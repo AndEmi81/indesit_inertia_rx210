@@ -1,0 +1,1 @@
+# indesit_inertia_rx210
