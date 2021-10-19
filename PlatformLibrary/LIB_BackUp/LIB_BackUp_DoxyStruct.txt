@@ -1,0 +1,138 @@
+/**
+\defgroup	LIB_BackUp Backup
+@{
+\n			This module contains all routines necessaries to
+\li       identify the power fail event. See LIB_Backup_CheckIfIsTimeToBackup()
+\li       save application variables in flash. See LIB_Backup_DataSave()
+\li       restore data in R.A.M. when we have a power on. See LIB_Backup_RestoreManager()
+\n
+\n
+\version 01.00
+\n
+\Par <B>	How power fail is detected  </B>
+\n
+\n          Inside Analog Channel Task we monitor a channel named RTN (usually +12V)
+\n          if the mean between two successive readings of this channel falls below
+\n          a preset value (cfr. \b REF_MIN_ADC_UNITS) Task Backup is activated  (cfr. \b Task_Backup)
+\n          The first action performed by Task Backup is switch off all loads but backup
+\n          is not yet done, we call this phase "pre backup"
+\n          then starts continuos monitoring of RTN to establish if we have a fake or a real power fail.
+\n          See LIB_Backup_IsTimeToBackup() documentation and LIB_Backup_RefCheck() for more details.
+\n <B>
+\n          N.B. after saving data in flash a reset is performed.
+\n          so don't call LIB_Backup_RestoreManager() before making sure that the RTN is over
+\n          REF_MIN_ADC_UNITS 
+\n </B>
+\n
+\par Configuration:
+\n
+\n          There are two type of table one for th addresses a one for the sizes.
+			One couple id for Platform ( PltBackupAddrTab, PltBackupDimTab ) 
+			and one for Application (  AppBackupAddrTab, AppBackupDimTab ).
+			The address table must be terminated with BCK_ADDR_END_TAB marker, 
+			the marker PC_CTRL_NOT_RESTORED_END is used to 
+			
+
+\n <I>
+\n  #define BACKUPLENGTH ( \
+\n  sizeof(Backup_Source)+ \
+\n  sizeof(VAR0)+ \
+\n  sizeof(VAR1)+ \
+\n  sizeof(VAR2)+ \
+\n  sizeof(VAR3)+ \
+\n  sizeof(VAR4)+ \
+\n  sizeof(VAR6)+ \
+\n  sizeof(VAR7)+ \
+\n  sizeof(MyCounters[0])+ \
+\n  sizeof(MyCounters[2])+ \
+\n  sizeof(MyCounters[10])+ \
+\n  sizeof(MyCounters[5])+ \
+\n  sizeof(loadsState)+ \
+\n  sizeof(VAR8)+ \
+\n  sizeof(VAR5))
+\n  </I>
+\n\li       an array of void pointers named BackupAddrTab
+\n          indicating the address all data that must be saved in flash when
+\n          power fail
+\n          Eg.
+\n <I>
+\n  void *const BackupAddrTab[]={
+\n  &Backup_Source,
+\n  &VAR0,
+\n  &VAR1,
+\n  &VAR2,
+\n  &VAR3,
+\n  &VAR4,
+\n  &VAR6,
+\n  &VAR7,
+\n  &MyCounters[0],
+\n  &MyCounters[2],
+\n  &MyCounters[10],
+\n  &MyCounters[5],
+\n  &loadsState,
+\n  &VAR8,
+\n  ((void *) 0),	marker cfr. LIB_Backup_DataRestore() documentation
+\n  &VAR5,
+\n  };
+\n  </I>
+\n\li       an array of bytes named BackupDimTab
+\n          indicating the size in bytes of each data that must be saved in flash when
+\n          power fail
+\n          Eg.
+\n <I>
+\n  unsigned char const BackupDimTab[]={
+\n  sizeof(Backup_Source),
+\n  sizeof(VAR0),
+\n  sizeof(VAR1),
+\n  sizeof(VAR2),
+\n  sizeof(VAR3),
+\n  sizeof(VAR4),
+\n  sizeof(VAR6),
+\n  sizeof(VAR7),
+\n  sizeof(MyCounters[0]),
+\n  sizeof(MyCounters[2]),
+\n  sizeof(MyCounters[10]),
+\n  sizeof(MyCounters[5]),
+\n  sizeof(loadsState),
+\n  sizeof(VAR8),
+\n  0,	           marker cfr. LIB_Backup_DataRestore() documentation
+\n  sizeof(VAR5),
+\n  };
+\n  </I>
+\n          Furthermore the user must provide a file named BackUp_cfg.h that contains
+\n
+\n\li       a define \b BACKUPAREA_START_ADDR
+\n          indicating the start address of the flash area reserved to backup data
+\n\li       a define \b BACKUPAREA_SIZE_IN_BYTES
+\n          indicating the size in bytes of the flash area reserved to backup data
+\n
+\par Exported Functions (Platform Level):
+\li Task_Backup()
+\li LIB_Backup_CheckIfIsTimeToBackup()
+\li LIB_Backup_DataSave()
+\li LIB_Backup_ChecksumVerify()
+\li LIB_Backup_DataRestore()
+\n
+\par Exported Functions (Application Level):
+\li LIB_Backup_GetBackupSource()
+\li LIB_Backup_SetBackupSource()
+\li LIB_Backup_ResetBackupSource()
+\li LIB_Backup_ForceBackup()
+\li LIB_Backup_SetBackupControlMonitor()
+\li LIB_Backup_GetBackupControlMonitor()
+\li LIB_Backup_InvalidateBackupArea()
+\li LIB_Backup_GetBackupLen()
+\n
+\par Exported Variables:
+\li #AppBackupAddrTab[]
+\li #AppBackupDimTab[]
+\n
+\par Architecture Requirements ID:
+\li SARS_WMMT_MN_BKP_1
+\li SARS_WMMT_MN_BKP_2
+\li SARS_WMMT_MN_BKP_3
+\li SARS_WMMT_MN_BKP_4
+
+@}
+\ingroup   	PlatformLibrary
+*/

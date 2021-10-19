@@ -1,0 +1,992 @@
+   1                             		.file	"Main_Sequencer.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.Main_SequencerCallback,"ax",@progbits
+   6                             	_Main_SequencerCallback:
+   7                             	.LFB5:
+   8                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Main_Sequencer.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /**
+   7:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \n
+   8:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \par		Description
+   9:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \n			This module implements the service for loads synchronized with ZC .
+  10:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****             It makes use of a task which is resumed more times at the beginning of each sub-interva
+  11:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****             in which the halfwave is divided.
+  12:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \n
+  13:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \file		Main_Outputs.c
+  14:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \ingroup	Main
+  15:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \date		12/01/2011
+  16:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \version	01.00.00
+  17:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \author		Roberto Fioravanti
+  18:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \n
+  19:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \n
+  20:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \par\b	History:
+  21:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \n
+  22:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \n 		00.00.00
+  23:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \n		12/01/2011
+  24:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \n		Roberto Fioravanti
+  25:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \n		changes
+  26:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \n 		- Creation
+  27:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \n
+  28:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \n
+  29:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+  30:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* ******** */
+  31:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* Includes */
+  32:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* ******** */
+  33:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #include "Config.h"
+  34:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+  35:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if defined(CONFIG_MAIN_SEQUENCER_TASK_SUPPORT)
+  36:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+  37:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #include "TaskMonitor_Cfg.h"
+  38:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #include "Main.h"
+  39:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #include "Main_ActivityList.h"
+  40:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #include "LIB_Trace.h"
+  41:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+  42:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* ****************** */
+  43:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* Defines and Macros */
+  44:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* ****************** */
+  45:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if defined(CONFIG_MAIN_SEQUENCER_LENGTH_2)
+  46:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_LENGTH                   (2)
+  47:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #elif defined(CONFIG_MAIN_SEQUENCER_LENGTH_4)
+  48:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_LENGTH                   (4)
+  49:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #else
+  50:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #error "CONFIG_MAIN_SEQUENCER_LENGTH_2 or CONFIG_MAIN_SEQUENCER_LENGTH_4 missing definition."
+  51:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif
+  52:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+  53:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+  54:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if defined(CONFIG_MAIN_SEQUENCER_TASK_TRACE_PIN_ENABLE) && defined(CONFIG_LIB_TRACE_SUPPORT)
+  55:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK_TRACE_BEGIN()        TRACE_TO_PIN(ON, (CONFIG_MAIN_SEQUENCER_TASK_TRACE
+  56:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK_TRACE_END()          TRACE_TO_PIN(OFF , (CONFIG_MAIN_SEQUENCER_TASK_TRA
+  57:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #else
+  58:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK_TRACE_BEGIN()
+  59:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK_TRACE_END()
+  60:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif
+  61:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+  62:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if !defined(CONFIG_LIB_TM_MAIN)
+  63:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /** @name Synchronized loads task safety
+  64:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+  65:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \par Properties
+  66:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Not mandatory. They can remain undefined.
+  67:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** The configuration is defined in the file TaskMonitor_Cgf.h
+  68:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** @{
+  69:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+  70:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define START_SEQUENCER_TASK_MONITORING()
+  71:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK__MONITOR_IN()          /**< safety entry */
+  72:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK__MONITOR_OUT()         /**< safety exit */
+  73:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /*@}*/
+  74:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif
+  75:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+  76:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if !defined(MAIN_SEQUENCER_TASK__MONITOR_IN) && !defined(MAIN_SEQUENCER_TASK__MONITOR_OUT) && !def
+  77:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /** @name Sequencer task safety
+  78:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+  79:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \par Properties
+  80:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Not mandatory. If they remain undefined assume by default an empty value.
+  81:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+  82:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \par Examples
+  83:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \code
+  84:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK__MONITOR_IN()     helloTaskMonitor( APPLICATION_TASK_ID );
+  85:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK__MONITOR_OUT()
+  86:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \endcode
+  87:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** @{
+  88:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+  89:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+  90:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /** safety config */
+  91:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define START_SEQUENCER_TASK_MONITORING()
+  92:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /** safety entry */
+  93:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK__MONITOR_IN()
+  94:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /** safety exit */
+  95:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK__MONITOR_OUT()
+  96:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /*@}*/
+  97:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+  98:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #else
+  99:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if !defined(START_SEQUENCER_TASK_MONITORING)
+ 100:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #error "START_SEQUENCER_TASK_MONITORING not defined"
+ 101:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif
+ 102:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 103:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if !defined(MAIN_SEQUENCER_TASK__MONITOR_IN)
+ 104:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #error "MAIN_SEQUENCER_TASK__MONITOR_IN not defined"
+ 105:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif
+ 106:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 107:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if !defined(MAIN_SEQUENCER_TASK__MONITOR_OUT)
+ 108:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #error "MAIN_SEQUENCER_TASK__MONITOR_OUT not defined"
+ 109:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif
+ 110:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 111:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif
+ 112:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 113:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /** @name General macros
+ 114:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 115:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \par Properties
+ 116:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Not mandatory.
+ 117:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 118:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \par Examples
+ 119:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 120:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \li idEvent is unused
+ 121:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \code
+ 122:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK__BODY(idEvent)\
+ 123:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {\
+ 124:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     (void)LIB_ZcLoads_Manager(0);\
+ 125:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 126:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \endcode
+ 127:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** @{
+ 128:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 129:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 130:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 131:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /*@}*/
+ 132:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 133:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /**
+ 134:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** @name Debug macros
+ 135:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \par Properties
+ 136:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Not mandatory. If not defined they assume the default values
+ 137:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \li #define SEQUENCER_TASK_DEBUG                (1)
+ 138:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \li #define SEQUENCER_TASK_DURATION             (1)
+ 139:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \li #define SEQUENCER_TASK_TUNING               (1)
+ 140:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** @{
+ 141:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 142:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 143:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if !defined(SEQUENCER_TASK_DEBUG)
+ 144:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /** Debug enable
+ 145:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \li 0: all debug features disabled
+ 146:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \li 1: allows to enable the debug level for SEQUENCER_TASK_DURATION, SEQUENCER_TASK_TUNING
+ 147:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 148:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define SEQUENCER_TASK_DEBUG                (1)
+ 149:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif
+ 150:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 151:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if !defined(SEQUENCER_TASK_DURATION)
+ 152:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /** Measurement of the duration of the task
+ 153:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \li 0: disabled
+ 154:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \li 1: enabled
+ 155:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 156:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define SEQUENCER_TASK_DURATION             (1)
+ 157:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif
+ 158:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 159:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if !defined(SEQUENCER_TASK_TUNING)
+ 160:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /** Dynamic Tuning. It allows to change dynamically the period and the delay of the exection of the
+ 161:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** by changing the value of the variables OutputsTuning_Delay and OutputsTuning_Period.
+ 162:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \li 0: disabled
+ 163:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \li 1: enabled
+ 164:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 165:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \attention When SEQUENCER_TASK_TUNING is defined as 1,  SEQUENCER_DELAY_ACTIVATION_TUNING_VAL and S
+ 166:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** are not used
+ 167:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 168:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define SEQUENCER_TASK_TUNING               (1)
+ 169:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif
+ 170:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 171:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /*@}*/
+ 172:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 173:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 174:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /**
+ 175:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** @name Tuning macros
+ 176:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \par Properties
+ 177:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Not mandatory. If not defined they assume the default values
+ 178:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \li #define SEQUENCER_DELAY_ACTIVATION_TUNING_VAL         (0)
+ 179:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \li #define SEQUENCER_PERIOD_ACTIVATION_TUNING_VAL         (0)
+ 180:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \attention Used only if \ref SEQUENCER_TASK_DEBUG is defined as 0.
+ 181:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** @{
+ 182:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 183:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #ifndef SEQUENCER_DELAY_ACTIVATION_TUNING_VAL
+ 184:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define SEQUENCER_DELAY_ACTIVATION_TUNING_VAL           (0)     /**< First outputs activation delay
+ 185:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif
+ 186:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 187:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #ifndef SEQUENCER_PERIOD_ACTIVATION_TUNING_VAL
+ 188:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define SEQUENCER_PERIOD_ACTIVATION_TUNING_VAL          (0)    /**< Outputs activation period corre
+ 189:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif
+ 190:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /*@}*/
+ 191:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 192:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* *************************** */
+ 193:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* Typedef, Structs and Unions */
+ 194:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* *************************** */
+ 195:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** typedef struct Main_SequencerCBStruct Main_SequencerCB_Type;
+ 196:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** struct Main_SequencerCBStruct
+ 197:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 198:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     Main_SequencerProfileType           SequencerID;            /* ID of the sequence */
+ 199:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     Main_ActivityList_Type              SeqActivityList;        /* Standard Activity list manager *
+ 200:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** };
+ 201:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 202:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* **************************** */
+ 203:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* Prototype of local functions */
+ 204:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* **************************** */
+ 205:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 206:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* ********* */
+ 207:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* Variables */
+ 208:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* ********* */
+ 209:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 210:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* Global */
+ 211:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 212:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* Static */
+ 213:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /**
+ 214:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** @name Service variables
+ 215:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** @{
+ 216:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 217:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 218:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 219:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /** Task Stack */
+ 220:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static STACK_SEC OS_STACKPTR int  Main_SequencerTaskStack[CONFIG_MAIN_SEQUENCER_TASK_STACK_SIZE] ST
+ 221:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 222:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /** Task Control Block*/
+ 223:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static OS_TASK                  Main_SequencerTaskTCB;
+ 224:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 225:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /** high resolution Alarm */
+ 226:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static OS_ALARM                 Main_AlmSequencer;
+ 227:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 228:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* first object */
+ 229:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static Main_SequencerCB_Type    Main_Sequencer;
+ 230:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /*@}*/
+ 231:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 232:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if defined(CONFIG_MAIN_SEQUENCER_STACK_MONITOR)
+ 233:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static 	TOOLS_STACKUSAGE_MONITOR	Main_SequencerStackMonitor;
+ 234:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif
+ 235:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 236:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /**
+ 237:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** @name Debug variables
+ 238:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 239:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** @{
+ 240:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 241:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if     SEQUENCER_TASK_DEBUG
+ 242:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 243:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 244:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if     SEQUENCER_TASK_DURATION
+ 245:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static  TOOLS_TIMING            SequencerDuration;        /**< task duration in [us]
+ 246:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****                                                     \attention Available only if \ref SEQUENCER_TAS
+ 247:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****                                                     defined as 1.
+ 248:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****                                                     */
+ 249:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static  TOOLS_TIMING_STATS      SequencerTaskDurationStat;/**< statistics about task duration [us]
+ 250:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****                                                     \attention Available only if \ref SEQUENCER_TAS
+ 251:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****                                                                                                    
+ 252:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****                                                     */
+ 253:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif  /* SEQUENCER_TASK_DURATION */
+ 254:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 255:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 256:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if		SEQUENCER_TASK_TUNING
+ 257:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static  OS_I32                  SequencerTuning_Delay;    /**< Current delay correction for first a
+ 258:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****                                         \attention Available only if \ref SEQUENCER_TASK_DEBUG and 
+ 259:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****                                         defined as 1.
+ 260:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****                                         */
+ 261:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static  OS_I32                  SequencerTuning_Period;   /**< Current period correction for subseq
+ 262:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****                                         \attention Available only if \ref SEQUENCER_TASK_DEBUG and 
+ 263:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****                                         defined as 1.
+ 264:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****                                         */
+ 265:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif /* SEQUENCER_TASK_TUNING */
+ 266:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 267:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif  /* SEQUENCER_TASK_DEBUG */
+ 268:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /*@}*/
+ 269:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* ******************* */
+ 270:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* Functions Prototype */
+ 271:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* ******************* */
+ 272:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 273:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* Exported function */
+ 274:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* Local Function */
+ 275:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask ( void );
+ 276:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static void AlmSequencerCallback ( void );
+ 277:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerCallback(void);
+ 278:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 279:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 280:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if     SEQUENCER_TASK_DEBUG   &&   SEQUENCER_TASK_DURATION
+ 281:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask_Duration_Init ( void );
+ 282:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask_Duration_Start ( void );
+ 283:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask_Duration_End ( void );
+ 284:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #else
+ 285:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define Main_SequencerTask_Duration_Init()
+ 286:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define Main_SequencerTask_Duration_Start()
+ 287:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define Main_SequencerTask_Duration_End()
+ 288:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif /* SEQUENCER_TASK_DEBUG   &&   SEQUENCER_TASK_DURATION */
+ 289:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 290:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if     SEQUENCER_TASK_DEBUG   &&   SEQUENCER_TASK_TUNING
+ 291:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask_Tuning_Init ( void );
+ 292:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static OS_I32 Main_SequencerTask_DelayTuner ( OS_U32 usOffset );
+ 293:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static OS_I32 Main_SequencerTask_PeriodTuner ( OS_U32 usOffset );
+ 294:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #else
+ 295:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define Main_SequencerTask_Tuning_Init()
+ 296:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define Main_SequencerTask_DelayTuner(dummy)     ((OS_I32)SEQUENCER_DELAY_ACTIVATION_TUNING_VAL)
+ 297:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #define Main_SequencerTask_PeriodTuner(dummy)    ((OS_I32)SEQUENCER_PERIOD_ACTIVATION_TUNING_VAL)
+ 298:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif /* SEQUENCER_TASK_DEBUG   &&   SEQUENCER_TASK_TUNING */
+ 299:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 300:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* *************** */
+ 301:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* Function Bodies */
+ 302:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* *************** */
+ 303:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 304:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* Exported function */
+ 305:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 306:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /**
+ 307:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Sequencer service initialization.
+ 308:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** It creates task \ref Main_SequencerTask and \ref Main_AlmSequencer alarm.
+ 309:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** If debug option OUTPUTS_TASK_DEBUG and
+ 310:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \li \ref OUTPUTS_TASK_TUNING or
+ 311:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \li \ref OUTPUTS_TASK_DURATION
+ 312:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \n are enabled it initializes tools for timing measurement.
+ 313:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 314:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if defined(CONFIG_MAIN_SEQUENCER_TASK_SUPPORT)
+ 315:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** void Main_SequencerInit ( void )
+ 316:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 317:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     /* first Activity points to NULL*/
+ 318:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     
+ 319:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     Main_ActivityList_Init(&(Main_Sequencer.SeqActivityList));
+ 320:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     
+ 321:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     /* create the task */
+ 322:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	OS_CREATETASK ( &Main_SequencerTaskTCB,
+ 323:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 					"SequencerTask",
+ 324:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 					Main_SequencerTask,
+ 325:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 					MAIN_SEQUENCER_TASK_PRIORITY,
+ 326:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 					Main_SequencerTaskStack );
+ 327:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if defined(CONFIG_MAIN_SEQUENCER_STACK_MONITOR)
+ 328:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	Tools_CreateTaskStackMonitor(&Main_SequencerTaskTCB, &Main_SequencerStackMonitor);
+ 329:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif
+ 330:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     /* create the alarm */
+ 331:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	OS_CreateAlarm ( &Main_AlmSequencer, AlmSequencerCallback, ( OS_U32 ) 0, ( OS_U32 ) 0 );
+ 332:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     
+ 333:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     /* initialize debug utilities */
+ 334:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	Main_SequencerTask_Duration_Init();
+ 335:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	Main_SequencerTask_Tuning_Init();
+ 336:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     
+ 337:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     
+ 338:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 339:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif
+ 340:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /**
+ 341:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Sets the alarm on high resolution timer to resume Sequencer Task at the beginning of each sub-inter
+ 342:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** It must be called on ZC event.
+ 343:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** At each expiration of the alarm the task is resumed.
+ 344:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 345:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \param [in] usOffset first alarm expiration in microseconds
+ 346:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \param [in] usPeriod alarm period in microseconds
+ 347:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \param [in] count number of expiration in microseconds (See alarm documentation)
+ 348:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 349:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \author 	Roberto Fioravanti
+ 350:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \date		29/03/2011
+ 351:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \version	1.0.0
+ 352:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 353:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if defined(CONFIG_MAIN_SEQUENCER_TASK_SUPPORT)
+ 354:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** void Main_PeriodicScheduleSequencer ( OS_U32 usOffset, OS_U32 usPeriod, OS_U32 TickRef )
+ 355:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 356:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     OS_ALARM_TICK ref = (OS_ALARM_TICK)TickRef;
+ 357:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	usOffset += Main_SequencerTask_DelayTuner ( usOffset );
+ 358:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	usPeriod += Main_SequencerTask_PeriodTuner ( usPeriod );
+ 359:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	if(OS_IsTask(&Main_SequencerTaskTCB))
+ 360:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	{
+ 361:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	    OS_START_ABSALARM ( &Main_AlmSequencer, usOffset, usPeriod, MAIN_SEQUENCER_LENGTH, &ref );
+ 362:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	}
+ 363:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	Main_Sequencer.SequencerID = 1;
+ 364:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 365:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif
+ 366:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 367:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if defined(CONFIG_MAIN_SEQUENCER_TASK_SUPPORT)
+ 368:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** void Main_AddSequencerActivity ( Main_SequencerActivityType* pSeqActivity, Main_ActivityCallbackTyp
+ 369:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 370:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	Main_ActivityType * pActivity;
+ 371:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     
+ 372:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     /* Set the hook routine */
+ 373:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     pSeqActivity->pSeqCallback=pSeqCallback;
+ 374:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     pSeqActivity->profile=0;
+ 375:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     
+ 376:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     /* Process the standard Activity */
+ 377:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     pActivity= &(pSeqActivity->activity);
+ 378:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     Main_CreateActivity ( &(Main_Sequencer.SeqActivityList), pActivity, Main_SequencerCallback , NU
+ 379:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 380:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif
+ 381:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 382:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 383:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 384:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 385:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** int Main_GetSequencerLength(void)
+ 386:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 387:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     return (int) (MAIN_SEQUENCER_LENGTH);
+ 388:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 389:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 390:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 391:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Main_SequencerProfileType Main_GetSequencerMiddleEvent(void)
+ 392:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 393:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     return (Main_SequencerProfileType) (1<<(MAIN_SEQUENCER_LENGTH/2));
+ 394:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 395:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 396:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* Local Function */
+ 397:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 398:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerCallback(void)
+ 399:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+   9                             		.loc 1 399 0
+ 400:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     Main_SequencerActivityType * p = (Main_SequencerActivityType *) (Main_Sequencer.SeqActivityList
+  10                             		.loc 1 400 0
+  11 0000 FB 32 00 00 00 00       		mov.L	#_Main_Sequencer, r3
+  12 0006 A8 B4                   		mov.L	8[r3], r4
+  13                             	.LVL0:
+ 401:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     if(p->pSeqCallback)
+  14                             		.loc 1 401 0
+  15 0008 ED 4E 03                		mov.L	12[r4], r14
+  16 000b 61 0E                   		cmp	#0, r14
+  17 000d 20 10                   		beq	.L1
+ 402:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     {
+ 403:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****       if ( p->profile & Main_Sequencer.SequencerID )
+  18                             		.loc 1 403 0
+  19 000f CC 33                   		mov.B	[r3], r3
+  20 0011 8A 44                   		mov.B	8[r4], r4
+  21                             	.LVL1:
+  22 0013 53 34                   		and	r3, r4
+  23 0015 CF 44                   		mov.B	r4, r4
+  24 0017 61 04                   		cmp	#0, r4
+  25 0019 20 04                   		beq	.L1
+ 404:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****       {
+ 405:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****         (p->pSeqCallback)();
+  26                             		.loc 1 405 0
+  27 001b 7F 1E                   		jsr	r14
+  28                             	.LVL2:
+  29                             	.L1:
+  30 001d 02                      		rts
+  31                             	.LFE5:
+  33                             		.section	.text.AlmSequencerCallback,"ax",@progbits
+  35                             	_AlmSequencerCallback:
+  36                             	.LFB7:
+ 406:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****       }
+ 407:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     }
+ 408:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 409:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /**
+ 410:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 411:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerManager(void)
+ 412:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 413:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     Main_ActivityProcess(&(Main_Sequencer.SeqActivityList));
+ 414:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     
+ 415:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     Main_Sequencer.SequencerID <<= 1U;
+ 416:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 417:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 418:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /**
+ 419:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Sequencer Alarm callback that resumes Outputs task
+ 420:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 421:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static void AlmSequencerCallback ( void )
+ 422:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+  37                             		.loc 1 422 0
+ 423:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	if ( OS_GetSuspendCnt ( &Main_SequencerTaskTCB ) > 0 )
+  38                             		.loc 1 423 0
+  39 0000 FB 12 00 00 00 00       		mov.L	#_Main_SequencerTaskTCB, r1
+  40 0006 05 00 00 00             		bsr	_OS_GetSuspendCnt
+  41                             	.LVL3:
+  42 000a 5B 11                   		movu.B	r1, r1
+  43 000c 61 01                   		cmp	#0, r1
+  44 000e 20 0C                   		beq	.L9
+ 424:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	{
+ 425:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		OS_Resume ( &Main_SequencerTaskTCB );
+  45                             		.loc 1 425 0
+  46 0010 FB 12 00 00 00 00       		mov.L	#_Main_SequencerTaskTCB, r1
+  47 0016 04 00 00 00             		bra	_OS_Resume
+  48                             	.LVL4:
+  49                             	.L9:
+  50 001a 02                      		rts
+  51                             	.LFE7:
+  53                             		.section	.text.Main_SequencerTask,"ax",@progbits
+  55                             	_Main_SequencerTask:
+  56                             	.LFB8:
+ 426:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	}
+ 427:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 428:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 429:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 430:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 431:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 432:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /**
+ 433:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** normal Non-preemptable periodic task for ADC channels readings
+ 434:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 435:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \warning	none
+ 436:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 437:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \author 	Roberto Fioravanti
+ 438:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \date		29/03/2011
+ 439:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \version	1.0.0
+ 440:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 441:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \note		\par \b Note 1:
+ 442:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 			documentation by Roberto Fioravanti
+ 443:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 444:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 445:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask ( void )
+ 446:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+  57                             		.loc 1 446 0
+  58 0000 7E A7                   		push.l	r7
+  59                             	.LCFI0:
+ 447:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	START_SEQUENCER_TASK_MONITORING();
+  60                             		.loc 1 447 0
+  61 0002 66 41                   		mov	#4, r1
+  62 0004 75 42 1E                		mov	#30, r2
+  63 0007 66 03                   		mov.L	#0, r3
+  64 0009 05 00 00 00             		bsr	_LIB_TaskMonitoringConfig
+  65                             	.LVL5:
+  66                             	.LBB8:
+  67                             	.LBB9:
+ 415:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     Main_Sequencer.SequencerID <<= 1U;
+  68                             		.loc 1 415 0
+  69 000d FB 72 00 00 00 00       		mov.L	#_Main_Sequencer, r7
+  70 0013 03                      		.balign 2,3,1
+  71                             	.L12:
+  72                             	.LBE9:
+  73                             	.LBE8:
+ 448:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	while ( 1 )
+ 449:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	{
+ 450:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		OS_Suspend ( NULL );
+  74                             		.loc 1 450 0 discriminator 1
+  75 0014 66 01                   		mov.L	#0, r1
+  76 0016 05 00 00 00             		bsr	_OS_Suspend
+  77                             	.LVL6:
+ 451:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 452:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		TRACE_CPU_IDLE_END();
+ 453:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 454:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		MAIN_SEQUENCER_TASK_TRACE_BEGIN()
+ 455:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		OS_EnterRegion();
+  78                             		.loc 1 455 0 discriminator 1
+  79 001a 05 00 00 00             		bsr	_OS_EnterRegionFunc
+  80                             	.LVL7:
+  81                             	.LBB12:
+  82                             	.LBB13:
+ 456:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		/* here the scheduler is switched off */
+ 457:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		/* debug: begin */
+ 458:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		Main_SequencerTask_Duration_Start();
+ 459:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		/* debug: end */
+ 460:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		MAIN_SEQUENCER_TASK__MONITOR_IN();
+ 461:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		
+ 462:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****         Main_SequencerManager();
+ 463:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 464:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		MAIN_SEQUENCER_TASK__MONITOR_OUT();
+ 465:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		/* debug: begin */
+ 466:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		Main_SequencerTask_Duration_End();
+ 467:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		/* debug: end */
+ 468:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		OS_LeaveRegion();
+ 469:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****         MAIN_SEQUENCER_TASK_TRACE_END()
+ 470:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		/* here the scheduler is switched on */
+ 471:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	}
+ 472:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 473:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /* Local Function */
+ 474:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 475:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if SEQUENCER_TASK_DEBUG && SEQUENCER_TASK_DURATION
+ 476:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /**
+ 477:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Init Duration  measurement
+ 478:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 479:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask_Duration_Init ( void )
+ 480:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 481:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	Tools_CreateTimingMeasure ( &SequencerDuration );
+ 482:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	Tools_CreateTimingStats ( &SequencerTaskDurationStat );
+ 483:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 484:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /**
+ 485:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Starts a duration measurement
+ 486:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 487:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask_Duration_Start ( void )
+ 488:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 489:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	Tools_TimingSetRef ( &SequencerDuration );
+  83                             		.loc 1 489 0 discriminator 1
+  84 001e FB 12 00 00 00 00       		mov.L	#_SequencerDuration, r1
+  85 0024 05 00 00 00             		bsr	_Tools_TimingSetRef
+  86                             	.LVL8:
+  87                             	.LBE13:
+  88                             	.LBE12:
+ 460:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		MAIN_SEQUENCER_TASK__MONITOR_IN();
+  89                             		.loc 1 460 0 discriminator 1
+  90 0028 66 12                   		mov.L	#1, r2
+  91 002a 66 41                   		mov	#4, r1
+  92 002c 05 00 00 00             		bsr	_LIB_SetTask
+  93                             	.LVL9:
+  94 0030 66 41                   		mov	#4, r1
+  95 0032 05 00 00 00             		bsr	_LIB_TaskStartActivity
+  96                             	.LVL10:
+  97                             	.LBB14:
+  98                             	.LBB10:
+ 413:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     Main_ActivityProcess(&(Main_Sequencer.SeqActivityList));
+  99                             		.loc 1 413 0 discriminator 1
+ 100 0036 FB 12 00 00 00 00       		mov.L	#_Main_Sequencer+4, r1
+ 101 003c 05 00 00 00             		bsr	_Main_ActivityProcess
+ 102                             	.LVL11:
+ 415:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     Main_Sequencer.SequencerID <<= 1U;
+ 103                             		.loc 1 415 0 discriminator 1
+ 104 0040 CC 7E                   		mov.B	[r7], r14
+ 105                             	.LBE10:
+ 106                             	.LBE14:
+ 464:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		MAIN_SEQUENCER_TASK__MONITOR_OUT();
+ 107                             		.loc 1 464 0 discriminator 1
+ 108 0042 66 41                   		mov	#4, r1
+ 109                             	.LBB15:
+ 110                             	.LBB11:
+ 415:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     Main_Sequencer.SequencerID <<= 1U;
+ 111                             		.loc 1 415 0 discriminator 1
+ 112 0044 4B EE                   		add	r14, r14
+ 113 0046 C3 7E                   		mov.B	r14, [r7]
+ 114                             	.LBE11:
+ 115                             	.LBE15:
+ 464:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		MAIN_SEQUENCER_TASK__MONITOR_OUT();
+ 116                             		.loc 1 464 0 discriminator 1
+ 117 0048 05 00 00 00             		bsr	_LIB_TaskEndActivity
+ 118                             	.LVL12:
+ 119                             	.LBB16:
+ 120                             	.LBB17:
+ 490:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 491:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 492:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /**
+ 493:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Stops the duration measurement
+ 494:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 495:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask_Duration_End ( void )
+ 496:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 497:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	Tools_ProcessValue ( &SequencerTaskDurationStat, Tools_GetTiming ( &SequencerDuration ) );
+ 121                             		.loc 1 497 0 discriminator 1
+ 122 004c FB 12 00 00 00 00       		mov.L	#_SequencerDuration, r1
+ 123 0052 05 00 00 00             		bsr	_Tools_GetTiming
+ 124                             	.LVL13:
+ 125 0056 EF 12                   		mov.L	r1, r2
+ 126 0058 FB 12 00 00 00 00       		mov.L	#_SequencerTaskDurationStat, r1
+ 127 005e 05 00 00 00             		bsr	_Tools_ProcessValue
+ 128                             	.LVL14:
+ 129                             	.LBE17:
+ 130                             	.LBE16:
+ 468:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		OS_LeaveRegion();
+ 131                             		.loc 1 468 0 discriminator 1
+ 132 0062 05 00 00 00             		bsr	_OS_LeaveRegion
+ 133                             	.LVL15:
+ 134 0066 2E AE                   		bra	.L12
+ 135                             	.LFE8:
+ 137                             		.section	.rodata.str1.1,"aMS",@progbits,1
+ 138                             	.LC0:
+ 139 0000 53 65 71 75 65 6E 63 65 		.string	"SequencerTask"
+ 139      72 54 61 73 6B 00 
+ 140                             		.section	.text.Main_SequencerInit,"ax",@progbits
+ 141                             		.global	_Main_SequencerInit
+ 143                             	_Main_SequencerInit:
+ 144                             	.LFB0:
+ 316:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 145                             		.loc 1 316 0
+ 146 0000 60 80                   		sub	#8, r0
+ 147                             	.LCFI1:
+ 319:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     Main_ActivityList_Init(&(Main_Sequencer.SeqActivityList));
+ 148                             		.loc 1 319 0
+ 149 0002 FB 12 00 00 00 00       		mov.L	#_Main_Sequencer+4, r1
+ 150 0008 05 00 00 00             		bsr	_Main_ActivityList_Init
+ 151                             	.LVL16:
+ 322:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	OS_CREATETASK ( &Main_SequencerTaskTCB,
+ 152                             		.loc 1 322 0
+ 153 000c FB 12 00 00 00 00       		mov.L	#_Main_SequencerTaskTCB, r1
+ 154 0012 FB 22 00 00 00 00       		mov.L	#.LC0, r2
+ 155 0018 FB 36 96                		mov	#0xffffff96, r3
+ 156 001b FB 42 00 00 00 00       		mov.L	#_Main_SequencerTask, r4
+ 157 0021 F8 02 00 00 00 00       		mov.L	#_Main_SequencerTaskStack, [r0]
+ 158 0027 F9 0A 01 80 01          		mov.L	#0x180, 4[r0]
+ 159 002c 05 00 00 00             		bsr	_OS_CreateTask_S
+ 160                             	.LVL17:
+ 331:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	OS_CreateAlarm ( &Main_AlmSequencer, AlmSequencerCallback, ( OS_U32 ) 0, ( OS_U32 ) 0 );
+ 161                             		.loc 1 331 0
+ 162 0030 66 03                   		mov.L	#0, r3
+ 163 0032 FB 22 00 00 00 00       		mov.L	#_AlmSequencerCallback, r2
+ 164 0038 EF 34                   		mov.L	r3, r4
+ 165 003a FB 12 00 00 00 00       		mov.L	#_Main_AlmSequencer, r1
+ 166 0040 05 00 00 00             		bsr	_OS_CreateAlarm_
+ 167                             	.LVL18:
+ 168                             	.LBB22:
+ 169                             	.LBB23:
+ 481:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	Tools_CreateTimingMeasure ( &SequencerDuration );
+ 170                             		.loc 1 481 0
+ 171 0044 FB 12 00 00 00 00       		mov.L	#_SequencerDuration, r1
+ 172 004a 05 00 00 00             		bsr	_Tools_CreateTimingMeasure
+ 173                             	.LVL19:
+ 482:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	Tools_CreateTimingStats ( &SequencerTaskDurationStat );
+ 174                             		.loc 1 482 0
+ 175 004e FB 12 00 00 00 00       		mov.L	#_SequencerTaskDurationStat, r1
+ 176 0054 05 00 00 00             		bsr	_Tools_CreateTimingStats
+ 177                             	.LVL20:
+ 178                             	.LBE23:
+ 179                             	.LBE22:
+ 180                             	.LBB24:
+ 181                             	.LBB25:
+ 498:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 499:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #endif /* SEQUENCER_TASK_DEBUG && SEQUENCER_TASK_DURATION */
+ 500:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 501:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 502:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** #if     SEQUENCER_TASK_DEBUG && SEQUENCER_TASK_TUNING
+ 503:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /**
+ 504:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Tuning initialization.
+ 505:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Resets OutputsTuning_Delay and OutputsTuning_Period at zero.
+ 506:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 507:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask_Tuning_Init ( void )
+ 508:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 509:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	SequencerTuning_Delay = 0;
+ 182                             		.loc 1 509 0
+ 183 0058 FB E2 00 00 00 00       		mov.L	#_SequencerTuning_Delay, r14
+ 184 005e F8 E6 00                		mov.L	#0, [r14]
+ 510:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	SequencerTuning_Period = 0;
+ 185                             		.loc 1 510 0
+ 186 0061 FB E2 00 00 00 00       		mov.L	#_SequencerTuning_Period, r14
+ 187 0067 F8 E6 00                		mov.L	#0, [r14]
+ 188                             	.LBE25:
+ 189                             	.LBE24:
+ 338:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 190                             		.loc 1 338 0
+ 191 006a 67 02                   		rtsd	#8
+ 192                             	.LFE0:
+ 194                             		.section	.text.Main_PeriodicScheduleSequencer,"ax",@progbits
+ 195                             		.global	_Main_PeriodicScheduleSequencer
+ 197                             	_Main_PeriodicScheduleSequencer:
+ 198                             	.LFB1:
+ 355:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 199                             		.loc 1 355 0
+ 200                             	.LVL21:
+ 201 0000 6E 7D                   		pushm	r7-r13
+ 202                             	.LCFI2:
+ 203                             	.LBB30:
+ 204                             	.LBB31:
+ 511:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 512:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 513:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /**
+ 514:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Filters OutputsTuning_Delay.
+ 515:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \param [in] usOffset current delay
+ 516:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \return OS_I32
+ 517:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \retval OutputsTuning_Delay.
+ 518:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \attention range of OutputsTuning_Delay:
+ 519:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** from -usOffset to max of OS_I32
+ 520:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 521:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static OS_I32 Main_SequencerTask_DelayTuner ( OS_U32 usOffset )
+ 522:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 523:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	if ( SequencerTuning_Delay < 0 )
+ 205                             		.loc 1 523 0
+ 206 0002 FB 72 00 00 00 00       		mov.L	#_SequencerTuning_Delay, r7
+ 207 0008 EC 7E                   		mov.L	[r7], r14
+ 208                             	.LBE31:
+ 209                             	.LBE30:
+ 355:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 210                             		.loc 1 355 0
+ 211 000a 60 40                   		sub	#4, r0
+ 212                             	.LCFI3:
+ 356:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     OS_ALARM_TICK ref = (OS_ALARM_TICK)TickRef;
+ 213                             		.loc 1 356 0
+ 214 000c D3 03                   		mov.W	r3, [r0]
+ 215                             	.LVL22:
+ 216                             	.LBB34:
+ 217                             	.LBB32:
+ 218                             		.loc 1 523 0
+ 219 000e 61 0E                   		cmp	#0, r14
+ 220                             	.LBE32:
+ 221                             	.LBE34:
+ 355:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 222                             		.loc 1 355 0
+ 223 0010 EF 1B                   		mov.L	r1, r11
+ 224 0012 EF 2A                   		mov.L	r2, r10
+ 225                             	.LBB35:
+ 226                             	.LBB33:
+ 227                             		.loc 1 523 0
+ 228 0014 28 0E                   		bge	.L17
+ 524:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	{
+ 525:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		if ( -SequencerTuning_Delay > (int)usOffset )
+ 229                             		.loc 1 525 0
+ 230 0016 7E 1E                   		neg	r14
+ 231 0018 47 1E                   		cmp	r1, r14
+ 232 001a 2B 08                   		ble	.L17
+ 526:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		{
+ 527:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 			SequencerTuning_Delay = - ( ( OS_I32 ) usOffset );
+ 233                             		.loc 1 527 0
+ 234 001c FC 07 1C                		neg	r1, r12
+ 235 001f E3 7C                   		mov.L	r12, [r7]
+ 236 0021 03                      		.balign 2,3,1
+ 237                             	.L17:
+ 528:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		}
+ 529:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	}
+ 530:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	
+ 531:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	return SequencerTuning_Delay;
+ 238                             		.loc 1 531 0
+ 239 0022 EC 7D                   		mov.L	[r7], r13
+ 240                             	.LVL23:
+ 241                             	.LBE33:
+ 242                             	.LBE35:
+ 243                             	.LBB36:
+ 244                             	.LBB37:
+ 532:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 533:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 
+ 534:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** /**
+ 535:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** Filters OutputsTuning_Period.
+ 536:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \param [in] usOffset current period
+ 537:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \return OS_I32
+ 538:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \retval OutputsTuning_Delay.
+ 539:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** \attention range of OutputsTuning_Delay:
+ 540:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** from -usOffset to max of OS_I32
+ 541:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** */
+ 542:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** static OS_I32 Main_SequencerTask_PeriodTuner ( OS_U32 usOffset )
+ 543:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 544:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	if ( SequencerTuning_Period < 0 )
+ 245                             		.loc 1 544 0
+ 246 0024 FB 72 00 00 00 00       		mov.L	#_SequencerTuning_Period, r7
+ 247 002a EC 7E                   		mov.L	[r7], r14
+ 248 002c 61 0E                   		cmp	#0, r14
+ 249 002e 28 0E                   		bge	.L18
+ 545:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	{
+ 546:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		if ( abs(SequencerTuning_Period) > usOffset )
+ 250                             		.loc 1 546 0
+ 251 0030 7E 1E                   		neg	r14
+ 252 0032 47 AE                   		cmp	r10, r14
+ 253 0034 25 08                   		bleu	.L18
+ 547:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		{
+ 548:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 			SequencerTuning_Period = - ( ( OS_I32 ) usOffset );
+ 254                             		.loc 1 548 0
+ 255 0036 FC 07 AC                		neg	r10, r12
+ 256 0039 E3 7C                   		mov.L	r12, [r7]
+ 257 003b 03                      		.balign 2,3,5
+ 258                             	.L18:
+ 259                             	.LBE37:
+ 260                             	.LBE36:
+ 359:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	if(OS_IsTask(&Main_SequencerTaskTCB))
+ 261                             		.loc 1 359 0
+ 262 003c FB 12 00 00 00 00       		mov.L	#_Main_SequencerTaskTCB, r1
+ 263                             	.LVL24:
+ 264                             	.LBB39:
+ 265                             	.LBB38:
+ 549:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 		}
+ 550:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	}
+ 551:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	
+ 552:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	return SequencerTuning_Period;
+ 266                             		.loc 1 552 0
+ 267 0042 EC 7C                   		mov.L	[r7], r12
+ 268                             	.LVL25:
+ 269                             	.LBE38:
+ 270                             	.LBE39:
+ 359:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	if(OS_IsTask(&Main_SequencerTaskTCB))
+ 271                             		.loc 1 359 0
+ 272 0044 05 00 00 00             		bsr	_OS_IsTask
+ 273                             	.LVL26:
+ 274 0048 5B 11                   		movu.B	r1, r1
+ 275 004a 61 01                   		cmp	#0, r1
+ 276 004c 20 62                   		beq	.L20
+ 361:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	    OS_START_ABSALARM ( &Main_AlmSequencer, usOffset, usPeriod, MAIN_SEQUENCER_LENGTH, &ref );
+ 277                             		.loc 1 361 0
+ 278 004e 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 279                             	.LVL27:
+ 280 0052 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 281 0058 CD 7E 01                		mov.B	1[r7], r14
+ 282 005b FB 12 00 00 00 00       		mov.L	#_Main_AlmSequencer, r1
+ 283 0061 62 1E                   		add	#1, r14
+ 284 0063 C7 7E 01                		mov.B	r14, 1[r7]
+ 285 0066 05 00 00 00             		bsr	_OS_StopAlarm
+ 286                             	.LVL28:
+ 287 006a FF 22 DB                		add	r13, r11, r2
+ 288 006d FB 12 00 00 00 00       		mov.L	#_Main_AlmSequencer, r1
+ 289 0073 05 00 00 00             		bsr	_OS_SetAlarmOffset_
+ 290                             	.LVL29:
+ 291 0077 FF 22 CA                		add	r12, r10, r2
+ 292 007a FB 12 00 00 00 00       		mov.L	#_Main_AlmSequencer, r1
+ 293 0080 05 00 00 00             		bsr	_OS_SetAlarmPeriod_
+ 294                             	.LVL30:
+ 295 0084 FB 12 00 00 00 00       		mov.L	#_Main_AlmSequencer, r1
+ 296 008a 66 22                   		mov.L	#2, r2
+ 297 008c 05 00 00 00             		bsr	_OS_SetAlarmActivationsCount_
+ 298                             	.LVL31:
+ 299 0090 FB 12 00 00 00 00       		mov.L	#_Main_AlmSequencer, r1
+ 300 0096 EF 02                   		mov.L	r0, r2
+ 301 0098 05 00 00 00             		bsr	_OS_StartAbsAlarm
+ 302                             	.LVL32:
+ 303 009c CD 7A 01                		mov.B	1[r7], r10
+ 304                             	.LVL33:
+ 305 009f 60 1A                   		sub	#1, r10
+ 306 00a1 C7 7A 01                		mov.B	r10, 1[r7]
+ 307 00a4 5B AA                   		movu.B	r10, r10
+ 308 00a6 61 0A                   		cmp	#0, r10
+ 309 00a8 21 06                   		bne	.L20
+ 361:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	    OS_START_ABSALARM ( &Main_AlmSequencer, usOffset, usPeriod, MAIN_SEQUENCER_LENGTH, &ref );
+ 310                             		.loc 1 361 0 is_stmt 0 discriminator 1
+ 311 00aa 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 312                             	.LVL34:
+ 313                             		.balign 2,3,5
+ 314                             	.L20:
+ 363:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** 	Main_Sequencer.SequencerID = 1;
+ 315                             		.loc 1 363 0 is_stmt 1
+ 316 00ae FB 72 00 00 00 00       		mov.L	#_Main_Sequencer, r7
+ 317 00b4 3C 70 01                		mov.B	#1, [r7]
+ 364:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 318                             		.loc 1 364 0
+ 319 00b7 3F 7D 08                		rtsd	#32, r7-r13
+ 320                             	.LFE1:
+ 322                             		.section	.text.Main_AddSequencerActivity,"ax",@progbits
+ 323                             		.global	_Main_AddSequencerActivity
+ 325                             	_Main_AddSequencerActivity:
+ 326                             	.LFB2:
+ 369:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 327                             		.loc 1 369 0
+ 328                             	.LVL35:
+ 369:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 329                             		.loc 1 369 0
+ 330 0000 EF 1E                   		mov.L	r1, r14
+ 373:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     pSeqActivity->pSeqCallback=pSeqCallback;
+ 331                             		.loc 1 373 0
+ 332 0002 A0 9A                   		mov.L	r2, 12[r1]
+ 374:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     pSeqActivity->profile=0;
+ 333                             		.loc 1 374 0
+ 334 0004 3C 18 00                		mov.B	#0, 8[r1]
+ 335                             	.LVL36:
+ 378:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c ****     Main_CreateActivity ( &(Main_Sequencer.SeqActivityList), pActivity, Main_SequencerCallback , NU
+ 336                             		.loc 1 378 0
+ 337 0007 EF E2                   		mov.L	r14, r2
+ 338                             	.LVL37:
+ 339 0009 FB 12 00 00 00 00       		mov.L	#_Main_Sequencer+4, r1
+ 340                             	.LVL38:
+ 341 000f FB 32 00 00 00 00       		mov.L	#_Main_SequencerCallback, r3
+ 342 0015 66 04                   		mov.L	#0, r4
+ 343 0017 04 00 00 00             		bra	_Main_CreateActivity
+ 344                             	.LVL39:
+ 345                             	.LFE2:
+ 347                             		.section	.text.Main_GetSequencerLength,"ax",@progbits
+ 348                             		.global	_Main_GetSequencerLength
+ 350                             	_Main_GetSequencerLength:
+ 351                             	.LFB3:
+ 386:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 352                             		.loc 1 386 0
+ 388:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 353                             		.loc 1 388 0
+ 354 0000 66 21                   		mov.L	#2, r1
+ 355 0002 02                      		rts
+ 356                             	.LFE3:
+ 358                             		.section	.text.Main_GetSequencerMiddleEvent,"ax",@progbits
+ 359                             		.global	_Main_GetSequencerMiddleEvent
+ 361                             	_Main_GetSequencerMiddleEvent:
+ 362                             	.LFB4:
+ 392:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** {
+ 363                             		.loc 1 392 0
+ 394:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Sequencer.c **** }
+ 364                             		.loc 1 394 0
+ 365 0000 66 21                   		mov.L	#2, r1
+ 366 0002 02                      		rts
+ 367                             	.LFE4:
+ 369                             		.section	.bss.Main_Sequencer,"aw",@nobits
+ 370                             		.balign 4
+ 373                             	_Main_Sequencer:
+ 374 0000 00 00 00 00 00 00 00 00 		.zero	12
+ 374      00 00 00 00 
+ 375                             		.section	.bss.Main_SequencerTaskTCB,"aw",@nobits
+ 376                             		.balign 4
+ 379                             	_Main_SequencerTaskTCB:
+ 380 0000 00 00 00 00 00 00 00 00 		.zero	44
+ 380      00 00 00 00 00 00 00 00 
+ 380      00 00 00 00 00 00 00 00 
+ 380      00 00 00 00 00 00 00 00 
+ 380      00 00 00 00 00 00 00 00 
+ 381                             		.section	.osstack,"aw",@progbits
+ 382                             		.balign 4
+ 385                             	_Main_SequencerTaskStack:
+ 386 0000 00 00 00 00 00 00 00 00 		.zero	384
+ 386      00 00 00 00 00 00 00 00 
+ 386      00 00 00 00 00 00 00 00 
+ 386      00 00 00 00 00 00 00 00 
+ 386      00 00 00 00 00 00 00 00 
+ 387                             		.section	.bss.Main_AlmSequencer,"aw",@nobits
+ 388                             		.balign 4
+ 391                             	_Main_AlmSequencer:
+ 392 0000 00 00 00 00 00 00 00 00 		.zero	20
+ 392      00 00 00 00 00 00 00 00 
+ 392      00 00 00 00 
+ 393                             		.section	.bss.SequencerDuration,"aw",@nobits
+ 394                             		.balign 4
+ 397                             	_SequencerDuration:
+ 398 0000 00 00 00 00 00 00 00 00 		.zero	16
+ 398      00 00 00 00 00 00 00 00 
+ 399                             		.section	.bss.SequencerTaskDurationStat,"aw",@nobits
+ 400                             		.balign 4
+ 403                             	_SequencerTaskDurationStat:
+ 404 0000 00 00 00 00 00 00 00 00 		.zero	12
+ 404      00 00 00 00 
+ 405                             		.section	.bss.SequencerTuning_Delay,"aw",@nobits
+ 406                             		.balign 4
+ 409                             	_SequencerTuning_Delay:
+ 410 0000 00 00 00 00             		.zero	4
+ 411                             		.section	.bss.SequencerTuning_Period,"aw",@nobits
+ 412                             		.balign 4
+ 415                             	_SequencerTuning_Period:
+ 416 0000 00 00 00 00             		.zero	4
+ 531                             	.Letext0:
+ 532                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 533                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 534                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\Main\\EmbOS\\tools/Tools.h"
+ 535                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\Main\\EmbOS\\Services\\ActivityList/Main_ActivityLi
+ 536                             		.file 6 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/MainInterface.h"
+ 537                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_SecurityCheck/LIB_TaskMonitori
+ 538                             		.file 8 "C:\\Workspace\\FW_Platform2_5\\trunk\\CFG_DishWasher\\CFG_Inertia/TaskMonitor_Cfg.h"

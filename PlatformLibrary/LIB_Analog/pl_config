@@ -1,0 +1,92 @@
+#############################################################################
+#
+#	Platform 2 library configuration
+#
+#############################################################################
+
+menu "Analogic Acquisition Configuration"
+  depends on LIB_ANALOG
+config MANAGE_AD_CHANNEL_READ_SUPPORT_ENABLE 
+  bool "Enable read AD channel support"
+  default n
+  help
+    Enable support AD reading at a certain event. Eg. for tuibidity sensor.
+
+config ADC_DRV_CHANNELS_NUM
+    depends on LIB_ANALOG
+    int 
+    range 1 8
+    default 1
+    prompt "Number of AD channels [1..8]"
+    help 
+    Maximum number of AD channel that can be read.
+
+config VLINEMEASURE_COMPENSATION_AD
+    depends on LIB_ANALOG
+    int 
+    range 0 128
+    default 30
+    prompt "AD value compensation [0..128]"
+    help 
+    AD value adjustment of the measure.
+
+config VLINEMEASURE_NUM_OF_SAMPLES
+    depends on LIB_ANALOG
+    int 
+    range 1 128
+    default 5
+    prompt "Samples [0..128]"
+    help 
+    Number of samples.
+
+config LIB_ADC_CALIBRATION
+	bool "Enable Calibration Support"
+	default n
+	help
+    	  Enables EMS/Plant Calibration support on Analog readings
+
+config LIB_ADC_VLINE_CALIBRATION
+	depends on LIB_ADC_CALIBRATION
+	bool "Enable Vline Calibration Support"
+	default n
+	help
+    	  Enables Vline Calibration support
+
+config 	LIB_CAL_VLINE_THEOR_OFFS
+    depends on LIB_ADC_VLINE_CALIBRATION
+	int "Theoretical VLINE data for calibration"
+	default 0
+	help
+    	  Theoretical VLINE data for calibration
+
+config LIB_CAL_VLINE_MEASR_OFFS
+    depends on LIB_ADC_VLINE_CALIBRATION
+	int "Measured VLINE data for calibration"
+	default 1
+	help
+    	  Measured VLINE data for calibration
+
+config VLINE_ON_NEG_LEVEL
+	bool "Enable Vline reading on Negative Level"
+	default n
+	help
+		Enable Vline reading on negative level: this feature can be used e.g. for ADC accuracy checks
+
+config VLINE_ON_NEG_LEVEL_AVG
+	depends on VLINE_ON_NEG_LEVEL
+	bool "Enable an average value when evaluating Vline reading on Negative Level"
+	default n
+	help
+		This feature enables an average value computation for Vline reading on negative level
+		
+config VLINE_ON_NEG_LEVEL_AVGSAMPLES
+depends on VLINE_ON_NEG_LEVEL_AVG
+	int "Number of samples for Average Vline on negative threshold"
+	default 16
+	range	2 16384
+	help
+		Set number of samples for average computation
+    
+endmenu
+
+#############################################################################

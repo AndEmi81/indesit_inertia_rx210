@@ -1,0 +1,65 @@
+#############################################################################
+#
+#	Platform 2 library configuration
+#
+#############################################################################
+
+menu "Consistency configuration"
+  depends on PM_CONSISTENCY
+
+	config PLATFORM2_CONSISTENCY
+	bool "Platform 2 consistency"
+    default y
+    help 
+        Use Platform2 module 
+
+  config PM_CS_RES_PLUS_STATUS
+    bool "Consistency plus load status"
+    default y
+    help 
+        Consistency returns load status into consistency value or not.
+   
+  config CS_DOORLOCK_POWERON_DELAY
+  	depends on PM_DOORLOCK
+    int "Door Lock Power ON Delay"
+    range 1 65535
+    default 500
+    help 
+        Delay before evaluate Door Lock consistency at Power ON (prevents F06.01)
+
+  config CS_LINKEDLOADS_EXTRA_DELAY
+  	depends on PM_LINKED_LOADS_SUPPORT
+    int "Linked Loads Extra Delay"
+    range 1 255
+    default 25
+    help 
+        Extra delay to add on Linked Loads switch delay before evaluate consistency
+
+  config CS_FIXEDSPEEDMOTOR_DELAY
+  	depends on PM_FIXEDSPEEDMOTOR
+    int "Fixed Speed Motor Delay"
+    range 1 255
+    default 50
+    help 
+        Delay on Fixed Speed Motor Load before evaluate consistency
+
+	  config CS_ZEROCROSSING_DELAY
+    int "Zero Crossing feedback Delay"
+    range 0 255
+    default 25
+    help 
+        Delay on Loads with Zero Crossing feedback before evaluate consistency
+		
+  config PM_CONSISTENCY_APPL_BUFFER
+    depends on PM_CONSISTENCY
+	bool "Application buffer configuration interface"
+	default false
+	help
+		Enabling this option application may configure a Consistency buffer to perform copy automatically.
+		This option is used only for backward compatibility; it's preferred to remove it and use 
+		PM_Consistency_GetAllCsValues() function instead.
+		
+	
+endmenu
+
+#############################################################################

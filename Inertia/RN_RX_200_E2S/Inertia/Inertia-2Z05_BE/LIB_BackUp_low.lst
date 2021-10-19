@@ -1,0 +1,1095 @@
+   1                             		.file	"LIB_BackUp_low.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.LIB_BackupBlockSave,"ax",@progbits
+   6                             	_LIB_BackupBlockSave:
+   7                             	.LFB1:
+   8                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp/LIB_BackUp_low.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** /**
+   2:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n
+   3:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n
+   4:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \file		LIB_BackUp_low.c
+   5:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \ingroup	LIB_BackUp
+   6:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \date
+   7:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \version
+   8:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \author
+   9:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n
+  10:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n
+  11:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \par\b	History:
+  12:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n
+  13:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n
+  14:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n
+  15:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** */
+  16:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** #define MODULE_BODY_LIB_BACKUP
+  17:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** #include "IO_driver.h"
+  18:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** #include "OCFLS_drv.h"
+  19:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** #include "LIB_BackUp.h"
+  20:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** #include "LIB_ClassBVar.h"
+  21:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** #include "OCFLS_drv.h"
+  22:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** #include "LIB_Error.h"
+  23:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  24:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  25:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** #define MAX_IDX_BACKUP_TAB	2 /**< numero di tabelle di cui fare il backup */
+  26:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** #define CLEAR_TEMPORARY_BUFFER(d,v,s) memset(d, v, s)
+  27:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  28:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  29:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** static bool_t LIB_BackupBlockSave(FLS_SourcePtrType pSource, FLS_sizeType size, FLS_positionType po
+  30:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  31:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** uint16_t LIB_Backup_GetBackupLen(void)
+  32:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** {
+  33:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint16_t i=0;
+  34:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint16_t dataLen = 0;
+  35:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	while(PltBackupAddrTab[i] != ((void *) BCK_ADDR_END_TAB )){
+  36:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		dataLen += PltBackupDimTab[i++];
+  37:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	}
+  38:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	i=0;
+  39:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	while(AppBackupAddrTab[i] != ((void *) BCK_ADDR_END_TAB )){
+  40:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		dataLen += AppBackupDimTab[i++];
+  41:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	}
+  42:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	return dataLen;
+  43:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** }
+  44:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  45:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** /**
+  46:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** Writes in flash a block of backup data
+  47:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  48:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \param  [in]	pSource pointer to source data
+  49:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \param  [in]	size size in bytes of block
+  50:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \param  [in]	position start addr in flash where to store data
+  51:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  52:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  53:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \return 	bool_t
+  54:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  55:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \retval		TRUE success
+  56:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \retval		FALSE fail
+  57:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  58:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  59:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \author 	stefano.ughi
+  60:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \date		Feb 07, 2011
+  61:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \version	1.0.0
+  62:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  63:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  64:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \note		\par \b Note 1:
+  65:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			documentation by stefano.ughi
+  66:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  67:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** */
+  68:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  69:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** static bool_t LIB_BackupBlockSave(FLS_SourcePtrType pSource, FLS_sizeType size, FLS_positionType po
+  70:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** {
+   9                             		.loc 1 70 0
+  10                             	.LVL0:
+  11 0000 6E 7B                   		pushm	r7-r11
+  12                             	.LCFI0:
+  13 0002 EF 17                   		mov.L	r1, r7
+  14 0004 EF 2A                   		mov.L	r2, r10
+  15 0006 EF 3B                   		mov.L	r3, r11
+  16                             	.LVL1:
+  17                             		.balign 2,3,1
+  18                             	.L2:
+  71:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	bool_t neverEndLoop;
+  72:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	bool_t result;
+  73:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	IO_ErrorType err;
+  74:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  75:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	result = FALSE;
+  76:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	neverEndLoop = TRUE;
+  77:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  78:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	while( neverEndLoop )
+  79:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	{
+  80:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		err = OCFLS_WriteAndVerifyAsync(pSource, size, position);
+  19                             		.loc 1 80 0
+  20 0008 EF 71                   		mov.L	r7, r1
+  21 000a EF A2                   		mov.L	r10, r2
+  22 000c EF B3                   		mov.L	r11, r3
+  23 000e 05 00 00 00             		bsr	_OCFLS_WriteAndVerifyAsync
+  24                             	.LVL2:
+  81:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  82:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		switch (err)
+  25                             		.loc 1 82 0
+  26 0012 5B 11                   		movu.B	r1, r1
+  27 0014 61 01                   		cmp	#0, r1
+  28 0016 20 09                   		beq	.L3
+  29 0018 75 51 17                		cmp	#23, r1
+  30 001b 21 ED                   		bne	.L2
+  31 001d 2E 06                   		bra	.L5
+  32                             	.L3:
+  83:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		{
+  84:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		case IO_E_OK:
+  85:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  86:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			neverEndLoop = FALSE;
+  87:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			result = TRUE;
+  33                             		.loc 1 87 0
+  34 001f 66 11                   		mov.L	#1, r1
+  35                             	.LVL3:
+  36 0021 2E 05                   		bra	.L4
+  37                             	.LVL4:
+  38                             	.L5:
+  88:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  89:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			break;
+  90:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  91:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		case IO_E_UNEXPECTED_CONDITION:
+  92:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  93:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			neverEndLoop = FALSE;
+  94:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			result = FALSE;
+  39                             		.loc 1 94 0
+  40 0023 66 01                   		mov.L	#0, r1
+  41                             	.LVL5:
+  42 0025 03                      		.balign 2,3,2
+  43                             	.L4:
+  95:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  96:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			break;
+  97:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+  98:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		default:
+  99:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			break;
+ 100:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		}
+ 101:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	}
+ 102:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	return (result);
+ 103:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** }
+  44                             		.loc 1 103 0
+  45 0026 3F 7B 05                		rtsd	#20, r7-r11
+  46                             	.LFE1:
+  48 0029 03                      		.section	.text.LIB_Backup_GetBackupLen,"ax",@progbits
+  49                             		.global	_LIB_Backup_GetBackupLen
+  51                             	_LIB_Backup_GetBackupLen:
+  52                             	.LFB0:
+  32:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** {
+  53                             		.loc 1 32 0
+  54                             	.LVL6:
+  34:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint16_t dataLen = 0;
+  55                             		.loc 1 34 0
+  56 0000 66 01                   		mov	#0, r1
+  33:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint16_t i=0;
+  57                             		.loc 1 33 0
+  58 0002 DF 1E                   		mov.W	r1, r14
+  35:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	while(PltBackupAddrTab[i] != ((void *) BCK_ADDR_END_TAB )){
+  59                             		.loc 1 35 0
+  60 0004 FB 22 00 00 00 00       		mov.L	#_PltBackupAddrTab, r2
+  36:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		dataLen += PltBackupDimTab[i++];
+  61                             		.loc 1 36 0
+  62 000a FB 52 00 00 00 00       		mov.L	#_PltBackupDimTab, r5
+  35:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	while(PltBackupAddrTab[i] != ((void *) BCK_ADDR_END_TAB )){
+  63                             		.loc 1 35 0
+  64 0010 2E 0A                   		bra	.L8
+  65                             	.LVL7:
+  66                             	.L9:
+  36:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		dataLen += PltBackupDimTab[i++];
+  67                             		.loc 1 36 0
+  68 0012 FE C4 54                		movu.B	[r4,r5], r4
+  69 0015 62 1E                   		add	#1, r14
+  70                             	.LVL8:
+  71 0017 4B 41                   		add	r4, r1
+  72                             	.LVL9:
+  73 0019 03                      		.balign 2,3,1
+  74                             	.L8:
+  35:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	while(PltBackupAddrTab[i] != ((void *) BCK_ADDR_END_TAB )){
+  75                             		.loc 1 35 0 discriminator 1
+  76 001a 5F E4                   		movu.W	r14, r4
+  77 001c FE 64 23                		mov.L	[r4,r2], r3
+  78 001f 75 03 FF                		cmp	#-1, r3
+  79 0022 21 F0                   		bne	.L9
+  80 0024 66 0E                   		mov	#0, r14
+  81                             	.LVL10:
+  39:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	while(AppBackupAddrTab[i] != ((void *) BCK_ADDR_END_TAB )){
+  82                             		.loc 1 39 0 discriminator 1
+  83 0026 FB 22 00 00 00 00       		mov.L	#_AppBackupAddrTab, r2
+  40:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		dataLen += AppBackupDimTab[i++];
+  84                             		.loc 1 40 0 discriminator 1
+  85 002c FB 52 00 00 00 00       		mov.L	#_AppBackupDimTab, r5
+  86 0032 2E 0A                   		bra	.L10
+  87                             	.LVL11:
+  88                             	.L11:
+  40:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		dataLen += AppBackupDimTab[i++];
+  89                             		.loc 1 40 0 is_stmt 0
+  90 0034 FE C4 54                		movu.B	[r4,r5], r4
+  91 0037 62 1E                   		add	#1, r14
+  92                             	.LVL12:
+  93 0039 4B 41                   		add	r4, r1
+  94                             	.LVL13:
+  95 003b 03                      		.balign 2,3,1
+  96                             	.L10:
+  39:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	while(AppBackupAddrTab[i] != ((void *) BCK_ADDR_END_TAB )){
+  97                             		.loc 1 39 0 is_stmt 1 discriminator 1
+  98 003c 5F E4                   		movu.W	r14, r4
+  99 003e FE 64 23                		mov.L	[r4,r2], r3
+ 100 0041 75 03 FF                		cmp	#-1, r3
+ 101 0044 21 F0                   		bne	.L11
+  43:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** }
+ 102                             		.loc 1 43 0
+ 103 0046 5F 11                   		movu.W	r1, r1
+ 104 0048 02                      		rts
+ 105                             	.LFE0:
+ 107 0049 03                      		.section	.text.LIB_Backup_InvalidateBackupArea,"ax",@progbits
+ 108                             		.global	_LIB_Backup_InvalidateBackupArea
+ 110                             	_LIB_Backup_InvalidateBackupArea:
+ 111                             	.LFB2:
+ 104:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 105:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 106:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** /**
+ 107:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** Performs backup area clear.
+ 108:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** Needs that FLS driver is inizialized.
+ 109:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 110:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \return 	bool_t
+ 111:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 112:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \retval		TRUE clear done
+ 113:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \retval		FALSE clear failed
+ 114:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 115:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \author 	stefano.ughi
+ 116:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \date		Feb 02, 2011
+ 117:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \version	1.0.0
+ 118:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 119:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \note		\par \b Note 1:
+ 120:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			documentation by stefano.ughi
+ 121:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 122:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** */
+ 123:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** bool_t LIB_Backup_InvalidateBackupArea(void)
+ 124:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** {
+ 112                             		.loc 1 124 0
+ 113                             		.balign 2,3,3
+ 114                             	.L13:
+ 125:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	IO_ErrorType err;
+ 126:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	bool_t endLessLoop;
+ 127:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	bool_t clear_OK;
+ 128:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 129:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	clear_OK = FALSE;
+ 130:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	endLessLoop = TRUE;
+ 131:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	while (endLessLoop)
+ 132:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	{
+ 133:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		err = OCFLS_BlankCheckEraseVerifyAsync(BACKUPAREA_SIZE_IN_BYTES, BACKUPAREA_START_ADDR);
+ 115                             		.loc 1 133 0
+ 116 0000 FB 1A 00 04             		mov.L	#0x400, r1
+ 117 0004 FB 2E 00 00 10          		mov.L	#0x100000, r2
+ 118 0009 05 00 00 00             		bsr	_OCFLS_BlankCheckEraseVerifyAsync
+ 119                             	.LVL14:
+ 134:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		switch (err)
+ 120                             		.loc 1 134 0
+ 121 000d 5B 11                   		movu.B	r1, r1
+ 122 000f 61 01                   		cmp	#0, r1
+ 123 0011 20 09                   		beq	.L14
+ 124 0013 75 51 17                		cmp	#23, r1
+ 125 0016 21 EA                   		bne	.L13
+ 126 0018 2E 05                   		bra	.L16
+ 127                             	.L14:
+ 135:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		{
+ 136:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		case IO_E_OK:
+ 137:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			endLessLoop = FALSE;
+ 138:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			clear_OK = TRUE;
+ 128                             		.loc 1 138 0
+ 129 001a 66 11                   		mov.L	#1, r1
+ 130                             	.LVL15:
+ 131 001c 02                      		rts
+ 132                             	.LVL16:
+ 133                             	.L16:
+ 134:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		switch (err)
+ 134                             		.loc 1 134 0
+ 135 001d 66 01                   		mov.L	#0, r1
+ 136                             	.LVL17:
+ 139:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			break;
+ 140:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		case IO_E_UNEXPECTED_CONDITION:
+ 141:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			endLessLoop = FALSE;
+ 142:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			break;
+ 143:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		default:
+ 144:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			/* running */
+ 145:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			break;
+ 146:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		}
+ 147:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	}
+ 148:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	return clear_OK;
+ 149:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** }
+ 137                             		.loc 1 149 0
+ 138 001f 02                      		rts
+ 139                             	.LFE2:
+ 141                             		.section	.text.LIB_Backup_DataSave,"ax",@progbits
+ 142                             		.global	_LIB_Backup_DataSave
+ 144                             	_LIB_Backup_DataSave:
+ 145                             	.LFB3:
+ 150:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 151:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** /**
+ 152:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n Saves in flash backup data.
+ 153:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n Receives as inputs:
+ 154:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n\li BackupAddrTab[]   addresses of locations that must be saved.
+ 155:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n\li BackupDimTab[]    sizes of locations.
+ 156:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 157:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \return 	uint8_t
+ 158:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 159:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \retval		BACKUP_E_TOO_MANY_ELEMENTS too many elements inside BackupDimTab
+ 160:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \retval		BACKUP_E_TOO_MANY_BYTES too many backup bytes
+ 161:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \retval		BACKUP_E_BLOCK_WRITE error on write/verify block operation
+ 162:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \retval		BACKUP_E_OK Success
+ 163:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 164:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 165:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \author 	stefano.ughi
+ 166:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \date		Feb 08, 2011
+ 167:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \version	1.0.0
+ 168:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 169:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \note		\par \b Note 1:
+ 170:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			documentation by stefano.ughi
+ 171:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c ****             \par \b Note 2:
+ 172:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c ****             each backup location must have a size less than 256 bytes
+ 173:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** */
+ 174:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 175:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** uint8_t LIB_Backup_DataSave (void)
+ 176:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** {
+ 146                             		.loc 1 176 0
+ 147                             	.LVL18:
+ 148 0000 6E 6D                   		pushm	r6-r13
+ 149                             	.LCFI1:
+ 150 0002 71 00 B4                		add	#0xffffffb4, r0
+ 151                             	.LCFI2:
+ 152                             	.LVL19:
+ 177:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t temporaryWriteBuffer[BLOCK_FLASH_SIZE];
+ 178:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Punto al primo indirizzo dei dati da salvare */
+ 179:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t **ppBackupAddrTab = (uint8_t**)&PltBackupAddrTab[0];
+ 180:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Punto al primo elemento dei dati da salvare */
+ 181:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t *ppBackupDimTab = (uint8_t*)&PltBackupDimTab[0];
+ 182:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t dataLen;
+ 183:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	
+ 184:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Punto al primo elemento del buffer temporaneo che utilizzo per appoggiare i dati da backuppare 
+ 185:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t *pTemporaryWriteBuffer = &temporaryWriteBuffer[0];
+ 186:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Numero di bytes processati per il backup */
+ 187:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint16_t indexTemporaryWriteBuffer;
+ 188:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Checksum */
+ 189:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	backupChecksum_t backupDataChecksum;
+ 190:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Indice elemento BackupDimTab processato */
+ 191:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	indexBackupDimTab_t indexBackupDimTab;
+ 192:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t i;
+ 193:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t byteToSave;
+ 194:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Contatore numero blocchi di dim. BLOCK_FLASH_SIZE scritti */
+ 195:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t numBlock;
+ 196:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t idxBackupTab = 0;
+ 197:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 198:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	PLT_ASSERT( LIB_Backup_GetBackupLen() + 2*(sizeof(backupChecksum_t)/sizeof(uint8_t)) < BACKUPAREA_
+ 199:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/*MS PLT_ASSERT( sizeTab(PltBackupDimTab) < (1<<(8*sizeof(indexBackupDimTab_t)))) */
+ 200:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	
+ 201:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/*lint +e506 +e774*/
+ 202:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	CLEAR_TEMPORARY_BUFFER(pTemporaryWriteBuffer, 0xFF, BLOCK_FLASH_SIZE);
+ 153                             		.loc 1 202 0
+ 154 0005 EF 01                   		mov.L	r0, r1
+ 155 0007 75 43 40                		mov.L	#64, r3
+ 156 000a FB 26 FF                		mov	#-1, r2
+ 157 000d 7F 88                   		sstr.b
+ 158                             	.LVL20:
+ 203:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 204:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Init. backup data checksum */
+ 205:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	backupDataChecksum = 0;
+ 159                             		.loc 1 205 0
+ 160 000f 66 0A                   		mov	#0, r10
+ 196:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t idxBackupTab = 0;
+ 161                             		.loc 1 196 0
+ 162 0011 CF A8                   		mov.B	r10, r8
+ 206:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	
+ 207:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Init. index BackupDimTab[] */
+ 208:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	indexBackupDimTab = 0;
+ 209:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 210:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Inizializzazione indice vettore temporaryWriteBuffer[] */
+ 211:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	indexTemporaryWriteBuffer = 0;
+ 212:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Inizializzazione numero blocchi da scrivere */
+ 213:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	numBlock=0;
+ 163                             		.loc 1 213 0
+ 164 0013 CF A7                   		mov.B	r10, r7
+ 208:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	indexBackupDimTab = 0;
+ 165                             		.loc 1 208 0
+ 166 0015 CF AD                   		mov.B	r10, r13
+ 211:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	indexTemporaryWriteBuffer = 0;
+ 167                             		.loc 1 211 0
+ 168 0017 66 06                   		mov	#0, r6
+ 181:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t *ppBackupDimTab = (uint8_t*)&PltBackupDimTab[0];
+ 169                             		.loc 1 181 0
+ 170 0019 FB E2 00 00 00 00       		mov.L	#_PltBackupDimTab, r14
+ 179:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t **ppBackupAddrTab = (uint8_t**)&PltBackupAddrTab[0];
+ 171                             		.loc 1 179 0
+ 172 001f FB 92 00 00 00 00       		mov.L	#_PltBackupAddrTab, r9
+ 173 0025 2E 07                   		bra	.L24
+ 174                             	.LVL21:
+ 175                             	.L28:
+ 214:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	
+ 215:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Per tutte le locazioni da salvare in backup */
+ 216:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	while ( idxBackupTab < MAX_IDX_BACKUP_TAB )
+ 176                             		.loc 1 216 0
+ 177 0027 DF C6                   		mov.W	r12, r6
+ 178 0029 EF B9                   		mov.L	r11, r9
+ 179                             	.LVL22:
+ 180 002b 03                      		.balign 2,3,1
+ 181                             	.L24:
+ 217:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	{
+ 218:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		dataLen = ppBackupDimTab[indexBackupDimTab];
+ 182                             		.loc 1 218 0
+ 183 002c 5B DC                   		movu.B	r13, r12
+ 184                             	.LVL23:
+ 175:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** uint8_t LIB_Backup_DataSave (void)
+ 185                             		.loc 1 175 0
+ 186 002e EF 6F                   		mov.L	r6, r15
+ 219:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		/* Fissata una locazione da salvare in backup considero
+ 220:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		   tutti i bytes di cui e' costituita quella locazione */
+ 221:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		for ( i = 0; i < dataLen; i++ )
+ 187                             		.loc 1 221 0
+ 188 0030 66 0B                   		mov.L	#0, r11
+ 189 0032 FE CC E5                		movu.B	[r12,r14], r5
+ 175:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** uint8_t LIB_Backup_DataSave (void)
+ 190                             		.loc 1 175 0
+ 191 0035 62 1F                   		add	#1, r15
+ 192                             		.loc 1 221 0
+ 193 0037 2E 51                   		bra	.L18
+ 194                             	.LVL24:
+ 195                             	.L22:
+ 222:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		{
+ 223:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			/* Prelevo il singolo byte */
+ 224:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			byteToSave = *(*ppBackupAddrTab+i);
+ 196                             		.loc 1 224 0
+ 197 0039 EC 9C                   		mov.L	[r9], r12
+ 225:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			/* Riempio il vettore temporaryWriteBuffer con il dato da scrivere */
+ 226:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			*(pTemporaryWriteBuffer + (indexTemporaryWriteBuffer % BLOCK_FLASH_SIZE)) = byteToSave;
+ 198                             		.loc 1 226 0
+ 199 003b 75 24 3F                		and	#63, r4
+ 200                             	.LVL25:
+ 224:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			byteToSave = *(*ppBackupAddrTab+i);
+ 201                             		.loc 1 224 0
+ 202 003e FE 4B CC                		mov.B	[r11,r12], r12
+ 203                             	.LVL26:
+ 227:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			/* Aggiorno cheksum	*/
+ 228:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			backupDataChecksum += byteToSave;
+ 204                             		.loc 1 228 0
+ 205 0041 4B CA                   		add	r12, r10
+ 206                             	.LVL27:
+ 226:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			*(pTemporaryWriteBuffer + (indexTemporaryWriteBuffer % BLOCK_FLASH_SIZE)) = byteToSave;
+ 207                             		.loc 1 226 0
+ 208 0043 FE 04 0C                		mov.B	r12, [r4,r0]
+ 175:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** uint8_t LIB_Backup_DataSave (void)
+ 209                             		.loc 1 175 0
+ 210 0046 FF 2C BF                		add	r11, r15, r12
+ 211                             	.LVL28:
+ 229:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			/* Aggiorno indice buffer temporaneo */
+ 230:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			indexTemporaryWriteBuffer ++;
+ 231:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 232:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			if ( 0 == (indexTemporaryWriteBuffer % BLOCK_FLASH_SIZE))
+ 212                             		.loc 1 232 0
+ 213 0049 FD 74 CC 3F             		tst	#63, r12
+ 214 004d 21 39                   		bne	.L19
+ 233:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			{
+ 234:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 				/* Il vettore temporaneo e' pieno -> scrivo */
+ 235:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 				numBlock++;
+ 215                             		.loc 1 235 0
+ 216 004f 62 17                   		add	#1, r7
+ 217                             	.LVL29:
+ 236:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 237:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 				if ( LIB_BackupBlockSave((FLS_SourcePtrType)pTemporaryWriteBuffer, BLOCK_FLASH_SIZE, (BACKUPARE
+ 218                             		.loc 1 237 0
+ 219 0051 5B 73                   		movu.B	r7, r3
+ 220 0053 72 33 FF 3F             		add	#0x3fff, r3
+ 221 0057 6C 63                   		shll	#6, r3
+ 222 0059 EF 01                   		mov.L	r0, r1
+ 223 005b 75 42 40                		mov.L	#64, r2
+ 224 005e A4 0D                   		mov.L	r5, 68[r0]
+ 225 0060 E7 0E 10                		mov.L	r14, 64[r0]
+ 226 0063 E7 0F 12                		mov.L	r15, 72[r0]
+ 227 0066 05 00 00 00             		bsr	_LIB_BackupBlockSave
+ 228                             	.LVL30:
+ 229 006a 61 01                   		cmp	#0, r1
+ 230 006c AC 0D                   		mov.L	68[r0], r5
+ 231 006e ED 0E 10                		mov.L	64[r0], r14
+ 232 0071 ED 0F 12                		mov.L	72[r0], r15
+ 233 0074 21 07                   		bne	.L20
+ 234                             	.LVL31:
+ 235                             		.balign 2,3,1
+ 236                             	.L26:
+ 238:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 				{
+ 239:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 					return(BACKUP_E_BLOCK_WRITE);
+ 237                             		.loc 1 239 0
+ 238 0076 66 1A                   		mov	#1, r10
+ 239 0078 38 AC 00                		bra	.L21
+ 240                             	.LVL32:
+ 241                             	.L20:
+ 240:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 				}
+ 241:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 				CLEAR_TEMPORARY_BUFFER(pTemporaryWriteBuffer,0xFF,BLOCK_FLASH_SIZE);
+ 242                             		.loc 1 241 0
+ 243 007b EF 01                   		mov.L	r0, r1
+ 244 007d 75 43 40                		mov.L	#64, r3
+ 245 0080 FB 26 FF                		mov	#-1, r2
+ 246 0083 7F 88                   		sstr.b
+ 247 0085 03                      		.balign 2,3,1
+ 248                             	.L19:
+ 249 0086 62 1B                   		add	#1, r11
+ 250                             	.LVL33:
+ 251                             		.balign 2,3,1
+ 252                             	.L18:
+ 175:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** uint8_t LIB_Backup_DataSave (void)
+ 253                             		.loc 1 175 0 discriminator 1
+ 254 0088 EF 64                   		mov.L	r6, r4
+ 255 008a 4B B4                   		add	r11, r4
+ 221:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		for ( i = 0; i < dataLen; i++ )
+ 256                             		.loc 1 221 0 discriminator 1
+ 257 008c 5B B3                   		movu.B	r11, r3
+ 258 008e 47 35                   		cmp	r3, r5
+ 175:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** uint8_t LIB_Backup_DataSave (void)
+ 259                             		.loc 1 175 0 discriminator 1
+ 260 0090 DF 4C                   		mov.W	r4, r12
+ 261                             	.LVL34:
+ 221:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		for ( i = 0; i < dataLen; i++ )
+ 262                             		.loc 1 221 0 discriminator 1
+ 263 0092 24 A7                   		bgtu	.L22
+ 242:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			}
+ 243:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		}
+ 244:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 245:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		/* Passo all'indirizzo successivo dei dati da salvare */
+ 246:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		ppBackupAddrTab++;
+ 247:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		/* Passo alla size successiva */
+ 248:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		indexBackupDimTab++;
+ 249:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 250:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		/**
+ 251:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		 * se è finita la tabella di plt passo alla tabella di applicazione
+ 252:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		 * la tabella è finita quando ha addr == 0
+ 253:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		 */
+ 254:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		if( *ppBackupAddrTab == ((void *)BCK_ADDR_END_TAB )){ /* condizione per passare alla tabella succ
+ 264                             		.loc 1 254 0
+ 265 0094 ED 94 01                		mov.L	4[r9], r4
+ 266                             	.LVL35:
+ 246:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		ppBackupAddrTab++;
+ 267                             		.loc 1 246 0
+ 268 0097 71 9B 04                		add	#4, r9, r11
+ 269                             	.LVL36:
+ 248:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		indexBackupDimTab++;
+ 270                             		.loc 1 248 0
+ 271 009a 62 1D                   		add	#1, r13
+ 272                             	.LVL37:
+ 273                             		.loc 1 254 0
+ 274 009c 75 04 FF                		cmp	#-1, r4
+ 275 009f 21 13                   		bne	.L23
+ 255:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			idxBackupTab++;
+ 276                             		.loc 1 255 0
+ 277 00a1 62 18                   		add	#1, r8
+ 278                             	.LVL38:
+ 256:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			indexBackupDimTab = 0;
+ 279                             		.loc 1 256 0
+ 280 00a3 66 0D                   		mov	#0, r13
+ 257:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			ppBackupAddrTab = (uint8_t**)&AppBackupAddrTab[0];
+ 258:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			ppBackupDimTab  = (uint8_t*)&AppBackupDimTab[0];
+ 281                             		.loc 1 258 0
+ 282 00a5 FB E2 00 00 00 00       		mov.L	#_AppBackupDimTab, r14
+ 257:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			ppBackupAddrTab = (uint8_t**)&AppBackupAddrTab[0];
+ 283                             		.loc 1 257 0
+ 284 00ab FB B2 00 00 00 00       		mov.L	#_AppBackupAddrTab, r11
+ 285                             	.LVL39:
+ 286 00b1 03                      		.balign 2,3,1
+ 287                             	.L23:
+ 216:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	while ( idxBackupTab < MAX_IDX_BACKUP_TAB )
+ 288                             		.loc 1 216 0 discriminator 1
+ 289 00b2 5B 84                   		movu.B	r8, r4
+ 290 00b4 61 14                   		cmp	#1, r4
+ 291 00b6 24 05 38 6F FF          		bleu	.L28
+ 292                             	.LVL40:
+ 259:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		}
+ 260:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	}
+ 261:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 262:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Sono state processate tutte le locazioni da salvare in flash
+ 263:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	   probabilmente l'ultimo blocco non e' stato salvato  */
+ 264:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 265:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Processo Checksum */
+ 266:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	for ( i = 0; i < sizeof(backupChecksum_t)/sizeof(uint8_t); i++ )
+ 267:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	{
+ 268:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		*(pTemporaryWriteBuffer + (indexTemporaryWriteBuffer % BLOCK_FLASH_SIZE)) = *((uint8_t*)&backupDa
+ 293                             		.loc 1 268 0 discriminator 1
+ 294 00bb EF CB                   		mov.L	r12, r11
+ 295                             	.LVL41:
+ 296 00bd 75 2B 3F                		and	#63, r11
+ 297 00c0 FE 0B 0A                		mov.B	r10, [r11,r0]
+ 298                             	.LVL42:
+ 269:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		indexTemporaryWriteBuffer ++;
+ 299                             		.loc 1 269 0 discriminator 1
+ 300 00c3 71 CB 01                		add	#1, r12, r11
+ 270:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		if ( 0 == (indexTemporaryWriteBuffer % BLOCK_FLASH_SIZE) )
+ 301                             		.loc 1 270 0 discriminator 1
+ 302 00c6 75 2B 3F                		and	#63, r11
+ 303 00c9 5F BD                   		movu.W	r11, r13
+ 304                             	.LVL43:
+ 305 00cb 61 0D                   		cmp	#0, r13
+ 306 00cd 21 23                   		bne	.L25
+ 271:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		{
+ 272:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			numBlock++;
+ 307                             		.loc 1 272 0
+ 308 00cf 62 17                   		add	#1, r7
+ 309                             	.LVL44:
+ 273:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 274:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			if ( LIB_BackupBlockSave((FLS_SourcePtrType)pTemporaryWriteBuffer, BLOCK_FLASH_SIZE, (BACKUPAREA
+ 310                             		.loc 1 274 0
+ 311 00d1 5B 73                   		movu.B	r7, r3
+ 312 00d3 72 33 FF 3F             		add	#0x3fff, r3
+ 313 00d7 6C 63                   		shll	#6, r3
+ 314 00d9 EF 01                   		mov.L	r0, r1
+ 315 00db 75 42 40                		mov.L	#64, r2
+ 316 00de 05 00 00 00             		bsr	_LIB_BackupBlockSave
+ 317                             	.LVL45:
+ 318 00e2 61 01                   		cmp	#0, r1
+ 319 00e4 20 92                   		beq	.L26
+ 275:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			{
+ 276:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 				return(BACKUP_E_BLOCK_WRITE);
+ 277:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			}
+ 278:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			CLEAR_TEMPORARY_BUFFER(pTemporaryWriteBuffer,0xFF,BLOCK_FLASH_SIZE);
+ 320                             		.loc 1 278 0
+ 321 00e6 EF 01                   		mov.L	r0, r1
+ 322 00e8 75 43 40                		mov.L	#64, r3
+ 323 00eb FB 26 FF                		mov	#-1, r2
+ 324 00ee 7F 88                   		sstr.b
+ 325                             		.balign 2,3,1
+ 326                             	.L25:
+ 327                             	.LVL46:
+ 279:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		}
+ 280:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	}
+ 281:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Write CheckSum Compl. */
+ 282:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	backupDataChecksum = (backupChecksum_t) (~(uint32_t)backupDataChecksum);
+ 283:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	for ( i = 0; i<sizeof(backupChecksum_t)/sizeof(uint8_t); i++ )
+ 284:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	{
+ 285:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		*(pTemporaryWriteBuffer + (indexTemporaryWriteBuffer % BLOCK_FLASH_SIZE)) = *((uint8_t*)&backupDa
+ 286:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		indexTemporaryWriteBuffer ++;
+ 287:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		if ( 0 == (indexTemporaryWriteBuffer%BLOCK_FLASH_SIZE) )
+ 288:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		{
+ 289:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			numBlock++;
+ 328                             		.loc 1 289 0
+ 329 00f0 EF 73                   		mov.L	r7, r3
+ 330 00f2 62 13                   		add	#1, r3
+ 282:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	backupDataChecksum = (backupChecksum_t) (~(uint32_t)backupDataChecksum);
+ 331                             		.loc 1 282 0
+ 332 00f4 7E 0A                   		not	r10
+ 333                             	.LVL47:
+ 285:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		*(pTemporaryWriteBuffer + (indexTemporaryWriteBuffer % BLOCK_FLASH_SIZE)) = *((uint8_t*)&backupDa
+ 334                             		.loc 1 285 0
+ 335 00f6 5F BB                   		movu.W	r11, r11
+ 290:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 291:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			if ( LIB_BackupBlockSave((FLS_SourcePtrType)pTemporaryWriteBuffer, BLOCK_FLASH_SIZE, (BACKUPAREA
+ 336                             		.loc 1 291 0
+ 337 00f8 5B 33                   		movu.B	r3, r3
+ 285:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		*(pTemporaryWriteBuffer + (indexTemporaryWriteBuffer % BLOCK_FLASH_SIZE)) = *((uint8_t*)&backupDa
+ 338                             		.loc 1 285 0
+ 339 00fa FE 0B 0A                		mov.B	r10, [r11,r0]
+ 340                             	.LVL48:
+ 341                             		.loc 1 291 0
+ 342 00fd 72 33 FF 3F             		add	#0x3fff, r3
+ 286:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		indexTemporaryWriteBuffer ++;
+ 343                             		.loc 1 286 0
+ 344 0101 71 CA 02                		add	#2, r12, r10
+ 287:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		if ( 0 == (indexTemporaryWriteBuffer%BLOCK_FLASH_SIZE) )
+ 345                             		.loc 1 287 0
+ 346 0104 75 2A 3F                		and	#63, r10
+ 347                             		.loc 1 291 0
+ 348 0107 EF 01                   		mov.L	r0, r1
+ 287:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		if ( 0 == (indexTemporaryWriteBuffer%BLOCK_FLASH_SIZE) )
+ 349                             		.loc 1 287 0
+ 350 0109 21 1F                   		bne	.L27
+ 351                             	.LVL49:
+ 352                             		.loc 1 291 0
+ 353 010b 6C 63                   		shll	#6, r3
+ 354 010d 75 42 40                		mov.L	#64, r2
+ 355 0110 05 00 00 00             		bsr	_LIB_BackupBlockSave
+ 356                             	.LVL50:
+ 357 0114 61 01                   		cmp	#0, r1
+ 358 0116 3A 60 FF                		beq	.L26
+ 292:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			{
+ 293:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 				return(BACKUP_E_BLOCK_WRITE);
+ 294:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			}
+ 295:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			CLEAR_TEMPORARY_BUFFER(pTemporaryWriteBuffer,0xFF,BLOCK_FLASH_SIZE);
+ 359                             		.loc 1 295 0
+ 360 0119 EF 01                   		mov.L	r0, r1
+ 361 011b 75 43 40                		mov.L	#64, r3
+ 362 011e FB 26 FF                		mov	#-1, r2
+ 363 0121 7F 88                   		sstr.b
+ 364                             	.LVL51:
+ 365 0123 03                      		.balign 2,3,1
+ 366                             	.L21:
+ 367 0124 5B A1                   		movu.B	r10, r1
+ 368 0126 2E 13                   		bra	.L35
+ 369                             	.LVL52:
+ 370                             	.L27:
+ 296:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		}
+ 297:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	}
+ 298:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 299:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	if ( (indexTemporaryWriteBuffer % BLOCK_FLASH_SIZE) != 0 )
+ 300:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	{
+ 301:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		numBlock++;
+ 302:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		/* Avrei dovuto scrivere indexTemporaryWriteBuffer%BLOCK_FLASH_SIZE) bytes */
+ 303:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		if ( LIB_BackupBlockSave((FLS_SourcePtrType)pTemporaryWriteBuffer,(indexTemporaryWriteBuffer%BLOC
+ 371                             		.loc 1 303 0
+ 372 0128 EF A2                   		mov.L	r10, r2
+ 373 012a 6C 63                   		shll	#6, r3
+ 374 012c 05 00 00 00             		bsr	_LIB_BackupBlockSave
+ 375                             	.LVL53:
+ 376 0130 61 01                   		cmp	#0, r1
+ 377 0132 FC DB 10                		sceq.L	r1
+ 378 0135 CF 1A                   		mov.B	r1, r10
+ 379 0137 2E ED                   		bra	.L21
+ 380                             	.LVL54:
+ 381                             	.L35:
+ 304:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		{
+ 305:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			return(BACKUP_E_BLOCK_WRITE);
+ 306:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		}
+ 307:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	}
+ 308:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 309:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	return(BACKUP_E_OK);
+ 310:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** }
+ 382                             		.loc 1 310 0
+ 383 0139 3F 6D 1B                		rtsd	#108, r6-r13
+ 384                             	.LFE3:
+ 386                             		.section	.text.LIB_Backup_DataRestore,"ax",@progbits
+ 387                             		.global	_LIB_Backup_DataRestore
+ 389                             	_LIB_Backup_DataRestore:
+ 390                             	.LFB4:
+ 311:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 312:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 313:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** /**
+ 314:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** Restores backup data.
+ 315:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n\li Case 1: keyword found inside the first byte of backup data, the routines restores only
+ 316:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n data from NULL pointer to the end. The NULL pointer is called marker.
+ 317:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n\li Case 2: keyword not found inside the first byte of backup data, the routines restores
+ 318:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n all backup data.
+ 319:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n The routine receives as inputs:
+ 320:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n\li BackupAddrTab[]   addresses of location to restore.
+ 321:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \n\li BackupDimTab[]    sizes of location.
+ 322:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 323:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 324:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \author 	stefano.ughi
+ 325:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \date		Feb 01, 2011
+ 326:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \version	1.0.0
+ 327:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 328:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \note		\par \b Note 1:
+ 329:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			documentation by stefano.ughi
+ 330:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 331:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** */
+ 332:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** void LIB_Backup_DataRestore(void)
+ 333:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** {
+ 391                             		.loc 1 333 0
+ 392                             	.LVL55:
+ 393 0000 6E 7D                   		pushm	r7-r13
+ 394                             	.LCFI3:
+ 334:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	indexBackupDimTab_t i = 0;
+ 335:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t j;
+ 336:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t idxBackupTab = 0;
+ 337:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Default: all data must be restored */
+ 338:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	bool_t partialRestore = FALSE;
+ 339:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	bool_t markerFound    = FALSE;
+ 340:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	bool_t skipNextItemToo = FALSE;
+ 341:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	bool_t skipItem = FALSE;
+ 342:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t *pBackupArea = (uint8_t *)BACKUPAREA_START_ADDR;
+ 343:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 344:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t** ppBackupAddrTab = (uint8_t**)&PltBackupAddrTab[0];
+ 345:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Punto al primo elemento dei dati da salvare */
+ 346:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t *ppBackupDimTab  = (uint8_t*)&PltBackupDimTab[0];
+ 347:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 348:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	/* Is present Keyword for partial restore ? */
+ 349:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	if ( *pBackupArea == PARTIAL_BACKUP_KEYWORD )
+ 395                             		.loc 1 349 0
+ 396 0002 FB 7E 00 00 10          		mov.L	#0x100000, r7
+ 397 0007 58 77                   		movu.B	[r7], r7
+ 398 0009 75 57 5A                		cmp	#0x5a, r7
+ 399 000c 21 0E                   		bne	.L47
+ 350:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	{
+ 351:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		/* Restores the keyword that will be tested from application */
+ 352:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		Backup_Source = PARTIAL_BACKUP_KEYWORD;
+ 400                             		.loc 1 352 0
+ 401 000e FB A2 00 00 00 00       		mov.L	#_Backup_Source, r10
+ 402 0014 C3 A7                   		mov.B	r7, [r10]
+ 403                             	.LVL56:
+ 353:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		/* Partial restore enabled */
+ 354:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		partialRestore = TRUE;
+ 404                             		.loc 1 354 0
+ 405 0016 66 17                   		mov.L	#1, r7
+ 406 0018 2E 04                   		bra	.L38
+ 407                             	.LVL57:
+ 408                             	.L47:
+ 338:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	bool_t partialRestore = FALSE;
+ 409                             		.loc 1 338 0
+ 410 001a 66 07                   		mov.L	#0, r7
+ 411                             	.LVL58:
+ 412                             		.balign 2,3,1
+ 413                             	.L38:
+ 355:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	}
+ 356:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 357:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	while ( idxBackupTab < MAX_IDX_BACKUP_TAB )
+ 358:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	{
+ 359:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 360:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** #if defined(CONFIG_LIB_BACKUP_DATACARE_SAVE)
+ 361:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		if (idxBackupTab == 0)
+ 362:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		{
+ 363:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			for (j = 0; (skipItem == FALSE) && (PltBackupSafetyIdx[j] != 0); j++)
+ 364:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			{
+ 365:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 				if ( (i == PltBackupSafetyIdx[j]) && (PltBackupDimTab[i+1] == 2))
+ 366:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 				{
+ 367:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 					uint16_t chkVal = *((uint16_t *)(pBackupArea + PltBackupDimTab[i]));
+ 368:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 369:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 					if (SAFETY_DATA_CHECKONLY(pBackupArea, PltBackupDimTab[i], chkVal))
+ 370:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 					{
+ 371:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 						skipNextItemToo = FALSE;
+ 372:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 						skipItem = FALSE;
+ 373:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 					}
+ 374:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 					else
+ 375:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 					{
+ 376:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 						skipNextItemToo = TRUE;
+ 377:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 						skipItem = TRUE;
+ 378:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 					}
+ 379:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 				}
+ 380:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			}
+ 381:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		}
+ 382:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		else
+ 383:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		{
+ 384:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			skipNextItemToo = FALSE;
+ 385:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			skipItem = FALSE;
+ 386:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		}
+ 387:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** #else
+ 388:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		skipNextItemToo = FALSE;
+ 389:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** #endif
+ 390:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 391:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		for (j = 0; j < ppBackupDimTab[i]; j++)
+ 392:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		{
+ 393:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			if ( ((FALSE == partialRestore) || (TRUE == markerFound)) && (FALSE == skipItem))
+ 394:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			{
+ 395:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 				*(*ppBackupAddrTab + j) = *pBackupArea;
+ 396:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			}
+ 397:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			pBackupArea++;
+ 398:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		}
+ 399:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 400:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		if (*ppBackupAddrTab == PC_CTRL_NOT_RESTORED_END)
+ 401:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		{
+ 402:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			/* From here restore data if keyword found */
+ 403:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			markerFound = TRUE;
+ 404:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		}
+ 405:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 406:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		if (!skipNextItemToo)
+ 407:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		{
+ 408:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			skipItem = FALSE;
+ 409:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		}
+ 410:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 411:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		ppBackupAddrTab++;
+ 412:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		i++;
+ 413:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 414:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		if( *ppBackupAddrTab == ((void *) BCK_ADDR_END_TAB)){
+ 415:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			ppBackupAddrTab = (uint8_t**)&AppBackupAddrTab[0];
+ 416:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			ppBackupDimTab  = (uint8_t*)&AppBackupDimTab[0];
+ 417:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			skipNextItemToo = FALSE;
+ 418:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			skipItem = FALSE;
+ 419:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			markerFound = FALSE;
+ 420:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			i=0;
+ 414                             		.loc 1 420 0 discriminator 1
+ 415 001c 66 0E                   		mov.L	#0, r14
+ 416 001e FB F2 00 00 00 00       		mov.L	#_PltBackupDimTab, r15
+ 417 0024 FB 32 00 00 00 00       		mov.L	#_PltBackupAddrTab, r3
+ 418 002a CF E5                   		mov.B	r14, r5
+ 419 002c CF E2                   		mov.B	r14, r2
+ 420 002e FB 1E 00 00 10          		mov.L	#0x100000, r1
+ 421 0033 2E 51                   		bra	.L39
+ 422                             	.LVL59:
+ 423                             	.L42:
+ 393:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			if ( ((FALSE == partialRestore) || (TRUE == markerFound)) && (FALSE == skipItem))
+ 424                             		.loc 1 393 0
+ 425 0035 61 07                   		cmp	#0, r7
+ 426 0037 20 07                   		beq	.L40
+ 393:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			if ( ((FALSE == partialRestore) || (TRUE == markerFound)) && (FALSE == skipItem))
+ 427                             		.loc 1 393 0 is_stmt 0 discriminator 2
+ 428 0039 61 1E                   		cmp	#1, r14
+ 429 003b 21 0B                   		bne	.L41
+ 430 003d 03                      		.balign 2,3,1
+ 431                             	.L40:
+ 395:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 				*(*ppBackupAddrTab + j) = *pBackupArea;
+ 432                             		.loc 1 395 0 is_stmt 1
+ 433 003e EC 3C                   		mov.L	[r3], r12
+ 434 0040 CC 4D                   		mov.B	[r4], r13
+ 435 0042 FE 0A CD                		mov.B	r13, [r10,r12]
+ 436 0045 03                      		.balign 2,3,1
+ 437                             	.L41:
+ 397:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			pBackupArea++;
+ 438                             		.loc 1 397 0
+ 439 0046 62 14                   		add	#1, r4
+ 440                             	.LVL60:
+ 441                             		.balign 2,3,2
+ 442                             	.L46:
+ 332:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** void LIB_Backup_DataRestore(void)
+ 443                             		.loc 1 332 0 discriminator 1
+ 444 0048 FF 0A 14                		sub	r1, r4, r10
+ 445                             	.LVL61:
+ 391:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		for (j = 0; j < ppBackupDimTab[i]; j++)
+ 446                             		.loc 1 391 0 discriminator 1
+ 447 004b 5B AA                   		movu.B	r10, r10
+ 448 004d 44 BA                   		cmp	[r11].UB, r10
+ 449 004f 23 E6                   		bltu	.L42
+ 400:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		if (*ppBackupAddrTab == PC_CTRL_NOT_RESTORED_END)
+ 450                             		.loc 1 400 0
+ 451 0051 EC 3A                   		mov.L	[r3], r10
+ 452                             	.LVL62:
+ 453 0053 61 0A                   		cmp	#0, r10
+ 454 0055 21 05                   		bne	.L43
+ 403:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			markerFound = TRUE;
+ 455                             		.loc 1 403 0
+ 456 0057 66 1E                   		mov.L	#1, r14
+ 457 0059 03                      		.balign 2,3,1
+ 458                             	.L43:
+ 459                             	.LVL63:
+ 414:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		if( *ppBackupAddrTab == ((void *) BCK_ADDR_END_TAB)){
+ 460                             		.loc 1 414 0
+ 461 005a ED 3A 01                		mov.L	4[r3], r10
+ 411:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		ppBackupAddrTab++;
+ 462                             		.loc 1 411 0
+ 463 005d 71 31 04                		add	#4, r3, r1
+ 464                             	.LVL64:
+ 412:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		i++;
+ 465                             		.loc 1 412 0
+ 466 0060 62 12                   		add	#1, r2
+ 467                             	.LVL65:
+ 414:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		if( *ppBackupAddrTab == ((void *) BCK_ADDR_END_TAB)){
+ 468                             		.loc 1 414 0
+ 469 0062 75 0A FF                		cmp	#-1, r10
+ 470 0065 21 15                   		bne	.L44
+ 471                             	.LVL66:
+ 419:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			markerFound = FALSE;
+ 472                             		.loc 1 419 0
+ 473 0067 66 0E                   		mov.L	#0, r14
+ 421:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			idxBackupTab++;
+ 474                             		.loc 1 421 0
+ 475 0069 62 15                   		add	#1, r5
+ 476                             	.LVL67:
+ 416:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			ppBackupDimTab  = (uint8_t*)&AppBackupDimTab[0];
+ 477                             		.loc 1 416 0
+ 478 006b FB F2 00 00 00 00       		mov.L	#_AppBackupDimTab, r15
+ 415:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			ppBackupAddrTab = (uint8_t**)&AppBackupAddrTab[0];
+ 479                             		.loc 1 415 0
+ 480 0071 FB 12 00 00 00 00       		mov.L	#_AppBackupAddrTab, r1
+ 420:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			i=0;
+ 481                             		.loc 1 420 0
+ 482 0077 CF E2                   		mov.B	r14, r2
+ 483                             	.LVL68:
+ 484 0079 03                      		.balign 2,3,1
+ 485                             	.L44:
+ 357:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	while ( idxBackupTab < MAX_IDX_BACKUP_TAB )
+ 486                             		.loc 1 357 0 discriminator 1
+ 487 007a 5B 5A                   		movu.B	r5, r10
+ 488 007c 61 1A                   		cmp	#1, r10
+ 489 007e 24 0E                   		bgtu	.L37
+ 357:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	while ( idxBackupTab < MAX_IDX_BACKUP_TAB )
+ 490                             		.loc 1 357 0 is_stmt 0
+ 491 0080 EF 13                   		mov.L	r1, r3
+ 492 0082 EF 41                   		mov.L	r4, r1
+ 493                             	.LVL69:
+ 494                             		.balign 2,3,1
+ 495                             	.L39:
+ 391:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		for (j = 0; j < ppBackupDimTab[i]; j++)
+ 496                             		.loc 1 391 0 is_stmt 1 discriminator 1
+ 497 0084 5B 2B                   		movu.B	r2, r11
+ 354:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		partialRestore = TRUE;
+ 498                             		.loc 1 354 0 discriminator 1
+ 499 0086 EF 14                   		mov.L	r1, r4
+ 391:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		for (j = 0; j < ppBackupDimTab[i]; j++)
+ 500                             		.loc 1 391 0 discriminator 1
+ 501 0088 4B FB                   		add	r15, r11
+ 502 008a 2E BE                   		bra	.L46
+ 503                             	.LVL70:
+ 504                             	.L37:
+ 422:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		}
+ 423:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	}
+ 424:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** }
+ 505                             		.loc 1 424 0
+ 506 008c 3F 7D 07                		rtsd	#28, r7-r13
+ 507                             	.LFE4:
+ 509 008f 03                      		.section	.text.LIB_Backup_ChecksumVerify,"ax",@progbits
+ 510                             		.global	_LIB_Backup_ChecksumVerify
+ 512                             	_LIB_Backup_ChecksumVerify:
+ 513                             	.LFB5:
+ 425:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 426:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 427:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** /**
+ 428:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** Verifies backup data checksum.
+ 429:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 430:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \return 	bool_t
+ 431:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 432:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \retval		TRUE checksum o.k.
+ 433:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \retval		FALSE checksum k.o.
+ 434:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 435:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \author 	stefano.ughi
+ 436:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \date		Feb 02, 2011
+ 437:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \version	1.0.0
+ 438:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 439:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** \note		\par \b Note 1:
+ 440:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 			documentation by stefano.ughi
+ 441:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 442:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** */
+ 443:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 444:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** bool_t LIB_Backup_ChecksumVerify(void)
+ 445:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** {
+ 514                             		.loc 1 445 0
+ 515                             	.LVL71:
+ 446:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint8_t *pBackupArea;
+ 447:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	uint16_t lenBackupTab;
+ 448:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	backupChecksum_t backupChk;
+ 449:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	backupChecksum_t not_backupChk;
+ 450:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	bool_t retVal=FALSE;
+ 451:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 452:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	backupChk = 0;
+ 453:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	lenBackupTab  = LIB_Backup_GetBackupLen();
+ 516                             		.loc 1 453 0
+ 517 0000 05 00 00 00             		bsr	_LIB_Backup_GetBackupLen
+ 518                             	.LVL72:
+ 452:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	backupChk = 0;
+ 519                             		.loc 1 452 0
+ 520 0004 66 0E                   		mov	#0, r14
+ 454:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	pBackupArea = (uint8_t *)BACKUPAREA_START_ADDR;
+ 521                             		.loc 1 454 0
+ 522 0006 FB 4E 00 00 10          		mov.L	#0x100000, r4
+ 455:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 456:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	while ( lenBackupTab != 0 )
+ 523                             		.loc 1 456 0
+ 524 000b 5F 11                   		movu.W	r1, r1
+ 525 000d 2E 07                   		bra	.L54
+ 526                             	.LVL73:
+ 527                             	.L55:
+ 457:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	{
+ 458:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		backupChk += *pBackupArea++;
+ 528                             		.loc 1 458 0
+ 529 000f FD 28 43                		mov.B	[r4+], r3
+ 530                             	.LVL74:
+ 531 0012 4B 3E                   		add	r3, r14
+ 532                             	.LVL75:
+ 533                             		.balign 2,3,1
+ 534                             	.L54:
+ 456:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	while ( lenBackupTab != 0 )
+ 535                             		.loc 1 456 0 discriminator 1
+ 536 0014 5F 43                   		movu.W	r4, r3
+ 537 0016 47 31                   		cmp	r3, r1
+ 538 0018 21 F7                   		bne	.L55
+ 539 001a 73 14 00 00 10          		add	#0x100000, r1, r4
+ 540                             	.LVL76:
+ 459:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		lenBackupTab--;
+ 460:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	}
+ 461:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 462:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	not_backupChk = (backupChecksum_t) (~(uint32_t)backupChk);
+ 463:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 464:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	if ( (backupChk == *(backupChecksum_t*)pBackupArea) &&
+ 541                             		.loc 1 464 0
+ 542 001f 5B E2                   		movu.B	r14, r2
+ 543 0021 44 42                   		cmp	[r4].UB, r2
+ 544 0023 21 0E                   		bne	.L57
+ 545                             		.loc 1 464 0 is_stmt 0 discriminator 1
+ 546 0025 B0 49                   		movu.B	1[r4], r1
+ 462:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	not_backupChk = (backupChecksum_t) (~(uint32_t)backupChk);
+ 547                             		.loc 1 462 0 is_stmt 1 discriminator 1
+ 548 0027 7E 0E                   		not	r14
+ 549                             	.LVL77:
+ 550                             		.loc 1 464 0 discriminator 1
+ 551 0029 5B EE                   		movu.B	r14, r14
+ 450:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	bool_t retVal=FALSE;
+ 552                             		.loc 1 450 0 discriminator 1
+ 553 002b 47 E1                   		cmp	r14, r1
+ 554 002d FC DB 10                		sceq.L	r1
+ 555 0030 02                      		rts
+ 556                             	.LVL78:
+ 557                             	.L57:
+ 450:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	bool_t retVal=FALSE;
+ 558                             		.loc 1 450 0 is_stmt 0
+ 559 0031 66 01                   		mov.L	#0, r1
+ 560                             	.LVL79:
+ 465:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	        (not_backupChk == *(backupChecksum_t*)(pBackupArea+sizeof(backupChecksum_t))) )
+ 466:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	{
+ 467:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 		retVal = TRUE;
+ 468:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	}
+ 469:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 
+ 470:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** 	return retVal;
+ 471:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp_low.c **** }
+ 561                             		.loc 1 471 0 is_stmt 1
+ 562 0033 02                      		rts
+ 563                             	.LFE5:
+ 687                             	.Letext0:
+ 688                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 689                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_cfg.h"
+ 690                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers/IO_driver.h"
+ 691                             		.file 5 "C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp/LIB_BackUp.h"
+ 692                             		.file 6 "C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp/LIB_BackupExp.h"
+ 693                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCFLS/OCFLS_drv.h"

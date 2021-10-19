@@ -1,0 +1,805 @@
+   1                             		.file	"RemoteLoadsControl.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.Main_RemoteLoadsControl_Init,"ax",@progbits
+   5                             		.global	_Main_RemoteLoadsControl_Init
+   7                             	_Main_RemoteLoadsControl_Init:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS/RemoteLoadsControl.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** Copyright (c) 2004-2009, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /**
+   6:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \defgroup	RemoteloadsControl  RemoteLoads Control Library
+   7:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** @{
+   8:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \par            Description
+   9:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \n              This module contains the implementation of the Remote Loads control, also known as
+  10:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 'PC Control'. Remote control is the control by an external tool that communicates with the applicat
+  11:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c ****                 Each command is a buffer which contains data for only one load.
+  12:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+  13:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c ****                 Two types of command are availale: normal and extended.
+  14:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+  15:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \par            Configuration
+  16:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \li             PP_REMOTE_LOADS_CONTROL_BUFFER_SIZE is the size of the queue in number of bytes for
+  17:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+  18:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \par            Use
+  19:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+  20:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c ****                 After the initializazion of the module by calling Main_RemoteLoadsControl_Init, a c
+  21:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c ****                 can stored in the queue by Main_RemoteLoadsControl_PutCommand.
+  22:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c ****                 Main_RemoteLoadsControl_GetCommand retrieves the command, if exists,that must be pr
+  23:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c ****                 Main_RemoteLoadsControl_ProcessCommand.
+  24:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c ****                 Once processed, the command must be deleted by calling Main_RemoteLoadsControl_Purg
+  25:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** @}
+  26:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \ingroup        MainLibrary
+  27:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** */
+  28:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /**
+  29:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \n
+  30:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \par		    Description
+  31:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \n			    This module uses EmbOS queues that work as FIFO, because it allows commands of various siz
+  32:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c ****                 EmbOS queues enhance performance as they save memory and time: retrieving a message
+  33:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c ****                 but returns a pointer allowing to process the message by accessing the content thro
+  34:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \n
+  35:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \file		    RemoteLoadsControl.c
+  36:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \ingroup	    MainLibrary
+  37:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \date		    Feb 2011
+  38:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \version	    00.00.00
+  39:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \author		    Roberto Fioravanti
+  40:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \n
+  41:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \n
+  42:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \par\b	History:
+  43:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \n
+  44:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \n 		        00.00.00
+  45:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \n          	Feb 2011
+  46:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \n          	Roberto Fioravanti
+  47:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \n            - Creation
+  48:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \n
+  49:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** */
+  50:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /*lint -idlen(60) */
+  51:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+  52:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* ******** */
+  53:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* Includes */
+  54:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* ******** */
+  55:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+  56:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** #include "Main.h"
+  57:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** #include "OutputManager.h"
+  58:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** #include "OutputManagerExp.h"
+  59:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** #if defined(CONFIG_LIB_LOADSREQUEST_SUPPORT)
+  60:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** #include "LoadsRequestExp.h"
+  61:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** #endif
+  62:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* ****************** */
+  63:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* Defines and Macros */
+  64:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* ****************** */
+  65:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+  66:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** #define RLC_HDR_SIZE()      (sizeof(GIOM_RemoteLoadsControlExtendedType)-sizeof(GIOM_RemoteLoadsCon
+  67:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+  68:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+  69:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* *************************** */
+  70:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* Typedef, Structs and Unions */
+  71:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* *************************** */
+  72:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+  73:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+  74:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+  75:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /**
+  76:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+  77:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** */
+  78:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** typedef  enum
+  79:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** {
+  80:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	REMOTELOADSCONTROL_STATE_INVALID = 0,
+  81:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	REMOTELOADSCONTROL_STATE_RUNNING
+  82:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** } Main_RemoteLoadsControlStateType;
+  83:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+  84:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /**
+  85:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+  86:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** */
+  87:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** typedef struct
+  88:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** {
+  89:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	Main_RemoteLoadsControlStateType  state;
+  90:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	Main_RemoteLoadsControlErrorType  error;
+  91:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	OS_Q Q;
+  92:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	char QBuffer[PP_REMOTE_LOADS_CONTROL_BUFFER_SIZE * 1 /*\todo make property*/];
+  93:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** } Main_RemoteLoadsControlObjType;
+  94:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+  95:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** typedef struct
+  96:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** {
+  97:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	uint8_t data [PP_REMOTE_LOADS_CONTROL_BUFFER_SIZE];
+  98:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** } GIOM_RemoteLoadsControlBufferType;
+  99:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /**
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** */
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** typedef struct
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** {
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	RemoteLoadsControlType type;
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	uint8_t	len;
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	GIOM_RemoteLoadsControlBufferType buffer;
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** } GIOM_RemoteLoadsControlExtendedType;
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* ********* */
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* Variables */
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* ********* */
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* Static */
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /**
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** */
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** static Main_RemoteLoadsControlObjType Main_RemoteLoadsControl; /* Instance of the object */
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* Global */
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* ******************** */
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* Functions Prototypes */
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* ******************** */
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** bool_t Main_RemoteLoadsControl_IsInitialized ( void );
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* *************** */
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* Function Bodies */
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* *************** */
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* Exported function */
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /**
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** Initializes EmbOs objects and global variables of the module.
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** */
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** void Main_RemoteLoadsControl_Init ( void )
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** {
+  10                             		.loc 1 139 0
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	OS_Q_Create ( & ( Main_RemoteLoadsControl.Q ),
+  11                             		.loc 1 140 0
+  12 0000 FB 12 08 00 00 00       		mov.L	#_Main_RemoteLoadsControl+8, r1
+  13 0006 FB 22 2C 00 00 00       		mov.L	#_Main_RemoteLoadsControl+44, r2
+  14 000c 75 43 14                		mov.L	#20, r3
+  15 000f 05 00 00 00             		bsr	_OS_Q_Create
+  16                             	.LVL0:
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 				  & ( Main_RemoteLoadsControl.QBuffer ),
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 				  sizeof ( Main_RemoteLoadsControl.QBuffer ) );
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	Main_RemoteLoadsControl.state = REMOTELOADSCONTROL_STATE_RUNNING;
+  17                             		.loc 1 143 0
+  18 0013 FB E2 00 00 00 00       		mov.L	#_Main_RemoteLoadsControl, r14
+  19 0019 F8 E6 01                		mov.L	#1, [r14]
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_NO_ERROR;
+  20                             		.loc 1 144 0
+  21 001c F9 E6 01 00             		mov.L	#0, 4[r14]
+  22 0020 02                      		rts
+  23                             	.LFE0:
+  25                             		.section	.text.Main_RemoteLoadsControl_PutCommand,"ax",@progbits
+  26                             		.global	_Main_RemoteLoadsControl_PutCommand
+  28                             	_Main_RemoteLoadsControl_PutCommand:
+  29                             	.LFB1:
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** }
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /**
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** Stores a command in the queue
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \param [in] type type of command (see RemoteLoadsControlType)
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \param [in] len lenght in bytes of the command
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \param [in] pData pointer to command
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \return bool_t
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \retval REMOTELOADSCONTROL_NO_ERROR no error
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \retval REMOTELOADSCONTROL_UNKNOWN_OBJ uninitilized module. Call Main_RemoteLoadsControl_Init.
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \retval REMOTELOADSCONTROL_FULLQUEUE_ON_PUTCOMMAND queue is full, not enough space. Purge command o
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** define PP_REMOTE_LOADS_CONTROL_BUFFER_SIZE with a greater value.
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \retval REMOTELOADSCONTROL_INVALID_DATA_ON_PUTCOMMAND   invalid pData (null) or len is greater than
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** The returned value is available on Main_RemoteLoadsControl.error
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** */
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** Main_RemoteLoadsControlErrorType Main_RemoteLoadsControl_PutCommand ( RemoteLoadsControlType type, 
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** {
+  30                             		.loc 1 164 0
+  31                             	.LVL1:
+  32 0000 7E A7                   		push.l	r7
+  33                             	.LCFI0:
+  34 0002 71 00 E4                		add	#-28, r0
+  35                             	.LCFI1:
+  36                             	.LVL2:
+  37                             	.LBB7:
+  38                             	.LBB8:
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	Main_RemoteLoadsControlErrorType result = REMOTELOADSCONTROL_UNKNOWN_OBJ;
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	GIOM_RemoteLoadsControlExtendedType param;
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	if ( !Main_RemoteLoadsControl_IsInitialized() )
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	{
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_UNKNOWN_OBJ;
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	}
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	else
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	{
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		OS_MEMSET(&param, 0, sizeof(param));
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		param.type = type;
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		if ( len <= sizeof ( GIOM_RemoteLoadsControlBufferType ) )
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		{
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			param.len = len;
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			if ( pData )
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			{
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			    bool_t res;
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 				memcpy ( param.buffer.data, pData, ( size_t ) len );
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 				
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 				res = ( bool_t ) OS_Q_Put ( &Main_RemoteLoadsControl.Q, &param, len + RLC_HDR_SIZE() );
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 				
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 				if ( res )
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 				{
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 					result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_FULLQUEUE_ON_PUTCOMMAND;
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 				}
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 				else
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 				{
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 					result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_NO_ERROR;
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 				}
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			}
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			else
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			{
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 				result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_INVALID_DATA_ON_PUTCOMMAND;
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			}
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		}
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		else
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		{
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_INVALID_DATA_ON_PUTCOMMAND;
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		}
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	}
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	return result;
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** }
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /**
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** Retrieves a command from the queue
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \param [out] ppData pointer to pointer to command
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \param [out] pLen lenght in bytes of the command
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \attention
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** Global variables:
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** Main_RemoteLoadsControl.error assumes the following values
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \li REMOTELOADSCONTROL_NO_ERROR no error
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \li REMOTELOADSCONTROL_UNKNOWN_OBJ uninitilized module. Call Main_RemoteLoadsControl_Init.
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \li REMOTELOADSCONTROL_FULLQUEUE_ON_PUTCOMMAND queue is full, not enough space. Purge command or
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** define PP_REMOTE_LOADS_CONTROL_BUFFER_SIZE with a greater value.
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \li REMOTELOADSCONTROL_INVALID_DATA_POINTER_ON_GETCOMMAND   invalid pData or len (null).
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** */
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** void Main_RemoteLoadsControl_GetCommand ( void** ppData, int* pLen )
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** {
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	if ( !Main_RemoteLoadsControl_IsInitialized() )
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	{
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_UNKNOWN_OBJ;
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	}
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	else
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	{
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		if ( pLen && ppData )
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		{
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_NO_ERROR;
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			*pLen = OS_Q_GetPtrCond ( &Main_RemoteLoadsControl.Q, ppData );
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		}
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		else
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		{
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_INVALID_DATA_POINTER_ON_GETCOMMAND;
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		}
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	}
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** }
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /**
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** Processes the command.
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** If the command is valid it calls LIB_IOM_SetAllLoadsOff() or LIB_IOM_GIOM_SetLoad()
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \param [in] pData pointer to the command
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \attention
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** Global variables:
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** Main_RemoteLoadsControl.error assumes the following values:
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \li REMOTELOADSCONTROL_NO_ERROR no error
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** \li REMOTELOADSCONTROL_UNKNOWN_COMMAND command is invalid
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** */
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** void Main_RemoteLoadsControl_ProcessCommand ( void* pData )
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** {
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	uint8_t* pFirstData;
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	GIOM_LoadStruct load;
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	uint8_t len;
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	GIOM_RemoteLoadsControlExtendedType* pRemoteLoadsData = ( GIOM_RemoteLoadsControlExtendedType* ) p
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	switch ( ( ( GIOM_RemoteLoadsControlExtendedType* ) pData )->type )
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	{
+ 268:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	case REMOTE_LOADS_CONTROL_EXTENDED:
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	case REMOTE_LOADS_CONTROL_BASIC:
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		pFirstData = pRemoteLoadsData->buffer.data;
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		len = pRemoteLoadsData->len;
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		break;
+ 273:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	default:
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_UNKNOWN_COMMAND;
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		return;
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	}
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	if ( *pFirstData == 0xFF )
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	{
+ 280:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** #if defined(CONFIG_LIB_LOADSREQUEST_SUPPORT)
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		LIB_IOM_ResetAllLoadRequest();
+ 282:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** #else
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		LIB_IOM_SetAllLoadsOff ( SOURCE_SALO_PCCONTROL );
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** #endif
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	}
+ 286:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	else
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	{
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		load.loadID = *pFirstData; /* ID Load / Position */
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		load.loadParam.b = * ( pFirstData + 1 );
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		memcpy ( load.data, ( pFirstData + 1 ), ( size_t ) ( len - 1 ) );
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** #if defined(CONFIG_LIB_LOADSREQUEST_SUPPORT)
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		LIB_IOM_ProcessSingleLoadRequest( &load );
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** #else
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		( void ) LIB_IOM_GIOM_SetLoad ( &load );
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** #endif
+ 297:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	}
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_NO_ERROR;
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** }
+ 302:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 303:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /**
+ 305:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** Deletes the last retrieved command.
+ 306:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** */
+ 307:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** void Main_RemoteLoadsControl_PurgeCommand ( void )
+ 308:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** {
+ 309:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	OS_Q_Purge ( &Main_RemoteLoadsControl.Q );
+ 310:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** }
+ 311:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 313:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 314:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /* Local Function */
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** /**
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** Returns if module has beel initialized.
+ 318:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** */
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** bool_t Main_RemoteLoadsControl_IsInitialized ( void )
+ 320:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** {
+ 321:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	return ( bool_t ) ( Main_RemoteLoadsControl.state == REMOTELOADSCONTROL_STATE_RUNNING );
+  39                             		.loc 1 321 0
+  40 0005 FB 72 00 00 00 00       		mov.L	#_Main_RemoteLoadsControl, r7
+  41                             	.LBE8:
+  42                             	.LBE7:
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	if ( !Main_RemoteLoadsControl_IsInitialized() )
+  43                             		.loc 1 168 0
+  44 000b EC 7E                   		mov.L	[r7], r14
+  45 000d 61 1E                   		cmp	#1, r14
+  46 000f 10                      		beq	.L3
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_UNKNOWN_OBJ;
+  47                             		.loc 1 170 0
+  48 0010 3E 71 04                		mov.L	#4, 4[r7]
+  49 0013 66 41                   		mov.L	#4, r1
+  50                             	.LVL3:
+  51 0015 2E 4B                   		bra	.L4
+  52                             	.LVL4:
+  53                             	.L3:
+  54 0017 EF 14                   		mov.L	r1, r4
+  55 0019 CF 2F                   		mov.B	r2, r15
+  56 001b EF 35                   		mov.L	r3, r5
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		OS_MEMSET(&param, 0, sizeof(param));
+  57                             		.loc 1 174 0
+  58 001d EF 01                   		mov.L	r0, r1
+  59                             	.LVL5:
+  60 001f 75 43 1C                		mov.L	#28, r3
+  61                             	.LVL6:
+  62 0022 66 02                   		mov	#0, r2
+  63                             	.LVL7:
+  64 0024 7F 88                   		sstr.b
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		param.type = type;
+  65                             		.loc 1 175 0
+  66 0026 E3 04                   		mov.L	r4, [r0]
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		if ( len <= sizeof ( GIOM_RemoteLoadsControlBufferType ) )
+  67                             		.loc 1 177 0
+  68 0028 5B F4                   		movu.B	r15, r4
+  69                             	.LVL8:
+  70 002a 75 54 14                		cmp	#20, r4
+  71 002d 24 2D                   		bgtu	.L5
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			param.len = len;
+  72                             		.loc 1 179 0
+  73 002f C7 0F 04                		mov.B	r15, 4[r0]
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			if ( pData )
+  74                             		.loc 1 181 0
+  75 0032 61 05                   		cmp	#0, r5
+  76 0034 20 26                   		beq	.L5
+  77                             	.LBB9:
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 				memcpy ( param.buffer.data, pData, ( size_t ) len );
+  78                             		.loc 1 184 0
+  79 0036 71 01 05                		add	#5, r0, r1
+  80 0039 EF 52                   		mov.L	r5, r2
+  81 003b EF 43                   		mov.L	r4, r3
+  82 003d 7F 8F                   		smovf
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 				res = ( bool_t ) OS_Q_Put ( &Main_RemoteLoadsControl.Q, &param, len + RLC_HDR_SIZE() );
+  83                             		.loc 1 186 0
+  84 003f FB 12 08 00 00 00       		mov.L	#_Main_RemoteLoadsControl+8, r1
+  85 0045 EF 02                   		mov.L	r0, r2
+  86 0047 71 43 08                		add	#8, r4, r3
+  87 004a 05 00 00 00             		bsr	_OS_Q_Put
+  88                             	.LVL9:
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 				if ( res )
+  89                             		.loc 1 188 0
+  90 004e 61 01                   		cmp	#0, r1
+  91 0050 17                      		beq	.L7
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 					result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_FULLQUEUE_ON_PUTCOMMAND;
+  92                             		.loc 1 190 0
+  93 0051 3E 71 03                		mov.L	#3, 4[r7]
+  94                             	.LVL10:
+  95 0054 66 31                   		mov.L	#3, r1
+  96                             	.LVL11:
+  97 0056 0A                      		bra	.L4
+  98                             	.LVL12:
+  99                             	.L7:
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 					result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_NO_ERROR;
+ 100                             		.loc 1 194 0
+ 101 0057 A0 79                   		mov.L	r1, 4[r7]
+ 102                             	.LVL13:
+ 103 0059 0F                      		bra	.L4
+ 104                             	.LVL14:
+ 105                             	.L5:
+ 106                             	.LBE9:
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_INVALID_DATA_ON_PUTCOMMAND;
+ 107                             		.loc 1 204 0
+ 108 005a E7 7E 01                		mov.L	r14, 4[r7]
+ 109                             	.LVL15:
+ 110 005d EF E1                   		mov.L	r14, r1
+ 111                             	.LVL16:
+ 112 005f 03                      		.balign 2,3,2
+ 113                             	.L4:
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** }
+ 114                             		.loc 1 209 0
+ 115 0060 3F 77 08                		rtsd	#32, r7-r7
+ 116                             	.LFE1:
+ 118 0063 03                      		.section	.text.Main_RemoteLoadsControl_GetCommand,"ax",@progbits
+ 119                             		.global	_Main_RemoteLoadsControl_GetCommand
+ 121                             	_Main_RemoteLoadsControl_GetCommand:
+ 122                             	.LFB2:
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** {
+ 123                             		.loc 1 226 0
+ 124                             	.LVL17:
+ 125 0000 7E A7                   		push.l	r7
+ 126                             	.LCFI2:
+ 127 0002 EF 27                   		mov.L	r2, r7
+ 128                             	.LBB10:
+ 129                             	.LBB11:
+ 130                             		.loc 1 321 0
+ 131 0004 FB E2 00 00 00 00       		mov.L	#_Main_RemoteLoadsControl, r14
+ 132                             	.LBE11:
+ 133                             	.LBE10:
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	if ( !Main_RemoteLoadsControl_IsInitialized() )
+ 134                             		.loc 1 227 0
+ 135 000a EC E2                   		mov.L	[r14], r2
+ 136                             	.LVL18:
+ 137 000c 61 12                   		cmp	#1, r2
+ 138 000e 17                      		beq	.L10
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_UNKNOWN_OBJ;
+ 139                             		.loc 1 229 0
+ 140 000f F9 E6 01 04             		mov.L	#4, 4[r14]
+ 141 0013 2E 23                   		bra	.L9
+ 142                             	.L10:
+ 143 0015 EF E3                   		mov.L	r14, r3
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		if ( pLen && ppData )
+ 144                             		.loc 1 233 0
+ 145 0017 61 07                   		cmp	#0, r7
+ 146 0019 20 1A                   		beq	.L12
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		if ( pLen && ppData )
+ 147                             		.loc 1 233 0 is_stmt 0 discriminator 1
+ 148 001b 71 14 00                		add	#0, r1, r4
+ 149 001e 20 15                   		beq	.L12
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_NO_ERROR;
+ 150                             		.loc 1 235 0 is_stmt 1
+ 151 0020 F9 E6 01 00             		mov.L	#0, 4[r14]
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			*pLen = OS_Q_GetPtrCond ( &Main_RemoteLoadsControl.Q, ppData );
+ 152                             		.loc 1 236 0
+ 153 0024 FB 12 08 00 00 00       		mov.L	#_Main_RemoteLoadsControl+8, r1
+ 154                             	.LVL19:
+ 155 002a EF 42                   		mov.L	r4, r2
+ 156 002c 05 00 00 00             		bsr	_OS_Q_GetPtrCond
+ 157                             	.LVL20:
+ 158 0030 E3 71                   		mov.L	r1, [r7]
+ 159 0032 0C                      		bra	.L9
+ 160                             	.LVL21:
+ 161                             	.L12:
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 			Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_INVALID_DATA_POINTER_ON_GETCOMMAND;
+ 162                             		.loc 1 240 0
+ 163 0033 3E 31 02                		mov.L	#2, 4[r3]
+ 164                             	.LVL22:
+ 165                             		.balign 2,3,2
+ 166                             	.L9:
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** }
+ 167                             		.loc 1 243 0
+ 168 0036 3F 77 01                		rtsd	#4, r7-r7
+ 169                             	.LFE2:
+ 171 0039 03                      		.section	.text.Main_RemoteLoadsControl_ProcessCommand,"ax",@progbits
+ 172                             		.global	_Main_RemoteLoadsControl_ProcessCommand
+ 174                             	_Main_RemoteLoadsControl_ProcessCommand:
+ 175                             	.LFB3:
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** {
+ 176                             		.loc 1 260 0
+ 177 0000 EF 12                   		mov.L	r1, r2
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	switch ( ( ( GIOM_RemoteLoadsControlExtendedType* ) pData )->type )
+ 178                             		.loc 1 266 0
+ 179 0002 EC 1E                   		mov.L	[r1], r14
+ 180 0004 60 1E                   		sub	#1, r14
+ 181 0006 61 1E                   		cmp	#1, r14
+ 182 0008 24 12                   		bgtu	.L21
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** {
+ 183                             		.loc 1 260 0
+ 184 000a 60 C0                   		sub	#12, r0
+ 185                             	.LCFI3:
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		len = pRemoteLoadsData->len;
+ 186                             		.loc 1 271 0
+ 187 000c 89 13                   		mov.B	4[r1], r3
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	if ( *pFirstData == 0xFF )
+ 188                             		.loc 1 278 0
+ 189 000e CD 1E 05                		mov.B	5[r1], r14
+ 190 0011 5B E4                   		movu.B	r14, r4
+ 191 0013 75 54 FF                		cmp	#0xff, r4
+ 192 0016 21 17                   		bne	.L27
+ 193 0018 2E 0D                   		bra	.L23
+ 194                             	.L21:
+ 195                             	.LCFI4:
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_UNKNOWN_COMMAND;
+ 196                             		.loc 1 274 0
+ 197 001a FB E2 00 00 00 00       		mov.L	#_Main_RemoteLoadsControl, r14
+ 198 0020 F9 E6 01 05             		mov.L	#5, 4[r14]
+ 199 0024 02                      		rts
+ 200                             	.L23:
+ 201                             	.LCFI5:
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		LIB_IOM_SetAllLoadsOff ( SOURCE_SALO_PCCONTROL );
+ 202                             		.loc 1 283 0
+ 203 0025 66 01                   		mov	#0, r1
+ 204 0027 05 00 00 00             		bsr	_LIB_IOM_SetAllLoadsOff
+ 205 002b 2E 19                   		bra	.L26
+ 206                             	.L27:
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		load.loadID = *pFirstData; /* ID Load / Position */
+ 207                             		.loc 1 288 0
+ 208 002d C3 0E                   		mov.B	r14, [r0]
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		load.loadParam.b = * ( pFirstData + 1 );
+ 209                             		.loc 1 289 0
+ 210 002f C5 10 06 01             		mov.B	6[r1], 1[r0]
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		memcpy ( load.data, ( pFirstData + 1 ), ( size_t ) ( len - 1 ) );
+ 211                             		.loc 1 290 0
+ 212 0033 5B 33                   		movu.B	r3, r3
+ 213 0035 71 01 02                		add	#2, r0, r1
+ 214 0038 62 62                   		add	#6, r2
+ 215 003a 60 13                   		sub	#1, r3
+ 216 003c 7F 8F                   		smovf
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 		( void ) LIB_IOM_GIOM_SetLoad ( &load );
+ 217                             		.loc 1 295 0
+ 218 003e EF 01                   		mov.L	r0, r1
+ 219 0040 05 00 00 00             		bsr	_LIB_IOM_GIOM_SetLoad
+ 220                             		.balign 2,3,5
+ 221                             	.L26:
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_NO_ERROR;
+ 222                             		.loc 1 300 0
+ 223 0044 FB E2 00 00 00 00       		mov.L	#_Main_RemoteLoadsControl, r14
+ 224 004a F9 E6 01 00             		mov.L	#0, 4[r14]
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** }
+ 225                             		.loc 1 301 0
+ 226 004e 67 03                   		rtsd	#12
+ 227                             	.LFE3:
+ 229                             		.section	.text.Main_RemoteLoadsControl_PurgeCommand,"ax",@progbits
+ 230                             		.global	_Main_RemoteLoadsControl_PurgeCommand
+ 232                             	_Main_RemoteLoadsControl_PurgeCommand:
+ 233                             	.LFB4:
+ 308:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** {
+ 234                             		.loc 1 308 0
+ 309:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** 	OS_Q_Purge ( &Main_RemoteLoadsControl.Q );
+ 235                             		.loc 1 309 0
+ 236 0000 FB 12 08 00 00 00       		mov.L	#_Main_RemoteLoadsControl+8, r1
+ 237 0006 04 00 00 00             		bra	_OS_Q_Purge
+ 238                             	.LVL23:
+ 239                             	.LFE4:
+ 241                             		.section	.text.Main_RemoteLoadsControl_IsInitialized,"ax",@progbits
+ 242                             		.global	_Main_RemoteLoadsControl_IsInitialized
+ 244                             	_Main_RemoteLoadsControl_IsInitialized:
+ 245                             	.LFB5:
+ 320:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** {
+ 246                             		.loc 1 320 0
+ 247                             		.loc 1 321 0
+ 248 0000 FB E2 00 00 00 00       		mov.L	#_Main_RemoteLoadsControl, r14
+ 249 0006 EC E1                   		mov.L	[r14], r1
+ 322:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\RemoteLoadsControl.c **** }
+ 250                             		.loc 1 322 0
+ 251 0008 61 11                   		cmp	#1, r1
+ 252 000a FC DB 10                		sceq.L	r1
+ 253 000d 02                      		rts
+ 254                             	.LFE5:
+ 256                             		.section	.bss.Main_RemoteLoadsControl,"aw",@nobits
+ 257                             		.balign 4
+ 260                             	_Main_RemoteLoadsControl:
+ 261 0000 00 00 00 00 00 00 00 00 		.zero	64
+ 261      00 00 00 00 00 00 00 00 
+ 261      00 00 00 00 00 00 00 00 
+ 261      00 00 00 00 00 00 00 00 
+ 261      00 00 00 00 00 00 00 00 
+ 356                             	.Letext0:
+ 357                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 358                             		.file 3 "C:\\Renesas\\E2_STU~1\\GNURXV~1.01-\\rx-ELF/rx-elf/optlibinc/stddef.h"
+ 359                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 360                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_IOManager/OutputManagerEx
+ 361                             		.file 6 "C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS/MainInterface.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 RemoteLoadsControl.c
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:7      .text.Main_RemoteLoadsControl_Init:00000000 _Main_RemoteLoadsControl_Init
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:12     .text.Main_RemoteLoadsControl_Init:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:260    .bss.Main_RemoteLoadsControl:00000000 _Main_RemoteLoadsControl
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:28     .text.Main_RemoteLoadsControl_PutCommand:00000000 _Main_RemoteLoadsControl_PutCommand
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:32     .text.Main_RemoteLoadsControl_PutCommand:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:121    .text.Main_RemoteLoadsControl_GetCommand:00000000 _Main_RemoteLoadsControl_GetCommand
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:125    .text.Main_RemoteLoadsControl_GetCommand:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:174    .text.Main_RemoteLoadsControl_ProcessCommand:00000000 _Main_RemoteLoadsControl_ProcessCommand
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:177    .text.Main_RemoteLoadsControl_ProcessCommand:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:232    .text.Main_RemoteLoadsControl_PurgeCommand:00000000 _Main_RemoteLoadsControl_PurgeCommand
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:236    .text.Main_RemoteLoadsControl_PurgeCommand:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:244    .text.Main_RemoteLoadsControl_IsInitialized:00000000 _Main_RemoteLoadsControl_IsInitialized
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:248    .text.Main_RemoteLoadsControl_IsInitialized:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:263    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:8      .text.Main_RemoteLoadsControl_Init:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:29     .text.Main_RemoteLoadsControl_PutCommand:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:122    .text.Main_RemoteLoadsControl_GetCommand:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:175    .text.Main_RemoteLoadsControl_ProcessCommand:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:233    .text.Main_RemoteLoadsControl_PurgeCommand:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:245    .text.Main_RemoteLoadsControl_IsInitialized:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:1574   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2757   .debug_str:00000647 .LASF95
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2645   .debug_str:00000288 .LASF96
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2543   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2559   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2699   .debug_str:00000496 .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2647   .debug_str:000002cf .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2637   .debug_str:00000263 .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2609   .debug_str:00000174 .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2583   .debug_str:000000a9 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2591   .debug_str:0000010a .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2735   .debug_str:00000584 .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2691   .debug_str:0000043f .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2593   .debug_str:00000118 .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2599   .debug_str:0000014c .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2633   .debug_str:0000024e .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2739   .debug_str:00000591 .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2569   .debug_str:00000027 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2753   .debug_str:0000061c .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2615   .debug_str:000001b4 .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2727   .debug_str:00000542 .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2561   .debug_str:00000000 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2701   .debug_str:000004a0 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2709   .debug_str:000004db .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2625   .debug_str:000001ed .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2565   .debug_str:00000018 .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2657   .debug_str:00000307 .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2577   .debug_str:00000066 .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2623   .debug_str:000001e5 .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2639   .debug_str:00000275 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2649   .debug_str:000002e2 .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2723   .debug_str:0000052e .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2713   .debug_str:000004e8 .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2731   .debug_str:00000575 .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2761   .debug_str:00000674 .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2733   .debug_str:0000057a .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2667   .debug_str:00000342 .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2725   .debug_str:00000535 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2589   .debug_str:000000f6 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2751   .debug_str:00000616 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2693   .debug_str:0000044d .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2651   .debug_str:000002eb .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2705   .debug_str:000004c7 .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2563   .debug_str:00000005 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2581   .debug_str:0000008b .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2665   .debug_str:0000033b .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2571   .debug_str:0000002e .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2619   .debug_str:000001c8 .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2711   .debug_str:000004e3 .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2659   .debug_str:0000030e .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2681   .debug_str:000003e8 .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2635   .debug_str:0000025b .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2621   .debug_str:000001df .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2685   .debug_str:000003fa .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2741   .debug_str:0000059a .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2567   .debug_str:0000001e .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2707   .debug_str:000004d3 .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2601   .debug_str:00000153 .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2607   .debug_str:00000166 .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2717   .debug_str:00000517 .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2719   .debug_str:0000051e .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2603   .debug_str:00000159 .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2749   .debug_str:0000060c .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2643   .debug_str:00000283 .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2585   .debug_str:000000c0 .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2579   .debug_str:00000070 .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2747   .debug_str:000005ee .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2745   .debug_str:000005d7 .LASF62
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2697   .debug_str:0000047a .LASF63
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2679   .debug_str:000003ba .LASF64
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2743   .debug_str:000005a1 .LASF65
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2677   .debug_str:0000038f .LASF66
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2703   .debug_str:000004a8 .LASF67
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2663   .debug_str:00000318 .LASF68
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2631   .debug_str:0000022d .LASF69
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2597   .debug_str:0000012b .LASF70
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2627   .debug_str:000001fc .LASF71
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2671   .debug_str:0000035d .LASF72
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2605   .debug_str:00000160 .LASF73
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2683   .debug_str:000003f4 .LASF74
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2721   .debug_str:00000526 .LASF75
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2611   .debug_str:0000017d .LASF76
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2755   .debug_str:00000625 .LASF77
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2653   .debug_str:000002f1 .LASF78
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2617   .debug_str:000001c1 .LASF79
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2695   .debug_str:00000456 .LASF80
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2587   .debug_str:000000d0 .LASF97
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2689   .debug_str:00000422 .LASF83
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:23     .text.Main_RemoteLoadsControl_Init:00000021 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:16     .text.Main_RemoteLoadsControl_Init:00000013 .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2687   .debug_str:000003ff .LASF98
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:116    .text.Main_RemoteLoadsControl_PutCommand:00000063 .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2274   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2292   .debug_loc:0000002c .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2338   .debug_loc:00000097 .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2367   .debug_loc:000000dc .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2759   .debug_str:0000066d .LASF81
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2396   .debug_loc:00000121 .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2673   .debug_str:0000037e .LASF82
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:37     .text.Main_RemoteLoadsControl_PutCommand:00000005 .LBB7
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:42     .text.Main_RemoteLoadsControl_PutCommand:0000000b .LBE7
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:77     .text.Main_RemoteLoadsControl_PutCommand:00000036 .LBB9
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:106    .text.Main_RemoteLoadsControl_PutCommand:0000005a .LBE9
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2433   .debug_loc:0000017c .LLST5
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:88     .text.Main_RemoteLoadsControl_PutCommand:0000004e .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2575   .debug_str:00000043 .LASF84
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:169    .text.Main_RemoteLoadsControl_GetCommand:00000039 .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2444   .debug_loc:0000019a .LLST6
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2595   .debug_str:00000124 .LASF85
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2457   .debug_loc:000001ba .LLST7
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2737   .debug_str:0000058c .LASF86
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2486   .debug_loc:000001ff .LLST8
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:128    .text.Main_RemoteLoadsControl_GetCommand:00000004 .LBB10
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:133    .text.Main_RemoteLoadsControl_GetCommand:0000000a .LBE10
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:157    .text.Main_RemoteLoadsControl_GetCommand:00000030 .LVL20
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2729   .debug_str:0000054e .LASF87
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:227    .text.Main_RemoteLoadsControl_ProcessCommand:00000050 .LFE3
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2497   .debug_loc:0000021d .LLST9
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2675   .debug_str:00000384 .LASF89
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2661   .debug_str:00000313 .LASF88
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2655   .debug_str:000002f6 .LASF90
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2715   .debug_str:000004f2 .LASF91
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:239    .text.Main_RemoteLoadsControl_PurgeCommand:0000000a .LFE4
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:238    .text.Main_RemoteLoadsControl_PurgeCommand:0000000a .LVL23
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:254    .text.Main_RemoteLoadsControl_IsInitialized:0000000e .LFE5
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2613   .debug_str:0000019c .LASF92
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2669   .debug_str:00000351 .LASF99
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2641   .debug_str:0000027a .LASF93
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2629   .debug_str:0000021d .LASF94
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:2573   .debug_str:00000038 .LASF100
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:33     .text.Main_RemoteLoadsControl_PutCommand:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:35     .text.Main_RemoteLoadsControl_PutCommand:00000005 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:31     .text.Main_RemoteLoadsControl_PutCommand:00000000 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:50     .text.Main_RemoteLoadsControl_PutCommand:00000015 .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:52     .text.Main_RemoteLoadsControl_PutCommand:00000017 .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:59     .text.Main_RemoteLoadsControl_PutCommand:0000001f .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:69     .text.Main_RemoteLoadsControl_PutCommand:0000002a .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:104    .text.Main_RemoteLoadsControl_PutCommand:0000005a .LVL14
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:111    .text.Main_RemoteLoadsControl_PutCommand:0000005f .LVL16
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:63     .text.Main_RemoteLoadsControl_PutCommand:00000024 .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:61     .text.Main_RemoteLoadsControl_PutCommand:00000022 .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:36     .text.Main_RemoteLoadsControl_PutCommand:00000005 .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:94     .text.Main_RemoteLoadsControl_PutCommand:00000054 .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:98     .text.Main_RemoteLoadsControl_PutCommand:00000057 .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:102    .text.Main_RemoteLoadsControl_PutCommand:00000059 .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:109    .text.Main_RemoteLoadsControl_PutCommand:0000005d .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:96     .text.Main_RemoteLoadsControl_PutCommand:00000056 .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:126    .text.Main_RemoteLoadsControl_GetCommand:00000002 .LCFI2
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:124    .text.Main_RemoteLoadsControl_GetCommand:00000000 .LVL17
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:154    .text.Main_RemoteLoadsControl_GetCommand:0000002a .LVL19
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:160    .text.Main_RemoteLoadsControl_GetCommand:00000033 .LVL21
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:164    .text.Main_RemoteLoadsControl_GetCommand:00000036 .LVL22
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:136    .text.Main_RemoteLoadsControl_GetCommand:0000000c .LVL18
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:185    .text.Main_RemoteLoadsControl_ProcessCommand:0000000c .LCFI3
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:195    .text.Main_RemoteLoadsControl_ProcessCommand:0000001a .LCFI4
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:201    .text.Main_RemoteLoadsControl_ProcessCommand:00000025 .LCFI5
+C:\Users\Andrea\AppData\Local\Temp\ccUhuOIb.s:363    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_OS_Q_Create
+_OS_Q_Put
+_OS_Q_GetPtrCond
+_LIB_IOM_SetAllLoadsOff
+_LIB_IOM_GIOM_SetLoad
+_OS_Q_Purge

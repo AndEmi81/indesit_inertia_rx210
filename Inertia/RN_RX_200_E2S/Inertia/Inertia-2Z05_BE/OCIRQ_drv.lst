@@ -1,0 +1,541 @@
+   1                             		.file	"OCIRQ_drv.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.OCIRQ_InitSync,"ax",@progbits
+   5                             		.global	_OCIRQ_InitSync
+   7                             	_OCIRQ_InitSync:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ/OCIRQ_drv.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /**
+   7:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \n
+   8:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \Par		OCIRQ_drv.c
+   9:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \n			Implementation of all functions necessary to achieve the aim.
+  10:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \n
+  11:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \file		OCIRQ_drv.c
+  12:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \ingroup	OCIRQ
+  13:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \date		Nov 30, 2010
+  14:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \version	01.00.00
+  15:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \author		stefano.ughi
+  16:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \n
+  17:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \n
+  18:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \Par\b	History:
+  19:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \n
+  20:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \n 		01.00.00
+  21:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \n		Nov 30, 2010
+  22:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \n		stefano.ughi
+  23:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \n		changes
+  24:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \n 			Creation
+  25:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \n
+  26:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \n
+  27:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** */
+  28:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #include "Config.h"
+  29:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+  30:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* ******** */
+  31:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* Includes */
+  32:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* ******** */
+  33:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #include "OCDIO_drv.h"
+  34:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #include "OCIRQ_drv.h"
+  35:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #include "LIB_TaskMonitoring.h"
+  36:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+  37:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+  38:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #if defined(ZC_IO_MODULE_MAP_SIZE) && defined(ZC_IO_MODULE_MAP_NAME)
+  39:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+  40:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #if (ZC_IO_MODULE_MAP_SIZE == 0)
+  41:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	#error "ZC_IO_MODULE_MAP_SIZE, if defined, must assume values greater than 0. IRQ_cfg.h"
+  42:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #else   /* (ZC_IO_MODULE_MAP_SIZE == 0) */
+  43:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	#include "OCDIO_drv.h"
+  44:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #endif  /* (ZC_IO_MODULE_MAP_SIZE == 0) */
+  45:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+  46:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #endif  /* defined(ZC_IO_MODULE_MAP_SIZE) && defined(ZC_IO_MODULE_MAP_NAME) */
+  47:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+  48:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* ****************** */
+  49:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* Defines and Macros */
+  50:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* ****************** */
+  51:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+  52:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+  53:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* *************************** */
+  54:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* Typedef, Structs and Unions */
+  55:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* *************************** */
+  56:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+  57:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+  58:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* ********* */
+  59:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* Variables */
+  60:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* ********* */
+  61:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+  62:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* Global */
+  63:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #if defined(ZC_IO_MODULE_MAP_SIZE) && defined(ZC_IO_MODULE_MAP_NAME)
+  64:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** extern const IO_ModuleIOMapType ZC_IO_MODULE_MAP_NAME[ZC_IO_MODULE_MAP_SIZE];
+  65:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #endif /* defined(ZC_IO_MODULE_MAP_SIZE) && defined(ZC_IO_MODULE_MAP_NAME)*/
+  66:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* Static */
+  67:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /** callback called inside ISR */
+  68:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #if defined(CONFIG_OCIRQ_STATIC_CFG)
+  69:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	#if !defined(ZCV_ON_ICU)
+  70:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		#define IRQ_Callback OCIRQ_CALLBACK
+  71:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	#endif /* #if defined(ZCV_ON_ICU) */
+  72:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #else
+  73:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** static Comm_Notification IRQ_Callback= (Comm_Notification)NULL;
+  74:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #endif
+  75:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* ******************* */
+  76:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* Functions Prototype */
+  77:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* ******************* */
+  78:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+  79:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* Exported function */
+  80:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* Local Function */
+  81:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** static bool_t IRQ_IsValid(bool_t edge);
+  82:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+  83:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* *************** */
+  84:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* Function Bodies */
+  85:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* *************** */
+  86:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+  87:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* Exported function */
+  88:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /**
+  89:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** IRQ Input Initialization. This function performs IRQ setup according to the properties defined
+  90:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \n in IRQ_cfg.h.
+  91:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \n Call this function at reset.
+  92:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+  93:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \param  [in]  callback used to notify user about IRQ event
+  94:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+  95:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \return 	IO_ErrorType
+  96:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \retval		IO_E_OK
+  97:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+  98:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvIRQ_2
+  99:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** */
+ 100:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** IO_ErrorType OCIRQ_InitSync(Comm_Notification callback)
+ 101:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** {
+  10                             		.loc 1 101 0
+  11                             	.LVL0:
+ 102:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #if !defined(CONFIG_OCIRQ_STATIC_CFG)
+ 103:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	IRQ_Callback = callback;
+  12                             		.loc 1 103 0
+  13 0000 FB E2 00 00 00 00       		mov.L	#_IRQ_Callback, r14
+  14 0006 E3 E1                   		mov.L	r1, [r14]
+ 104:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #endif
+ 105:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #if defined(ZC_IO_MODULE_MAP_SIZE)
+ 106:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c ****     OCDIO_SetIOMapPinDirValueSync((IO_ModuleIOMapType*)&ZC_IO_MODULE_MAP_NAME[0], 0, 1);
+ 107:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #endif /* defined(ZC_IO_MODULE_MAP_SIZE) */
+ 108:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	
+ 109:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	IRQ_Init(IRQ_ZC_ID);
+  15                             		.loc 1 109 0
+  16 0008 66 01                   		mov	#0, r1
+  17                             	.LVL1:
+  18 000a 05 00 00 00             		bsr	_IRQ_Init
+  19                             	.LVL2:
+ 110:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 111:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #if (DIO_DIGITAL_FILTER_IS_AVAILABLE == TRUE) && defined(ZC_PIN_IDX) && defined(DIGITAL_FILTER_CLOC
+ 112:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	OCDIO_SetIODigitalFilterPinSync(ZC_PIN_IDX);
+  20                             		.loc 1 112 0
+  21 000e 75 41 1B                		mov	#27, r1
+  22 0011 05 00 00 00             		bsr	_OCDIO_SetIODigitalFilterPinSync
+  23                             	.LVL3:
+ 113:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	OCDIO_SetIODigitalFilterFrequencySync(ZC_PIN_IDX, DIGITAL_FILTER_CLOCK_IRQ);
+  24                             		.loc 1 113 0
+  25 0015 66 12                   		mov	#1, r2
+  26 0017 75 41 1B                		mov	#27, r1
+  27 001a 05 00 00 00             		bsr	_OCDIO_SetIODigitalFilterFrequencySync
+  28                             	.LVL4:
+ 114:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #endif
+ 115:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 116:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** }
+  29                             		.loc 1 116 0
+  30 001e 66 01                   		mov.L	#0, r1
+  31 0020 02                      		rts
+  32                             	.LFE0:
+  34                             		.section	.text.OCIRQ_SetEdgeSync,"ax",@progbits
+  35                             		.global	_OCIRQ_SetEdgeSync
+  37                             	_OCIRQ_SetEdgeSync:
+  38                             	.LFB1:
+ 117:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /**
+ 118:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** This function sets the edge for IRQ interrupt.
+ 119:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 120:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \param  [in]	edge possibles values are:
+ 121:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \li IRQ_ON_NEGATIVE_EDGE
+ 122:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \li IRQ_ON_POSITIVE_EDGE
+ 123:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 124:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \return 	IO_ErrorType
+ 125:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \retval		IO_E_OK
+ 126:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 127:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 128:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** */
+ 129:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 130:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** IO_ErrorType OCIRQ_SetEdgeSync(bool_t edge)
+ 131:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** {
+  39                             		.loc 1 131 0
+  40                             	.LVL5:
+ 132:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	IRQ_SetEdge(edge, IRQ_ZC_ID);
+  41                             		.loc 1 132 0
+  42 0000 66 02                   		mov	#0, r2
+  43 0002 05 00 00 00             		bsr	_IRQ_SetEdge
+  44                             	.LVL6:
+ 133:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 134:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** }
+  45                             		.loc 1 134 0
+  46 0006 66 01                   		mov.L	#0, r1
+  47 0008 02                      		rts
+  48                             	.LFE1:
+  50                             		.section	.text.OCIRQ_IntrptEnableSync,"ax",@progbits
+  51                             		.global	_OCIRQ_IntrptEnableSync
+  53                             	_OCIRQ_IntrptEnableSync:
+  54                             	.LFB2:
+ 135:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /**
+ 136:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** This function Enables/Disables IRQ interrupt.
+ 137:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 138:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \param  [in]	enable possibles values are:
+ 139:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \li TRUE enable
+ 140:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \li FALSE disable
+ 141:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 142:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \return 	IO_ErrorType
+ 143:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \retval		IO_E_OK
+ 144:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 145:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 146:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** */
+ 147:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 148:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** IO_ErrorType OCIRQ_IntrptEnableSync(bool_t enable)
+ 149:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** {
+  55                             		.loc 1 149 0
+  56                             	.LVL7:
+ 150:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	IRQ_IntEnable(enable, IRQ_ZC_ID);
+  57                             		.loc 1 150 0
+  58 0000 66 02                   		mov	#0, r2
+  59 0002 05 00 00 00             		bsr	_IRQ_IntEnable
+  60                             	.LVL8:
+ 151:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 152:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** }
+  61                             		.loc 1 152 0
+  62 0006 66 01                   		mov.L	#0, r1
+  63 0008 02                      		rts
+  64                             	.LFE2:
+  66                             		.section	.text.OCIRQ_GetEdgeSync,"ax",@progbits
+  67                             		.global	_OCIRQ_GetEdgeSync
+  69                             	_OCIRQ_GetEdgeSync:
+  70                             	.LFB3:
+ 153:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /**
+ 154:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** This function returns the edge selected for IRQ interrupt.
+ 155:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 156:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \return 	bool_t
+ 157:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 158:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \retval		IRQ_ON_NEGATIVE_EDGE
+ 159:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \retval		IRQ_ON_POSITIVE_EDGE
+ 160:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 161:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 162:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** */
+ 163:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 164:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** bool_t OCIRQ_GetEdgeSync(void)
+ 165:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** {
+  71                             		.loc 1 165 0
+ 166:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	return (bool_t)IRQ_GetEdge(IRQ_ZC_ID);
+  72                             		.loc 1 166 0
+  73 0000 66 01                   		mov	#0, r1
+  74 0002 04 00 00 00             		bra	_IRQ_GetEdge
+  75                             	.LVL9:
+  76                             	.LFE3:
+  78                             		.section	.text.OCIRQ_ChangeEdgeSync,"ax",@progbits
+  79                             		.global	_OCIRQ_ChangeEdgeSync
+  81                             	_OCIRQ_ChangeEdgeSync:
+  82                             	.LFB4:
+ 167:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** }
+ 168:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 169:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /**
+ 170:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** This function changes synchronization edge for IRQ interrupt.
+ 171:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 172:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \param  [in] irqEdgeSync    current sync. edge
+ 173:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 174:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 175:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** */
+ 176:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** void OCIRQ_ChangeEdgeSync(bool_t irqEdgeSync)
+ 177:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** {
+  83                             		.loc 1 177 0
+  84                             	.LVL10:
+ 178:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	if(IRQ_ON_POSITIVE_EDGE == irqEdgeSync)
+  85                             		.loc 1 178 0
+  86 0000 61 11                   		cmp	#1, r1
+  87 0002 21 06                   		bne	.L6
+ 179:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	{
+ 180:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		(void)OCIRQ_SetEdgeSync(IRQ_ON_NEGATIVE_EDGE);
+  88                             		.loc 1 180 0
+  89 0004 66 01                   		mov.L	#0, r1
+  90                             	.LVL11:
+  91 0006 2E 04                   		bra	.L7
+  92                             	.LVL12:
+  93                             	.L6:
+ 181:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	}
+ 182:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	else
+ 183:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	{
+ 184:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		(void)OCIRQ_SetEdgeSync(IRQ_ON_POSITIVE_EDGE);
+  94                             		.loc 1 184 0
+  95 0008 66 11                   		mov.L	#1, r1
+  96                             	.LVL13:
+  97                             		.balign 2,3,3
+  98                             	.L7:
+  99 000a 04 00 00 00             		bra	_OCIRQ_SetEdgeSync
+ 100                             	.LVL14:
+ 101                             	.LFE4:
+ 103                             		.section	.text.OCIRQ_DeInitSync,"ax",@progbits
+ 104                             		.global	_OCIRQ_DeInitSync
+ 106                             	_OCIRQ_DeInitSync:
+ 107                             	.LFB5:
+ 185:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	}
+ 186:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** }
+ 187:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 188:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /**
+ 189:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** This function deinitialises the IRQ driver and
+ 190:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \n sets involved registers back to their controller default configuration.
+ 191:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 192:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 193:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** */
+ 194:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** IO_ErrorType OCIRQ_DeInitSync(void)
+ 195:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** {
+ 108                             		.loc 1 195 0
+ 196:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	IRQ_DeInit(IRQ_ZC_ID);
+ 109                             		.loc 1 196 0
+ 110 0000 66 01                   		mov	#0, r1
+ 111 0002 05 00 00 00             		bsr	_IRQ_DeInit
+ 112                             	.LVL15:
+ 197:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #if !defined(CONFIG_OCIRQ_STATIC_CFG)
+ 198:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	IRQ_Callback=(Comm_Notification)NULL;
+ 113                             		.loc 1 198 0
+ 114 0006 FB E2 00 00 00 00       		mov.L	#_IRQ_Callback, r14
+ 115 000c F8 E6 00                		mov.L	#0, [r14]
+ 199:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #endif
+ 200:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 201:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** }
+ 116                             		.loc 1 201 0
+ 117 000f 66 01                   		mov.L	#0, r1
+ 118 0011 02                      		rts
+ 119                             	.LFE5:
+ 121                             		.section	.text.IRQ_ISR,"ax",@progbits
+ 122                             		.global	_IRQ_ISR
+ 124                             	_IRQ_ISR:
+ 125                             	.LFB6:
+ 202:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 203:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /**
+ 204:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** ISR of IRQ. This function calls the callback function defined by the user.
+ 205:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \n It checks first if IRQ is valid.
+ 206:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 207:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \note		This function must be called inside interrupt vector
+ 208:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 209:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 210:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** */
+ 211:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 212:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** void IRQ_ISR(void)
+ 213:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** {
+ 126                             		.loc 1 213 0
+ 127 0000 6E 7B                   		pushm	r7-r11
+ 128                             	.LCFI0:
+ 214:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	bool_t irqValidation;
+ 215:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	bool_t irqEdgeSync;
+ 216:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 217:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	IRQ_MONITOR_ENTER();
+ 129                             		.loc 1 217 0
+ 130 0002 05 00 00 00             		bsr	_LIB_IRQMonitor_Enter
+ 131                             	.LVL16:
+ 218:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 219:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	/* Get IRQ Sync Edge */
+ 220:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	irqEdgeSync = OCIRQ_GetEdgeSync();
+ 132                             		.loc 1 220 0
+ 133 0006 05 00 00 00             		bsr	_OCIRQ_GetEdgeSync
+ 134                             	.LVL17:
+ 135 000a EF 17                   		mov.L	r1, r7
+ 136                             	.LVL18:
+ 137 000c 66 5B                   		mov	#5, r11
+ 221:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 222:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	/* Validate Interrupt */
+ 223:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	irqValidation = IRQ_IsValid(irqEdgeSync);
+ 224:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	/* Calls the user callback */
+ 225:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	if( IRQ_Callback ){
+ 226:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		(void)(IRQ_Callback)((IO_NotificationType)irqEdgeSync, (IO_ChannelType)0, (IO_ErrorType)irqValida
+ 227:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	}
+ 228:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	/* Acknowledges interrupt request events */
+ 229:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	IRQ_Acknowledge(IRQ_ZC_ID);
+ 230:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 231:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	IRQ_MONITOR_EXIT();
+ 232:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 233:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** }
+ 234:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 235:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /* Local Function */
+ 236:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 237:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 238:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /**
+ 239:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** This function checks if interrupt is valid.
+ 240:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 241:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \param  [in]    edge syncronization edge valid values are:
+ 242:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \li             IRQ_ON_NEGATIVE_EDGE
+ 243:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \li             IRQ_ON_POSITIVE_EDGE
+ 244:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 245:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \return 	bool_t
+ 246:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 247:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \retval		TRUE    valid IRQ interrupt
+ 248:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \retval		FALSE   spurious IRQ interrupt
+ 249:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** */
+ 250:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #if defined(ZC_IO_MODULE_MAP_SIZE)
+ 251:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 252:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** static bool_t IRQ_IsValid(bool_t edge)
+ 253:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** {
+ 254:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #if (IRQ_FILTER > 0)
+ 255:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	{
+ 256:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 257:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		uint8_t filter = IRQ_FILTER;
+ 258:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		uint8_t cntr = 0;
+ 259:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		/* read more time to ensure that the signal level is correct*/
+ 260:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		do
+ 261:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		{   /*lint -e960 no side effects on right hand */
+ 262:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 			if ( ((IRQ_ON_POSITIVE_EDGE == edge) && 
+ 263:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 			        OCDIO_GetIOMapPinValueSync((IO_ModuleIOMapType*)&ZC_IO_MODULE_MAP_NAME[0], 0)) 
+ 264:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 			||
+ 265:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 			((IRQ_ON_NEGATIVE_EDGE == edge) && 
+ 266:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 			    (!OCDIO_GetIOMapPinValueSync((IO_ModuleIOMapType*)&ZC_IO_MODULE_MAP_NAME[0], 0))) )
+ 267:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 				/*lint +e960 no side effects on right hand */
+ 268:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 			{
+ 269:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 				cntr++;
+ 270:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 			}
+ 271:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 			filter--;
+ 272:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		}
+ 273:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		while(filter > 0);
+ 274:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 275:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		if ( IRQ_FILTER == cntr )
+ 276:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		{
+ 277:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 			return TRUE;
+ 278:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		}
+ 279:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		else
+ 280:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		{
+ 281:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 			return FALSE;
+ 282:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		}
+ 283:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 284:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	}
+ 285:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #else
+ 286:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	return TRUE;
+ 287:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #endif  /* #if (IRQ_FILTER > 0) */
+ 288:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 289:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** }
+ 290:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 291:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 292:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #else /* defined(ZC_IO_MODULE_MAP_SIZE) */
+ 293:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 294:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** /**
+ 295:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** This function checks if interrupt is valid.
+ 296:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 297:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \param  [in]    edge syncronization edge valid values are:
+ 298:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \li             IRQ_ON_NEGATIVE_EDGE
+ 299:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \li             IRQ_ON_POSITIVE_EDGE
+ 300:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 301:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \return 	bool_t
+ 302:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 303:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \retval		TRUE    valid IRQ interrupt
+ 304:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** \retval		FALSE   spurious IRQ interrupt
+ 305:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** */
+ 306:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 307:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** static bool_t IRQ_IsValid(bool_t edge)
+ 308:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** {
+ 309:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** #if (IRQ_FILTER > 0)
+ 310:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	{
+ 311:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 312:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		uint8_t filter = IRQ_FILTER;
+ 313:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		uint8_t cntr = 0;
+ 138                             		.loc 1 313 0
+ 139 000e 66 0A                   		mov	#0, r10
+ 140                             	.LVL19:
+ 141                             		.balign 2,3,1
+ 142                             	.L13:
+ 143                             	.LBB5:
+ 144                             	.LBB6:
+ 314:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		do
+ 315:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		{   /*lint -e960 no side effects on right hand */
+ 316:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 			if ( ((IRQ_ON_POSITIVE_EDGE == edge) && IRQ_pinIsHigh(IRQ_ZC_ID)) ||
+ 145                             		.loc 1 316 0
+ 146 0010 61 17                   		cmp	#1, r7
+ 147 0012 21 10                   		bne	.L10
+ 148 0014 66 01                   		mov	#0, r1
+ 149 0016 05 00 00 00             		bsr	_IRQ_pinIsHigh
+ 150                             	.LVL20:
+ 151 001a 61 01                   		cmp	#0, r1
+ 152 001c 20 14                   		beq	.L11
+ 153                             		.balign 2,3,1
+ 154                             	.L12:
+ 317:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 			     ((IRQ_ON_NEGATIVE_EDGE == edge) && IRQ_pinIsLow( IRQ_ZC_ID)) )
+ 318:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 				/*lint +e960 no side effects on right hand */
+ 319:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 			{
+ 320:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 				cntr++;
+ 155                             		.loc 1 320 0
+ 156 001e 62 1A                   		add	#1, r10
+ 157                             	.LVL21:
+ 158 0020 2E 10                   		bra	.L11
+ 159                             	.L10:
+ 316:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 			if ( ((IRQ_ON_POSITIVE_EDGE == edge) && IRQ_pinIsHigh(IRQ_ZC_ID)) ||
+ 160                             		.loc 1 316 0
+ 161 0022 61 07                   		cmp	#0, r7
+ 162 0024 21 0C                   		bne	.L11
+ 317:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 			     ((IRQ_ON_NEGATIVE_EDGE == edge) && IRQ_pinIsLow( IRQ_ZC_ID)) )
+ 163                             		.loc 1 317 0
+ 164 0026 CF 71                   		mov.B	r7, r1
+ 165 0028 05 00 00 00             		bsr	_IRQ_pinIsHigh
+ 166                             	.LVL22:
+ 167 002c 61 01                   		cmp	#0, r1
+ 168 002e 20 F0                   		beq	.L12
+ 169                             		.balign 2,3,1
+ 170                             	.L11:
+ 171 0030 60 1B                   		sub	#1, r11
+ 321:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 			}
+ 322:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 			filter--;
+ 323:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		}
+ 324:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		while(filter > 0);
+ 172                             		.loc 1 324 0
+ 173 0032 5B B2                   		movu.B	r11, r2
+ 174 0034 61 02                   		cmp	#0, r2
+ 175 0036 21 DA                   		bne	.L13
+ 325:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 
+ 326:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		if ( IRQ_FILTER == cntr )
+ 176                             		.loc 1 326 0
+ 177 0038 5B AA                   		movu.B	r10, r10
+ 178 003a 61 5A                   		cmp	#5, r10
+ 179                             	.LBE6:
+ 180                             	.LBE5:
+ 225:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	if( IRQ_Callback ){
+ 181                             		.loc 1 225 0
+ 182 003c FB A2 00 00 00 00       		mov.L	#_IRQ_Callback, r10
+ 183                             	.LVL23:
+ 184 0042 EC AB                   		mov.L	[r10], r11
+ 185                             	.LBB8:
+ 186                             	.LBB7:
+ 187                             		.loc 1 326 0
+ 188 0044 FC DB 30                		sceq.L	r3
+ 189                             	.LBE7:
+ 190                             	.LBE8:
+ 225:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	if( IRQ_Callback ){
+ 191                             		.loc 1 225 0
+ 192 0047 61 0B                   		cmp	#0, r11
+ 193 0049 20 07                   		beq	.L14
+ 226:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 		(void)(IRQ_Callback)((IO_NotificationType)irqEdgeSync, (IO_ChannelType)0, (IO_ErrorType)irqValida
+ 194                             		.loc 1 226 0
+ 195 004b CF 71                   		mov.B	r7, r1
+ 196 004d 7F 1B                   		jsr	r11
+ 197                             	.LVL24:
+ 198 004f 03                      		.balign 2,3,1
+ 199                             	.L14:
+ 229:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	IRQ_Acknowledge(IRQ_ZC_ID);
+ 200                             		.loc 1 229 0
+ 201 0050 66 01                   		mov	#0, r1
+ 202 0052 05 00 00 00             		bsr	_IRQ_Acknowledge
+ 203                             	.LVL25:
+ 233:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** }
+ 204                             		.loc 1 233 0
+ 205 0056 6F 7B                   		popm	r7-r11
+ 206                             	.LVL26:
+ 231:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCIRQ\OCIRQ_drv.c **** 	IRQ_MONITOR_EXIT();
+ 207                             		.loc 1 231 0
+ 208 0058 04 00 00 00             		bra	_LIB_IRQMonitor_Exit
+ 209                             	.LVL27:
+ 210                             	.LFE6:
+ 212                             		.section	.bss.IRQ_Callback,"aw",@nobits
+ 213                             		.balign 4
+ 216                             	_IRQ_Callback:
+ 217 0000 00 00 00 00             		.zero	4
+ 306                             	.Letext0:
+ 307                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 308                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers/IO_driver.h"
+ 309                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCDIO/OCDIO_drv.h"
+ 310                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_hal.h"
+ 311                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_SecurityCheck/LIB_TaskMonitori

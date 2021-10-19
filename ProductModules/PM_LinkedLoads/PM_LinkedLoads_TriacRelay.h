@@ -1,0 +1,56 @@
+/*
+Copyright (c) 2004-2005, Indesit Company, EDT.
+Tutti i diritti sono riservati. All rights reserved.
+*/
+
+/**
+\par		PM_LinkedLoads_TriacRelay.h
+\n			header file of PM_TriacRelayMultiExp.h
+\n
+\file		PM_LinkedLoads_TriacRelay.h
+\ingroup	LINKEDLOADS_TR
+\date		Oct 4, 2010 
+\version	00.00.67 
+\author		Roberto Fioravanti
+\n
+\n
+\par\b	History:
+\n
+\n 		00.00.67
+\n		04/10/2010
+\n		Roberto Fioravanti 
+\n		changes 
+\n 		- creation
+
+*/
+
+#ifndef __PM_LINKEDLOADS_TRIACRELAY_H
+#define __PM_LINKEDLOADS_TRIACRELAY_H
+
+/* ********** */
+/* Includes */
+/* ********* */
+#include "PM_LinkedLoads_TriacRelayExp.h"
+
+/* ****************** */
+/* Defines and Macros */
+/* ****************** */
+
+
+/* *************************** */
+/* Typedef, Structs and Unions */
+/* *************************** */
+
+/* ****************** */
+/* Exported variables */
+/* ****************** */
+
+/* ******************* */
+/* Function prototypes */
+/* ******************* */
+
+#endif /* __PM_LINKEDLOADS_TRIACRELAY_H */
+
+/* *********** */
+/* End of file */
+/* *********** */

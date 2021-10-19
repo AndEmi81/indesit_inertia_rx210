@@ -1,0 +1,1579 @@
+   1                             		.file	"OCSPI_drv.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.SPI_SendChar,"ax",@progbits
+   5                             		.global	_SPI_SendChar
+   7                             	_SPI_SendChar:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI/OCSPI_drv.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** Copyright (c) 2010-2011, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \n
+   8:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \Par		    OCSPI - On Chip SPI Source file
+   9:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \n			    Contains implementation of the OCSPI driver
+  10:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \n
+  11:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \file		    OCSPI_drv.c
+  12:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \ingroup	  OCSPI
+  13:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \date		    18/07/2011
+  14:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \version	  00.00.01
+  15:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \author		  A.Ricci, F.Tarabelloni
+  16:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \n
+  17:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \n
+  18:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \Par\b	History:
+  19:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \n 
+  20:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \n 		        00.00.01
+  21:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \n          	18/07/2011
+  22:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \n          	A.Ricci, F.Tarabelloni
+  23:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \n            - Creation on the base of existing files for MC9S08
+  24:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** \n
+  25:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** */
+  26:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+  27:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+  28:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* Includes                    */
+  29:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+  30:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #include "OCSPI_drv.h"
+  31:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #include "LIB_TaskMonitoring.h"
+  32:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+  33:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+  34:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* Defines and Macros          */
+  35:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+  36:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_ClkEnable()            SPI_ClkEnable(1) 
+  37:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_ResetStatus()          SPI_ResetStatus(1)
+  38:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_Enable()               SPI_Enable(1)
+  39:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_IntEnable()            SPI_IntEnable(1)
+  40:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_SetBaudRate(b)         SPI_SetBaudRate(1, b)
+  41:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_MasterEnable()         SPI_MasterEnable(1)
+  42:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_SetClockPolarity(pol)  SPI_SetClockPolarity(1, pol)
+  43:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_SetClockPhase(pha)     SPI_SetClockPhase(1, pha)
+  44:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_SetShiftDir(dir)       SPI_SetShiftDir(1, dir)
+  45:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_GetStatus()            SPI_GetStatus(1)
+  46:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_ReadData()             SPI_ReadData(1)
+  47:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_WriteData(chr)         SPI_WriteData(1, chr)
+  48:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+  49:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define SPI_RX_BUF_SIZE    SPI1_RX_BUF_SIZE_CFG
+  50:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define SPI_TX_BUF_SIZE    SPI1_TX_BUF_SIZE_CFG
+  51:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+  52:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* SPI State value list */
+  53:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define OVERRUN_ERR      0x01          /* Overrun error flag bit   */
+  54:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define CHAR_IN_RX       0x08          /* Char is in RX buffer     */
+  55:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define FULL_TX          0x10          /* Full transmit buffer     */
+  56:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define RUNINT_FROM_TX   0x20          /* Interrupt is in progress */
+  57:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define FULL_RX          0x40          /* Full receive buffer      */
+  58:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+  59:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define ON_ERROR         0x01
+  60:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define ON_FULL_RX       0x02
+  61:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define ON_RX_CHAR       0x04
+  62:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define ON_FREE_TX       0x08
+  63:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #define ON_TX_CHAR       0x10
+  64:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+  65:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+  66:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* Typedef, Structs and Unions */
+  67:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+  68:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+  69:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+  70:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* Variables                   */
+  71:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+  72:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** typedef struct {
+  73:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Callback function configuration structure. */
+  74:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** gSPICfg_t Cfg;
+  75:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /** \brief State of SPI operations. */
+  76:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** uint8_t State;
+  77:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Error during SPI operations. */
+  78:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** uint8_t Error;
+  79:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Decoded error used to export the occurred error. */
+  80:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** gSPIError_t StructError;
+  81:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+  82:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Input buffer for SPI communication. */
+  83:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** gSPIData_t RxBuffer[SPI_RX_BUF_SIZE];
+  84:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Index for reading from input buffer. */
+  85:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** gSPIDataLen_t RxIndxR;
+  86:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Index for writing to input buffer. */
+  87:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** gSPIDataLen_t RxIndxW;
+  88:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Length of data in Rx buffer. */
+  89:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** gSPIDataLen_t RxBufLen;
+  90:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+  91:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Output buffer for SPI communication. */
+  92:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** gSPIData_t TxBuffer[SPI_TX_BUF_SIZE];
+  93:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Index for reading from output buffer. */
+  94:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** gSPIDataLen_t TxIndxR;
+  95:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Index for writing to output buffer. */
+  96:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** gSPIDataLen_t TxIndxW;
+  97:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Length of data in Tx buffer. */
+  98:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** gSPIDataLen_t TxBufLen;
+  99:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** } SpiDrv_t;
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** static SpiDrv_t Spi0;
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* Function prototypes         */
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** void OCSPI_InitHwSync(void);
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnError(void);
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnFreeTxBuf(void);
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnFullRxBuf(void);
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnRxChar(void);
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnTxChar(void);
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** void SPI_ISR1(void);
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* Function bodies             */
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_SendChar                                     |
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | Send a char from SPI bus                         |
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_SendChar( gSPIData_t chr )
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** {
+  10                             		.loc 1 124 0
+  11                             	.LVL0:
+  12 0000 6E 7A                   		pushm	r7-r10
+  13                             	.LCFI0:
+  14 0002 CF 1A                   		mov.B	r1, r10
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   EnterCriticalSection();                             /* Save the PS register */
+  15                             		.loc 1 125 0
+  16 0004 05 00 00 00             		bsr	_OS_DisableInterrupt
+  17                             	.LVL1:
+  18 0008 FB 42 00 00 00 00       		mov.L	#_OS_Global, r4
+  19 000e CD 4E 01                		mov.B	1[r4], r14
+  20 0011 71 E7 01                		add	#1, r14, r7
+  21 0014 80 4F                   		mov.B	r7, 1[r4]
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   if (Spi0.TxBufLen == SPI_TX_BUF_SIZE) {       /* Is number of chars in buffer the same as the siz
+  22                             		.loc 1 127 0
+  23 0016 FB 72 00 00 00 00       		mov.L	#_Spi0, r7
+  24 001c CD 73 54                		mov.B	84[r7], r3
+  25 001f 5B 32                   		movu.B	r3, r2
+  26 0021 75 52 20                		cmp	#32, r2
+  27 0024 21 11                   		bne	.L2
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     ExitCriticalSection();                            /* Restore the PS register */
+  28                             		.loc 1 128 0
+  29 0026 C7 4E 01                		mov.B	r14, 1[r4]
+  30 0029 76 2E FF 00             		and #0xff, r14
+  31 002d 21 5A                   		bne	.L5
+  32                             		.loc 1 128 0 is_stmt 0 discriminator 1
+  33 002f 05 00 00 00             		bsr	_OS_EnableInterrupt
+  34                             	.LVL2:
+  35 0033 2E 54                   		bra	.L5
+  36                             	.L2:
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     return ERR_TXFULL; /** \todo IO_E_TXFULL is better (to add) */
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxBufLen++;                              /* Increase number of bytes in the transmit buffer 
+  37                             		.loc 1 132 0 is_stmt 1
+  38 0035 62 13                   		add	#1, r3
+  39 0037 C7 73 54                		mov.B	r3, 84[r7]
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxBuffer[Spi0.TxIndxW] = chr;             /* Store char to buffer */
+  40                             		.loc 1 133 0
+  41 003a 59 7E 53                		movu.B	83[r7], r14
+  42 003d 70 E4 30 00 00 00       		add	#_Spi0+48, r14, r4
+  43 0043 C7 4A 02                		mov.B	r10, 2[r4]
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   /*MS gSpiTxIndxW = (uint8_t)((gSpiTxIndxW + 1) & (SPI_TX_BUF_SIZE - 1)); */ /* Update index */
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxIndxW = (Spi0.TxIndxW + 1) % (SPI_TX_BUF_SIZE); /* Update index */
+  44                             		.loc 1 136 0
+  45 0046 62 1E                   		add	#1, r14
+  46 0048 75 2E 1F                		and #31, r14
+  47 004b C7 7E 53                		mov.B	r14, 83[r7]
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   if(!(Spi0.State & RUNINT_FROM_TX))
+  48                             		.loc 1 138 0
+  49 004e CD 7E 0C                		mov.B 12[r7], r14
+  50 0051 75 2E 20                		and #32, r14
+  51 0054 21 18                   		bne	.L4
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   {          /* Transmition running ? */
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     SPI1_WriteData( Spi0.TxBuffer[Spi0.TxIndxR] ); /* Store char to transmitter register */
+  52                             		.loc 1 140 0
+  53 0056 59 7E 52                		movu.B	82[r7], r14
+  54 0059 70 EE 30 00 00 00       		add	#_Spi0+48, r14
+  55 005f 66 11                   		mov	#1, r1
+  56 0061 CD E2 02                		mov.B	2[r14], r2
+  57 0064 05 00 00 00             		bsr	_SPI_WriteData
+  58                             	.LVL3:
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.State |= RUNINT_FROM_TX;               /* Set RUNINT_FROM_TX flag */
+  59                             		.loc 1 141 0
+  60 0068 F1 75 0C                		bset #5, 12[r7].B
+  61 006b 03                      		.balign 2,3,5
+  62                             	.L4:
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   ExitCriticalSection();                              /* Restore the PS register */
+  63                             		.loc 1 143 0
+  64 006c FB E2 00 00 00 00       		mov.L	#_OS_Global, r14
+  65 0072 CD E7 01                		mov.B	1[r14], r7
+  66 0075 60 17                   		sub	#1, r7
+  67 0077 C7 E7 01                		mov.B	r7, 1[r14]
+  68 007a 5B 77                   		movu.B	r7, r7
+  69 007c 61 07                   		cmp	#0, r7
+  70 007e 21 0C                   		bne	.L6
+  71                             		.loc 1 143 0 is_stmt 0 discriminator 1
+  72 0080 05 00 00 00             		bsr	_OS_EnableInterrupt
+  73                             	.LVL4:
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   return IO_E_OK;                              /* OK */
+  74                             		.loc 1 144 0 is_stmt 1 discriminator 1
+  75 0084 CF 71                   		mov.B	r7, r1
+  76 0086 0E                      		bra	.L3
+  77                             	.L5:
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     return ERR_TXFULL; /** \todo IO_E_TXFULL is better (to add) */
+  78                             		.loc 1 129 0
+  79 0087 66 B1                   		mov	#11, r1
+  80 0089 0B                      		bra	.L3
+  81                             	.L6:
+  82                             		.loc 1 144 0
+  83 008a 66 01                   		mov	#0, r1
+  84                             		.balign 2,3,1
+  85                             	.L3:
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** }
+  86                             		.loc 1 145 0
+  87 008c 5B 11                   		movu.B	r1, r1
+  88 008e 3F 7A 04                		rtsd	#16, r7-r10
+  89                             	.LFE0:
+  91 0091 03                      		.section	.text.SPI_RecvChar,"ax",@progbits
+  92                             		.global	_SPI_RecvChar
+  94                             	_SPI_RecvChar:
+  95                             	.LFB1:
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_RecvChar                                     |
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | Receive a char from SPI bus                      |
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_RecvChar( gSPIData_t *pChr )
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** {
+  96                             		.loc 1 153 0
+  97                             	.LVL5:
+  98 0000 6E 7B                   		pushm	r7-r11
+  99                             	.LCFI1:
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   uint8_t tmpState;
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   if (Spi0.RxBufLen > 0) {                     /* Is number of received chars greater than 0? */
+ 100                             		.loc 1 156 0
+ 101 0002 FB 72 00 00 00 00       		mov.L	#_Spi0, r7
+ 102 0008 59 7E 31                		movu.B	49[r7], r14
+ 103 000b 61 0E                   		cmp	#0, r14
+ 104 000d 20 5A                   		beq	.L11
+ 105 000f EF 1A                   		mov.L	r1, r10
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     EnterCriticalSection();                          /* Save the PS register */
+ 106                             		.loc 1 157 0
+ 107 0011 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 108                             	.LVL6:
+ 109 0015 FB E2 00 00 00 00       		mov.L	#_OS_Global, r14
+ 110 001b CD E4 01                		mov.B	1[r14], r4
+ 111 001e 62 14                   		add	#1, r4
+ 112 0020 C7 E4 01                		mov.B	r4, 1[r14]
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.RxBufLen--;                           /* Decrease number of received chars */
+ 113                             		.loc 1 158 0
+ 114 0023 CD 74 31                		mov.B	49[r7], r4
+ 115 0026 60 14                   		sub	#1, r4
+ 116 0028 C7 74 31                		mov.B	r4, 49[r7]
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     *pChr = Spi0.RxBuffer[Spi0.RxIndxR];        /* Read the char */
+ 117                             		.loc 1 159 0
+ 118 002b 59 74 2F                		movu.B	47[r7], r4
+ 119 002e 70 44 0C 00 00 00       		add	#_Spi0+12, r4
+ 120 0034 C1 4A 03                		mov.B	3[r4], [r10]
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.RxIndxR = (uint8_t)((Spi0.RxIndxR + 1) & (SPI_RX_BUF_SIZE - 1)); /* Update index */
+ 121                             		.loc 1 160 0
+ 122 0037 CD 74 2F                		mov.B	47[r7], r4
+ 123 003a 62 14                   		add	#1, r4
+ 124 003c 75 24 1F                		and #31, r4
+ 125 003f C7 74 2F                		mov.B	r4, 47[r7]
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     tmpState = Spi0.State;                     /* Safe the flags */
+ 126                             		.loc 1 161 0
+ 127 0042 CD 7A 0C                		mov.B	12[r7], r10
+ 128                             	.LVL7:
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.State &= ~(OVERRUN_ERR | FULL_RX);    /* Clear flag "char in RX buffer" */
+ 129                             		.loc 1 162 0
+ 130 0045 EF A4                   		mov.L	r10, r4
+ 131 0047 75 24 BE                		and #0xffffffbe, r4
+ 132 004a 83 74                   		mov.B	r4, 12[r7]
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     ExitCriticalSection();                           /* Restore the PS register */
+ 133                             		.loc 1 163 0
+ 134 004c CD E7 01                		mov.B	1[r14], r7
+ 135 004f 60 17                   		sub	#1, r7
+ 136 0051 C7 E7 01                		mov.B	r7, 1[r14]
+ 137 0054 76 27 FF 00             		and #0xff, r7
+ 138 0058 1E                      		bne	.L10
+ 139                             		.loc 1 163 0 is_stmt 0 discriminator 1
+ 140 0059 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 141                             	.LVL8:
+ 142 005d 03                      		.balign 2,3,1
+ 143                             	.L10:
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   else {
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     return ERR_RXEMPTY; /** \todo IO_E_RXEMPTY is better (to add) */
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   if ((tmpState & (OVERRUN_ERR | FULL_RX)) != 0) { /* Has the overrun occurred? */
+ 144                             		.loc 1 168 0 is_stmt 1
+ 145 005e EF A1                   		mov.L	r10, r1
+ 146 0060 75 21 41                		and	#0x41, r1
+ 147 0063 17                      		beq	.L9
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     return ERR_OVERRUN; /** \todo IO_E_OVERRUN is better (to add) */
+ 148                             		.loc 1 169 0
+ 149 0064 66 D1                   		mov	#13, r1
+ 150 0066 0C                      		bra	.L9
+ 151                             	.LVL9:
+ 152                             	.L11:
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     return ERR_RXEMPTY; /** \todo IO_E_RXEMPTY is better (to add) */
+ 153                             		.loc 1 166 0
+ 154 0067 66 A1                   		mov	#10, r1
+ 155                             	.LVL10:
+ 156 0069 03                      		.balign 2,3,2
+ 157                             	.L9:
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   } 
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   else {
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     return IO_E_OK;
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** }
+ 158                             		.loc 1 174 0
+ 159 006a 75 21 4F                		and #0x4f, r1
+ 160 006d 3F 7B 05                		rtsd	#20, r7-r11
+ 161                             	.LFE1:
+ 163                             		.section	.text.SPI_SendBlock,"ax",@progbits
+ 164                             		.global	_SPI_SendBlock
+ 166                             	_SPI_SendBlock:
+ 167                             	.LFB2:
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_SendBlock                                    |
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | Send a block of data from SPI bus                |
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_SendBlock( gSPIData_t *pData, uint16_t dataLen, uint16_t *pSnd )
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** {
+ 168                             		.loc 1 182 0
+ 169                             	.LVL11:
+ 170 0000 6E 7D                   		pushm	r7-r13
+ 171                             	.LCFI2:
+ 172 0002 EF 1A                   		mov.L	r1, r10
+ 173 0004 EF 3C                   		mov.L	r3, r12
+ 174                             	.LVL12:
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   IO_ErrorType result = IO_E_OK;
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   uint16_t i;
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   for (i=0; i<dataLen; i++) {
+ 175                             		.loc 1 185 0
+ 176 0006 EF 17                   		mov.L	r1, r7
+ 177 0008 5F 2D                   		movu.W	r2, r13
+ 178 000a 2E 10                   		bra	.L15
+ 179                             	.LVL13:
+ 180                             	.L17:
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     result = SPI_SendChar(*(pData + i));  /* Send one byte */
+ 181                             		.loc 1 186 0
+ 182 000c FD 28 71                		mov.B	[r7+], r1
+ 183 000f 05 00 00 00             		bsr	_SPI_SendChar
+ 184                             	.LVL14:
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     if (result != IO_E_OK) {
+ 185                             		.loc 1 187 0
+ 186 0013 5B 1E                   		movu.B	r1, r14
+ 187 0015 61 0E                   		cmp	#0, r14
+ 188 0017 21 0F                   		bne	.L16
+ 189                             	.LVL15:
+ 190 0019 03                      		.balign 2,3,2
+ 191                             	.L15:
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_SendBlock( gSPIData_t *pData, uint16_t dataLen, uint16_t *pSnd )
+ 192                             		.loc 1 181 0 discriminator 1
+ 193 001a FF 0B A7                		sub	r10, r7, r11
+ 194                             	.LVL16:
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   for (i=0; i<dataLen; i++) {
+ 195                             		.loc 1 185 0 discriminator 1
+ 196 001d 5F BE                   		movu.W	r11, r14
+ 197 001f 47 DE                   		cmp	r13, r14
+ 198 0021 23 EB                   		bltu	.L17
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   for (i=0; i<dataLen; i++) {
+ 199                             		.loc 1 185 0 is_stmt 0
+ 200 0023 66 01                   		mov	#0, r1
+ 201                             	.LVL17:
+ 202 0025 03                      		.balign 2,3,1
+ 203                             	.L16:
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****       break;
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     }
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   *pSnd = i;                          /* Return number of sent bytes */
+ 204                             		.loc 1 191 0 is_stmt 1
+ 205 0026 D3 CB                   		mov.W	r11, [r12]
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   return result;                      /* Return error code */
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** }
+ 206                             		.loc 1 193 0
+ 207 0028 5B 11                   		movu.B	r1, r1
+ 208 002a 3F 7D 07                		rtsd	#28, r7-r13
+ 209                             	.LFE2:
+ 211 002d 03                      		.section	.text.SPI_RecvBlock,"ax",@progbits
+ 212                             		.global	_SPI_RecvBlock
+ 214                             	_SPI_RecvBlock:
+ 215                             	.LFB3:
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /**
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  * SPI_RecvBlock                                    |
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  * Receive a block of data from SPI bus             |
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  \param  [in]	pData 	- pointer to buffer
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  \param  [in]	dataLen - number of bytes to get from buffer
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  \param  [in]	pRcv 	- number of bytes to get from buffer
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  \return 	IO_E_OK, ERR_RXEMPTY, ERR_OVERRUN
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  */
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_RecvBlock( gSPIData_t *pData, uint16_t dataLen, uint16_t *pRcv )
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** {
+ 216                             		.loc 1 205 0
+ 217                             	.LVL18:
+ 218 0000 6E 7D                   		pushm	r7-r13
+ 219                             	.LCFI3:
+ 220 0002 EF 1D                   		mov.L	r1, r13
+ 221 0004 EF 3B                   		mov.L	r3, r11
+ 222                             	.LVL19:
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   IO_ErrorType mResult = IO_E_OK;    /* Most serious error */
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   IO_ErrorType result;
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   uint16_t i = 0;
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   while (i < dataLen) {
+ 223                             		.loc 1 210 0
+ 224 0006 66 07                   		mov.L	#0, r7
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   IO_ErrorType mResult = IO_E_OK;    /* Most serious error */
+ 225                             		.loc 1 206 0
+ 226 0008 CF 7A                   		mov.B	r7, r10
+ 227                             		.loc 1 210 0
+ 228 000a 5F 29                   		movu.W	r2, r9
+ 229 000c 2E 1C                   		bra	.L20
+ 230                             	.LVL20:
+ 231                             	.L24:
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     result = SPI_RecvChar(pData++);  /* Retrieve byte from Rx buffer */
+ 232                             		.loc 1 211 0
+ 233 000e 05 00 00 00             		bsr	_SPI_RecvChar
+ 234                             	.LVL21:
+ 235 0012 5B A3                   		movu.B	r10, r3
+ 236 0014 EF 1E                   		mov.L	r1, r14
+ 237 0016 47 13                   		cmp	r1, r3
+ 238 0018 22 04                   		bgeu	.L21
+ 239 001a CF 1A                   		mov.B	r1, r10
+ 240                             	.LVL22:
+ 241                             		.balign 2,3,1
+ 242                             	.L21:
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     if (result > mResult) {          /* Is last error most serious than through error state? */
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****       mResult = result;              /* If yes then prepare error value to return */
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     }
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     if ((result != IO_E_OK) && (result != ERR_OVERRUN)) {
+ 243                             		.loc 1 215 0
+ 244 001c 61 0E                   		cmp	#0, r14
+ 245 001e 10                      		beq	.L22
+ 246                             		.loc 1 215 0 is_stmt 0 discriminator 1
+ 247 001f 61 DE                   		cmp	#13, r14
+ 248 0021 15                      		beq	.L22
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****       *pRcv = i;                      /* Return number of received bytes */
+ 249                             		.loc 1 216 0 is_stmt 1
+ 250 0022 D3 BC                   		mov.W	r12, [r11]
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****       return mResult;                 /* Return error code */
+ 251                             		.loc 1 217 0
+ 252 0024 2E 12                   		bra	.L23
+ 253                             	.L22:
+ 254                             	.LVL23:
+ 255 0026 62 17                   		add	#1, r7
+ 256                             	.LVL24:
+ 257                             		.balign 2,3,2
+ 258                             	.L20:
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_RecvBlock( gSPIData_t *pData, uint16_t dataLen, uint16_t *pRcv )
+ 259                             		.loc 1 204 0 discriminator 1
+ 260 0028 FF 21 7D                		add	r7, r13, r1
+ 261 002b DF 7C                   		mov.W	r7, r12
+ 262                             	.LVL25:
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   while (i < dataLen) {
+ 263                             		.loc 1 210 0 discriminator 1
+ 264 002d 5F 7E                   		movu.W	r7, r14
+ 265 002f 47 9E                   		cmp	r9, r14
+ 266 0031 23 DD                   		bltu	.L24
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     }
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     i++;
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   *pRcv = i;                          /* Return number of received bytes */
+ 267                             		.loc 1 221 0
+ 268 0033 D3 B7                   		mov.W	r7, [r11]
+ 269                             	.LVL26:
+ 270 0035 03                      		.balign 2,3,1
+ 271                             	.L23:
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   return mResult;                     /* Return error code */
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** }
+ 272                             		.loc 1 223 0
+ 273 0036 5B A1                   		movu.B	r10, r1
+ 274 0038 3F 7D 07                		rtsd	#28, r7-r13
+ 275                             	.LFE3:
+ 277 003b 03                      		.section	.text.SPI_ClearRxBuf,"ax",@progbits
+ 278                             		.global	_SPI_ClearRxBuf
+ 280                             	_SPI_ClearRxBuf:
+ 281                             	.LFB4:
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_ClearRxBuf                                   |
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | Clear the SPI Rx buffer                          |
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_ClearRxBuf( void )
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** {
+ 282                             		.loc 1 231 0
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   EnterCriticalSection();                        /* Save the PS register */
+ 283                             		.loc 1 232 0
+ 284 0000 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 285                             	.LVL27:
+ 286 0004 FB E2 00 00 00 00       		mov.L	#_OS_Global, r14
+ 287 000a 59 E4 01                		movu.B	1[r14], r4
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.RxBufLen = 0;                       /* Set number of bytes in the transmit buffer to 0 */
+ 288                             		.loc 1 233 0
+ 289 000d FB E2 00 00 00 00       		mov.L	#_Spi0, r14
+ 290 0013 F9 E4 31 00             		mov.B	#0, 49[r14]
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.RxIndxR = Spi0.RxIndxW = 0;          /* Reset indices */
+ 291                             		.loc 1 234 0
+ 292 0017 F9 E4 30 00             		mov.B	#0, 48[r14]
+ 293 001b F9 E4 2F 00             		mov.B	#0, 47[r14]
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.State &= ~(OVERRUN_ERR | FULL_RX);  /* Clear flags */
+ 294                             		.loc 1 235 0
+ 295 001f CD E3 0C                		mov.B	12[r14], r3
+ 296 0022 75 23 BE                		and #0xffffffbe, r3
+ 297 0025 C7 E3 0C                		mov.B	r3, 12[r14]
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   ExitCriticalSection();                         /* Restore the PS register */
+ 298                             		.loc 1 236 0
+ 299 0028 71 4E 00                		add	#0, r4, r14
+ 300 002b 1D                      		bne	.L33
+ 301                             		.loc 1 236 0 is_stmt 0 discriminator 1
+ 302 002c 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 303                             	.LVL28:
+ 304                             		.balign 2,3,1
+ 305                             	.L33:
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   return IO_E_OK;                         /* OK */
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** }
+ 306                             		.loc 1 238 0 is_stmt 1
+ 307 0030 66 01                   		mov.L	#0, r1
+ 308 0032 02                      		rts
+ 309                             	.LFE4:
+ 311 0033 03                      		.section	.text.SPI_ClearTxBuf,"ax",@progbits
+ 312                             		.global	_SPI_ClearTxBuf
+ 314                             	_SPI_ClearTxBuf:
+ 315                             	.LFB5:
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_ClearTxBuf                                   |
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | Clear the SPI Tx buffer                          |
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_ClearTxBuf( void )
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** {
+ 316                             		.loc 1 246 0
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   EnterCriticalSection();                        /* Save the PS register */
+ 317                             		.loc 1 247 0
+ 318 0000 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 319                             	.LVL29:
+ 320 0004 FB E2 00 00 00 00       		mov.L	#_OS_Global, r14
+ 321 000a 59 E4 01                		movu.B	1[r14], r4
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxBufLen = 0;                      /* Set number of bytes in the receive buffer to 0 */
+ 322                             		.loc 1 248 0
+ 323 000d FB E2 00 00 00 00       		mov.L	#_Spi0, r14
+ 324 0013 F9 E4 54 00             		mov.B	#0, 84[r14]
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxIndxR = Spi0.TxIndxW = 0;          /* Reset indices */
+ 325                             		.loc 1 249 0
+ 326 0017 F9 E4 53 00             		mov.B	#0, 83[r14]
+ 327 001b F9 E4 52 00             		mov.B	#0, 82[r14]
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   ExitCriticalSection();                         /* Restore the PS register */
+ 328                             		.loc 1 250 0
+ 329 001f 71 4E 00                		add	#0, r4, r14
+ 330 0022 1E                      		bne	.L35
+ 331                             		.loc 1 250 0 is_stmt 0 discriminator 1
+ 332 0023 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 333                             	.LVL30:
+ 334 0027 03                      		.balign 2,3,1
+ 335                             	.L35:
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   return IO_E_OK;                         /* OK */
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** }
+ 336                             		.loc 1 252 0 is_stmt 1
+ 337 0028 66 01                   		mov.L	#0, r1
+ 338 002a 02                      		rts
+ 339                             	.LFE5:
+ 341 002b 03                      		.section	.text.SPI_GetError,"ax",@progbits
+ 342                             		.global	_SPI_GetError
+ 344                             	_SPI_GetError:
+ 345                             	.LFB6:
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_GetError                                     |
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | Get SPI Error                                    |
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_GetError( gSPIError_t *pError )
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** {
+ 346                             		.loc 1 260 0
+ 347                             	.LVL31:
+ 348 0000 6E 7A                   		pushm	r7-r10
+ 349                             	.LCFI4:
+ 350 0002 EF 17                   		mov.L	r1, r7
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   EnterCriticalSection();                     /* Save the PS register */
+ 351                             		.loc 1 261 0
+ 352 0004 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 353                             	.LVL32:
+ 354 0008 FB E2 00 00 00 00       		mov.L	#_OS_Global, r14
+ 355 000e CD E4 01                		mov.B	1[r14], r4
+ 356 0011 62 14                   		add	#1, r4
+ 357 0013 C7 E4 01                		mov.B	r4, 1[r14]
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   pError->err = 0;
+ 358                             		.loc 1 262 0
+ 359 0016 3C 70 00                		mov.B	#0, [r7]
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   pError->errName.OverRun = ((Spi0.Error & OVERRUN_ERR) != 0); /* Overrun error */
+ 360                             		.loc 1 263 0
+ 361 0019 FB 42 00 00 00 00       		mov.L	#_Spi0, r4
+ 362 001f 8B 4A                   		mov.B	13[r4], r2
+ 363 0021 66 03                   		mov	#0, r3
+ 364 0023 FD 74 C2 01             		tst	#1, r2
+ 365 0027 FD E7 13                		bmne	#7, r3
+ 366 002a C3 73                   		mov.B	r3, [r7]
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   pError->errName.RxBufOvf = ((Spi0.Error & FULL_RX) != 0);    /* Buffer overflow */
+ 367                             		.loc 1 264 0
+ 368 002c 8B 4A                   		mov.B	13[r4], r2
+ 369 002e 6A 62                   		shar	#6, r2
+ 370 0030 FD 74 C2 01             		tst	#1, r2
+ 371 0034 FD E6 13                		bmne	#6, r3
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   pError->errName.FaultErr = FALSE;    /* not used */  
+ 372                             		.loc 1 265 0
+ 373 0037 7A 53                   		bclr	#5, r3
+ 374 0039 C3 73                   		mov.B	r3, [r7]
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.Error = 0x00;                   /* Reset error flags */
+ 375                             		.loc 1 266 0
+ 376 003b 3C 4D 00                		mov.B	#0, 13[r4]
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   ExitCriticalSection();                      /* Restore the PS register */
+ 377                             		.loc 1 267 0
+ 378 003e CD E7 01                		mov.B	1[r14], r7
+ 379                             	.LVL33:
+ 380 0041 60 17                   		sub	#1, r7
+ 381 0043 C7 E7 01                		mov.B	r7, 1[r14]
+ 382 0046 76 27 FF 00             		and #0xff, r7
+ 383 004a 1E                      		bne	.L37
+ 384                             		.loc 1 267 0 is_stmt 0 discriminator 1
+ 385 004b 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 386                             	.LVL34:
+ 387 004f 03                      		.balign 2,3,1
+ 388                             	.L37:
+ 268:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   return IO_E_OK;                      /* OK */
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** }
+ 389                             		.loc 1 269 0 is_stmt 1
+ 390 0050 66 01                   		mov.L	#0, r1
+ 391 0052 3F 7A 04                		rtsd	#16, r7-r10
+ 392                             	.LFE6:
+ 394 0055 03                      		.section	.text.SPI_OnError,"ax",@progbits
+ 395                             		.global	_SPI_OnError
+ 397                             	_SPI_OnError:
+ 398                             	.LFB7:
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 273:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | Test Functions                                   |
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  |                                                  |
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnError(void){
+ 399                             		.loc 1 276 0
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 400                             		.loc 1 277 0
+ 401                             	 ; 277 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI/OCSPI_drv.c" 1
+ 402 0000 03                      		nop
+ 403                             	 ; 0 "" 2
+ 404 0001 02                      		rts
+ 405                             	.LFE7:
+ 407                             		.section	.text.SPI_OnRxChar,"ax",@progbits
+ 408                             		.global	_SPI_OnRxChar
+ 410                             	_SPI_OnRxChar:
+ 411                             	.LFB8:
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** }
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 280:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnRxChar(void){
+ 412                             		.loc 1 280 0
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 413                             		.loc 1 281 0
+ 414                             	 ; 281 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI/OCSPI_drv.c" 1
+ 415 0000 03                      		nop
+ 416                             	 ; 0 "" 2
+ 417 0001 02                      		rts
+ 418                             	.LFE8:
+ 420                             		.section	.text.SPI_OnFullRxBuf,"ax",@progbits
+ 421                             		.global	_SPI_OnFullRxBuf
+ 423                             	_SPI_OnFullRxBuf:
+ 424                             	.LFB9:
+ 282:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** }
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnFullRxBuf(void){
+ 425                             		.loc 1 284 0
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 426                             		.loc 1 285 0
+ 427                             	 ; 285 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI/OCSPI_drv.c" 1
+ 428 0000 03                      		nop
+ 429                             	 ; 0 "" 2
+ 430 0001 02                      		rts
+ 431                             	.LFE9:
+ 433                             		.section	.text.SPI_OnTxChar,"ax",@progbits
+ 434                             		.global	_SPI_OnTxChar
+ 436                             	_SPI_OnTxChar:
+ 437                             	.LFB10:
+ 286:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** }
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnTxChar(void){
+ 438                             		.loc 1 288 0
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 439                             		.loc 1 289 0
+ 440                             	 ; 289 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI/OCSPI_drv.c" 1
+ 441 0000 03                      		nop
+ 442                             	 ; 0 "" 2
+ 443 0001 02                      		rts
+ 444                             	.LFE10:
+ 446                             		.section	.text.SPI_OnFreeTxBuf,"ax",@progbits
+ 447                             		.global	_SPI_OnFreeTxBuf
+ 449                             	_SPI_OnFreeTxBuf:
+ 450                             	.LFB11:
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** }
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnFreeTxBuf(void){
+ 451                             		.loc 1 292 0
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 452                             		.loc 1 293 0
+ 453                             	 ; 293 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI/OCSPI_drv.c" 1
+ 454 0000 03                      		nop
+ 455                             	 ; 0 "" 2
+ 456 0001 02                      		rts
+ 457                             	.LFE11:
+ 459                             		.section	.text.SPI_ISR1,"ax",@progbits
+ 460                             		.global	_SPI_ISR1
+ 462                             	_SPI_ISR1:
+ 463                             	.LFB12:
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** }
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 297:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_ISR1                                         |
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  |                                                  |
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** void SPI_ISR1(void)
+ 302:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** {
+ 464                             		.loc 1 302 0
+ 465 0000 6E 7A                   		pushm	r7-r10
+ 466                             	.LCFI5:
+ 467                             	.LVL35:
+ 303:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   gSPIData_t data;                          /* Temporary variable for data */
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   uint8_t flags = 0;                        /* Temporary variable for flags */
+ 305:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   uint8_t status;                           /* Temporary variable for flags */
+ 306:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 307:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   IRQ_MONITOR_ENTER();
+ 468                             		.loc 1 307 0
+ 469 0002 05 00 00 00             		bsr	_LIB_IRQMonitor_Enter
+ 470                             	.LVL36:
+ 308:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 309:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   status = SPI1_GetStatus();                /* Read the device error register */
+ 471                             		.loc 1 309 0
+ 472 0006 66 11                   		mov	#1, r1
+ 473 0008 05 00 00 00             		bsr	_SPI_GetStatus
+ 474                             	.LVL37:
+ 310:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 311:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   data = SPI1_ReadData();                   /* Read data from receiver */
+ 475                             		.loc 1 311 0
+ 476 000c 66 11                   		mov	#1, r1
+ 477 000e 05 00 00 00             		bsr	_SPI_ReadData
+ 478                             	.LVL38:
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 313:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   if(Spi0.RxBufLen < SPI_RX_BUF_SIZE) {     /* Is number of bytes in the receive buffer lower than 
+ 479                             		.loc 1 313 0
+ 480 0012 FB 72 00 00 00 00       		mov.L	#_Spi0, r7
+ 481 0018 CD 74 31                		mov.B	49[r7], r4
+ 482 001b 5B 4E                   		movu.B	r4, r14
+ 483 001d 75 5E 1F                		cmp	#31, r14
+ 484 0020 24 27                   		bgtu	.L45
+ 314:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 	Spi0.RxBufLen++;                        /* Increase number of chars in the receive buffer */
+ 485                             		.loc 1 314 0
+ 486 0022 62 14                   		add	#1, r4
+ 487 0024 C7 74 31                		mov.B	r4, 49[r7]
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.RxBuffer[Spi0.RxIndxW] = data;       /* Save received char to the receive buffer */
+ 488                             		.loc 1 315 0
+ 489 0027 CD 7E 30                		mov.B	48[r7], r14
+ 490 002a 5B E3                   		movu.B	r14, r3
+ 491 002c 70 33 0C 00 00 00       		add	#_Spi0+12, r3
+ 492 0032 80 B9                   		mov.B	r1, 3[r3]
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.RxIndxW = (uint8_t)((Spi0.RxIndxW + 1) & (SPI_RX_BUF_SIZE-1)); /* Update index */
+ 493                             		.loc 1 316 0
+ 494 0034 62 1E                   		add	#1, r14
+ 495 0036 75 2E 1F                		and #31, r14
+ 496 0039 C7 7E 30                		mov.B	r14, 48[r7]
+ 497                             	.LVL39:
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     flags |= ON_RX_CHAR;                    /* If yes then set the OnRxChar flag */
+ 318:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     if(Spi0.RxBufLen == SPI_RX_BUF_SIZE) {   /* Is number of bytes in the receive buffer equal to t
+ 498                             		.loc 1 318 0
+ 499 003c 5B 44                   		movu.B	r4, r4
+ 500 003e 75 54 20                		cmp	#32, r4
+ 501 0041 20 18                   		beq	.L56
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     flags |= ON_RX_CHAR;                    /* If yes then set the OnRxChar flag */
+ 502                             		.loc 1 317 0
+ 503 0043 66 47                   		mov	#4, r7
+ 504 0045 2E 17                   		bra	.L46
+ 505                             	.LVL40:
+ 506                             	.L45:
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****       flags |= ON_FULL_RX;                  /* Set flag "OnFullRxBuf" */
+ 320:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     }
+ 321:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 322:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   else {
+ 323:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 	  Spi0.State |= FULL_RX;                   /* Set flag "full RX buffer" */
+ 507                             		.loc 1 323 0
+ 508 0047 CD 7E 0C                		mov.B	12[r7], r14
+ 509 004a 78 6E                   		bset #6, r14
+ 510 004c C7 7E 0C                		mov.B	r14, 12[r7]
+ 511                             	.LVL41:
+ 324:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     flags |= ON_ERROR;                      /* Set the OnError flag */
+ 325:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.Error |= Spi0.State;                /* Update error flag mirror */
+ 512                             		.loc 1 325 0
+ 513 004f 06 15 7E 0D             		or	13[r7].B, r14
+ 514 0053 C7 7E 0D                		mov.B	r14, 13[r7]
+ 324:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     flags |= ON_ERROR;                      /* Set the OnError flag */
+ 515                             		.loc 1 324 0
+ 516 0056 66 17                   		mov	#1, r7
+ 517 0058 0C                      		bra	.L46
+ 518                             	.LVL42:
+ 519                             	.L56:
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****       flags |= ON_FULL_RX;                  /* Set flag "OnFullRxBuf" */
+ 520                             		.loc 1 319 0
+ 521 0059 66 67                   		mov	#6, r7
+ 522                             	.LVL43:
+ 523 005b 03                      		.balign 2,3,5
+ 524                             	.L46:
+ 326:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 327:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxBufLen--;                          /* Decrease number of chars in the transmit buffer */
+ 525                             		.loc 1 327 0
+ 526 005c FB E2 00 00 00 00       		mov.L	#_Spi0, r14
+ 527 0062 CD E3 54                		mov.B	84[r14], r3
+ 528 0065 60 13                   		sub	#1, r3
+ 529 0067 C7 E3 54                		mov.B	r3, 84[r14]
+ 328:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxIndxR = (uint8_t)((Spi0.TxIndxR + 1) & (SPI_TX_BUF_SIZE-1)); /* Update index */
+ 530                             		.loc 1 328 0
+ 531 006a CD E4 52                		mov.B	82[r14], r4
+ 532 006d 62 14                   		add	#1, r4
+ 533 006f 75 24 1F                		and #31, r4
+ 534 0072 C7 E4 52                		mov.B	r4, 82[r14]
+ 329:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   if (Spi0.TxBufLen) {                         /* Is number of bytes in the transmit buffer greathe
+ 535                             		.loc 1 329 0
+ 536 0075 76 23 FF 00             		and #0xff, r3
+ 537 0079 20 15                   		beq	.L47
+ 330:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     SPI1_WriteData(Spi0.TxBuffer[Spi0.TxIndxR]); /* Store char to transmitter register */
+ 538                             		.loc 1 330 0
+ 539 007b 5B 4E                   		movu.B	r4, r14
+ 540 007d 70 EE 30 00 00 00       		add	#_Spi0+48, r14
+ 541 0083 66 11                   		mov	#1, r1
+ 542 0085 CD E2 02                		mov.B	2[r14], r2
+ 543 0088 05 00 00 00             		bsr	_SPI_WriteData
+ 544                             	.LVL44:
+ 545 008c 2E 0E                   		bra	.L48
+ 546                             	.L47:
+ 331:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 332:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   else {
+ 333:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 	  Spi0.State &= ~(RUNINT_FROM_TX|FULL_TX);  /* Clear "running int from TX" and "full TX buff" flag
+ 547                             		.loc 1 333 0
+ 548 008e CD E4 0C                		mov.B	12[r14], r4
+ 549 0091 75 24 CF                		and #-49, r4
+ 550 0094 C7 E4 0C                		mov.B	r4, 12[r14]
+ 334:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     flags |= ON_FREE_TX;                      /* Set the OnFreeTXBuf flag */
+ 551                             		.loc 1 334 0
+ 552 0097 78 37                   		bset #3, r7
+ 553                             	.LVL45:
+ 554 0099 03                      		.balign 2,3,6
+ 555                             	.L48:
+ 335:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 336:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   
+ 337:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   if(flags & ON_ERROR) {                          /* Is the error flag set? */
+ 556                             		.loc 1 337 0
+ 557 009a FD 74 C7 01             		tst	#1, r7
+ 558 009e 13                      		beq	.L49
+ 559 009f 2E 27                   		bra	.L81
+ 560                             	.L49:
+ 338:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     SPI_OnError();                                /* for test only */
+ 339:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     if (Spi0.Cfg.errorCallback != NULL) {
+ 340:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     	Spi0.Cfg.errorCallback(Spi0.State, &Spi0.StructError); /* Invoke the error callback */
+ 341:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     }
+ 342:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 343:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   else {
+ 344:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     if(flags & ON_RX_CHAR) {                      /* Is OnRxChar flag set? */
+ 561                             		.loc 1 344 0
+ 562 00a1 EF 7E                   		mov.L	r7, r14
+ 563 00a3 64 4E                   		and #4, r14
+ 564 00a5 20 1B                   		beq	.L52
+ 565                             	.LBB12:
+ 566                             	.LBB13:
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 567                             		.loc 1 281 0
+ 568                             	 ; 281 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI/OCSPI_drv.c" 1
+ 569 00a7 03                      		nop
+ 570                             	 ; 0 "" 2
+ 571                             	.LBE13:
+ 572                             	.LBE12:
+ 345:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****       SPI_OnRxChar();                             /* for test only */
+ 346:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****       if (Spi0.Cfg.rxCallback != NULL) {
+ 573                             		.loc 1 346 0
+ 574 00a8 FB 42 00 00 00 00       		mov.L	#_Spi0, r4
+ 575 00ae ED 4E 01                		mov.L	4[r4], r14
+ 576 00b1 61 0E                   		cmp	#0, r14
+ 577 00b3 20 0D                   		beq	.L52
+ 347:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     	  Spi0.Cfg.rxCallback(Spi0.State, &Spi0.StructError);  /* Invoke the rx callback */
+ 578                             		.loc 1 347 0
+ 579 00b5 8B 41                   		mov.B	12[r4], r1
+ 580 00b7 FB 22 0E 00 00 00       		mov.L	#_Spi0+14, r2
+ 581 00bd 7F 1E                   		jsr	r14
+ 582                             	.LVL46:
+ 583 00bf 03                      		.balign 2,3,1
+ 584                             	.L52:
+ 348:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****       }
+ 349:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     }
+ 350:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     if(flags & ON_FULL_RX) {                        /* Is OnTxChar flag set? */
+ 585                             		.loc 1 350 0
+ 586 00c0 EF 7E                   		mov.L	r7, r14
+ 587 00c2 64 2E                   		and #2, r14
+ 588 00c4 20 1A                   		beq	.L51
+ 589                             	.L81:
+ 590                             	.LBB14:
+ 591                             	.LBB15:
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 592                             		.loc 1 285 0
+ 593                             	 ; 285 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI/OCSPI_drv.c" 1
+ 594 00c6 03                      		nop
+ 595                             	 ; 0 "" 2
+ 596                             	.LBE15:
+ 597                             	.LBE14:
+ 351:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****       SPI_OnFullRxBuf();                            /* for test only */
+ 352:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****       if (Spi0.Cfg.errorCallback != NULL) {
+ 598                             		.loc 1 352 0
+ 599 00c7 FB 42 00 00 00 00       		mov.L	#_Spi0, r4
+ 600 00cd ED 4E 02                		mov.L	8[r4], r14
+ 601 00d0 61 0E                   		cmp	#0, r14
+ 602 00d2 20 0C                   		beq	.L51
+ 353:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     	  Spi0.Cfg.errorCallback(Spi0.State, &Spi0.StructError); /* Invoke the error callback */
+ 603                             		.loc 1 353 0
+ 604 00d4 8B 41                   		mov.B	12[r4], r1
+ 605 00d6 FB 22 0E 00 00 00       		mov.L	#_Spi0+14, r2
+ 606 00dc 7F 1E                   		jsr	r14
+ 607                             	.LVL47:
+ 608                             	.L51:
+ 609                             	.LBB16:
+ 610                             	.LBB17:
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 611                             		.loc 1 289 0
+ 612                             	 ; 289 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI/OCSPI_drv.c" 1
+ 613 00de 03                      		nop
+ 614                             	 ; 0 "" 2
+ 615                             	.LBE17:
+ 616                             	.LBE16:
+ 354:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****       }
+ 355:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     }
+ 356:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 357:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   
+ 358:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   SPI_OnTxChar();                                 /* for test only */
+ 359:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   if (Spi0.Cfg.txCallback != NULL) {
+ 617                             		.loc 1 359 0
+ 618 00df FB 42 00 00 00 00       		mov.L	#_Spi0, r4
+ 619 00e5 EC 4E                   		mov.L	[r4], r14
+ 620 00e7 61 0E                   		cmp	#0, r14
+ 621 00e9 20 0D                   		beq	.L54
+ 360:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 	  Spi0.Cfg.txCallback(Spi0.State, &Spi0.StructError);      /* Invoke the tx callback */
+ 622                             		.loc 1 360 0
+ 623 00eb 8B 41                   		mov.B	12[r4], r1
+ 624 00ed FB 22 0E 00 00 00       		mov.L	#_Spi0+14, r2
+ 625 00f3 7F 1E                   		jsr	r14
+ 626                             	.LVL48:
+ 627 00f5 03                      		.balign 2,3,1
+ 628                             	.L54:
+ 361:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 362:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   
+ 363:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   if (flags & ON_FREE_TX) {                       /* Is flag "OnFreeTxBuf" set? */
+ 629                             		.loc 1 363 0
+ 630 00f6 64 87                   		and #8, r7
+ 631                             	.LVL49:
+ 632 00f8 20 1C                   		beq	.L55
+ 633                             	.LBB18:
+ 634                             	.LBB19:
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 635                             		.loc 1 293 0
+ 636                             	 ; 293 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI/OCSPI_drv.c" 1
+ 637 00fa 03                      		nop
+ 638                             	 ; 0 "" 2
+ 639                             	.LBE19:
+ 640                             	.LBE18:
+ 364:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     SPI_OnFreeTxBuf();                          
+ 365:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     if (Spi0.Cfg.errorCallback != NULL) {
+ 641                             		.loc 1 365 0
+ 642 00fb FB E2 00 00 00 00       		mov.L	#_Spi0, r14
+ 643 0101 ED E7 02                		mov.L	8[r14], r7
+ 644 0104 61 07                   		cmp	#0, r7
+ 645 0106 20 0E                   		beq	.L55
+ 366:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     	Spi0.Cfg.errorCallback(Spi0.State, &Spi0.StructError); /* Invoke the error callback */
+ 646                             		.loc 1 366 0
+ 647 0108 CD E1 0C                		mov.B	12[r14], r1
+ 648 010b FB 22 0E 00 00 00       		mov.L	#_Spi0+14, r2
+ 649 0111 7F 17                   		jsr	r7
+ 650                             	.LVL50:
+ 651 0113 03                      		.balign 2,3,1
+ 652                             	.L55:
+ 367:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****     }
+ 368:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 369:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 370:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   IRQ_MONITOR_EXIT();
+ 371:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 372:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** }
+ 653                             		.loc 1 372 0
+ 654 0114 6F 7A                   		popm	r7-r10
+ 370:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   IRQ_MONITOR_EXIT();
+ 655                             		.loc 1 370 0
+ 656 0116 04 00 00 00             		bra	_LIB_IRQMonitor_Exit
+ 657                             	.LVL51:
+ 658                             	.LFE12:
+ 660                             		.section	.text.OCSPI_InitHwSync,"ax",@progbits
+ 661                             		.global	_OCSPI_InitHwSync
+ 663                             	_OCSPI_InitHwSync:
+ 664                             	.LFB13:
+ 373:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 374:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #if defined(FREESCALE_MC9S08_QE128)
+ 375:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #ifdef MEMORY_MODEL_BANKED
+ 376:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #pragma CODE_SEG __NEAR_SEG NON_BANKED
+ 377:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /* Place it in NON_BANKED memory */
+ 378:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #else
+ 379:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #pragma CODE_SEG DEFAULT
+ 380:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #endif /* MEMORY_MODEL_BANKED */
+ 381:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /*INTERRUPT_KEYWORD void OCSPI_ISR1(void)
+ 382:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** {
+ 383:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   SPI_ISR1();   
+ 384:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** }*/
+ 385:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #pragma CODE_SEG DEFAULT
+ 386:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #endif
+ 387:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 388:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 389:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | OCSPI_InitHwSync                                 |
+ 390:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | Function initializes HW SPI interface            |
+ 391:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/ 
+ 392:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** void OCSPI_InitHwSync(void)
+ 393:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** {
+ 665                             		.loc 1 393 0
+ 394:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #if (SPI1_ENABLE == TRUE)
+ 395:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 396:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_ClkEnable();
+ 666                             		.loc 1 396 0
+ 667 0000 66 11                   		mov	#1, r1
+ 668 0002 05 00 00 00             		bsr	_SPI_ClkEnable
+ 669                             	.LVL52:
+ 397:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_ResetStatus();
+ 670                             		.loc 1 397 0
+ 671 0006 66 11                   		mov	#1, r1
+ 672 0008 05 00 00 00             		bsr	_SPI_ResetStatus
+ 673                             	.LVL53:
+ 398:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   
+ 399:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_SetBaudRate(SPI1_BAUDRATE);
+ 674                             		.loc 1 399 0
+ 675 000c 66 11                   		mov	#1, r1
+ 676 000e FB 2E 00 09 3D          		mov.L	#0x3d0900, r2
+ 677 0013 05 00 00 00             		bsr	_SPI_SetBaudRate
+ 678                             	.LVL54:
+ 400:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   
+ 401:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_MasterEnable();
+ 679                             		.loc 1 401 0
+ 680 0017 66 11                   		mov	#1, r1
+ 681 0019 05 00 00 00             		bsr	_SPI_MasterEnable
+ 682                             	.LVL55:
+ 402:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_SetClockPolarity(SPI1_CLOCK_POLARITY);
+ 683                             		.loc 1 402 0
+ 684 001d 66 11                   		mov	#1, r1
+ 685 001f 66 02                   		mov	#0, r2
+ 686 0021 05 00 00 00             		bsr	_SPI_SetClockPolarity
+ 687                             	.LVL56:
+ 403:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_SetClockPhase(SPI1_CLOCK_PHASE);
+ 688                             		.loc 1 403 0
+ 689 0025 66 11                   		mov	#1, r1
+ 690 0027 66 02                   		mov	#0, r2
+ 691 0029 05 00 00 00             		bsr	_SPI_SetClockPhase
+ 692                             	.LVL57:
+ 404:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_SetShiftDir(SPI1_SHIFT_DIRECTION);
+ 693                             		.loc 1 404 0
+ 694 002d 66 11                   		mov	#1, r1
+ 695 002f 66 02                   		mov	#0, r2
+ 696 0031 05 00 00 00             		bsr	_SPI_SetShiftDir
+ 697                             	.LVL58:
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_Enable();
+ 698                             		.loc 1 405 0
+ 699 0035 66 11                   		mov	#1, r1
+ 700 0037 05 00 00 00             		bsr	_SPI_Enable
+ 701                             	.LVL59:
+ 406:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_IntEnable();
+ 702                             		.loc 1 406 0
+ 703 003b 66 11                   		mov	#1, r1
+ 704 003d 04 00 00 00             		bra	_SPI_IntEnable
+ 705                             	.LVL60:
+ 706                             	.LFE13:
+ 708                             		.section	.text.SPI_ResetSync,"ax",@progbits
+ 709                             		.global	_SPI_ResetSync
+ 711                             	_SPI_ResetSync:
+ 712                             	.LFB14:
+ 407:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 408:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** #endif /*SPI1_ENABLE*/
+ 409:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   
+ 410:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** } 
+ 411:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 412:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 413:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_ResetSync                                    |
+ 414:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | Function resets SPI interface                    |
+ 415:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/ 
+ 416:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** void SPI_ResetSync( void )
+ 417:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** {
+ 713                             		.loc 1 417 0
+ 418:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 	Spi0.State = 0;
+ 714                             		.loc 1 418 0
+ 715 0000 FB E2 00 00 00 00       		mov.L	#_Spi0, r14
+ 716 0006 F9 E4 0C 00             		mov.B	#0, 12[r14]
+ 419:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 	Spi0.Error = 0;
+ 717                             		.loc 1 419 0
+ 718 000a F9 E4 0D 00             		mov.B	#0, 13[r14]
+ 420:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   /* Clean SPI buffers */
+ 421:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   (void)SPI_ClearTxBuf();
+ 719                             		.loc 1 421 0
+ 720 000e 05 00 00 00             		bsr	_SPI_ClearTxBuf
+ 721                             	.LVL61:
+ 422:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   (void)SPI_ClearRxBuf();  
+ 722                             		.loc 1 422 0
+ 723 0012 05 00 00 00             		bsr	_SPI_ClearRxBuf
+ 724                             	.LVL62:
+ 423:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 424:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_ResetStatus();
+ 725                             		.loc 1 424 0
+ 726 0016 66 11                   		mov	#1, r1
+ 727 0018 04 00 00 00             		bra	_SPI_ResetStatus
+ 728                             	.LVL63:
+ 729                             	.LFE14:
+ 731                             		.section	.text.SPI_InitSync,"ax",@progbits
+ 732                             		.global	_SPI_InitSync
+ 734                             	_SPI_InitSync:
+ 735                             	.LFB15:
+ 425:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** }
+ 426:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 427:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 428:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_InitSync                                     |
+ 429:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  | Function initializes SPI interface               |
+ 430:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/ 
+ 431:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_InitSync( gSPICfg_t* pInitSync )
+ 432:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** {
+ 736                             		.loc 1 432 0
+ 737                             	.LVL64:
+ 433:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   /* Init the OCSPI data structure */
+ 434:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 	Spi0.TxBufLen = 0;
+ 738                             		.loc 1 434 0
+ 739 0000 FB E2 00 00 00 00       		mov.L	#_Spi0, r14
+ 740 0006 F9 E4 54 00             		mov.B	#0, 84[r14]
+ 435:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 	Spi0.RxBufLen = 0;
+ 741                             		.loc 1 435 0
+ 742 000a F9 E4 31 00             		mov.B	#0, 49[r14]
+ 436:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 	Spi0.State = 0;
+ 743                             		.loc 1 436 0
+ 744 000e F9 E4 0C 00             		mov.B	#0, 12[r14]
+ 437:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 	Spi0.Error = 0;
+ 745                             		.loc 1 437 0
+ 746 0012 F9 E4 0D 00             		mov.B	#0, 13[r14]
+ 438:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   
+ 439:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   if (pInitSync != NULL) {
+ 747                             		.loc 1 439 0
+ 748 0016 61 01                   		cmp	#0, r1
+ 749 0018 20 0C                   		beq	.L85
+ 440:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 	  Spi0.Cfg.txCallback = pInitSync->txCallback;
+ 750                             		.loc 1 440 0
+ 751 001a E0 1E                   		mov.L	[r1], [r14]
+ 441:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 	  Spi0.Cfg.rxCallback = pInitSync->rxCallback;
+ 752                             		.loc 1 441 0
+ 753 001c E5 1E 01 01             		mov.L	4[r1], 4[r14]
+ 442:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 	  Spi0.Cfg.errorCallback = pInitSync->errorCallback;
+ 754                             		.loc 1 442 0
+ 755 0020 E5 1E 02 02             		mov.L	8[r1], 8[r14]
+ 756                             		.balign 2,3,3
+ 757                             	.L85:
+ 443:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 444:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 445:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   /* Hw init */
+ 446:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c ****   OCSPI_InitHwSync();
+ 758                             		.loc 1 446 0
+ 759 0024 05 00 00 00             		bsr	_OCSPI_InitHwSync
+ 760                             	.LVL65:
+ 447:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 
+ 448:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** 	return IO_E_OK;  
+ 449:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI\OCSPI_drv.c **** }
+ 761                             		.loc 1 449 0
+ 762 0028 66 01                   		mov.L	#0, r1
+ 763 002a 02                      		rts
+ 764                             	.LFE15:
+ 766 002b 03                      		.section	.bss.Spi0,"aw",@nobits
+ 767                             		.balign 4
+ 770                             	_Spi0:
+ 771 0000 00 00 00 00 00 00 00 00 		.zero	88
+ 771      00 00 00 00 00 00 00 00 
+ 771      00 00 00 00 00 00 00 00 
+ 771      00 00 00 00 00 00 00 00 
+ 771      00 00 00 00 00 00 00 00 
+ 1004                             	.Letext0:
+ 1005                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 1006                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 1007                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Drivers/IO_driver.h"
+ 1008                             		.file 5 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCSPI/OCSPI_drv.h"
+ 1009                             		.file 6 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_SecurityCheck/LIB_TaskMon
+ 1010                             		.file 7 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\RN_RX200/RN_RX200_hal.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 OCSPI_drv.c
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:7      .text.SPI_SendChar:00000000 _SPI_SendChar
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:12     .text.SPI_SendChar:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:770    .bss.Spi0:00000000 _Spi0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:94     .text.SPI_RecvChar:00000000 _SPI_RecvChar
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:98     .text.SPI_RecvChar:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:166    .text.SPI_SendBlock:00000000 _SPI_SendBlock
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:170    .text.SPI_SendBlock:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:214    .text.SPI_RecvBlock:00000000 _SPI_RecvBlock
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:218    .text.SPI_RecvBlock:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:280    .text.SPI_ClearRxBuf:00000000 _SPI_ClearRxBuf
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:284    .text.SPI_ClearRxBuf:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:314    .text.SPI_ClearTxBuf:00000000 _SPI_ClearTxBuf
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:318    .text.SPI_ClearTxBuf:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:344    .text.SPI_GetError:00000000 _SPI_GetError
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:348    .text.SPI_GetError:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:397    .text.SPI_OnError:00000000 _SPI_OnError
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:402    .text.SPI_OnError:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:410    .text.SPI_OnRxChar:00000000 _SPI_OnRxChar
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:415    .text.SPI_OnRxChar:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:423    .text.SPI_OnFullRxBuf:00000000 _SPI_OnFullRxBuf
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:428    .text.SPI_OnFullRxBuf:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:436    .text.SPI_OnTxChar:00000000 _SPI_OnTxChar
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:441    .text.SPI_OnTxChar:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:449    .text.SPI_OnFreeTxBuf:00000000 _SPI_OnFreeTxBuf
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:454    .text.SPI_OnFreeTxBuf:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:462    .text.SPI_ISR1:00000000 _SPI_ISR1
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:465    .text.SPI_ISR1:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:663    .text.OCSPI_InitHwSync:00000000 _OCSPI_InitHwSync
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:667    .text.OCSPI_InitHwSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:711    .text.SPI_ResetSync:00000000 _SPI_ResetSync
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:715    .text.SPI_ResetSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:734    .text.SPI_InitSync:00000000 _SPI_InitSync
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:739    .text.SPI_InitSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:773    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:8      .text.SPI_SendChar:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:95     .text.SPI_RecvChar:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:167    .text.SPI_SendBlock:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:215    .text.SPI_RecvBlock:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:281    .text.SPI_ClearRxBuf:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:315    .text.SPI_ClearTxBuf:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:345    .text.SPI_GetError:00000000 .LFB6
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:398    .text.SPI_OnError:00000000 .LFB7
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:411    .text.SPI_OnRxChar:00000000 .LFB8
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:424    .text.SPI_OnFullRxBuf:00000000 .LFB9
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:437    .text.SPI_OnTxChar:00000000 .LFB10
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:450    .text.SPI_OnFreeTxBuf:00000000 .LFB11
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:463    .text.SPI_ISR1:00000000 .LFB12
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:664    .text.OCSPI_InitHwSync:00000000 .LFB13
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:712    .text.SPI_ResetSync:00000000 .LFB14
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:735    .text.SPI_InitSync:00000000 .LFB15
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:3000   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4415   .debug_str:0000029e .LASF169
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4445   .debug_str:0000034b .LASF170
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4271   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4307   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4525   .debug_str:0000057a .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4387   .debug_str:000001fd .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4451   .debug_str:000003a2 .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4367   .debug_str:0000018e .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4377   .debug_str:000001cd .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4339   .debug_str:000000b7 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4383   .debug_str:000001e8 .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4569   .debug_str:00000680 .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4519   .debug_str:0000055b .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4361   .debug_str:0000015c .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4523   .debug_str:00000572 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4421   .debug_str:000002d4 .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4621   .debug_str:000007b2 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4637   .debug_str:0000080a .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4381   .debug_str:000001db .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4589   .debug_str:000006fc .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4309   .debug_str:00000000 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4531   .debug_str:000005a8 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4551   .debug_str:0000061a .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4335   .debug_str:0000009c .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4313   .debug_str:00000018 .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4461   .debug_str:000003dc .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4331   .debug_str:00000085 .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4403   .debug_str:00000265 .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4435   .debug_str:00000321 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4599   .debug_str:00000743 .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4577   .debug_str:000006b5 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4555   .debug_str:00000627 .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4609   .debug_str:00000776 .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4651   .debug_str:00000864 .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4613   .debug_str:00000786 .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4485   .debug_str:00000464 .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4579   .debug_str:000006bc .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4513   .debug_str:00000530 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4317   .debug_str:00000029 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4521   .debug_str:00000569 .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4455   .debug_str:000003bf .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4467   .debug_str:000003fb .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4311   .debug_str:00000005 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4337   .debug_str:000000ab .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4471   .debug_str:00000411 .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4447   .debug_str:0000038c .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4417   .debug_str:000002c4 .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4547   .debug_str:000005fe .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4441   .debug_str:0000033d .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4565   .debug_str:00000674 .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4369   .debug_str:000001a0 .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4443   .debug_str:00000344 .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4595   .debug_str:00000722 .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4475   .debug_str:00000433 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4567   .debug_str:0000067b .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4643   .debug_str:0000082f .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4321   .debug_str:00000044 .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4345   .debug_str:000000e6 .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4483   .debug_str:0000045d .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4325   .debug_str:0000005e .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4397   .debug_str:00000239 .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4553   .debug_str:00000622 .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4593   .debug_str:00000719 .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4625   .debug_str:000007c2 .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4357   .debug_str:00000145 .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4605   .debug_str:00000763 .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4395   .debug_str:00000232 .LASF62
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4623   .debug_str:000007bb .LASF63
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4375   .debug_str:000001c7 .LASF64
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4457   .debug_str:000003c5 .LASF65
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4315   .debug_str:0000001e .LASF66
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4647   .debug_str:00000849 .LASF67
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4617   .debug_str:000007a1 .LASF68
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4379   .debug_str:000001d6 .LASF69
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4351   .debug_str:0000011e .LASF70
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4329   .debug_str:0000007b .LASF171
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4653   .debug_str:0000086e .LASF71
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4495   .debug_str:000004b4 .LASF72
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4585   .debug_str:000006e2 .LASF73
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4517   .debug_str:00000549 .LASF74
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4327   .debug_str:00000068 .LASF75
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4353   .debug_str:00000129 .LASF76
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4571   .debug_str:00000688 .LASF77
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4497   .debug_str:000004be .LASF78
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4645   .debug_str:00000837 .LASF79
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4529   .debug_str:00000592 .LASF80
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4473   .debug_str:0000041b .LASF81
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4561   .debug_str:0000064c .LASF82
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4319   .debug_str:0000002f .LASF83
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4649   .debug_str:00000854 .LASF84
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4453   .debug_str:000003b5 .LASF85
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4557   .debug_str:00000631 .LASF86
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4509   .debug_str:00000515 .LASF87
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4607   .debug_str:0000076a .LASF88
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4587   .debug_str:000006ef .LASF89
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4459   .debug_str:000003d1 .LASF90
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4597   .debug_str:00000730 .LASF91
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4433   .debug_str:0000030e .LASF92
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4391   .debug_str:00000213 .LASF93
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4591   .debug_str:00000708 .LASF94
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4545   .debug_str:000005f2 .LASF95
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4489   .debug_str:00000483 .LASF96
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4341   .debug_str:000000ce .LASF97
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4573   .debug_str:000006a0 .LASF98
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4343   .debug_str:000000db .LASF99
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4633   .debug_str:000007e7 .LASF100
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4399   .debug_str:00000250 .LASF101
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4431   .debug_str:00000305 .LASF102
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4437   .debug_str:00000326 .LASF103
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4477   .debug_str:00000440 .LASF104
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4627   .debug_str:000007cb .LASF105
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4499   .debug_str:000004d1 .LASF106
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4639   .debug_str:00000813 .LASF107
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4611   .debug_str:0000077b .LASF108
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4631   .debug_str:000007dc .LASF109
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4527   .debug_str:00000584 .LASF110
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4541   .debug_str:000005da .LASF111
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4559   .debug_str:00000646 .LASF112
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4481   .debug_str:00000457 .LASF113
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4501   .debug_str:000004e1 .LASF114
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4355   .debug_str:0000013c .LASF115
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4405   .debug_str:0000026d .LASF116
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4413   .debug_str:00000296 .LASF117
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4427   .debug_str:000002f3 .LASF118
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4429   .debug_str:000002fc .LASF119
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4419   .debug_str:000002cc .LASF120
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4423   .debug_str:000002e1 .LASF121
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4323   .debug_str:00000055 .LASF122
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4575   .debug_str:000006ac .LASF123
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4581   .debug_str:000006c9 .LASF124
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4583   .debug_str:000006d5 .LASF125
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4603   .debug_str:00000753 .LASF126
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4333   .debug_str:0000008f .LASF127
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4641   .debug_str:0000081f .LASF128
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4389   .debug_str:00000206 .LASF129
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:89     .text.SPI_SendChar:00000091 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:3880   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:3893   .debug_loc:00000020 .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:17     .text.SPI_SendChar:00000008 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:34     .text.SPI_SendChar:00000033 .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:58     .text.SPI_SendChar:00000068 .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:73     .text.SPI_SendChar:00000084 .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4507   .debug_str:00000508 .LASF130
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:161    .text.SPI_RecvChar:00000070 .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:3904   .debug_loc:0000003e .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4629   .debug_str:000007d7 .LASF131
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:3917   .debug_loc:0000005e .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4533   .debug_str:000005b0 .LASF136
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:3946   .debug_loc:000000a3 .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:108    .text.SPI_RecvChar:00000015 .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:141    .text.SPI_RecvChar:0000005d .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4539   .debug_str:000005cc .LASF132
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:209    .text.SPI_SendBlock:0000002d .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:3953   .debug_loc:000000b6 .LLST5
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4349   .debug_str:00000118 .LASF133
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:3966   .debug_loc:000000d6 .LLST6
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4409   .debug_str:0000027e .LASF134
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:3977   .debug_loc:000000f4 .LLST7
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4465   .debug_str:000003f6 .LASF135
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:3988   .debug_loc:00000112 .LLST8
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4385   .debug_str:000001f6 .LASF137
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:3999   .debug_loc:00000130 .LLST9
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4020   .debug_loc:00000166 .LLST10
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:184    .text.SPI_SendBlock:00000013 .LVL14
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4505   .debug_str:000004fa .LASF138
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:275    .text.SPI_RecvBlock:0000003b .LFE3
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4036   .debug_loc:00000190 .LLST11
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4049   .debug_loc:000001b0 .LLST12
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4077   .debug_loc:000001ed .LLST13
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4515   .debug_str:00000544 .LASF139
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4088   .debug_loc:0000020b .LLST14
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4537   .debug_str:000005c4 .LASF140
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4099   .debug_loc:00000229 .LLST15
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4115   .debug_loc:00000253 .LLST16
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4122   .debug_loc:00000266 .LLST17
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:234    .text.SPI_RecvBlock:00000012 .LVL21
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4479   .debug_str:00000448 .LASF141
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:309    .text.SPI_ClearRxBuf:00000033 .LFE4
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:285    .text.SPI_ClearRxBuf:00000004 .LVL27
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:303    .text.SPI_ClearRxBuf:00000030 .LVL28
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4549   .debug_str:0000060b .LASF142
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:339    .text.SPI_ClearTxBuf:0000002b .LFE5
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:319    .text.SPI_ClearTxBuf:00000004 .LVL29
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:333    .text.SPI_ClearTxBuf:00000027 .LVL30
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4401   .debug_str:00000258 .LASF143
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:392    .text.SPI_GetError:00000055 .LFE6
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4138   .debug_loc:00000290 .LLST18
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4373   .debug_str:000001c0 .LASF144
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4151   .debug_loc:000002b0 .LLST19
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:353    .text.SPI_GetError:00000008 .LVL32
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:386    .text.SPI_GetError:0000004f .LVL34
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:405    .text.SPI_OnError:00000002 .LFE7
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:418    .text.SPI_OnRxChar:00000002 .LFE8
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:431    .text.SPI_OnFullRxBuf:00000002 .LFE9
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:444    .text.SPI_OnTxChar:00000002 .LFE10
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:457    .text.SPI_OnFreeTxBuf:00000002 .LFE11
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4407   .debug_str:00000275 .LASF148
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:658    .text.SPI_ISR1:0000011a .LFE12
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4169   .debug_loc:000002dc .LLST20
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4449   .debug_str:0000039d .LASF146
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4619   .debug_str:000007ac .LASF145
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4182   .debug_loc:000002fc .LLST21
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4601   .debug_str:0000074c .LASF147
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:565    .text.SPI_ISR1:000000a7 .LBB12
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:572    .text.SPI_ISR1:000000a8 .LBE12
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:590    .text.SPI_ISR1:000000c6 .LBB14
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:597    .text.SPI_ISR1:000000c7 .LBE14
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:609    .text.SPI_ISR1:000000de .LBB16
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:616    .text.SPI_ISR1:000000df .LBE16
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:633    .text.SPI_ISR1:000000fa .LBB18
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:640    .text.SPI_ISR1:000000fb .LBE18
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:470    .text.SPI_ISR1:00000006 .LVL36
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:474    .text.SPI_ISR1:0000000c .LVL37
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:478    .text.SPI_ISR1:00000012 .LVL38
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:544    .text.SPI_ISR1:0000008c .LVL44
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:582    .text.SPI_ISR1:000000bf .LVL46
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:607    .text.SPI_ISR1:000000de .LVL47
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:626    .text.SPI_ISR1:000000f5 .LVL48
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:650    .text.SPI_ISR1:00000113 .LVL50
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:657    .text.SPI_ISR1:0000011a .LVL51
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4615   .debug_str:00000790 .LASF149
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:706    .text.OCSPI_InitHwSync:00000041 .LFE13
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:669    .text.OCSPI_InitHwSync:00000006 .LVL52
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:673    .text.OCSPI_InitHwSync:0000000c .LVL53
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:678    .text.OCSPI_InitHwSync:00000017 .LVL54
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:682    .text.OCSPI_InitHwSync:0000001d .LVL55
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:687    .text.OCSPI_InitHwSync:00000025 .LVL56
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:692    .text.OCSPI_InitHwSync:0000002d .LVL57
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:697    .text.OCSPI_InitHwSync:00000035 .LVL58
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:701    .text.OCSPI_InitHwSync:0000003b .LVL59
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:705    .text.OCSPI_InitHwSync:00000041 .LVL60
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4439   .debug_str:0000032f .LASF150
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:729    .text.SPI_ResetSync:0000001c .LFE14
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:721    .text.SPI_ResetSync:00000012 .LVL61
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:724    .text.SPI_ResetSync:00000016 .LVL62
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:728    .text.SPI_ResetSync:0000001c .LVL63
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4503   .debug_str:000004ed .LASF151
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:764    .text.SPI_InitSync:0000002b .LFE15
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4425   .debug_str:000002e9 .LASF152
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4214   .debug_loc:0000034b .LLST22
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:760    .text.SPI_InitSync:00000028 .LVL65
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4655   .debug_str:00000876 .LASF153
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4469   .debug_str:00000407 .LASF172
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4371   .debug_str:000001ac .LASF154
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4463   .debug_str:000003e3 .LASF155
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4543   .debug_str:000005e4 .LASF160
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4635   .debug_str:000007f5 .LASF156
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4491   .debug_str:00000498 .LASF157
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4511   .debug_str:00000523 .LASF158
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4347   .debug_str:00000104 .LASF159
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4493   .debug_str:000004a6 .LASF161
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4411   .debug_str:00000286 .LASF162
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4487   .debug_str:00000473 .LASF163
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4363   .debug_str:00000168 .LASF164
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4365   .debug_str:00000179 .LASF165
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4359   .debug_str:0000014a .LASF166
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4393   .debug_str:00000222 .LASF167
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4535   .debug_str:000005b9 .LASF168
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:4563   .debug_str:00000666 .LASF173
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:13     .text.SPI_SendChar:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:11     .text.SPI_SendChar:00000000 .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:99     .text.SPI_RecvChar:00000002 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:97     .text.SPI_RecvChar:00000000 .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:128    .text.SPI_RecvChar:00000045 .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:151    .text.SPI_RecvChar:00000067 .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:155    .text.SPI_RecvChar:00000069 .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:171    .text.SPI_SendBlock:00000002 .LCFI2
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:169    .text.SPI_SendBlock:00000000 .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:179    .text.SPI_SendBlock:0000000c .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:174    .text.SPI_SendBlock:00000006 .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:189    .text.SPI_SendBlock:00000019 .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:194    .text.SPI_SendBlock:0000001d .LVL16
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:201    .text.SPI_SendBlock:00000025 .LVL17
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:219    .text.SPI_RecvBlock:00000002 .LCFI3
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:217    .text.SPI_RecvBlock:00000000 .LVL18
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:230    .text.SPI_RecvBlock:0000000e .LVL20
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:256    .text.SPI_RecvBlock:00000028 .LVL24
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:262    .text.SPI_RecvBlock:0000002d .LVL25
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:269    .text.SPI_RecvBlock:00000035 .LVL26
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:222    .text.SPI_RecvBlock:00000006 .LVL19
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:254    .text.SPI_RecvBlock:00000026 .LVL23
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:349    .text.SPI_GetError:00000002 .LCFI4
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:347    .text.SPI_GetError:00000000 .LVL31
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:379    .text.SPI_GetError:00000041 .LVL33
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:466    .text.SPI_ISR1:00000002 .LCFI5
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:467    .text.SPI_ISR1:00000002 .LVL35
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:497    .text.SPI_ISR1:0000003c .LVL39
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:505    .text.SPI_ISR1:00000047 .LVL40
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:511    .text.SPI_ISR1:0000004f .LVL41
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:518    .text.SPI_ISR1:00000059 .LVL42
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:522    .text.SPI_ISR1:0000005b .LVL43
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:631    .text.SPI_ISR1:000000f8 .LVL49
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:737    .text.SPI_InitSync:00000000 .LVL64
+C:\Users\Andrea\AppData\Local\Temp\ccIIz59d.s:1012   .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_OS_DisableInterrupt
+_OS_Global
+_OS_EnableInterrupt
+_SPI_WriteData
+_LIB_IRQMonitor_Enter
+_SPI_GetStatus
+_SPI_ReadData
+_LIB_IRQMonitor_Exit
+_SPI_ClkEnable
+_SPI_ResetStatus
+_SPI_SetBaudRate
+_SPI_MasterEnable
+_SPI_SetClockPolarity
+_SPI_SetClockPhase
+_SPI_SetShiftDir
+_SPI_Enable
+_SPI_IntEnable

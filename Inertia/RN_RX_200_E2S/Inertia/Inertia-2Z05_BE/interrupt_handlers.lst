@@ -1,0 +1,2229 @@
+   1                             		.file	"interrupt_handlers.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.INT_Excep_SuperVisorInst,"ax",@progbits
+   5                             		.global	_INT_Excep_SuperVisorInst
+   7                             	_INT_Excep_SuperVisorInst:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS/interrupt_handlers.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /***********************************************************************/
+   2:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /*                                                                     */
+   3:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /*  FILE        :interrupt_handlers.c                                  */
+   4:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /*  DATE        :Thu, Sep 08, 2011                                     */
+   5:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /*  DESCRIPTION :Interrupt Handler                                     */
+   6:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /*  CPU TYPE    :RX200                                                 */
+   7:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /*                                                                     */
+   8:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /*                                                                     */
+   9:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /***********************************************************************/
+  10:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c ****                 
+  11:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+  12:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+  13:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+  14:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #include "interrupt_handlers.h"
+  15:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #include "OS_Config.h"
+  16:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #include "OCI2C_drv.h"
+  17:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #include "OCUART_drv.h"
+  18:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #include "OCLVD_drv.h"
+  19:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #include "OCADC_drv.h"
+  20:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #include "OCIRQ_drv.h"
+  21:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #include "OCTPM_drv.h"
+  22:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+  23:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #include "ISR_TMR.h"
+  24:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #include "LIB_Error.h"
+  25:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+  26:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #define	 USER_EXCEP_SUPERVISOR_ADDR	(FLASH_BASE_ADDRESS + (20 * 4) )
+  27:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #define	 USER_EXCEP_UND_INST_ADDR	(FLASH_BASE_ADDRESS + (23 * 4) )
+  28:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #define	 USER_EXCEP_NMI_ADDR		(FLASH_BASE_ADDRESS + (30 * 4) )
+  29:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+  30:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** typedef void (*fp) (void);
+  31:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+  32:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+  33:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* Exception(Supervisor Instruction)*/
+  34:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_SuperVisorInst(void){
+  10                             		.loc 1 34 0
+  11                             		; Note: Interrupt Handler
+  12 0000 6E 1F                   		pushm	r1-r15
+  13                             	.LCFI0:
+  35:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #if 0
+  36:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	fp f;
+  37:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	uint32_t *p;
+  38:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+  39:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	p = (uint32_t *)USER_EXCEP_SUPERVISOR_ADDR;
+  40:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	f = (fp)(*p);
+  41:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	f();
+  42:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+  43:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	LIB_Error_Fatal_Handler(PLT_ERROR_EXCEPT_SVR_INSTR);
+  14                             		.loc 1 43 0
+  15 0002 75 41 54                		mov.L	#0x54, r1
+  16 0005 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+  17                             	.LVL0:
+  44:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+  18                             		.loc 1 44 0
+  19 0009 6F 1F                   		popm	r1-r15
+  20 000b 7F 95                   		rte
+  21                             	.LFE0:
+  23                             		.section	.text.INT_Excep_UndefinedInst,"ax",@progbits
+  24                             		.global	_INT_Excep_UndefinedInst
+  26                             	_INT_Excep_UndefinedInst:
+  27                             	.LFB1:
+  45:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* Exception(Undefined Instruction)*/
+  46:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_UndefinedInst(void){
+  28                             		.loc 1 46 0
+  29                             		; Note: Interrupt Handler
+  30 0000 6E 1F                   		pushm	r1-r15
+  31                             	.LCFI1:
+  47:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #if 0
+  48:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	fp f;
+  49:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	uint32_t *p;
+  50:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+  51:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	p = (uint32_t *)USER_EXCEP_UND_INST_ADDR;
+  52:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	f = (fp)(*p);
+  53:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	f();
+  54:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+  55:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	LIB_Error_Fatal_Handler(PLT_ERROR_EXCEPT_UNDEF_INSTR);
+  32                             		.loc 1 55 0
+  33 0002 75 41 55                		mov.L	#0x55, r1
+  34 0005 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+  35                             	.LVL1:
+  56:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+  36                             		.loc 1 56 0
+  37 0009 6F 1F                   		popm	r1-r15
+  38 000b 7F 95                   		rte
+  39                             	.LFE1:
+  41                             		.section	.text.INT_NonMaskableInterrupt,"ax",@progbits
+  42                             		.global	_INT_NonMaskableInterrupt
+  44                             	_INT_NonMaskableInterrupt:
+  45                             	.LFB2:
+  57:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /*
+  58:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** Exception(Floating Point)
+  59:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_FloatingPoint(void){ brk(); }
+  60:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** */
+  61:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* NMI*/
+  62:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_NonMaskableInterrupt(void){
+  46                             		.loc 1 62 0
+  47                             		; Note: Interrupt Handler
+  48 0000 6E 1F                   		pushm	r1-r15
+  49                             	.LCFI2:
+  63:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #if 0
+  64:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		fp f;
+  65:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		uint32_t *p;
+  66:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+  67:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		p = (uint32_t *)USER_EXCEP_NMI_ADDR;
+  68:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		f = (fp)(*p);
+  69:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		f();
+  70:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+  71:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		LIB_Error_Fatal_Handler(PLT_ERROR_EXCEPT_NMI);
+  50                             		.loc 1 71 0
+  51 0002 75 41 56                		mov.L	#0x56, r1
+  52 0005 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+  53                             	.LVL2:
+  72:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+  54                             		.loc 1 72 0
+  55 0009 6F 1F                   		popm	r1-r15
+  56 000b 7F 95                   		rte
+  57                             	.LFE2:
+  59                             		.section	.text.DummyFunc,"ax",@progbits
+  60                             		.global	_DummyFunc
+  62                             	_DummyFunc:
+  63                             	.LFB3:
+  73:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /*Dummy*/
+  74:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void DummyFunc(void){/* brk(); */}
+  64                             		.loc 1 74 0
+  65                             		; Note: Interrupt Handler
+  66                             		.loc 1 74 0
+  67 0000 7F 95                   		rte
+  68                             	.LFE3:
+  70                             		.section	.text.INT_Excep_IRQ0,"ax",@progbits
+  71                             		.global	_INT_Excep_IRQ0
+  73                             	_INT_Excep_IRQ0:
+  74                             	.LFB4:
+  75:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+  76:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* BRK*/
+  77:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /*void INT_Excep_BRK(void){ wait(); }*/
+  78:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+  79:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+  80:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* IRQ0*/
+  81:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_IRQ0(void){
+  75                             		.loc 1 81 0
+  76                             		; Note: Interrupt Handler
+  77 0000 6E 1F                   		pushm	r1-r15
+  78                             	.LCFI3:
+  82:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+  79                             		.loc 1 82 0
+  80 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+  81                             	.LVL3:
+  82 0006 FD 6A 07                		mvfc	psw, r7
+  83 0009 77 37 00 00 01          		or	#0x10000, r7
+  84 000e FD 68 70                		mvtc	r7, psw
+  85 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+  86 0017 CC 7E                   		mov.B	[r7], r14
+  87 0019 62 1E                   		add	#1, r14
+  88 001b C3 7E                   		mov.B	r14, [r7]
+  89 001d CD 7E 01                		mov.B	1[r7], r14
+  90 0020 62 1E                   		add	#1, r14
+  91 0022 C7 7E 01                		mov.B	r14, 1[r7]
+  83:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	IRQ_ISR();	
+  92                             		.loc 1 83 0
+  93 0025 05 00 00 00             		bsr	_IRQ_ISR
+  94                             	.LVL4:
+  84:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+  95                             		.loc 1 84 0
+  96 0029 CD 7E 01                		mov.B	1[r7], r14
+  97 002c EF 74                   		mov.L	r7, r4
+  98 002e 60 1E                   		sub	#1, r14
+  99 0030 C7 7E 01                		mov.B	r14, 1[r7]
+ 100 0033 CC 7E                   		mov.B	[r7], r14
+ 101 0035 5B E3                   		movu.B	r14, r3
+ 102 0037 61 13                   		cmp	#1, r3
+ 103 0039 21 0E                   		bne	.L9
+ 104                             		.loc 1 84 0 is_stmt 0 discriminator 1
+ 105 003b A8 7F                   		mov.L	4[r7], r7
+ 106 003d 61 07                   		cmp	#0, r7
+ 107 003f 20 08                   		beq	.L9
+ 108                             		.loc 1 84 0 discriminator 3
+ 109 0041 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 110                             	.LVL5:
+ 111 0045 2E 07                   		bra	.L8
+ 112                             	.L9:
+ 113                             		.loc 1 84 0 discriminator 2
+ 114 0047 60 1E                   		sub	#1, r14
+ 115 0049 C3 4E                   		mov.B	r14, [r4]
+ 116 004b 03                      		.balign 2,3,1
+ 117                             	.L8:
+  85:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 118                             		.loc 1 85 0 is_stmt 1
+ 119 004c 6F 1F                   		popm	r1-r15
+ 120 004e 7F 95                   		rte
+ 121                             	.LFE4:
+ 123                             		.section	.text.INT_Excep_IRQ1,"ax",@progbits
+ 124                             		.global	_INT_Excep_IRQ1
+ 126                             	_INT_Excep_IRQ1:
+ 127                             	.LFB5:
+  86:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+  87:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* IRQ1*/
+  88:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_IRQ1(void){
+ 128                             		.loc 1 88 0
+ 129                             		; Note: Interrupt Handler
+ 130 0000 6E 1F                   		pushm	r1-r15
+ 131                             	.LCFI4:
+  89:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 132                             		.loc 1 89 0
+ 133 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 134                             	.LVL6:
+ 135 0006 FD 6A 07                		mvfc	psw, r7
+ 136 0009 77 37 00 00 01          		or	#0x10000, r7
+ 137 000e FD 68 70                		mvtc	r7, psw
+ 138 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 139 0017 CC 7E                   		mov.B	[r7], r14
+ 140 0019 62 1E                   		add	#1, r14
+ 141 001b C3 7E                   		mov.B	r14, [r7]
+ 142 001d CD 7E 01                		mov.B	1[r7], r14
+ 143 0020 62 1E                   		add	#1, r14
+ 144 0022 C7 7E 01                		mov.B	r14, 1[r7]
+  90:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	IRQ_ISR();
+ 145                             		.loc 1 90 0
+ 146 0025 05 00 00 00             		bsr	_IRQ_ISR
+ 147                             	.LVL7:
+  91:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 148                             		.loc 1 91 0
+ 149 0029 CD 7E 01                		mov.B	1[r7], r14
+ 150 002c EF 74                   		mov.L	r7, r4
+ 151 002e 60 1E                   		sub	#1, r14
+ 152 0030 C7 7E 01                		mov.B	r14, 1[r7]
+ 153 0033 CC 7E                   		mov.B	[r7], r14
+ 154 0035 5B E3                   		movu.B	r14, r3
+ 155 0037 61 13                   		cmp	#1, r3
+ 156 0039 21 0E                   		bne	.L16
+ 157                             		.loc 1 91 0 is_stmt 0 discriminator 1
+ 158 003b A8 7F                   		mov.L	4[r7], r7
+ 159 003d 61 07                   		cmp	#0, r7
+ 160 003f 20 08                   		beq	.L16
+ 161                             		.loc 1 91 0 discriminator 3
+ 162 0041 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 163                             	.LVL8:
+ 164 0045 2E 07                   		bra	.L15
+ 165                             	.L16:
+ 166                             		.loc 1 91 0 discriminator 2
+ 167 0047 60 1E                   		sub	#1, r14
+ 168 0049 C3 4E                   		mov.B	r14, [r4]
+ 169 004b 03                      		.balign 2,3,1
+ 170                             	.L15:
+  92:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 171                             		.loc 1 92 0 is_stmt 1
+ 172 004c 6F 1F                   		popm	r1-r15
+ 173 004e 7F 95                   		rte
+ 174                             	.LFE5:
+ 176                             		.section	.text.INT_Excep_IRQ5,"ax",@progbits
+ 177                             		.global	_INT_Excep_IRQ5
+ 179                             	_INT_Excep_IRQ5:
+ 180                             	.LFB6:
+  93:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+  94:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+  95:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* IRQ5*/
+  96:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_IRQ5(void){ 
+ 181                             		.loc 1 96 0
+ 182                             		; Note: Interrupt Handler
+ 183 0000 6E 1F                   		pushm	r1-r15
+ 184                             	.LCFI5:
+  97:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 185                             		.loc 1 97 0
+ 186 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 187                             	.LVL9:
+ 188 0006 FD 6A 07                		mvfc	psw, r7
+ 189 0009 77 37 00 00 01          		or	#0x10000, r7
+ 190 000e FD 68 70                		mvtc	r7, psw
+ 191 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 192 0017 CC 7E                   		mov.B	[r7], r14
+ 193 0019 62 1E                   		add	#1, r14
+ 194 001b C3 7E                   		mov.B	r14, [r7]
+ 195 001d CD 7E 01                		mov.B	1[r7], r14
+ 196 0020 62 1E                   		add	#1, r14
+ 197 0022 C7 7E 01                		mov.B	r14, 1[r7]
+  98:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	IRQ_ISR();
+ 198                             		.loc 1 98 0
+ 199 0025 05 00 00 00             		bsr	_IRQ_ISR
+ 200                             	.LVL10:
+  99:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 201                             		.loc 1 99 0
+ 202 0029 CD 7E 01                		mov.B	1[r7], r14
+ 203 002c EF 74                   		mov.L	r7, r4
+ 204 002e 60 1E                   		sub	#1, r14
+ 205 0030 C7 7E 01                		mov.B	r14, 1[r7]
+ 206 0033 CC 7E                   		mov.B	[r7], r14
+ 207 0035 5B E3                   		movu.B	r14, r3
+ 208 0037 61 13                   		cmp	#1, r3
+ 209 0039 21 0E                   		bne	.L23
+ 210                             		.loc 1 99 0 is_stmt 0 discriminator 1
+ 211 003b A8 7F                   		mov.L	4[r7], r7
+ 212 003d 61 07                   		cmp	#0, r7
+ 213 003f 20 08                   		beq	.L23
+ 214                             		.loc 1 99 0 discriminator 3
+ 215 0041 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 216                             	.LVL11:
+ 217 0045 2E 07                   		bra	.L22
+ 218                             	.L23:
+ 219                             		.loc 1 99 0 discriminator 2
+ 220 0047 60 1E                   		sub	#1, r14
+ 221 0049 C3 4E                   		mov.B	r14, [r4]
+ 222 004b 03                      		.balign 2,3,1
+ 223                             	.L22:
+ 100:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 224                             		.loc 1 100 0 is_stmt 1
+ 225 004c 6F 1F                   		popm	r1-r15
+ 226 004e 7F 95                   		rte
+ 227                             	.LFE6:
+ 229                             		.section	.text.INT_Excep_IRQ6,"ax",@progbits
+ 230                             		.global	_INT_Excep_IRQ6
+ 232                             	_INT_Excep_IRQ6:
+ 233                             	.LFB7:
+ 101:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 102:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* IRQ6*/
+ 103:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_IRQ6(void){ 
+ 234                             		.loc 1 103 0
+ 235                             		; Note: Interrupt Handler
+ 236 0000 6E 1F                   		pushm	r1-r15
+ 237                             	.LCFI6:
+ 104:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 238                             		.loc 1 104 0
+ 239 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 240                             	.LVL12:
+ 241 0006 FD 6A 07                		mvfc	psw, r7
+ 242 0009 77 37 00 00 01          		or	#0x10000, r7
+ 243 000e FD 68 70                		mvtc	r7, psw
+ 244 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 245 0017 CC 7E                   		mov.B	[r7], r14
+ 246 0019 62 1E                   		add	#1, r14
+ 247 001b C3 7E                   		mov.B	r14, [r7]
+ 248 001d CD 7E 01                		mov.B	1[r7], r14
+ 249 0020 62 1E                   		add	#1, r14
+ 250 0022 C7 7E 01                		mov.B	r14, 1[r7]
+ 105:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	IRQ_ISR();
+ 251                             		.loc 1 105 0
+ 252 0025 05 00 00 00             		bsr	_IRQ_ISR
+ 253                             	.LVL13:
+ 106:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 254                             		.loc 1 106 0
+ 255 0029 CD 7E 01                		mov.B	1[r7], r14
+ 256 002c EF 74                   		mov.L	r7, r4
+ 257 002e 60 1E                   		sub	#1, r14
+ 258 0030 C7 7E 01                		mov.B	r14, 1[r7]
+ 259 0033 CC 7E                   		mov.B	[r7], r14
+ 260 0035 5B E3                   		movu.B	r14, r3
+ 261 0037 61 13                   		cmp	#1, r3
+ 262 0039 21 0E                   		bne	.L30
+ 263                             		.loc 1 106 0 is_stmt 0 discriminator 1
+ 264 003b A8 7F                   		mov.L	4[r7], r7
+ 265 003d 61 07                   		cmp	#0, r7
+ 266 003f 20 08                   		beq	.L30
+ 267                             		.loc 1 106 0 discriminator 3
+ 268 0041 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 269                             	.LVL14:
+ 270 0045 2E 07                   		bra	.L29
+ 271                             	.L30:
+ 272                             		.loc 1 106 0 discriminator 2
+ 273 0047 60 1E                   		sub	#1, r14
+ 274 0049 C3 4E                   		mov.B	r14, [r4]
+ 275 004b 03                      		.balign 2,3,1
+ 276                             	.L29:
+ 107:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 277                             		.loc 1 107 0 is_stmt 1
+ 278 004c 6F 1F                   		popm	r1-r15
+ 279 004e 7F 95                   		rte
+ 280                             	.LFE7:
+ 282                             		.section	.text.INT_Excep_LVD1,"ax",@progbits
+ 283                             		.global	_INT_Excep_LVD1
+ 285                             	_INT_Excep_LVD1:
+ 286                             	.LFB8:
+ 108:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 109:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* LVD1*/
+ 110:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_LVD1(void)
+ 111:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** {
+ 287                             		.loc 1 111 0
+ 288                             		; Note: Interrupt Handler
+ 289 0000 6E 1F                   		pushm	r1-r15
+ 290                             	.LCFI7:
+ 112:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OCLVDW_ISR();
+ 291                             		.loc 1 112 0
+ 292 0002 05 00 00 00             		bsr	_OCLVDW_ISR
+ 293                             	.LVL15:
+ 113:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 294                             		.loc 1 113 0
+ 295 0006 6F 1F                   		popm	r1-r15
+ 296 0008 7F 95                   		rte
+ 297                             	.LFE8:
+ 299                             		.section	.text.INT_Excep_LVD2,"ax",@progbits
+ 300                             		.global	_INT_Excep_LVD2
+ 302                             	_INT_Excep_LVD2:
+ 303                             	.LFB9:
+ 114:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 115:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* LVD2*/
+ 116:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_LVD2(void)
+ 117:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** {
+ 304                             		.loc 1 117 0
+ 305                             		; Note: Interrupt Handler
+ 306 0000 6E 1F                   		pushm	r1-r15
+ 307                             	.LCFI8:
+ 118:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OCLVDW_ISR();
+ 308                             		.loc 1 118 0
+ 309 0002 05 00 00 00             		bsr	_OCLVDW_ISR
+ 310                             	.LVL16:
+ 119:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 311                             		.loc 1 119 0
+ 312 0006 6F 1F                   		popm	r1-r15
+ 313 0008 7F 95                   		rte
+ 314                             	.LFE9:
+ 316                             		.section	.text.INT_Excep_MTU0_TGIA0,"ax",@progbits
+ 317                             		.global	_INT_Excep_MTU0_TGIA0
+ 319                             	_INT_Excep_MTU0_TGIA0:
+ 320                             	.LFB10:
+ 120:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 121:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #ifdef TGRA0_IRQ_SUPPORT
+ 122:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void  INT_Excep_MTU0_TGIA0(void){
+ 321                             		.loc 1 122 0
+ 322                             		; Note: Interrupt Handler
+ 323                             	.LVL17:
+ 324 0000 6E 1F                   		pushm	r1-r15
+ 325                             	.LCFI9:
+ 123:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	int i=0;
+ 124:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 326                             		.loc 1 124 0
+ 327 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 328                             	.LVL18:
+ 329 0006 FD 6A 07                		mvfc	psw, r7
+ 330 0009 77 37 00 00 01          		or	#0x10000, r7
+ 331 000e FD 68 70                		mvtc	r7, psw
+ 332 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 333 0017 CC 7E                   		mov.B	[r7], r14
+ 125:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 126:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	i |= MTU0_TGIA0_ExceptionHandler(NULL, 0);
+ 334                             		.loc 1 126 0
+ 335 0019 66 01                   		mov.L	#0, r1
+ 124:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 336                             		.loc 1 124 0
+ 337 001b 62 1E                   		add	#1, r14
+ 338 001d C3 7E                   		mov.B	r14, [r7]
+ 339 001f CD 7E 01                		mov.B	1[r7], r14
+ 340                             		.loc 1 126 0
+ 341 0022 EF 12                   		mov.L	r1, r2
+ 124:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 342                             		.loc 1 124 0
+ 343 0024 62 1E                   		add	#1, r14
+ 344 0026 C7 7E 01                		mov.B	r14, 1[r7]
+ 345                             		.loc 1 126 0
+ 346 0029 05 00 00 00             		bsr	_MTU0_TGIA0_ExceptionHandler
+ 347                             	.LVL19:
+ 127:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if(!i)
+ 348                             		.loc 1 127 0
+ 349 002d 61 01                   		cmp	#0, r1
+ 350 002f 21 05                   		bne	.L41
+ 351 0031 03                      		.balign 2,3,3
+ 352                             	.L42:
+ 353 0032 2E 00                   		bra	.L42
+ 354                             	.L41:
+ 128:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	{
+ 129:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		while(1);
+ 130:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 131:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 132:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 355                             		.loc 1 132 0
+ 356 0034 CD 7E 01                		mov.B	1[r7], r14
+ 357 0037 60 1E                   		sub	#1, r14
+ 358 0039 C7 7E 01                		mov.B	r14, 1[r7]
+ 359 003c CC 7E                   		mov.B	[r7], r14
+ 360 003e 5B E4                   		movu.B	r14, r4
+ 361 0040 61 14                   		cmp	#1, r4
+ 362 0042 21 0E                   		bne	.L43
+ 363                             		.loc 1 132 0 is_stmt 0 discriminator 1
+ 364 0044 A8 7F                   		mov.L	4[r7], r7
+ 365 0046 61 07                   		cmp	#0, r7
+ 366 0048 20 08                   		beq	.L43
+ 367                             		.loc 1 132 0 discriminator 3
+ 368 004a 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 369                             	.LVL20:
+ 370 004e 2E 0C                   		bra	.L40
+ 371                             	.LVL21:
+ 372                             	.L43:
+ 373                             		.loc 1 132 0 discriminator 2
+ 374 0050 60 1E                   		sub	#1, r14
+ 375 0052 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 376 0058 C3 7E                   		mov.B	r14, [r7]
+ 377                             	.LVL22:
+ 378                             		.balign 2,3,1
+ 379                             	.L40:
+ 133:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 380                             		.loc 1 133 0 is_stmt 1
+ 381 005a 6F 1F                   		popm	r1-r15
+ 382 005c 7F 95                   		rte
+ 383                             	.LFE10:
+ 385                             		.section	.text.INT_Excep_MTU0_TGIB0,"ax",@progbits
+ 386                             		.global	_INT_Excep_MTU0_TGIB0
+ 388                             	_INT_Excep_MTU0_TGIB0:
+ 389                             	.LFB11:
+ 134:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 135:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 136:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 137:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 138:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void  INT_Excep_MTU0_TGIB0(void){  
+ 390                             		.loc 1 138 0
+ 391                             		; Note: Interrupt Handler
+ 392 0000 6E 1F                   		pushm	r1-r15
+ 393                             	.LCFI10:
+ 139:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if( TMR_GetClearSourceId(HAL_TMR_MTU0) == TCNT_CLEARING_TGRB ){
+ 394                             		.loc 1 139 0
+ 395 0002 66 01                   		mov	#0, r1
+ 396 0004 05 00 00 00             		bsr	_TMR_GetClearSourceId
+ 397                             	.LVL23:
+ 398 0008 5B 11                   		movu.B	r1, r1
+ 399 000a 61 11                   		cmp	#1, r1
+ 400 000c 21 0A                   		bne	.L50
+ 140:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		HWCNTR_ISR(HW_TMR_ID_0);
+ 401                             		.loc 1 140 0
+ 402 000e 66 01                   		mov	#0, r1
+ 403 0010 05 00 00 00             		bsr	_HWCNTR_ISR
+ 404                             	.LVL24:
+ 405 0014 2E 08                   		bra	.L49
+ 406                             	.L50:
+ 141:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}else{	
+ 142:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		HWTMRCH_ISR(TMR_CH_ID_1);
+ 407                             		.loc 1 142 0
+ 408 0016 66 81                   		mov	#8, r1
+ 409 0018 05 00 00 00             		bsr	_HWTMRCH_ISR
+ 410                             	.LVL25:
+ 411                             		.balign 2,3,1
+ 412                             	.L49:
+ 143:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 144:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 413                             		.loc 1 144 0
+ 414 001c 6F 1F                   		popm	r1-r15
+ 415 001e 7F 95                   		rte
+ 416                             	.LFE11:
+ 418                             		.section	.text.INT_Excep_MTU0_TGIC0,"ax",@progbits
+ 419                             		.global	_INT_Excep_MTU0_TGIC0
+ 421                             	_INT_Excep_MTU0_TGIC0:
+ 422                             	.LFB12:
+ 145:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 146:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #ifdef TGRC0_IRQ_SUPPORT
+ 147:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void  INT_Excep_MTU0_TGIC0(void){
+ 423                             		.loc 1 147 0
+ 424                             		; Note: Interrupt Handler
+ 425                             	.LVL26:
+ 426 0000 6E 1F                   		pushm	r1-r15
+ 427                             	.LCFI11:
+ 148:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	int i=0;
+ 149:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 428                             		.loc 1 149 0
+ 429 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 430                             	.LVL27:
+ 431 0006 FD 6A 07                		mvfc	psw, r7
+ 432 0009 77 37 00 00 01          		or	#0x10000, r7
+ 433 000e FD 68 70                		mvtc	r7, psw
+ 434 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 435 0017 CC 7E                   		mov.B	[r7], r14
+ 150:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 151:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	i |= MTU0_TGIC0_ExceptionHandler(NULL, 0);
+ 436                             		.loc 1 151 0
+ 437 0019 66 01                   		mov.L	#0, r1
+ 149:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 438                             		.loc 1 149 0
+ 439 001b 62 1E                   		add	#1, r14
+ 440 001d C3 7E                   		mov.B	r14, [r7]
+ 441 001f CD 7E 01                		mov.B	1[r7], r14
+ 442                             		.loc 1 151 0
+ 443 0022 EF 12                   		mov.L	r1, r2
+ 149:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 444                             		.loc 1 149 0
+ 445 0024 62 1E                   		add	#1, r14
+ 446 0026 C7 7E 01                		mov.B	r14, 1[r7]
+ 447                             		.loc 1 151 0
+ 448 0029 05 00 00 00             		bsr	_MTU0_TGIC0_ExceptionHandler
+ 449                             	.LVL28:
+ 152:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if(!i)
+ 450                             		.loc 1 152 0
+ 451 002d 61 01                   		cmp	#0, r1
+ 452 002f 21 05                   		bne	.L54
+ 453 0031 03                      		.balign 2,3,3
+ 454                             	.L55:
+ 455 0032 2E 00                   		bra	.L55
+ 456                             	.L54:
+ 153:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	{
+ 154:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		while(1);
+ 155:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 156:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 157:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 457                             		.loc 1 157 0
+ 458 0034 CD 7E 01                		mov.B	1[r7], r14
+ 459 0037 60 1E                   		sub	#1, r14
+ 460 0039 C7 7E 01                		mov.B	r14, 1[r7]
+ 461 003c CC 7E                   		mov.B	[r7], r14
+ 462 003e 5B E4                   		movu.B	r14, r4
+ 463 0040 61 14                   		cmp	#1, r4
+ 464 0042 21 0E                   		bne	.L56
+ 465                             		.loc 1 157 0 is_stmt 0 discriminator 1
+ 466 0044 A8 7F                   		mov.L	4[r7], r7
+ 467 0046 61 07                   		cmp	#0, r7
+ 468 0048 20 08                   		beq	.L56
+ 469                             		.loc 1 157 0 discriminator 3
+ 470 004a 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 471                             	.LVL29:
+ 472 004e 2E 0C                   		bra	.L53
+ 473                             	.LVL30:
+ 474                             	.L56:
+ 475                             		.loc 1 157 0 discriminator 2
+ 476 0050 60 1E                   		sub	#1, r14
+ 477 0052 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 478 0058 C3 7E                   		mov.B	r14, [r7]
+ 479                             	.LVL31:
+ 480                             		.balign 2,3,1
+ 481                             	.L53:
+ 158:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 482                             		.loc 1 158 0 is_stmt 1
+ 483 005a 6F 1F                   		popm	r1-r15
+ 484 005c 7F 95                   		rte
+ 485                             	.LFE12:
+ 487                             		.section	.text.INT_Excep_MTU0_TGID0,"ax",@progbits
+ 488                             		.global	_INT_Excep_MTU0_TGID0
+ 490                             	_INT_Excep_MTU0_TGID0:
+ 491                             	.LFB13:
+ 159:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 160:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 161:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 162:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void  INT_Excep_MTU0_TGID0(void){  
+ 492                             		.loc 1 162 0
+ 493                             		; Note: Interrupt Handler
+ 494 0000 6E 1F                   		pushm	r1-r15
+ 495                             	.LCFI12:
+ 163:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if( TMR_GetClearSourceId(HAL_TMR_MTU0) == TCNT_CLEARING_TGRD ){
+ 496                             		.loc 1 163 0
+ 497 0002 66 01                   		mov	#0, r1
+ 498 0004 05 00 00 00             		bsr	_TMR_GetClearSourceId
+ 499                             	.LVL32:
+ 500 0008 5B 11                   		movu.B	r1, r1
+ 501 000a 61 31                   		cmp	#3, r1
+ 502 000c 21 0A                   		bne	.L63
+ 164:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		HWCNTR_ISR(HW_TMR_ID_0);
+ 503                             		.loc 1 164 0
+ 504 000e 66 01                   		mov	#0, r1
+ 505 0010 05 00 00 00             		bsr	_HWCNTR_ISR
+ 506                             	.LVL33:
+ 507 0014 2E 0A                   		bra	.L62
+ 508                             	.L63:
+ 165:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}else{
+ 166:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		HWTMRCH_ISR(TMR_CH_ID_3);
+ 509                             		.loc 1 166 0
+ 510 0016 FB 16 FF                		mov	#-1, r1
+ 511 0019 05 00 00 00             		bsr	_HWTMRCH_ISR
+ 512                             	.LVL34:
+ 513 001d 03                      		.balign 2,3,1
+ 514                             	.L62:
+ 167:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 168:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 515                             		.loc 1 168 0
+ 516 001e 6F 1F                   		popm	r1-r15
+ 517 0020 7F 95                   		rte
+ 518                             	.LFE13:
+ 520                             		.section	.text.INT_Excep_MTU0_TCIV0,"ax",@progbits
+ 521                             		.global	_INT_Excep_MTU0_TCIV0
+ 523                             	_INT_Excep_MTU0_TCIV0:
+ 524                             	.LFB14:
+ 169:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 170:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 171:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #ifdef TCIV0_IRQ_SUPPORT
+ 172:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void  INT_Excep_MTU0_TCIV0(void){
+ 525                             		.loc 1 172 0
+ 526                             		; Note: Interrupt Handler
+ 527                             	.LVL35:
+ 528 0000 6E 1F                   		pushm	r1-r15
+ 529                             	.LCFI13:
+ 173:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	int i=0;
+ 174:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 530                             		.loc 1 174 0
+ 531 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 532                             	.LVL36:
+ 533 0006 FD 6A 07                		mvfc	psw, r7
+ 534 0009 77 37 00 00 01          		or	#0x10000, r7
+ 535 000e FD 68 70                		mvtc	r7, psw
+ 536 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 537 0017 CC 7E                   		mov.B	[r7], r14
+ 538 0019 62 1E                   		add	#1, r14
+ 539 001b C3 7E                   		mov.B	r14, [r7]
+ 540 001d CD 7E 01                		mov.B	1[r7], r14
+ 541 0020 62 1E                   		add	#1, r14
+ 542 0022 C7 7E 01                		mov.B	r14, 1[r7]
+ 175:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 176:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	i |= CNT0_OVF_ExceptionHandler();
+ 543                             		.loc 1 176 0
+ 544 0025 05 00 00 00             		bsr	_CNT0_OVF_ExceptionHandler
+ 545                             	.LVL37:
+ 177:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if(!i)
+ 546                             		.loc 1 177 0
+ 547 0029 61 01                   		cmp	#0, r1
+ 548 002b 21 05                   		bne	.L67
+ 549 002d 03                      		.balign 2,3,3
+ 550                             	.L68:
+ 551 002e 2E 00                   		bra	.L68
+ 552                             	.L67:
+ 178:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	{
+ 179:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		while(1);
+ 180:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 181:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 182:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 553                             		.loc 1 182 0
+ 554 0030 CD 7E 01                		mov.B	1[r7], r14
+ 555 0033 60 1E                   		sub	#1, r14
+ 556 0035 C7 7E 01                		mov.B	r14, 1[r7]
+ 557 0038 CC 7E                   		mov.B	[r7], r14
+ 558 003a 5B E4                   		movu.B	r14, r4
+ 559 003c 61 14                   		cmp	#1, r4
+ 560 003e 21 0E                   		bne	.L69
+ 561                             		.loc 1 182 0 is_stmt 0 discriminator 1
+ 562 0040 A8 7F                   		mov.L	4[r7], r7
+ 563 0042 61 07                   		cmp	#0, r7
+ 564 0044 20 08                   		beq	.L69
+ 565                             		.loc 1 182 0 discriminator 3
+ 566 0046 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 567                             	.LVL38:
+ 568 004a 2E 0C                   		bra	.L66
+ 569                             	.LVL39:
+ 570                             	.L69:
+ 571                             		.loc 1 182 0 discriminator 2
+ 572 004c 60 1E                   		sub	#1, r14
+ 573 004e FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 574 0054 C3 7E                   		mov.B	r14, [r7]
+ 575                             	.LVL40:
+ 576                             		.balign 2,3,1
+ 577                             	.L66:
+ 183:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 578                             		.loc 1 183 0 is_stmt 1
+ 579 0056 6F 1F                   		popm	r1-r15
+ 580 0058 7F 95                   		rte
+ 581                             	.LFE14:
+ 583                             		.section	.text.INT_Excep_MTU0_TGIE0,"ax",@progbits
+ 584                             		.global	_INT_Excep_MTU0_TGIE0
+ 586                             	_INT_Excep_MTU0_TGIE0:
+ 587                             	.LFB15:
+ 184:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 185:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void  INT_Excep_MTU0_TGIE0(void){
+ 588                             		.loc 1 185 0
+ 589                             		; Note: Interrupt Handler
+ 590 0000 6E 1F                   		pushm	r1-r15
+ 591                             	.LCFI14:
+ 186:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	HWTMRCH_ISR(TMR_CH_ID_5);
+ 592                             		.loc 1 186 0
+ 593 0002 FB 16 FF                		mov	#-1, r1
+ 594 0005 05 00 00 00             		bsr	_HWTMRCH_ISR
+ 595                             	.LVL41:
+ 187:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 596                             		.loc 1 187 0
+ 597 0009 6F 1F                   		popm	r1-r15
+ 598 000b 7F 95                   		rte
+ 599                             	.LFE15:
+ 601                             		.section	.text.INT_Excep_MTU0_TGIF0,"ax",@progbits
+ 602                             		.global	_INT_Excep_MTU0_TGIF0
+ 604                             	_INT_Excep_MTU0_TGIF0:
+ 605                             	.LFB16:
+ 188:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 189:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void  INT_Excep_MTU0_TGIF0(void){
+ 606                             		.loc 1 189 0
+ 607                             		; Note: Interrupt Handler
+ 608 0000 6E 1F                   		pushm	r1-r15
+ 609                             	.LCFI15:
+ 190:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	HWTMRCH_ISR(TMR_CH_ID_6);
+ 610                             		.loc 1 190 0
+ 611 0002 FB 16 FF                		mov	#-1, r1
+ 612 0005 05 00 00 00             		bsr	_HWTMRCH_ISR
+ 613                             	.LVL42:
+ 191:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 614                             		.loc 1 191 0
+ 615 0009 6F 1F                   		popm	r1-r15
+ 616 000b 7F 95                   		rte
+ 617                             	.LFE16:
+ 619                             		.section	.text.INT_Excep_MTU1_TGIA1,"ax",@progbits
+ 620                             		.global	_INT_Excep_MTU1_TGIA1
+ 622                             	_INT_Excep_MTU1_TGIA1:
+ 623                             	.LFB17:
+ 192:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 193:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 194:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #ifdef TGRA1_IRQ_SUPPORT
+ 195:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void  INT_Excep_MTU1_TGIA1(void){
+ 624                             		.loc 1 195 0
+ 625                             		; Note: Interrupt Handler
+ 626                             	.LVL43:
+ 627 0000 6E 1F                   		pushm	r1-r15
+ 628                             	.LCFI16:
+ 196:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	int i=0;
+ 197:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 629                             		.loc 1 197 0
+ 630 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 631                             	.LVL44:
+ 632 0006 FD 6A 07                		mvfc	psw, r7
+ 633 0009 77 37 00 00 01          		or	#0x10000, r7
+ 634 000e FD 68 70                		mvtc	r7, psw
+ 635 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 636 0017 CC 7E                   		mov.B	[r7], r14
+ 198:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 199:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	i |= MTU1_TGIA1_ExceptionHandler(NULL, 0);
+ 637                             		.loc 1 199 0
+ 638 0019 66 01                   		mov.L	#0, r1
+ 197:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 639                             		.loc 1 197 0
+ 640 001b 62 1E                   		add	#1, r14
+ 641 001d C3 7E                   		mov.B	r14, [r7]
+ 642 001f CD 7E 01                		mov.B	1[r7], r14
+ 643                             		.loc 1 199 0
+ 644 0022 EF 12                   		mov.L	r1, r2
+ 197:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 645                             		.loc 1 197 0
+ 646 0024 62 1E                   		add	#1, r14
+ 647 0026 C7 7E 01                		mov.B	r14, 1[r7]
+ 648                             		.loc 1 199 0
+ 649 0029 05 00 00 00             		bsr	_MTU1_TGIA1_ExceptionHandler
+ 650                             	.LVL45:
+ 200:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if(!i)
+ 651                             		.loc 1 200 0
+ 652 002d 61 01                   		cmp	#0, r1
+ 653 002f 21 05                   		bne	.L80
+ 654 0031 03                      		.balign 2,3,3
+ 655                             	.L81:
+ 656 0032 2E 00                   		bra	.L81
+ 657                             	.L80:
+ 201:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	{
+ 202:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		while(1);
+ 203:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 204:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 205:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 658                             		.loc 1 205 0
+ 659 0034 CD 7E 01                		mov.B	1[r7], r14
+ 660 0037 60 1E                   		sub	#1, r14
+ 661 0039 C7 7E 01                		mov.B	r14, 1[r7]
+ 662 003c CC 7E                   		mov.B	[r7], r14
+ 663 003e 5B E4                   		movu.B	r14, r4
+ 664 0040 61 14                   		cmp	#1, r4
+ 665 0042 21 0E                   		bne	.L82
+ 666                             		.loc 1 205 0 is_stmt 0 discriminator 1
+ 667 0044 A8 7F                   		mov.L	4[r7], r7
+ 668 0046 61 07                   		cmp	#0, r7
+ 669 0048 20 08                   		beq	.L82
+ 670                             		.loc 1 205 0 discriminator 3
+ 671 004a 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 672                             	.LVL46:
+ 673 004e 2E 0C                   		bra	.L79
+ 674                             	.LVL47:
+ 675                             	.L82:
+ 676                             		.loc 1 205 0 discriminator 2
+ 677 0050 60 1E                   		sub	#1, r14
+ 678 0052 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 679 0058 C3 7E                   		mov.B	r14, [r7]
+ 680                             	.LVL48:
+ 681                             		.balign 2,3,1
+ 682                             	.L79:
+ 206:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 683                             		.loc 1 206 0 is_stmt 1
+ 684 005a 6F 1F                   		popm	r1-r15
+ 685 005c 7F 95                   		rte
+ 686                             	.LFE17:
+ 688                             		.section	.text.INT_Excep_MTU1_TGIB1,"ax",@progbits
+ 689                             		.global	_INT_Excep_MTU1_TGIB1
+ 691                             	_INT_Excep_MTU1_TGIB1:
+ 692                             	.LFB18:
+ 207:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 208:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 209:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 210:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_MTU1_TGIB1(void){
+ 693                             		.loc 1 210 0
+ 694                             		; Note: Interrupt Handler
+ 695 0000 6E 1F                   		pushm	r1-r15
+ 696                             	.LCFI17:
+ 211:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if( TMR_GetClearSourceId(HAL_TMR_MTU1) == TCNT_CLEARING_TGRB ){		
+ 697                             		.loc 1 211 0
+ 698 0002 66 11                   		mov	#1, r1
+ 699 0004 05 00 00 00             		bsr	_TMR_GetClearSourceId
+ 700                             	.LVL49:
+ 701 0008 5B 11                   		movu.B	r1, r1
+ 702 000a 61 11                   		cmp	#1, r1
+ 703 000c 21 08                   		bne	.L89
+ 212:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		HWCNTR_ISR(HW_TMR_ID_1);
+ 704                             		.loc 1 212 0
+ 705 000e 05 00 00 00             		bsr	_HWCNTR_ISR
+ 706                             	.LVL50:
+ 707 0012 2E 0A                   		bra	.L88
+ 708                             	.L89:
+ 213:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}else{
+ 214:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		HWTMRCH_ISR(TMR_CH_ID_8);
+ 709                             		.loc 1 214 0
+ 710 0014 FB 16 FF                		mov	#-1, r1
+ 711 0017 05 00 00 00             		bsr	_HWTMRCH_ISR
+ 712                             	.LVL51:
+ 713 001b 03                      		.balign 2,3,1
+ 714                             	.L88:
+ 215:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 216:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 715                             		.loc 1 216 0
+ 716 001c 6F 1F                   		popm	r1-r15
+ 717 001e 7F 95                   		rte
+ 718                             	.LFE18:
+ 720                             		.section	.text.INT_Excep_MTU1_TCIV1,"ax",@progbits
+ 721                             		.global	_INT_Excep_MTU1_TCIV1
+ 723                             	_INT_Excep_MTU1_TCIV1:
+ 724                             	.LFB19:
+ 217:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 218:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #ifdef TCIV1_IRQ_SUPPORT
+ 219:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_MTU1_TCIV1(void){
+ 725                             		.loc 1 219 0
+ 726                             		; Note: Interrupt Handler
+ 727                             	.LVL52:
+ 728 0000 6E 1F                   		pushm	r1-r15
+ 729                             	.LCFI18:
+ 220:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	int i=0;
+ 221:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 730                             		.loc 1 221 0
+ 731 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 732                             	.LVL53:
+ 733 0006 FD 6A 07                		mvfc	psw, r7
+ 734 0009 77 37 00 00 01          		or	#0x10000, r7
+ 735 000e FD 68 70                		mvtc	r7, psw
+ 736 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 737 0017 CC 7E                   		mov.B	[r7], r14
+ 738 0019 62 1E                   		add	#1, r14
+ 739 001b C3 7E                   		mov.B	r14, [r7]
+ 740 001d CD 7E 01                		mov.B	1[r7], r14
+ 741 0020 62 1E                   		add	#1, r14
+ 742 0022 C7 7E 01                		mov.B	r14, 1[r7]
+ 222:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 223:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	i |= CNT1_OVF_ExceptionHandler();
+ 743                             		.loc 1 223 0
+ 744 0025 05 00 00 00             		bsr	_CNT1_OVF_ExceptionHandler
+ 745                             	.LVL54:
+ 224:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if(!i)
+ 746                             		.loc 1 224 0
+ 747 0029 61 01                   		cmp	#0, r1
+ 748 002b 21 05                   		bne	.L93
+ 749 002d 03                      		.balign 2,3,3
+ 750                             	.L94:
+ 751 002e 2E 00                   		bra	.L94
+ 752                             	.L93:
+ 225:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	{
+ 226:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		while(1);
+ 227:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 228:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 229:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 753                             		.loc 1 229 0
+ 754 0030 CD 7E 01                		mov.B	1[r7], r14
+ 755 0033 60 1E                   		sub	#1, r14
+ 756 0035 C7 7E 01                		mov.B	r14, 1[r7]
+ 757 0038 CC 7E                   		mov.B	[r7], r14
+ 758 003a 5B E4                   		movu.B	r14, r4
+ 759 003c 61 14                   		cmp	#1, r4
+ 760 003e 21 0E                   		bne	.L95
+ 761                             		.loc 1 229 0 is_stmt 0 discriminator 1
+ 762 0040 A8 7F                   		mov.L	4[r7], r7
+ 763 0042 61 07                   		cmp	#0, r7
+ 764 0044 20 08                   		beq	.L95
+ 765                             		.loc 1 229 0 discriminator 3
+ 766 0046 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 767                             	.LVL55:
+ 768 004a 2E 0C                   		bra	.L92
+ 769                             	.LVL56:
+ 770                             	.L95:
+ 771                             		.loc 1 229 0 discriminator 2
+ 772 004c 60 1E                   		sub	#1, r14
+ 773 004e FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 774 0054 C3 7E                   		mov.B	r14, [r7]
+ 775                             	.LVL57:
+ 776                             		.balign 2,3,1
+ 777                             	.L92:
+ 230:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 778                             		.loc 1 230 0 is_stmt 1
+ 779 0056 6F 1F                   		popm	r1-r15
+ 780 0058 7F 95                   		rte
+ 781                             	.LFE19:
+ 783                             		.section	.text.INT_Excep_MTU1_TCIU1,"ax",@progbits
+ 784                             		.global	_INT_Excep_MTU1_TCIU1
+ 786                             	_INT_Excep_MTU1_TCIU1:
+ 787                             	.LFB20:
+ 231:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 232:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_MTU1_TCIU1(void){ /* MTU1 Underflow*/
+ 788                             		.loc 1 232 0
+ 789                             		; Note: Interrupt Handler
+ 790 0000 6E 1F                   		pushm	r1-r15
+ 791                             	.LCFI19:
+ 233:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	HWTMRCH_ISR(TMR_CH_ID_10);
+ 792                             		.loc 1 233 0
+ 793 0002 FB 16 FF                		mov	#-1, r1
+ 794 0005 05 00 00 00             		bsr	_HWTMRCH_ISR
+ 795                             	.LVL58:
+ 234:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 796                             		.loc 1 234 0
+ 797 0009 6F 1F                   		popm	r1-r15
+ 798 000b 7F 95                   		rte
+ 799                             	.LFE20:
+ 801                             		.section	.text.INT_Excep_MTU2_TGIA2,"ax",@progbits
+ 802                             		.global	_INT_Excep_MTU2_TGIA2
+ 804                             	_INT_Excep_MTU2_TGIA2:
+ 805                             	.LFB21:
+ 235:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 236:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 237:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #ifdef TGRA2_IRQ_SUPPORT
+ 238:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void  INT_Excep_MTU2_TGIA2(void){
+ 806                             		.loc 1 238 0
+ 807                             		; Note: Interrupt Handler
+ 808                             	.LVL59:
+ 809 0000 6E 1F                   		pushm	r1-r15
+ 810                             	.LCFI20:
+ 239:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	int i=0;
+ 240:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 811                             		.loc 1 240 0
+ 812 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 813                             	.LVL60:
+ 814 0006 FD 6A 07                		mvfc	psw, r7
+ 815 0009 77 37 00 00 01          		or	#0x10000, r7
+ 816 000e FD 68 70                		mvtc	r7, psw
+ 817 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 818 0017 CC 7E                   		mov.B	[r7], r14
+ 241:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 242:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	i |= MTU2_TGIA2_ExceptionHandler(NULL, 0);
+ 819                             		.loc 1 242 0
+ 820 0019 66 01                   		mov.L	#0, r1
+ 240:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 821                             		.loc 1 240 0
+ 822 001b 62 1E                   		add	#1, r14
+ 823 001d C3 7E                   		mov.B	r14, [r7]
+ 824 001f CD 7E 01                		mov.B	1[r7], r14
+ 825                             		.loc 1 242 0
+ 826 0022 EF 12                   		mov.L	r1, r2
+ 240:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 827                             		.loc 1 240 0
+ 828 0024 62 1E                   		add	#1, r14
+ 829 0026 C7 7E 01                		mov.B	r14, 1[r7]
+ 830                             		.loc 1 242 0
+ 831 0029 05 00 00 00             		bsr	_MTU2_TGIA2_ExceptionHandler
+ 832                             	.LVL61:
+ 243:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if(!i)
+ 833                             		.loc 1 243 0
+ 834 002d 61 01                   		cmp	#0, r1
+ 835 002f 21 05                   		bne	.L104
+ 836 0031 03                      		.balign 2,3,3
+ 837                             	.L105:
+ 838 0032 2E 00                   		bra	.L105
+ 839                             	.L104:
+ 244:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	{
+ 245:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		while(1);
+ 246:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 247:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 248:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 840                             		.loc 1 248 0
+ 841 0034 CD 7E 01                		mov.B	1[r7], r14
+ 842 0037 60 1E                   		sub	#1, r14
+ 843 0039 C7 7E 01                		mov.B	r14, 1[r7]
+ 844 003c CC 7E                   		mov.B	[r7], r14
+ 845 003e 5B E4                   		movu.B	r14, r4
+ 846 0040 61 14                   		cmp	#1, r4
+ 847 0042 21 0E                   		bne	.L106
+ 848                             		.loc 1 248 0 is_stmt 0 discriminator 1
+ 849 0044 A8 7F                   		mov.L	4[r7], r7
+ 850 0046 61 07                   		cmp	#0, r7
+ 851 0048 20 08                   		beq	.L106
+ 852                             		.loc 1 248 0 discriminator 3
+ 853 004a 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 854                             	.LVL62:
+ 855 004e 2E 0C                   		bra	.L103
+ 856                             	.LVL63:
+ 857                             	.L106:
+ 858                             		.loc 1 248 0 discriminator 2
+ 859 0050 60 1E                   		sub	#1, r14
+ 860 0052 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 861 0058 C3 7E                   		mov.B	r14, [r7]
+ 862                             	.LVL64:
+ 863                             		.balign 2,3,1
+ 864                             	.L103:
+ 249:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 865                             		.loc 1 249 0 is_stmt 1
+ 866 005a 6F 1F                   		popm	r1-r15
+ 867 005c 7F 95                   		rte
+ 868                             	.LFE21:
+ 870                             		.section	.text.INT_Excep_MTU2_TGIB2,"ax",@progbits
+ 871                             		.global	_INT_Excep_MTU2_TGIB2
+ 873                             	_INT_Excep_MTU2_TGIB2:
+ 874                             	.LFB22:
+ 250:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 251:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 252:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 253:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_MTU2_TGIB2(void){
+ 875                             		.loc 1 253 0
+ 876                             		; Note: Interrupt Handler
+ 877 0000 6E 1F                   		pushm	r1-r15
+ 878                             	.LCFI21:
+ 254:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if( TMR_GetClearSourceId(HAL_TMR_MTU2) == TCNT_CLEARING_TGRB ){
+ 879                             		.loc 1 254 0
+ 880 0002 66 21                   		mov	#2, r1
+ 881 0004 05 00 00 00             		bsr	_TMR_GetClearSourceId
+ 882                             	.LVL65:
+ 883 0008 5B 11                   		movu.B	r1, r1
+ 884 000a 61 11                   		cmp	#1, r1
+ 885 000c 21 0A                   		bne	.L113
+ 255:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		HWCNTR_ISR(HW_TMR_ID_2);
+ 886                             		.loc 1 255 0
+ 887 000e 66 21                   		mov	#2, r1
+ 888 0010 05 00 00 00             		bsr	_HWCNTR_ISR
+ 889                             	.LVL66:
+ 890 0014 2E 0A                   		bra	.L112
+ 891                             	.L113:
+ 256:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}else{
+ 257:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		HWTMRCH_ISR(TMR_CH_ID_12);
+ 892                             		.loc 1 257 0
+ 893 0016 FB 16 FF                		mov	#-1, r1
+ 894 0019 05 00 00 00             		bsr	_HWTMRCH_ISR
+ 895                             	.LVL67:
+ 896 001d 03                      		.balign 2,3,1
+ 897                             	.L112:
+ 258:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 259:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 898                             		.loc 1 259 0
+ 899 001e 6F 1F                   		popm	r1-r15
+ 900 0020 7F 95                   		rte
+ 901                             	.LFE22:
+ 903                             		.section	.text.INT_Excep_MTU2_TCIV2,"ax",@progbits
+ 904                             		.global	_INT_Excep_MTU2_TCIV2
+ 906                             	_INT_Excep_MTU2_TCIV2:
+ 907                             	.LFB23:
+ 260:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 261:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #ifdef TCIV2_IRQ_SUPPORT
+ 262:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_MTU2_TCIV2(void){
+ 908                             		.loc 1 262 0
+ 909                             		; Note: Interrupt Handler
+ 910                             	.LVL68:
+ 911 0000 6E 1F                   		pushm	r1-r15
+ 912                             	.LCFI22:
+ 263:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	int i=0;
+ 264:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 913                             		.loc 1 264 0
+ 914 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 915                             	.LVL69:
+ 916 0006 FD 6A 07                		mvfc	psw, r7
+ 917 0009 77 37 00 00 01          		or	#0x10000, r7
+ 918 000e FD 68 70                		mvtc	r7, psw
+ 919 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 920 0017 CC 7E                   		mov.B	[r7], r14
+ 921 0019 62 1E                   		add	#1, r14
+ 922 001b C3 7E                   		mov.B	r14, [r7]
+ 923 001d CD 7E 01                		mov.B	1[r7], r14
+ 924 0020 62 1E                   		add	#1, r14
+ 925 0022 C7 7E 01                		mov.B	r14, 1[r7]
+ 265:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 266:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	i |= CNT2_OVF_ExceptionHandler();
+ 926                             		.loc 1 266 0
+ 927 0025 05 00 00 00             		bsr	_CNT2_OVF_ExceptionHandler
+ 928                             	.LVL70:
+ 267:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if(!i)
+ 929                             		.loc 1 267 0
+ 930 0029 61 01                   		cmp	#0, r1
+ 931 002b 21 05                   		bne	.L117
+ 932 002d 03                      		.balign 2,3,3
+ 933                             	.L118:
+ 934 002e 2E 00                   		bra	.L118
+ 935                             	.L117:
+ 268:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	{
+ 269:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		while(1);
+ 270:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 271:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 272:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 936                             		.loc 1 272 0
+ 937 0030 CD 7E 01                		mov.B	1[r7], r14
+ 938 0033 60 1E                   		sub	#1, r14
+ 939 0035 C7 7E 01                		mov.B	r14, 1[r7]
+ 940 0038 CC 7E                   		mov.B	[r7], r14
+ 941 003a 5B E4                   		movu.B	r14, r4
+ 942 003c 61 14                   		cmp	#1, r4
+ 943 003e 21 0E                   		bne	.L119
+ 944                             		.loc 1 272 0 is_stmt 0 discriminator 1
+ 945 0040 A8 7F                   		mov.L	4[r7], r7
+ 946 0042 61 07                   		cmp	#0, r7
+ 947 0044 20 08                   		beq	.L119
+ 948                             		.loc 1 272 0 discriminator 3
+ 949 0046 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 950                             	.LVL71:
+ 951 004a 2E 0C                   		bra	.L116
+ 952                             	.LVL72:
+ 953                             	.L119:
+ 954                             		.loc 1 272 0 discriminator 2
+ 955 004c 60 1E                   		sub	#1, r14
+ 956 004e FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 957 0054 C3 7E                   		mov.B	r14, [r7]
+ 958                             	.LVL73:
+ 959                             		.balign 2,3,1
+ 960                             	.L116:
+ 273:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 961                             		.loc 1 273 0 is_stmt 1
+ 962 0056 6F 1F                   		popm	r1-r15
+ 963 0058 7F 95                   		rte
+ 964                             	.LFE23:
+ 966                             		.section	.text.INT_Excep_MTU2_TCIU2,"ax",@progbits
+ 967                             		.global	_INT_Excep_MTU2_TCIU2
+ 969                             	_INT_Excep_MTU2_TCIU2:
+ 970                             	.LFB24:
+ 274:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif /*TCIV2_IRQ_SUPPORT */
+ 275:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 276:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_MTU2_TCIU2(void){ /* MTU2 Underflow*/
+ 971                             		.loc 1 276 0
+ 972                             		; Note: Interrupt Handler
+ 973 0000 6E 1F                   		pushm	r1-r15
+ 974                             	.LCFI23:
+ 277:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	HWTMRCH_ISR(TMR_CH_ID_14);
+ 975                             		.loc 1 277 0
+ 976 0002 FB 16 FF                		mov	#-1, r1
+ 977 0005 05 00 00 00             		bsr	_HWTMRCH_ISR
+ 978                             	.LVL74:
+ 278:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 979                             		.loc 1 278 0
+ 980 0009 6F 1F                   		popm	r1-r15
+ 981 000b 7F 95                   		rte
+ 982                             	.LFE24:
+ 984                             		.section	.text.INT_Excep_MTU3_TGIA3,"ax",@progbits
+ 985                             		.global	_INT_Excep_MTU3_TGIA3
+ 987                             	_INT_Excep_MTU3_TGIA3:
+ 988                             	.LFB25:
+ 279:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 280:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 281:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #ifdef TGRA3_IRQ_SUPPORT
+ 282:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void  INT_Excep_MTU3_TGIA3(void){
+ 989                             		.loc 1 282 0
+ 990                             		; Note: Interrupt Handler
+ 991                             	.LVL75:
+ 992 0000 6E 1F                   		pushm	r1-r15
+ 993                             	.LCFI24:
+ 283:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	int i=0;
+ 284:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 994                             		.loc 1 284 0
+ 995 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 996                             	.LVL76:
+ 997 0006 FD 6A 07                		mvfc	psw, r7
+ 998 0009 77 37 00 00 01          		or	#0x10000, r7
+ 999 000e FD 68 70                		mvtc	r7, psw
+ 1000 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 1001 0017 CC 7E                   		mov.B	[r7], r14
+ 285:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 286:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	i |= MTU3_TGIA3_ExceptionHandler(NULL, 0);
+ 1002                             		.loc 1 286 0
+ 1003 0019 66 01                   		mov.L	#0, r1
+ 284:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 1004                             		.loc 1 284 0
+ 1005 001b 62 1E                   		add	#1, r14
+ 1006 001d C3 7E                   		mov.B	r14, [r7]
+ 1007 001f CD 7E 01                		mov.B	1[r7], r14
+ 1008                             		.loc 1 286 0
+ 1009 0022 EF 12                   		mov.L	r1, r2
+ 284:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 1010                             		.loc 1 284 0
+ 1011 0024 62 1E                   		add	#1, r14
+ 1012 0026 C7 7E 01                		mov.B	r14, 1[r7]
+ 1013                             		.loc 1 286 0
+ 1014 0029 05 00 00 00             		bsr	_MTU3_TGIA3_ExceptionHandler
+ 1015                             	.LVL77:
+ 287:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if(!i)
+ 1016                             		.loc 1 287 0
+ 1017 002d 61 01                   		cmp	#0, r1
+ 1018 002f 21 05                   		bne	.L128
+ 1019 0031 03                      		.balign 2,3,3
+ 1020                             	.L129:
+ 1021 0032 2E 00                   		bra	.L129
+ 1022                             	.L128:
+ 288:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	{
+ 289:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		while(1);
+ 290:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 291:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 292:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 1023                             		.loc 1 292 0
+ 1024 0034 CD 7E 01                		mov.B	1[r7], r14
+ 1025 0037 60 1E                   		sub	#1, r14
+ 1026 0039 C7 7E 01                		mov.B	r14, 1[r7]
+ 1027 003c CC 7E                   		mov.B	[r7], r14
+ 1028 003e 5B E4                   		movu.B	r14, r4
+ 1029 0040 61 14                   		cmp	#1, r4
+ 1030 0042 21 0E                   		bne	.L130
+ 1031                             		.loc 1 292 0 is_stmt 0 discriminator 1
+ 1032 0044 A8 7F                   		mov.L	4[r7], r7
+ 1033 0046 61 07                   		cmp	#0, r7
+ 1034 0048 20 08                   		beq	.L130
+ 1035                             		.loc 1 292 0 discriminator 3
+ 1036 004a 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 1037                             	.LVL78:
+ 1038 004e 2E 0C                   		bra	.L127
+ 1039                             	.LVL79:
+ 1040                             	.L130:
+ 1041                             		.loc 1 292 0 discriminator 2
+ 1042 0050 60 1E                   		sub	#1, r14
+ 1043 0052 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 1044 0058 C3 7E                   		mov.B	r14, [r7]
+ 1045                             	.LVL80:
+ 1046                             		.balign 2,3,1
+ 1047                             	.L127:
+ 293:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1048                             		.loc 1 293 0 is_stmt 1
+ 1049 005a 6F 1F                   		popm	r1-r15
+ 1050 005c 7F 95                   		rte
+ 1051                             	.LFE25:
+ 1053                             		.section	.text.INT_Excep_MTU3_TGIB3,"ax",@progbits
+ 1054                             		.global	_INT_Excep_MTU3_TGIB3
+ 1056                             	_INT_Excep_MTU3_TGIB3:
+ 1057                             	.LFB26:
+ 294:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 295:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 296:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 297:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_MTU3_TGIB3(void){
+ 1058                             		.loc 1 297 0
+ 1059                             		; Note: Interrupt Handler
+ 1060 0000 6E 1F                   		pushm	r1-r15
+ 1061                             	.LCFI25:
+ 298:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if( TMR_GetClearSourceId(HAL_TMR_MTU3) == TCNT_CLEARING_TGRB ){
+ 1062                             		.loc 1 298 0
+ 1063 0002 66 31                   		mov	#3, r1
+ 1064 0004 05 00 00 00             		bsr	_TMR_GetClearSourceId
+ 1065                             	.LVL81:
+ 1066 0008 5B 11                   		movu.B	r1, r1
+ 1067 000a 61 11                   		cmp	#1, r1
+ 1068 000c 21 0A                   		bne	.L137
+ 299:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		HWCNTR_ISR(HW_TMR_ID_3);
+ 1069                             		.loc 1 299 0
+ 1070 000e 66 31                   		mov	#3, r1
+ 1071 0010 05 00 00 00             		bsr	_HWCNTR_ISR
+ 1072                             	.LVL82:
+ 1073 0014 2E 0A                   		bra	.L136
+ 1074                             	.L137:
+ 300:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}else{
+ 301:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		HWTMRCH_ISR(TMR_CH_ID_16);
+ 1075                             		.loc 1 301 0
+ 1076 0016 FB 16 FF                		mov	#-1, r1
+ 1077 0019 05 00 00 00             		bsr	_HWTMRCH_ISR
+ 1078                             	.LVL83:
+ 1079 001d 03                      		.balign 2,3,1
+ 1080                             	.L136:
+ 302:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 303:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1081                             		.loc 1 303 0
+ 1082 001e 6F 1F                   		popm	r1-r15
+ 1083 0020 7F 95                   		rte
+ 1084                             	.LFE26:
+ 1086                             		.section	.text.INT_Excep_MTU3_TGIC3,"ax",@progbits
+ 1087                             		.global	_INT_Excep_MTU3_TGIC3
+ 1089                             	_INT_Excep_MTU3_TGIC3:
+ 1090                             	.LFB27:
+ 304:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 305:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 306:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #ifdef TGRC3_IRQ_SUPPORT
+ 307:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void  INT_Excep_MTU3_TGIC3(void){
+ 1091                             		.loc 1 307 0
+ 1092                             		; Note: Interrupt Handler
+ 1093                             	.LVL84:
+ 1094 0000 6E 1F                   		pushm	r1-r15
+ 1095                             	.LCFI26:
+ 308:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	int i=0;
+ 309:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 1096                             		.loc 1 309 0
+ 1097 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 1098                             	.LVL85:
+ 1099 0006 FD 6A 07                		mvfc	psw, r7
+ 1100 0009 77 37 00 00 01          		or	#0x10000, r7
+ 1101 000e FD 68 70                		mvtc	r7, psw
+ 1102 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 1103 0017 CC 7E                   		mov.B	[r7], r14
+ 310:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 311:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	i |= MTU3_TGIC3_ExceptionHandler(NULL, 0);
+ 1104                             		.loc 1 311 0
+ 1105 0019 66 01                   		mov.L	#0, r1
+ 309:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 1106                             		.loc 1 309 0
+ 1107 001b 62 1E                   		add	#1, r14
+ 1108 001d C3 7E                   		mov.B	r14, [r7]
+ 1109 001f CD 7E 01                		mov.B	1[r7], r14
+ 1110                             		.loc 1 311 0
+ 1111 0022 EF 12                   		mov.L	r1, r2
+ 309:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 1112                             		.loc 1 309 0
+ 1113 0024 62 1E                   		add	#1, r14
+ 1114 0026 C7 7E 01                		mov.B	r14, 1[r7]
+ 1115                             		.loc 1 311 0
+ 1116 0029 05 00 00 00             		bsr	_MTU3_TGIC3_ExceptionHandler
+ 1117                             	.LVL86:
+ 312:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if(!i)
+ 1118                             		.loc 1 312 0
+ 1119 002d 61 01                   		cmp	#0, r1
+ 1120 002f 21 05                   		bne	.L141
+ 1121 0031 03                      		.balign 2,3,3
+ 1122                             	.L142:
+ 1123 0032 2E 00                   		bra	.L142
+ 1124                             	.L141:
+ 313:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	{
+ 314:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		while(1);
+ 315:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 316:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 317:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 1125                             		.loc 1 317 0
+ 1126 0034 CD 7E 01                		mov.B	1[r7], r14
+ 1127 0037 60 1E                   		sub	#1, r14
+ 1128 0039 C7 7E 01                		mov.B	r14, 1[r7]
+ 1129 003c CC 7E                   		mov.B	[r7], r14
+ 1130 003e 5B E4                   		movu.B	r14, r4
+ 1131 0040 61 14                   		cmp	#1, r4
+ 1132 0042 21 0E                   		bne	.L143
+ 1133                             		.loc 1 317 0 is_stmt 0 discriminator 1
+ 1134 0044 A8 7F                   		mov.L	4[r7], r7
+ 1135 0046 61 07                   		cmp	#0, r7
+ 1136 0048 20 08                   		beq	.L143
+ 1137                             		.loc 1 317 0 discriminator 3
+ 1138 004a 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 1139                             	.LVL87:
+ 1140 004e 2E 0C                   		bra	.L140
+ 1141                             	.LVL88:
+ 1142                             	.L143:
+ 1143                             		.loc 1 317 0 discriminator 2
+ 1144 0050 60 1E                   		sub	#1, r14
+ 1145 0052 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 1146 0058 C3 7E                   		mov.B	r14, [r7]
+ 1147                             	.LVL89:
+ 1148                             		.balign 2,3,1
+ 1149                             	.L140:
+ 318:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1150                             		.loc 1 318 0 is_stmt 1
+ 1151 005a 6F 1F                   		popm	r1-r15
+ 1152 005c 7F 95                   		rte
+ 1153                             	.LFE27:
+ 1155                             		.section	.text.INT_Excep_MTU3_TCIV3,"ax",@progbits
+ 1156                             		.global	_INT_Excep_MTU3_TCIV3
+ 1158                             	_INT_Excep_MTU3_TCIV3:
+ 1159                             	.LFB28:
+ 319:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 320:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 321:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 322:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #ifdef TGRD3_IRQ_SUPPORT
+ 323:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void  INT_Excep_MTU3_TGID3(void){
+ 324:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	int i=0;
+ 325:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 326:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 327:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	i |= MTU3_TGID3_ExceptionHandler(NULL, 0);
+ 328:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if(!i)
+ 329:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	{
+ 330:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		while(1);
+ 331:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 332:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 333:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 334:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 335:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 336:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 337:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 338:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #ifdef TCIV3_IRQ_SUPPORT
+ 339:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_MTU3_TCIV3(void){
+ 1160                             		.loc 1 339 0
+ 1161                             		; Note: Interrupt Handler
+ 1162                             	.LVL90:
+ 1163 0000 6E 1F                   		pushm	r1-r15
+ 1164                             	.LCFI27:
+ 340:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	int i=0;
+ 341:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 1165                             		.loc 1 341 0
+ 1166 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 1167                             	.LVL91:
+ 1168 0006 FD 6A 07                		mvfc	psw, r7
+ 1169 0009 77 37 00 00 01          		or	#0x10000, r7
+ 1170 000e FD 68 70                		mvtc	r7, psw
+ 1171 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 1172 0017 CC 7E                   		mov.B	[r7], r14
+ 1173 0019 62 1E                   		add	#1, r14
+ 1174 001b C3 7E                   		mov.B	r14, [r7]
+ 1175 001d CD 7E 01                		mov.B	1[r7], r14
+ 1176 0020 62 1E                   		add	#1, r14
+ 1177 0022 C7 7E 01                		mov.B	r14, 1[r7]
+ 342:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 343:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	i |= CNT3_OVF_ExceptionHandler();
+ 1178                             		.loc 1 343 0
+ 1179 0025 05 00 00 00             		bsr	_CNT3_OVF_ExceptionHandler
+ 1180                             	.LVL92:
+ 344:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if(!i)
+ 1181                             		.loc 1 344 0
+ 1182 0029 61 01                   		cmp	#0, r1
+ 1183 002b 21 05                   		bne	.L150
+ 1184 002d 03                      		.balign 2,3,3
+ 1185                             	.L151:
+ 1186 002e 2E 00                   		bra	.L151
+ 1187                             	.L150:
+ 345:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	{
+ 346:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		while(1);
+ 347:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 348:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 349:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 1188                             		.loc 1 349 0
+ 1189 0030 CD 7E 01                		mov.B	1[r7], r14
+ 1190 0033 60 1E                   		sub	#1, r14
+ 1191 0035 C7 7E 01                		mov.B	r14, 1[r7]
+ 1192 0038 CC 7E                   		mov.B	[r7], r14
+ 1193 003a 5B E4                   		movu.B	r14, r4
+ 1194 003c 61 14                   		cmp	#1, r4
+ 1195 003e 21 0E                   		bne	.L152
+ 1196                             		.loc 1 349 0 is_stmt 0 discriminator 1
+ 1197 0040 A8 7F                   		mov.L	4[r7], r7
+ 1198 0042 61 07                   		cmp	#0, r7
+ 1199 0044 20 08                   		beq	.L152
+ 1200                             		.loc 1 349 0 discriminator 3
+ 1201 0046 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 1202                             	.LVL93:
+ 1203 004a 2E 0C                   		bra	.L149
+ 1204                             	.LVL94:
+ 1205                             	.L152:
+ 1206                             		.loc 1 349 0 discriminator 2
+ 1207 004c 60 1E                   		sub	#1, r14
+ 1208 004e FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 1209 0054 C3 7E                   		mov.B	r14, [r7]
+ 1210                             	.LVL95:
+ 1211                             		.balign 2,3,1
+ 1212                             	.L149:
+ 350:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1213                             		.loc 1 350 0 is_stmt 1
+ 1214 0056 6F 1F                   		popm	r1-r15
+ 1215 0058 7F 95                   		rte
+ 1216                             	.LFE28:
+ 1218                             		.section	.text.INT_Excep_MTU4_TGIA4,"ax",@progbits
+ 1219                             		.global	_INT_Excep_MTU4_TGIA4
+ 1221                             	_INT_Excep_MTU4_TGIA4:
+ 1222                             	.LFB29:
+ 351:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif /* TCIV3_IRQ_SUPPORT */
+ 352:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 353:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #ifdef TGRA4_IRQ_SUPPORT
+ 354:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void  INT_Excep_MTU4_TGIA4(void){
+ 1223                             		.loc 1 354 0
+ 1224                             		; Note: Interrupt Handler
+ 1225                             	.LVL96:
+ 1226 0000 6E 1F                   		pushm	r1-r15
+ 1227                             	.LCFI28:
+ 355:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	int i=0;
+ 356:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 1228                             		.loc 1 356 0
+ 1229 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 1230                             	.LVL97:
+ 1231 0006 FD 6A 07                		mvfc	psw, r7
+ 1232 0009 77 37 00 00 01          		or	#0x10000, r7
+ 1233 000e FD 68 70                		mvtc	r7, psw
+ 1234 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 1235 0017 CC 7E                   		mov.B	[r7], r14
+ 357:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 358:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	i |= MTU4_TGIA4_ExceptionHandler(NULL, 0);
+ 1236                             		.loc 1 358 0
+ 1237 0019 66 01                   		mov.L	#0, r1
+ 356:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 1238                             		.loc 1 356 0
+ 1239 001b 62 1E                   		add	#1, r14
+ 1240 001d C3 7E                   		mov.B	r14, [r7]
+ 1241 001f CD 7E 01                		mov.B	1[r7], r14
+ 1242                             		.loc 1 358 0
+ 1243 0022 EF 12                   		mov.L	r1, r2
+ 356:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 1244                             		.loc 1 356 0
+ 1245 0024 62 1E                   		add	#1, r14
+ 1246 0026 C7 7E 01                		mov.B	r14, 1[r7]
+ 1247                             		.loc 1 358 0
+ 1248 0029 05 00 00 00             		bsr	_MTU4_TGIA4_ExceptionHandler
+ 1249                             	.LVL98:
+ 359:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if(!i)
+ 1250                             		.loc 1 359 0
+ 1251 002d 61 01                   		cmp	#0, r1
+ 1252 002f 21 05                   		bne	.L159
+ 1253 0031 03                      		.balign 2,3,3
+ 1254                             	.L160:
+ 1255 0032 2E 00                   		bra	.L160
+ 1256                             	.L159:
+ 360:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	{
+ 361:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		while(1);
+ 362:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 363:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 364:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 1257                             		.loc 1 364 0
+ 1258 0034 CD 7E 01                		mov.B	1[r7], r14
+ 1259 0037 60 1E                   		sub	#1, r14
+ 1260 0039 C7 7E 01                		mov.B	r14, 1[r7]
+ 1261 003c CC 7E                   		mov.B	[r7], r14
+ 1262 003e 5B E4                   		movu.B	r14, r4
+ 1263 0040 61 14                   		cmp	#1, r4
+ 1264 0042 21 0E                   		bne	.L161
+ 1265                             		.loc 1 364 0 is_stmt 0 discriminator 1
+ 1266 0044 A8 7F                   		mov.L	4[r7], r7
+ 1267 0046 61 07                   		cmp	#0, r7
+ 1268 0048 20 08                   		beq	.L161
+ 1269                             		.loc 1 364 0 discriminator 3
+ 1270 004a 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 1271                             	.LVL99:
+ 1272 004e 2E 0C                   		bra	.L158
+ 1273                             	.LVL100:
+ 1274                             	.L161:
+ 1275                             		.loc 1 364 0 discriminator 2
+ 1276 0050 60 1E                   		sub	#1, r14
+ 1277 0052 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 1278 0058 C3 7E                   		mov.B	r14, [r7]
+ 1279                             	.LVL101:
+ 1280                             		.balign 2,3,1
+ 1281                             	.L158:
+ 365:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1282                             		.loc 1 365 0 is_stmt 1
+ 1283 005a 6F 1F                   		popm	r1-r15
+ 1284 005c 7F 95                   		rte
+ 1285                             	.LFE29:
+ 1287                             		.section	.text.INT_Excep_MTU4_TGIC4,"ax",@progbits
+ 1288                             		.global	_INT_Excep_MTU4_TGIC4
+ 1290                             	_INT_Excep_MTU4_TGIC4:
+ 1291                             	.LFB30:
+ 366:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 367:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 368:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 369:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #ifdef TGRB4_IRQ_SUPPORT
+ 370:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void  INT_Excep_MTU4_TGIB4(void){
+ 371:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	int i=0;
+ 372:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 373:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 374:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	i |= MTU4_TGIB4_ExceptionHandler(NULL, 0);
+ 375:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if(!i)
+ 376:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	{
+ 377:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		while(1);
+ 378:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 379:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 380:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 381:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 382:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 383:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 384:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 385:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 386:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #ifdef TGRC4_IRQ_SUPPORT
+ 387:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void  INT_Excep_MTU4_TGIC4(void){
+ 1292                             		.loc 1 387 0
+ 1293                             		; Note: Interrupt Handler
+ 1294                             	.LVL102:
+ 1295 0000 6E 1F                   		pushm	r1-r15
+ 1296                             	.LCFI29:
+ 388:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	int i=0;
+ 389:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 1297                             		.loc 1 389 0
+ 1298 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 1299                             	.LVL103:
+ 1300 0006 FD 6A 07                		mvfc	psw, r7
+ 1301 0009 77 37 00 00 01          		or	#0x10000, r7
+ 1302 000e FD 68 70                		mvtc	r7, psw
+ 1303 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 1304 0017 CC 7E                   		mov.B	[r7], r14
+ 390:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 391:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	i |= MTU4_TGIC4_ExceptionHandler(NULL, 0);
+ 1305                             		.loc 1 391 0
+ 1306 0019 66 01                   		mov.L	#0, r1
+ 389:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 1307                             		.loc 1 389 0
+ 1308 001b 62 1E                   		add	#1, r14
+ 1309 001d C3 7E                   		mov.B	r14, [r7]
+ 1310 001f CD 7E 01                		mov.B	1[r7], r14
+ 1311                             		.loc 1 391 0
+ 1312 0022 EF 12                   		mov.L	r1, r2
+ 389:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 1313                             		.loc 1 389 0
+ 1314 0024 62 1E                   		add	#1, r14
+ 1315 0026 C7 7E 01                		mov.B	r14, 1[r7]
+ 1316                             		.loc 1 391 0
+ 1317 0029 05 00 00 00             		bsr	_MTU4_TGIC4_ExceptionHandler
+ 1318                             	.LVL104:
+ 392:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if(!i)
+ 1319                             		.loc 1 392 0
+ 1320 002d 61 01                   		cmp	#0, r1
+ 1321 002f 21 05                   		bne	.L168
+ 1322 0031 03                      		.balign 2,3,3
+ 1323                             	.L169:
+ 1324 0032 2E 00                   		bra	.L169
+ 1325                             	.L168:
+ 393:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	{
+ 394:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		while(1);
+ 395:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 396:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 1326                             		.loc 1 396 0
+ 1327 0034 CD 7E 01                		mov.B	1[r7], r14
+ 1328 0037 60 1E                   		sub	#1, r14
+ 1329 0039 C7 7E 01                		mov.B	r14, 1[r7]
+ 1330 003c CC 7E                   		mov.B	[r7], r14
+ 1331 003e 5B E4                   		movu.B	r14, r4
+ 1332 0040 61 14                   		cmp	#1, r4
+ 1333 0042 21 0E                   		bne	.L170
+ 1334                             		.loc 1 396 0 is_stmt 0 discriminator 1
+ 1335 0044 A8 7F                   		mov.L	4[r7], r7
+ 1336 0046 61 07                   		cmp	#0, r7
+ 1337 0048 20 08                   		beq	.L170
+ 1338                             		.loc 1 396 0 discriminator 3
+ 1339 004a 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 1340                             	.LVL105:
+ 1341 004e 2E 0C                   		bra	.L167
+ 1342                             	.LVL106:
+ 1343                             	.L170:
+ 1344                             		.loc 1 396 0 discriminator 2
+ 1345 0050 60 1E                   		sub	#1, r14
+ 1346 0052 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 1347 0058 C3 7E                   		mov.B	r14, [r7]
+ 1348                             	.LVL107:
+ 1349                             		.balign 2,3,1
+ 1350                             	.L167:
+ 397:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1351                             		.loc 1 397 0 is_stmt 1
+ 1352 005a 6F 1F                   		popm	r1-r15
+ 1353 005c 7F 95                   		rte
+ 1354                             	.LFE30:
+ 1356                             		.section	.text.INT_Excep_MTU4_TGID4,"ax",@progbits
+ 1357                             		.global	_INT_Excep_MTU4_TGID4
+ 1359                             	_INT_Excep_MTU4_TGID4:
+ 1360                             	.LFB31:
+ 398:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 399:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 400:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 401:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_MTU4_TGID4(void){
+ 1361                             		.loc 1 401 0
+ 1362                             		; Note: Interrupt Handler
+ 1363 0000 6E 1F                   		pushm	r1-r15
+ 1364                             	.LCFI30:
+ 402:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if( TMR_GetClearSourceId(HAL_TMR_MTU4) == TCNT_CLEARING_TGRD ){
+ 1365                             		.loc 1 402 0
+ 1366 0002 66 41                   		mov	#4, r1
+ 1367 0004 05 00 00 00             		bsr	_TMR_GetClearSourceId
+ 1368                             	.LVL108:
+ 1369 0008 5B 11                   		movu.B	r1, r1
+ 1370 000a 61 31                   		cmp	#3, r1
+ 1371 000c 21 0A                   		bne	.L177
+ 403:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		HWCNTR_ISR(HW_TMR_ID_4);
+ 1372                             		.loc 1 403 0
+ 1373 000e 66 41                   		mov	#4, r1
+ 1374 0010 05 00 00 00             		bsr	_HWCNTR_ISR
+ 1375                             	.LVL109:
+ 1376 0014 2E 0A                   		bra	.L176
+ 1377                             	.L177:
+ 404:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}else{
+ 405:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		HWTMRCH_ISR(TMR_CH_ID_23);
+ 1378                             		.loc 1 405 0
+ 1379 0016 FB 16 FF                		mov	#-1, r1
+ 1380 0019 05 00 00 00             		bsr	_HWTMRCH_ISR
+ 1381                             	.LVL110:
+ 1382 001d 03                      		.balign 2,3,1
+ 1383                             	.L176:
+ 406:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 407:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1384                             		.loc 1 407 0
+ 1385 001e 6F 1F                   		popm	r1-r15
+ 1386 0020 7F 95                   		rte
+ 1387                             	.LFE31:
+ 1389                             		.section	.text.INT_Excep_MTU4_TCIV4,"ax",@progbits
+ 1390                             		.global	_INT_Excep_MTU4_TCIV4
+ 1392                             	_INT_Excep_MTU4_TCIV4:
+ 1393                             	.LFB32:
+ 408:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 409:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #ifdef TCIV4_IRQ_SUPPORT
+ 410:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_MTU4_TCIV4(void){
+ 1394                             		.loc 1 410 0
+ 1395                             		; Note: Interrupt Handler
+ 1396                             	.LVL111:
+ 1397 0000 6E 1F                   		pushm	r1-r15
+ 1398                             	.LCFI31:
+ 411:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	int i=0;
+ 412:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 1399                             		.loc 1 412 0
+ 1400 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 1401                             	.LVL112:
+ 1402 0006 FD 6A 07                		mvfc	psw, r7
+ 1403 0009 77 37 00 00 01          		or	#0x10000, r7
+ 1404 000e FD 68 70                		mvtc	r7, psw
+ 1405 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 1406 0017 CC 7E                   		mov.B	[r7], r14
+ 1407 0019 62 1E                   		add	#1, r14
+ 1408 001b C3 7E                   		mov.B	r14, [r7]
+ 1409 001d CD 7E 01                		mov.B	1[r7], r14
+ 1410 0020 62 1E                   		add	#1, r14
+ 1411 0022 C7 7E 01                		mov.B	r14, 1[r7]
+ 413:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 414:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	i |= CNT4_OVF_ExceptionHandler();
+ 1412                             		.loc 1 414 0
+ 1413 0025 05 00 00 00             		bsr	_CNT4_OVF_ExceptionHandler
+ 1414                             	.LVL113:
+ 415:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	if(!i)
+ 1415                             		.loc 1 415 0
+ 1416 0029 61 01                   		cmp	#0, r1
+ 1417 002b 21 05                   		bne	.L181
+ 1418 002d 03                      		.balign 2,3,3
+ 1419                             	.L182:
+ 1420 002e 2E 00                   		bra	.L182
+ 1421                             	.L181:
+ 416:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	{
+ 417:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 		while(1);
+ 418:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	}
+ 419:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 420:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 1422                             		.loc 1 420 0
+ 1423 0030 CD 7E 01                		mov.B	1[r7], r14
+ 1424 0033 60 1E                   		sub	#1, r14
+ 1425 0035 C7 7E 01                		mov.B	r14, 1[r7]
+ 1426 0038 CC 7E                   		mov.B	[r7], r14
+ 1427 003a 5B E4                   		movu.B	r14, r4
+ 1428 003c 61 14                   		cmp	#1, r4
+ 1429 003e 21 0E                   		bne	.L183
+ 1430                             		.loc 1 420 0 is_stmt 0 discriminator 1
+ 1431 0040 A8 7F                   		mov.L	4[r7], r7
+ 1432 0042 61 07                   		cmp	#0, r7
+ 1433 0044 20 08                   		beq	.L183
+ 1434                             		.loc 1 420 0 discriminator 3
+ 1435 0046 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 1436                             	.LVL114:
+ 1437 004a 2E 0C                   		bra	.L180
+ 1438                             	.LVL115:
+ 1439                             	.L183:
+ 1440                             		.loc 1 420 0 discriminator 2
+ 1441 004c 60 1E                   		sub	#1, r14
+ 1442 004e FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 1443 0054 C3 7E                   		mov.B	r14, [r7]
+ 1444                             	.LVL116:
+ 1445                             		.balign 2,3,1
+ 1446                             	.L180:
+ 421:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1447                             		.loc 1 421 0 is_stmt 1
+ 1448 0056 6F 1F                   		popm	r1-r15
+ 1449 0058 7F 95                   		rte
+ 1450                             	.LFE32:
+ 1452                             		.section	.text.INT_Excep_MTU5_TGIU5,"ax",@progbits
+ 1453                             		.global	_INT_Excep_MTU5_TGIU5
+ 1455                             	_INT_Excep_MTU5_TGIU5:
+ 1456                             	.LFB33:
+ 422:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif /* TCIV4_IRQ_SUPPORT */
+ 423:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 424:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_MTU5_TGIU5(void){
+ 1457                             		.loc 1 424 0
+ 1458                             		; Note: Interrupt Handler
+ 1459 0000 6E 1F                   		pushm	r1-r15
+ 1460                             	.LCFI32:
+ 425:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	HWTMRCH_ISR(TMR_CH_ID_25);
+ 1461                             		.loc 1 425 0
+ 1462 0002 FB 16 FF                		mov	#-1, r1
+ 1463 0005 05 00 00 00             		bsr	_HWTMRCH_ISR
+ 1464                             	.LVL117:
+ 426:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1465                             		.loc 1 426 0
+ 1466 0009 6F 1F                   		popm	r1-r15
+ 1467 000b 7F 95                   		rte
+ 1468                             	.LFE33:
+ 1470                             		.section	.text.INT_Excep_MTU5_TGIV5,"ax",@progbits
+ 1471                             		.global	_INT_Excep_MTU5_TGIV5
+ 1473                             	_INT_Excep_MTU5_TGIV5:
+ 1474                             	.LFB34:
+ 427:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 428:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_MTU5_TGIV5(void){
+ 1475                             		.loc 1 428 0
+ 1476                             		; Note: Interrupt Handler
+ 1477 0000 6E 1F                   		pushm	r1-r15
+ 1478                             	.LCFI33:
+ 429:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	HWTMRCH_ISR(TMR_CH_ID_26);
+ 1479                             		.loc 1 429 0
+ 1480 0002 FB 16 FF                		mov	#-1, r1
+ 1481 0005 05 00 00 00             		bsr	_HWTMRCH_ISR
+ 1482                             	.LVL118:
+ 430:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1483                             		.loc 1 430 0
+ 1484 0009 6F 1F                   		popm	r1-r15
+ 1485 000b 7F 95                   		rte
+ 1486                             	.LFE34:
+ 1488                             		.section	.text.INT_Excep_MTU5_TGIW5,"ax",@progbits
+ 1489                             		.global	_INT_Excep_MTU5_TGIW5
+ 1491                             	_INT_Excep_MTU5_TGIW5:
+ 1492                             	.LFB35:
+ 431:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 432:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_MTU5_TGIW5(void){
+ 1493                             		.loc 1 432 0
+ 1494                             		; Note: Interrupt Handler
+ 1495 0000 6E 1F                   		pushm	r1-r15
+ 1496                             	.LCFI34:
+ 433:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	HWTMRCH_ISR(TMR_CH_ID_27);
+ 1497                             		.loc 1 433 0
+ 1498 0002 FB 16 FF                		mov	#-1, r1
+ 1499 0005 05 00 00 00             		bsr	_HWTMRCH_ISR
+ 1500                             	.LVL119:
+ 434:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1501                             		.loc 1 434 0
+ 1502 0009 6F 1F                   		popm	r1-r15
+ 1503 000b 7F 95                   		rte
+ 1504                             	.LFE35:
+ 1506                             		.section	.text.INT_Excep_SCI0_RXI0,"ax",@progbits
+ 1507                             		.global	_INT_Excep_SCI0_RXI0
+ 1509                             	_INT_Excep_SCI0_RXI0:
+ 1510                             	.LFB36:
+ 435:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /*-----------------------------------------------------------*/
+ 436:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 437:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 438:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* SCI0_RXI0 vector 215*/
+ 439:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #if defined(HAL_UART_SUPPORT)
+ 440:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_SCI0_RXI0(void)
+ 441:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** {
+ 1511                             		.loc 1 441 0
+ 1512                             		; Note: Interrupt Handler
+ 1513 0000 6E 1F                   		pushm	r1-r15
+ 1514                             	.LCFI35:
+ 442:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OCUART_RxDataMngr();
+ 1515                             		.loc 1 442 0
+ 1516 0002 05 00 00 00             		bsr	_OCUART_RxDataMngr
+ 1517                             	.LVL120:
+ 443:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1518                             		.loc 1 443 0
+ 1519 0006 6F 1F                   		popm	r1-r15
+ 1520 0008 7F 95                   		rte
+ 1521                             	.LFE36:
+ 1523                             		.section	.text.INT_Excep_SCI1_RXI1,"ax",@progbits
+ 1524                             		.global	_INT_Excep_SCI1_RXI1
+ 1526                             	_INT_Excep_SCI1_RXI1:
+ 1527                             	.LFB37:
+ 444:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 445:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 446:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* SCI1_RXI1*/
+ 447:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #if defined(HAL_UART_SUPPORT)
+ 448:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_SCI1_RXI1(void){ 
+ 1528                             		.loc 1 448 0
+ 1529                             		; Note: Interrupt Handler
+ 1530 0000 6E 1F                   		pushm	r1-r15
+ 1531                             	.LCFI36:
+ 449:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OCUART_RxDataMngr();
+ 1532                             		.loc 1 449 0
+ 1533 0002 05 00 00 00             		bsr	_OCUART_RxDataMngr
+ 1534                             	.LVL121:
+ 450:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1535                             		.loc 1 450 0
+ 1536 0006 6F 1F                   		popm	r1-r15
+ 1537 0008 7F 95                   		rte
+ 1538                             	.LFE37:
+ 1540                             		.section	.text.INT_Excep_SCI5_RXI5,"ax",@progbits
+ 1541                             		.global	_INT_Excep_SCI5_RXI5
+ 1543                             	_INT_Excep_SCI5_RXI5:
+ 1544                             	.LFB38:
+ 451:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 452:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 453:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #if defined(HAL_UART_SUPPORT)
+ 454:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* SCI5_RXI5  vector 223 */
+ 455:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_SCI5_RXI5(void){ 
+ 1545                             		.loc 1 455 0
+ 1546                             		; Note: Interrupt Handler
+ 1547 0000 6E 1F                   		pushm	r1-r15
+ 1548                             	.LCFI37:
+ 456:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OCUART_RxDataMngr();
+ 1549                             		.loc 1 456 0
+ 1550 0002 05 00 00 00             		bsr	_OCUART_RxDataMngr
+ 1551                             	.LVL122:
+ 457:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1552                             		.loc 1 457 0
+ 1553 0006 6F 1F                   		popm	r1-r15
+ 1554 0008 7F 95                   		rte
+ 1555                             	.LFE38:
+ 1557                             		.section	.text.INT_Excep_SCI5_TEI5,"ax",@progbits
+ 1558                             		.global	_INT_Excep_SCI5_TEI5
+ 1560                             	_INT_Excep_SCI5_TEI5:
+ 1561                             	.LFB39:
+ 458:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 459:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 460:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #if defined(HAL_UART_SUPPORT)
+ 461:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* SCI5_TEI5  vector 225 */
+ 462:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_SCI5_TEI5(void){
+ 1562                             		.loc 1 462 0
+ 1563                             		; Note: Interrupt Handler
+ 1564 0000 6E 1F                   		pushm	r1-r15
+ 1565                             	.LCFI38:
+ 463:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OCUART_TxDataMngr();
+ 1566                             		.loc 1 463 0
+ 1567 0002 05 00 00 00             		bsr	_OCUART_TxDataMngr
+ 1568                             	.LVL123:
+ 464:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1569                             		.loc 1 464 0
+ 1570 0006 6F 1F                   		popm	r1-r15
+ 1571 0008 7F 95                   		rte
+ 1572                             	.LFE39:
+ 1574                             		.section	.text.INT_Excep_SCI12_RXI12,"ax",@progbits
+ 1575                             		.global	_INT_Excep_SCI12_RXI12
+ 1577                             	_INT_Excep_SCI12_RXI12:
+ 1578                             	.LFB40:
+ 465:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 466:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 467:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #if defined(HAL_UART_SUPPORT)
+ 468:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* SCI12_RXI12 vector 239 */
+ 469:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_SCI12_RXI12(void){
+ 1579                             		.loc 1 469 0
+ 1580                             		; Note: Interrupt Handler
+ 1581 0000 6E 1F                   		pushm	r1-r15
+ 1582                             	.LCFI39:
+ 470:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OCUART_RxDataMngr();
+ 1583                             		.loc 1 470 0
+ 1584 0002 05 00 00 00             		bsr	_OCUART_RxDataMngr
+ 1585                             	.LVL124:
+ 471:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1586                             		.loc 1 471 0
+ 1587 0006 6F 1F                   		popm	r1-r15
+ 1588 0008 7F 95                   		rte
+ 1589                             	.LFE40:
+ 1591                             		.section	.text.INT_Excep_SCI12_TEI12,"ax",@progbits
+ 1592                             		.global	_INT_Excep_SCI12_TEI12
+ 1594                             	_INT_Excep_SCI12_TEI12:
+ 1595                             	.LFB41:
+ 472:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 473:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 474:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #if defined(HAL_UART_SUPPORT)
+ 475:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* SCI12_TEI12  vector 241 */
+ 476:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_SCI12_TEI12(void){
+ 1596                             		.loc 1 476 0
+ 1597                             		; Note: Interrupt Handler
+ 1598 0000 6E 1F                   		pushm	r1-r15
+ 1599                             	.LCFI40:
+ 477:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OCUART_TxDataMngr();
+ 1600                             		.loc 1 477 0
+ 1601 0002 05 00 00 00             		bsr	_OCUART_TxDataMngr
+ 1602                             	.LVL125:
+ 478:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1603                             		.loc 1 478 0
+ 1604 0006 6F 1F                   		popm	r1-r15
+ 1605 0008 7F 95                   		rte
+ 1606                             	.LFE41:
+ 1608                             		.section	.text.IIC0_RX_ISR,"ax",@progbits
+ 1609                             		.global	_IIC0_RX_ISR
+ 1611                             	_IIC0_RX_ISR:
+ 1612                             	.LFB42:
+ 479:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif
+ 480:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 481:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 482:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 483:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #if defined(I2C00_ISR_ENABLE)
+ 484:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* RIIC0_RXI0*/
+ 485:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void IIC0_RX_ISR(void){
+ 1613                             		.loc 1 485 0
+ 1614                             		; Note: Interrupt Handler
+ 1615 0000 6E 1F                   		pushm	r1-r15
+ 1616                             	.LCFI41:
+ 486:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 1617                             		.loc 1 486 0
+ 1618 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 1619                             	.LVL126:
+ 1620 0006 FD 6A 07                		mvfc	psw, r7
+ 1621 0009 77 37 00 00 01          		or	#0x10000, r7
+ 1622 000e FD 68 70                		mvtc	r7, psw
+ 1623 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 1624 0017 CC 7E                   		mov.B	[r7], r14
+ 1625 0019 62 1E                   		add	#1, r14
+ 1626 001b C3 7E                   		mov.B	r14, [r7]
+ 1627 001d CD 7E 01                		mov.B	1[r7], r14
+ 1628 0020 62 1E                   		add	#1, r14
+ 1629 0022 C7 7E 01                		mov.B	r14, 1[r7]
+ 487:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OCI2C_ISR();
+ 1630                             		.loc 1 487 0
+ 1631 0025 05 00 00 00             		bsr	_OCI2C_ISR
+ 1632                             	.LVL127:
+ 488:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 1633                             		.loc 1 488 0
+ 1634 0029 CD 7E 01                		mov.B	1[r7], r14
+ 1635 002c EF 74                   		mov.L	r7, r4
+ 1636 002e 60 1E                   		sub	#1, r14
+ 1637 0030 C7 7E 01                		mov.B	r14, 1[r7]
+ 1638 0033 CC 7E                   		mov.B	[r7], r14
+ 1639 0035 5B E3                   		movu.B	r14, r3
+ 1640 0037 61 13                   		cmp	#1, r3
+ 1641 0039 21 0E                   		bne	.L208
+ 1642                             		.loc 1 488 0 is_stmt 0 discriminator 1
+ 1643 003b A8 7F                   		mov.L	4[r7], r7
+ 1644 003d 61 07                   		cmp	#0, r7
+ 1645 003f 20 08                   		beq	.L208
+ 1646                             		.loc 1 488 0 discriminator 3
+ 1647 0041 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 1648                             	.LVL128:
+ 1649 0045 2E 07                   		bra	.L207
+ 1650                             	.L208:
+ 1651                             		.loc 1 488 0 discriminator 2
+ 1652 0047 60 1E                   		sub	#1, r14
+ 1653 0049 C3 4E                   		mov.B	r14, [r4]
+ 1654 004b 03                      		.balign 2,3,1
+ 1655                             	.L207:
+ 489:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1656                             		.loc 1 489 0 is_stmt 1
+ 1657 004c 6F 1F                   		popm	r1-r15
+ 1658 004e 7F 95                   		rte
+ 1659                             	.LFE42:
+ 1661                             		.section	.text.IIC0_TX_ISR,"ax",@progbits
+ 1662                             		.global	_IIC0_TX_ISR
+ 1664                             	_IIC0_TX_ISR:
+ 1665                             	.LFB43:
+ 490:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 491:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void IIC0_TX_ISR(void){
+ 1666                             		.loc 1 491 0
+ 1667                             		; Note: Interrupt Handler
+ 1668 0000 6E 1F                   		pushm	r1-r15
+ 1669                             	.LCFI42:
+ 492:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 1670                             		.loc 1 492 0
+ 1671 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 1672                             	.LVL129:
+ 1673 0006 FD 6A 07                		mvfc	psw, r7
+ 1674 0009 77 37 00 00 01          		or	#0x10000, r7
+ 1675 000e FD 68 70                		mvtc	r7, psw
+ 1676 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 1677 0017 CC 7E                   		mov.B	[r7], r14
+ 1678 0019 62 1E                   		add	#1, r14
+ 1679 001b C3 7E                   		mov.B	r14, [r7]
+ 1680 001d CD 7E 01                		mov.B	1[r7], r14
+ 1681 0020 62 1E                   		add	#1, r14
+ 1682 0022 C7 7E 01                		mov.B	r14, 1[r7]
+ 493:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OCI2C_ISR();
+ 1683                             		.loc 1 493 0
+ 1684 0025 05 00 00 00             		bsr	_OCI2C_ISR
+ 1685                             	.LVL130:
+ 494:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 1686                             		.loc 1 494 0
+ 1687 0029 CD 7E 01                		mov.B	1[r7], r14
+ 1688 002c EF 74                   		mov.L	r7, r4
+ 1689 002e 60 1E                   		sub	#1, r14
+ 1690 0030 C7 7E 01                		mov.B	r14, 1[r7]
+ 1691 0033 CC 7E                   		mov.B	[r7], r14
+ 1692 0035 5B E3                   		movu.B	r14, r3
+ 1693 0037 61 13                   		cmp	#1, r3
+ 1694 0039 21 0E                   		bne	.L215
+ 1695                             		.loc 1 494 0 is_stmt 0 discriminator 1
+ 1696 003b A8 7F                   		mov.L	4[r7], r7
+ 1697 003d 61 07                   		cmp	#0, r7
+ 1698 003f 20 08                   		beq	.L215
+ 1699                             		.loc 1 494 0 discriminator 3
+ 1700 0041 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 1701                             	.LVL131:
+ 1702 0045 2E 07                   		bra	.L214
+ 1703                             	.L215:
+ 1704                             		.loc 1 494 0 discriminator 2
+ 1705 0047 60 1E                   		sub	#1, r14
+ 1706 0049 C3 4E                   		mov.B	r14, [r4]
+ 1707 004b 03                      		.balign 2,3,1
+ 1708                             	.L214:
+ 495:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1709                             		.loc 1 495 0 is_stmt 1
+ 1710 004c 6F 1F                   		popm	r1-r15
+ 1711 004e 7F 95                   		rte
+ 1712                             	.LFE43:
+ 1714                             		.section	.text.IIC0_TX_END_ISR,"ax",@progbits
+ 1715                             		.global	_IIC0_TX_END_ISR
+ 1717                             	_IIC0_TX_END_ISR:
+ 1718                             	.LFB44:
+ 496:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 497:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* RIIC0_TEI0*/
+ 498:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void IIC0_TX_END_ISR(void){
+ 1719                             		.loc 1 498 0
+ 1720                             		; Note: Interrupt Handler
+ 1721 0000 6E 1F                   		pushm	r1-r15
+ 1722                             	.LCFI43:
+ 499:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_EnterInterrupt();
+ 1723                             		.loc 1 499 0
+ 1724 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 1725                             	.LVL132:
+ 1726 0006 FD 6A 07                		mvfc	psw, r7
+ 1727 0009 77 37 00 00 01          		or	#0x10000, r7
+ 1728 000e FD 68 70                		mvtc	r7, psw
+ 1729 0011 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 1730 0017 CC 7E                   		mov.B	[r7], r14
+ 1731 0019 62 1E                   		add	#1, r14
+ 1732 001b C3 7E                   		mov.B	r14, [r7]
+ 1733 001d CD 7E 01                		mov.B	1[r7], r14
+ 1734 0020 62 1E                   		add	#1, r14
+ 1735 0022 C7 7E 01                		mov.B	r14, 1[r7]
+ 500:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OCI2C_ISR();
+ 1736                             		.loc 1 500 0
+ 1737 0025 05 00 00 00             		bsr	_OCI2C_ISR
+ 1738                             	.LVL133:
+ 501:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OS_LeaveInterrupt();
+ 1739                             		.loc 1 501 0
+ 1740 0029 CD 7E 01                		mov.B	1[r7], r14
+ 1741 002c EF 74                   		mov.L	r7, r4
+ 1742 002e 60 1E                   		sub	#1, r14
+ 1743 0030 C7 7E 01                		mov.B	r14, 1[r7]
+ 1744 0033 CC 7E                   		mov.B	[r7], r14
+ 1745 0035 5B E3                   		movu.B	r14, r3
+ 1746 0037 61 13                   		cmp	#1, r3
+ 1747 0039 21 0E                   		bne	.L222
+ 1748                             		.loc 1 501 0 is_stmt 0 discriminator 1
+ 1749 003b A8 7F                   		mov.L	4[r7], r7
+ 1750 003d 61 07                   		cmp	#0, r7
+ 1751 003f 20 08                   		beq	.L222
+ 1752                             		.loc 1 501 0 discriminator 3
+ 1753 0041 05 00 00 00             		bsr	_OS_SwitchFromInt
+ 1754                             	.LVL134:
+ 1755 0045 2E 07                   		bra	.L221
+ 1756                             	.L222:
+ 1757                             		.loc 1 501 0 discriminator 2
+ 1758 0047 60 1E                   		sub	#1, r14
+ 1759 0049 C3 4E                   		mov.B	r14, [r4]
+ 1760 004b 03                      		.balign 2,3,1
+ 1761                             	.L221:
+ 502:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1762                             		.loc 1 502 0 is_stmt 1
+ 1763 004c 6F 1F                   		popm	r1-r15
+ 1764 004e 7F 95                   		rte
+ 1765                             	.LFE44:
+ 1767                             		.section	.text.INT_Excep_S12AD0_S12ADI0,"ax",@progbits
+ 1768                             		.global	_INT_Excep_S12AD0_S12ADI0
+ 1770                             	_INT_Excep_S12AD0_S12ADI0:
+ 1771                             	.LFB45:
+ 503:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** #endif /*  defined(I2C00_ISR_ENABLE) */
+ 504:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 
+ 505:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** /* vector 102 S12AD0_S12ADI0*/
+ 506:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** void INT_Excep_S12AD0_S12ADI0(void){
+ 1772                             		.loc 1 506 0
+ 1773                             		; Note: Interrupt Handler
+ 1774 0000 6E 1F                   		pushm	r1-r15
+ 1775                             	.LCFI44:
+ 507:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** 	OCADC_ISR();
+ 1776                             		.loc 1 507 0
+ 1777 0002 05 00 00 00             		bsr	_OCADC_ISR
+ 1778                             	.LVL135:
+ 508:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/EmbOS\interrupt_handlers.c **** }
+ 1779                             		.loc 1 508 0
+ 1780 0006 6F 1F                   		popm	r1-r15
+ 1781 0008 7F 95                   		rte
+ 1782                             	.LFE45:
+ 3700                             	.Letext0:
+ 3701                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 3702                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 3703                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_cfg.h"
+ 3704                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers/io_driver.h"
+ 3705                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Error/LIB_Error.h"
+ 3706                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCIRQ/OCIRQ_drv.h"
+ 3707                             		.file 8 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCLVD/OCLVD_drv.h"
+ 3708                             		.file 9 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200\\McuModule/ISR_TMR.h"
+ 3709                             		.file 10 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_hal.h"
+ 3710                             		.file 11 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCTPM/OCTPM_drv.h"
+ 3711                             		.file 12 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCUART/OCUART_drv.h"
+ 3712                             		.file 13 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCI2C/OCI2C_drv.h"
+ 3713                             		.file 14 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCADC/OCADC_drv.h"

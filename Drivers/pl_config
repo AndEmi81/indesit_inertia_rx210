@@ -1,0 +1,88 @@
+#############################################################################
+#
+#	Platform 2 library configuration
+#
+#############################################################################
+
+menu "Drivers configuration" 
+
+config PL_DRV_OCCRC
+	bool "On-Chip CRC Driver"
+	help
+	  Enables the On-Chip CRC Driver. *** It must be present in target MCU used ***
+
+config PL_DRV_SWCRC_TABLEDRIVEN
+	bool "SW CRC Table-Driven"
+	help
+	  Uses table driven computation for SW CRC instead of loop driven one
+
+config PL_DRV_OCRTC
+	bool "Driver Real Time Clock"
+	help
+	  Enables the RTC driver
+
+config PL_DRV_OCWDT
+	bool "Driver WatchDog"
+	help
+	  Enables the WatchDog driver 
+
+source "Drivers/OCWDT/pl_config"
+
+config PL_DRV_OCI2C_USE_CUSTOM_RESET
+	bool "OCI2C Custom Reset for Level 2 unblock routines"
+	help
+	  Allows use of Custom Reset for OCI2C Level 2 unblock routines - e.g. backward compatibility
+	  Custom function name is SW_RESET_MCU - it must be defined!
+	  
+config OCPWD_DISABLE_PINCHK
+	bool "OCPWD: Disable PIN Check polling for edge validation"
+	help
+		Enabling this option, no PIN check will be performed
+	  
+config OCLPM_DRV_ENABLE
+	bool "Low-Power Mode driver"
+	default n
+	help
+	  Enables the Low-Power mode driver
+
+	menu "Configurazione Low Power mode driver" 
+	depends on OCLPM_DRV_ENABLE
+	  
+		config OCLPM_DRV_I2C_TO_CANCEL_LP_MODE_SUPPORT
+			bool "Cancel Low-Power mode by I2C"
+			depends on OCLPM_DRV_ENABLE
+			default n
+			help
+			  Enables to cancel Low-Power mode by I2C
+		
+		config OCLPM_DRV_UART_TO_CANCEL_LP_MODE_SUPPORT
+			bool "Cancel Low-Power mode by UART"
+			depends on OCLPM_DRV_ENABLE
+			default n
+			help
+			  Enables to cancel Low-Power mode by UART
+		
+		config OCLPM_DRV_DIO_TO_CANCEL_LP_MODE_SUPPORT
+			bool "Cancel Low-Power mode by Digital IO"
+			depends on OCLPM_DRV_ENABLE
+			default n
+			help
+			  Enables to cancel Low-Power mode by Digital IO
+			  
+		menu "Configurazione IO per risveglio da low power mode"
+		depends on  OCLPM_DRV_DIO_TO_CANCEL_LP_MODE_SUPPORT
+		
+				config LPM_WAKEUP_PIN 		
+				int "LPM_WAKEUP_PIN"
+				default 255
+				
+				config LPM_WAKEUP_FILTER	
+				int "LPM_WAKEUP_FILTER"
+				default 100
+				
+		endmenu
+	endmenu
+	  	  
+endmenu
+
+#############################################################################

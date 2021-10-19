@@ -1,0 +1,1392 @@
+   1                             		.file	"OCFLS_drv.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.OCFLS_CheckParams.part.0,"ax",@progbits
+   6                             	_OCFLS_CheckParams.part.0:
+   7                             	.LFB8:
+   8                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS/OCFLS_drv.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /**
+   7:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n
+   8:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n			Source File
+   9:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n
+  10:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \file		OCFLS_drv.c
+  11:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \ingroup	OCFLS
+  12:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \date		Nov 10, 2009
+  13:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \version	01.00.00
+  14:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \author		stefano.ughi
+  15:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n
+  16:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n
+  17:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \par	History:
+  18:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n
+  19:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n 		00.00.35
+  20:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n		June 18, 2010
+  21:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n		stefano.ughi
+  22:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n		changes:
+  23:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n      compliant to ISO/ANSI 9899-1990 6.3.4 and Annex B
+  24:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n 		00.00.34
+  25:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n		June 18, 2010
+  26:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n		stefano.ughi
+  27:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n		changes:
+  28:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n      changed macro's name EnterCritical() in EnterCriticalSection()
+  29:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n      changed macro's name ExitCritical() in ExitCriticalSection()
+  30:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n      In Config.h must be defined
+  31:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n      #if defined(OSEK_SUPPORT)
+  32:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n      #define EnterCriticalSection()  SuspendAllInterrupts()
+  33:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n      #define ExitCriticalSection()   ResumeAllInterrupts()
+  34:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n      #else
+  35:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n      #define EnterCriticalSection()  EnterCritical()
+  36:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n      #define ExitCriticalSection()   ExitCritical()
+  37:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n      #endif
+  38:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n
+  39:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n 		00.00.34
+  40:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n		Jan 27, 2011
+  41:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n		stefano.ughi
+  42:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n		changes:
+  43:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n      Fixed bug on OCFLS_RWriteVerify
+  44:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n      OCWDT_SetSync(0) call changed with OCWDT_RefreshSync()
+  45:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n
+  46:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n 		00.00.33
+  47:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n		March 15, 2010
+  48:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n		stefano.ughi
+  49:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n		changes:
+  50:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n      added only write or erase/write permission on the selected flash block
+  51:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n
+  52:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n 		00.00.30
+  53:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n		Jan 14, 2010
+  54:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n		stefano.ughi
+  55:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n		changes:
+  56:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n      due to watchdog
+  57:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n 		- added FLS_ERASE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG property
+  58:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n		- added FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG property
+  59:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n
+  60:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n
+  61:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n
+  62:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n
+  63:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n etc.
+  64:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** */
+  65:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #define MODULE_BODY_OCFLS
+  66:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* ******** */
+  67:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* Includes */
+  68:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* ******** */
+  69:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #include "Config.h"
+  70:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #include "RTOS.h"
+  71:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #include "IO_Driver.h"
+  72:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #include "OCFLS_drv.h"
+  73:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #include "OCWDT_drv.h"
+  74:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #include "LIB_Error.h"
+  75:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+  76:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #if (FLS_ERASE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG > 255)
+  77:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #error "Value of FLS_ERASE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG property out of range."
+  78:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #endif
+  79:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+  80:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #if (FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG > 255)
+  81:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #error "Value of FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG property out of range."
+  82:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #endif
+  83:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+  84:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+  85:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+  86:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* ****************** */
+  87:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* Defines and Macros */
+  88:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* ****************** */
+  89:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+  90:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+  91:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* *************************** */
+  92:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* Typedef, Structs and Unions */
+  93:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* *************************** */
+  94:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* Function's pointer for Erase Page Command Executed in RAM  */
+  95:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** typedef void (*pFLS_ErasePageCmdIsInRam)(FLS_paramType param);
+  96:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* Function's pointer for Burst Writing Command Executed in RAM  */
+  97:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** typedef void (*pFLS_BurstProgCmdIsInRam)(FLS_SourcePtrType pSource, FLS_sizeType size, FLS_position
+  98:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+  99:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* ********* */
+ 100:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* Variables */
+ 101:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* ********* */
+ 102:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 103:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* Global */
+ 104:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** extern const FLS_MapType FlashMap[];
+ 105:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** extern const uint8_t FlashMapEraseForbidden[];
+ 106:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* Static */
+ 107:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 108:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* ******************* */
+ 109:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* Functions Prototype */
+ 110:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* ******************* */
+ 111:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** static IO_ErrorType OCFLS_CheckParams(FLS_sizeType size, FLS_positionType position);
+ 112:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 113:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* *************** */
+ 114:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* Function Bodies */
+ 115:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* *************** */
+ 116:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* Exported function */
+ 117:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /**
+ 118:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** This function initialises the FLS driver.
+ 119:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 120:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \return 	IO_ErrorType
+ 121:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 122:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OK succes
+ 123:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 124:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \author 	stefano.ughi
+ 125:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \date		Nov 12, 2009
+ 126:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \version	1.0.0
+ 127:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 128:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \note		\par \b Note 1:
+ 129:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			documentation by stefano.ughi
+ 130:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** */
+ 131:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_InitSync(void)
+ 132:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** {
+ 133:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_Init();
+ 134:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 135:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** }
+ 136:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 137:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 138:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /**
+ 139:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** This service implements the erase functionality.\n
+ 140:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** Verify is not performed, use \b OCFLS_REraseVerify function.
+ 141:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 142:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \param  [in]		size  specifies the number of bytes to be erased.
+ 143:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n					- \b probably more than size bytes will be erase bacause of uC flash
+ 144:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n                  organization.
+ 145:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \n
+ 146:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \param  [in]		position  specifies the position where the erase operation starts.
+ 147:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 148:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 149:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \return 	IO_ErrorType
+ 150:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 151:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_INVALID_SIZE size is invalid
+ 152:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OUT_OF_MEMORY position + (size-1) out of memory allocation.
+ 153:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval     IO_E_OUT_OF_BOUNDS check failed out of segments.
+ 154:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval 	IO_E_ERASE_FORBIDDEN  on the selected block only write operations are allowed
+ 155:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_PROGRAMMING problems during erasing procedure.
+ 156:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OK erase is o.k..
+ 157:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 158:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \author 	stefano.ughi
+ 159:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \date		Jan 13, 2010
+ 160:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \version	1.0.1
+ 161:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 162:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \todo       implementazione per i micro con pagine flash di dim. non uniforme.
+ 163:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 164:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \note		\par \b Note 1:
+ 165:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			documentation by stefano.ughi
+ 166:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 167:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** */
+ 168:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_REraseSync (FLS_sizeType size, FLS_positionType position)
+ 169:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** {
+ 170:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType err;
+ 171:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 172:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	static FLS_positionType EndPosition;
+ 173:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 174:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 175:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	/* Check if the parameters are valid */
+ 176:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	err = OCFLS_CheckParams(size,position);
+ 177:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	if( (IO_ErrorType)IO_E_OK != err )
+ 178:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 179:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		/* Problems founded check err */
+ 180:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		PLT_ERROR_WARNING(PLT_ERROR_OCFLS_BAD_PARAMS);
+ 181:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		return err;
+ 182:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 183:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 184:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_ERASE_BEGIN();
+ 185:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 186:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	EndPosition = (position+size);
+ 187:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	while ( position < EndPosition )
+ 188:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 189:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_InitRegsForErasing();
+ 190:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		/* Enter Critical Section */
+ 191:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EnterCriticalSection();
+ 192:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		/* Erasing */
+ 193:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		err = FLS_Erase(position);
+ 194:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		PLT_ERROR_WARNING_IF(err, PLT_ERROR_OCFLS_BAD_ERASE);
+ 195:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 196:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		/* Exit Critical Section */
+ 197:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ExitCriticalSection();
+ 198:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 199:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ERASE_END();
+ 200:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 201:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		/* Check Errors during erasing operation */
+ 202:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if( FLS_CheckErrors() )
+ 203:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 204:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			PLT_ERROR_WARNING(PLT_ERROR_OCFLS_BAD_PROGRAMMING);
+ 205:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			return (IO_ErrorType)IO_E_PROGRAMMING;
+ 206:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 207:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		else
+ 208:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 209:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #ifdef ALL_FLASH_PAGES_HAVE_THE_SAME_SIZE
+ 210:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			position+=FLASH_PAGE_SIZE_IN_BYTES;
+ 211:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #else
+ 212:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #error "ALL_FLASH_PAGES_HAVE_THE_SAME_SIZE, not supported different page size"
+ 213:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #endif
+ 214:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 215:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 216:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 217:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** }
+ 218:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 219:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /**
+ 220:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** This function implements write functionality.\n
+ 221:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** We assume that flash is blank.\n
+ 222:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** Verify is not performed, use \b OCFLS_RWriteVerify function.\n
+ 223:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \b HCS08: pSource must point to R.A.M. data, it is not possible to access flash during write operat
+ 224:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 225:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \param  [in]	pSource  Points to the initial data where to read from.
+ 226:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]	size  Specifies the number of bytes to be write.
+ 227:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]	position  Specifies the start point where the data is written.
+ 228:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 229:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \return 	IO_ErrorType
+ 230:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 231:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OK Successful write operation.
+ 232:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_INVALID_SIZE size is invalid.
+ 233:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OUT_OF_MEMORY position + (size-1) out of memory allocation.
+ 234:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval     IO_E_OUT_OF_BOUNDS check failed out of avaible segments.
+ 235:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_PROGRAMMING Programming Error.
+ 236:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 237:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \author 	stefano.ughi
+ 238:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \date		Nov 17, 2009
+ 239:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \version	1.0.0
+ 240:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 241:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \warning    check inside map file the right length of routine that is performed in R.A.M.
+ 242:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \note		\par \b Note 1:
+ 243:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			documentation by stefano.ughi
+ 244:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** */
+ 245:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_RWriteSync (FLS_SourcePtrType pSource, FLS_sizeType size, FLS_positionType posit
+ 246:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** {
+ 247:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType err;
+ 248:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 249:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 250:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	/* Check if the parameters are valid */
+ 251:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	err = OCFLS_CheckParams(size,position);
+ 252:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	if( ((IO_ErrorType)IO_E_OK != err) && ((IO_ErrorType)IO_E_ERASE_FORBIDDEN != err) )
+ 253:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 254:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		/* Problems founded check err */
+ 255:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		PLT_ERROR_WARNING(PLT_ERROR_OCFLS_BAD_PARAMS);
+ 256:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		return err;
+ 257:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 258:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 259:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_WRITE_BEGIN();
+ 260:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 261:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	/* Init Flash regs */
+ 262:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_InitRegsForProgramming();
+ 263:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	/* Enter Critical Section */
+ 264:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_EnterCriticalSection();
+ 265:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	/* Programming */
+ 266:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	err = FLS_Programming((uint8_t *) pSource,size,position);
+ 267:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	PLT_ERROR_WARNING_IF(err, PLT_ERROR_OCFLS_BAD_PROGRAMMING);
+ 268:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 269:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	/* Exit Critical Section */
+ 270:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_ExitCriticalSection();
+ 271:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 272:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_WRITE_END();
+ 273:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 274:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	/* Check Errors during erasing operation */
+ 275:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	if( FLS_CheckErrors() )
+ 276:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 277:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		err = (IO_ErrorType)IO_E_PROGRAMMING;
+ 278:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 279:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	else
+ 280:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 281:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		err = (IO_ErrorType)IO_E_OK;
+ 282:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 283:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	return err;
+ 284:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** }
+ 285:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /**
+ 286:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** This service verify if flash is blanck.
+ 287:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 288:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \param  [in]		size  specifies the number of bytes to be checked.
+ 289:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]		position  specifies the position where the check operation start.
+ 290:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 291:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \return 	IO_ErrorType
+ 292:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 293:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval     IO_E_NOT_BLANK check failed flash is not blanck.
+ 294:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OK check is o.k.
+ 295:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 296:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 297:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \author 	stefano.ughi
+ 298:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \date		Nov 12, 2009
+ 299:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \version	1.0.0
+ 300:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 301:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \note		\par \b Note 1:
+ 302:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			documentation by stefano.ughi
+ 303:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			\par \b Note 2:
+ 304:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			\b FLS_BlankCheckType must be the largest possible type in order to decrease time of checking.
+ 305:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			\par \b Note 3:
+ 306:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			\b FLS_ERASE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG must be set in FlashConfig.h
+ 307:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** */
+ 308:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #ifdef FLS_BlankCheck
+ 309:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_REraseVerify(FLS_sizeType size, FLS_positionType position)
+ 310:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** {
+ 311:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType Err;
+ 312:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	Err = FLS_BlankCheck(size, position);
+ 313:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	if(Err != 0)
+ 314:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 315:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		Err = IO_E_NOT_BLANK;
+ 316:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 317:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	return Err;
+ 318:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** }
+ 319:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #else
+ 320:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_REraseVerify(FLS_sizeType size, FLS_positionType position)
+ 321:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** {
+ 322:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #if (FLS_ERASE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG!=0)
+ 323:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	static uint8_t NumCheck=0;
+ 324:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #endif
+ 325:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 326:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	while( size >= sizeof(FLS_BlankCheckType) )
+ 327:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 328:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if( FLS_BLANK_VALUE != *(FLS_BlankCheckType*)position )
+ 329:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 330:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			return (IO_ErrorType)IO_E_NOT_BLANK;
+ 331:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 332:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		position+=sizeof(FLS_BlankCheckType);
+ 333:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		size-=sizeof(FLS_BlankCheckType);
+ 334:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 335:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #if (FLS_ERASE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG!=0)
+ 336:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 337:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		NumCheck++;
+ 338:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if ( NumCheck >= FLS_ERASE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG )
+ 339:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 340:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			(void)OCWDT_RefreshSync();
+ 341:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			NumCheck = 0;
+ 342:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 343:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 344:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #endif
+ 345:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 346:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #if (SIZE_OF_FLS_BlankCheckType > 1)
+ 347:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	/* This control is not necessary if FLS_BlankCheckType is 1 byte size */
+ 348:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	while( size > 0 )
+ 349:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 350:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if( (uint8_t)FLS_BLANK_VALUE != *(uint8_t*)position )
+ 351:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 352:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			return (IO_ErrorType)IO_E_NOT_BLANK;
+ 353:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 354:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		position++;
+ 355:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		size--;
+ 356:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 357:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #endif /* (SIZE_OF_FLS_BlankCheckType > 1) */
+ 358:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 359:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #if (FLS_ERASE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG!=0)
+ 360:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	/* For the next call */
+ 361:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	NumCheck = 0;
+ 362:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #endif
+ 363:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 364:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 365:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** }
+ 366:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #endif /* FLS_BlankCheck*/
+ 367:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /**
+ 368:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** This function implements the verify functionality.\n
+ 369:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 370:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \param  [in]	pSource  Points to the initial data where to read from.
+ 371:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]	size  Specifies the number of bytes to verify.
+ 372:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]	position  Specifies the start point where the data is written.
+ 373:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 374:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \return 	IO_ErrorType
+ 375:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 376:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OK Successful verify operation.
+ 377:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_VERIFY	Verify Error.
+ 378:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 379:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \author 	stefano.ughi
+ 380:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \date		Jan 27, 2011
+ 381:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \version	1.0.1
+ 382:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 383:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \note		\par \b Note 1:
+ 384:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			documentation by stefano.ughi
+ 385:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			\par \b Note 2:
+ 386:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			\b FLS_VerifyType must be the largest possible type in order to decrease time of checking.
+ 387:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			\par \b Note 3:
+ 388:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			\b FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG must be set in FlashConfig.
+ 389:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			\par \b Note 4:
+ 390:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			Jan 27,2011 fixed bug on pSource inc.
+ 391:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			\par \b Note 5:
+ 392:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			May 09,2011 fixed problem on pSource inc due to ISO/ANSI 9899-1990 6.3.4 and Annex B
+ 393:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 394:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** */
+ 395:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_RWriteVerify (FLS_SourcePtrType pSource, FLS_sizeType size, FLS_positionType pos
+ 396:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** {
+ 397:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #if (FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG!=0)
+ 398:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	static uint8_t NumCheck=0;
+ 399:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #endif
+ 400:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType err=IO_E_OK;
+ 401:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	uint8_t* pData=(uint8_t*)pSource;
+ 402:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	/* Check if data correctly written */
+ 403:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	while( (size >0) && (err == IO_E_OK))
+ 404:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 405:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if( *pData++ != *(uint8_t*)position++ )
+ 406:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 407:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			err = (IO_ErrorType)IO_E_VERIFY;
+ 408:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 409:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		size--;
+ 410:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 411:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #if (FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG!=0)
+ 412:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 413:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		NumCheck++;
+ 414:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if ( NumCheck >= FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG )
+ 415:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 416:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			(void)OCWDT_RefreshSync();
+ 417:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			NumCheck = 0;
+ 418:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 419:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 420:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #endif
+ 421:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 422:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 423:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #if 0
+ 424:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c ****     {
+ 425:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c ****         uint8_t * p = (uint8_t*)pSource;
+ 426:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c ****         while( size > 0 )
+ 427:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c ****         {    
+ 428:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c ****             if( *p != *(uint8_t*)position )
+ 429:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c ****             {
+ 430:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c ****                 return (IO_ErrorType)IO_E_VERIFY;
+ 431:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c ****             }
+ 432:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c ****             position++;
+ 433:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 434:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c ****             p++;
+ 435:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 436:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c ****             size--;
+ 437:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c ****         }
+ 438:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c ****     }
+ 439:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #endif /* ( SIZE_OF_FLS_VerifyType > 1 ) */
+ 440:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 441:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #if (FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG!=0)
+ 442:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	/* For the next call */
+ 443:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	NumCheck = 0;
+ 444:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** #endif
+ 445:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 446:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	return err;
+ 447:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** }
+ 448:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /**
+ 449:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** This function perform write-verify operations in flash.
+ 450:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 451:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \param  [in]	pSource  Points to the initial data where to read from.
+ 452:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]	size  Specifies the number of bytes to be write.
+ 453:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]	position  Specifies the start point where the data is written.
+ 454:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 455:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \attention \b	FLS_WriteSteps states of routine, used as global variable R/W
+ 456:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 457:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \return 	IO_ErrorType
+ 458:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 459:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_WORKING job running
+ 460:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OK job done correctly
+ 461:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_UNEXPECTED_CONDITION problem occurred
+ 462:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 463:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \author 	stefano.ughi
+ 464:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \date		Jan 8, 2010
+ 465:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \version	1.0.0
+ 466:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 467:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \note		\par \b Note 1:
+ 468:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			documentation by stefano.ughi
+ 469:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** */
+ 470:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_WriteAndVerifyAsync(FLS_SourcePtrType pSource, FLS_sizeType size, FLS_positionTy
+ 471:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** {
+ 472:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	static enum FLS_WriteStepsTag
+ 473:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 474:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WRITE= 0,
+ 475:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WRITE_VERIFY,
+ 476:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WRITE_SUCCES,
+ 477:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ERR
+ 478:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	} FLS_WriteSteps= {FLS_WRITE};
+ 479:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 480:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType err;
+ 481:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType fls_State = (IO_ErrorType)IO_E_WORKING;
+ 482:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 483:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	switch(FLS_WriteSteps)
+ 484:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 485:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_WRITE:
+ 486:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 487:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_RWriteSync(pSource,size,position);
+ 488:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if((IO_ErrorType)IO_E_OK == err)
+ 489:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 490:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_WriteSteps = FLS_WRITE_VERIFY;
+ 491:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 492:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		else
+ 493:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 494:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_WriteSteps = FLS_ERR;
+ 495:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 496:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 497:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 498:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_WRITE_VERIFY:
+ 499:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 500:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_RWriteVerify(pSource,size,position);
+ 501:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if((IO_ErrorType)IO_E_OK == err)
+ 502:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 503:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_WriteSteps = FLS_WRITE_SUCCES;
+ 504:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 505:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		else
+ 506:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 507:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_WriteSteps = FLS_ERR;
+ 508:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 509:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 510:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 511:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_WRITE_SUCCES:
+ 512:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		/* success */
+ 513:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		fls_State = (IO_ErrorType)IO_E_OK;
+ 514:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		/* restore machine state for the next call */
+ 515:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WriteSteps = FLS_WRITE;
+ 516:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 517:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 518:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_ERR:
+ 519:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		/* problem */
+ 520:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		fls_State = (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+ 521:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		/* restore machine state for the next call */
+ 522:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WriteSteps = FLS_WRITE;
+ 523:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 524:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 525:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	default:
+ 526:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WriteSteps = FLS_WRITE;
+ 527:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 528:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 529:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 530:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	return fls_State;
+ 531:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** }
+ 532:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /**
+ 533:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** This function perform verify-erase-verify operations in flash.
+ 534:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 535:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]	size  Specifies the number of bytes to erase.
+ 536:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]	position  Specifies the start point where the data is erased.
+ 537:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 538:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \attention \b	FLS_EraseSteps states of routine, used as global variable R/W
+ 539:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 540:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \return 	IO_ErrorType
+ 541:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 542:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_WORKING job running
+ 543:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OK job done correctly
+ 544:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_UNEXPECTED_CONDITION problem occurred
+ 545:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 546:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \author 	stefano.ughi
+ 547:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \date		Jan 14, 2010
+ 548:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \version	1.0.0
+ 549:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 550:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \note		\par \b Note 1:
+ 551:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			documentation by stefano.ughi
+ 552:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 553:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** */
+ 554:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_BlankCheckEraseVerifyAsync(FLS_sizeType size, FLS_positionType position)
+ 555:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** {
+ 556:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	static enum FLS_EraseStepsTag
+ 557:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 558:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_CHECK_IF_BLANK=0,
+ 559:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ERASE,
+ 560:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ERASE_VERIFY,
+ 561:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ERASE_SUCCES,
+ 562:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ERR
+ 563:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	} FLS_EraseSteps= {FLS_CHECK_IF_BLANK};
+ 564:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 565:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType err;
+ 566:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType fls_State = (IO_ErrorType)IO_E_WORKING;
+ 567:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 568:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	switch(FLS_EraseSteps)
+ 569:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 570:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_CHECK_IF_BLANK:
+ 571:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 572:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_REraseVerify(size,position);
+ 573:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if ((IO_ErrorType)IO_E_NOT_BLANK == err)
+ 574:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 575:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERASE;
+ 576:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 577:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		else
+ 578:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 579:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERASE_SUCCES;
+ 580:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 581:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 582:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 583:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_ERASE:
+ 584:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 585:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_REraseSync(size, position);
+ 586:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if((IO_ErrorType)IO_E_OK == err)
+ 587:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 588:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERASE_VERIFY;
+ 589:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 590:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		else
+ 591:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 592:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERR;
+ 593:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 594:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 595:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 596:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_ERASE_VERIFY:
+ 597:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 598:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_REraseVerify(size,position);
+ 599:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if((IO_ErrorType)IO_E_NOT_BLANK == err)
+ 600:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 601:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERR;
+ 602:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 603:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		else
+ 604:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 605:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERASE_SUCCES;
+ 606:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 607:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 608:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 609:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_ERASE_SUCCES:
+ 610:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		/* success */
+ 611:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		fls_State = (IO_ErrorType)IO_E_OK;
+ 612:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		/* restore machine state for the next call */
+ 613:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EraseSteps = FLS_CHECK_IF_BLANK;
+ 614:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 615:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 616:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_ERR:
+ 617:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		/* problem */
+ 618:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		fls_State = (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+ 619:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		/* restore machine state for the next call */
+ 620:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EraseSteps = FLS_CHECK_IF_BLANK;
+ 621:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 622:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 623:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	default:
+ 624:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EraseSteps = FLS_CHECK_IF_BLANK;
+ 625:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 626:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 627:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 628:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	return fls_State;
+ 629:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** }
+ 630:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /* Local Function */
+ 631:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** /**
+ 632:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** This service implements the check flash in range functionality.
+ 633:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 634:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \param  [in]		size  specifies the number of bytes to be checked.
+ 635:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]		position  specifies the position where the check operation starts.
+ 636:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 637:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \return 	IO_ErrorType
+ 638:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 639:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_INVALID_SIZE size is invalid.
+ 640:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OUT_OF_MEMORY position + (size-1) out of memory allocation.
+ 641:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval     IO_E_OUT_OF_BOUNDS check failed out of segments.
+ 642:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval 	IO_E_ERASE_FORBIDDEN check is o.k. but on the selected block only write operations are per
+ 643:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OK check is o.k. and all operations are permitted
+ 644:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 645:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \author 	stefano.ughi
+ 646:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \date		Nov 11, 2009
+ 647:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \version	1.0.0
+ 648:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 649:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** \note		\par \b Note 1:
+ 650:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			documentation by stefano.ughi
+ 651:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 652:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** */
+ 653:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** static IO_ErrorType OCFLS_CheckParams(FLS_sizeType size, FLS_positionType position)
+   9                             		.loc 1 653 0
+  10                             	.LVL0:
+ 654:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** {
+ 655:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_sizePLUSpositionType endPosition;
+ 656:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	uint8_t j;
+ 657:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 
+ 658:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	if( (FLS_sizeType)0 == size )
+ 659:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 660:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_SIZE;
+ 661:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 662:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	endPosition = ((FLS_sizePLUSpositionType)position + (size-1));
+  11                             		.loc 1 662 0
+  12 0000 60 11                   		sub	#1, r1
+  13                             	.LVL1:
+  14 0002 4B 21                   		add	r2, r1
+  15                             	.LVL2:
+  16 0004 FB 42 00 00 00 00       		mov.L	#_FlashMap, r4
+  17 000a 66 0E                   		mov.L	#0, r14
+  18                             	.LVL3:
+  19                             		.balign 2,3,4
+  20                             	.L4:
+ 663:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	if( endPosition > (FLS_sizePLUSpositionType)FLS_MAX_ADDR )
+ 664:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 665:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		return (IO_ErrorType)IO_E_OUT_OF_MEMORY;
+ 666:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 667:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	for( j = 0; j < NUM_FLASH_BLOCKS; j++ )
+ 668:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 669:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if( ( position >= FlashMap[j].StartAddress ) &&
+  21                             		.loc 1 669 0
+  22 000c 06 84 42                		cmp	[r4].L, r2
+  23 000f 23 1A                   		bltu	.L2
+  24 0011 06 85 41 01             		cmp	4[r4].L, r1
+  25 0015 24 14                   		bgtu	.L2
+ 670:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		        ( endPosition <= FlashMap[j].EndAddress ) )
+ 671:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 672:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			if( FlashMapEraseForbidden[j] )
+  26                             		.loc 1 672 0
+  27 0017 FB 42 00 00 00 00       		mov.L	#_FlashMapEraseForbidden, r4
+  28 001d FE CE 41                		movu.B	[r14,r4], r1
+  29                             	.LVL4:
+  30 0020 61 01                   		cmp	#0, r1
+  31 0022 20 12                   		beq	.L3
+ 673:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			{
+ 674:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 				return (IO_ErrorType)IO_E_ERASE_FORBIDDEN;
+  32                             		.loc 1 674 0
+  33 0024 75 41 25                		mov	#37, r1
+  34 0027 2E 0D                   		bra	.L3
+  35                             	.LVL5:
+  36                             	.L2:
+  37 0029 62 1E                   		add	#1, r14
+  38 002b 62 84                   		add	#8, r4
+ 667:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	for( j = 0; j < NUM_FLASH_BLOCKS; j++ )
+  39                             		.loc 1 667 0
+  40 002d 61 3E                   		cmp	#3, r14
+  41 002f 21 DD                   		bne	.L4
+ 675:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			}
+ 676:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			else
+ 677:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			{
+ 678:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 				return (IO_ErrorType)IO_E_OK;
+ 679:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			}
+ 680:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 681:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 682:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	return (IO_ErrorType)IO_E_OUT_OF_BOUNDS;
+  42                             		.loc 1 682 0
+  43 0031 75 41 21                		mov	#33, r1
+  44                             	.LVL6:
+  45                             		.balign 2,3,1
+  46                             	.L3:
+ 683:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** }
+  47                             		.loc 1 683 0
+  48 0034 5B 11                   		movu.B	r1, r1
+  49 0036 02                      		rts
+  50                             	.LFE8:
+  52 0037 03                      		.section	.text.OCFLS_InitSync,"ax",@progbits
+  53                             		.global	_OCFLS_InitSync
+  55                             	_OCFLS_InitSync:
+  56                             	.LFB0:
+ 132:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** {
+  57                             		.loc 1 132 0
+ 133:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_Init();
+  58                             		.loc 1 133 0
+  59 0000 05 00 00 00             		bsr	_FLS_Init
+  60                             	.LVL7:
+ 135:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** }
+  61                             		.loc 1 135 0
+  62 0004 66 01                   		mov.L	#0, r1
+  63 0006 02                      		rts
+  64                             	.LFE0:
+  66                             		.section	.text.OCFLS_REraseSync,"ax",@progbits
+  67                             		.global	_OCFLS_REraseSync
+  69                             	_OCFLS_REraseSync:
+  70                             	.LFB1:
+ 169:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** {
+  71                             		.loc 1 169 0
+  72                             	.LVL8:
+  73 0000 6E 7D                   		pushm	r7-r13
+  74                             	.LCFI0:
+  75                             	.LBB4:
+  76                             	.LBB5:
+ 658:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	if( (FLS_sizeType)0 == size )
+  77                             		.loc 1 658 0
+  78 0002 71 1B 00                		add	#0, r1, r11
+  79 0005 20 12                   		beq	.L17
+  80 0007 EF 27                   		mov.L	r2, r7
+  81 0009 05 00 00 00             		bsr	_OCFLS_CheckParams.part.0
+  82                             	.LVL9:
+  83                             	.LBE5:
+  84                             	.LBE4:
+ 177:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	if( (IO_ErrorType)IO_E_OK != err )
+  85                             		.loc 1 177 0
+  86 000d 5B 1C                   		movu.B	r1, r12
+  87 000f 61 0C                   		cmp	#0, r12
+  88 0011 CF 1A                   		mov.B	r1, r10
+  89 0013 20 10                   		beq	.L10
+  90 0015 2E 05                   		bra	.L9
+  91                             	.LVL10:
+  92                             	.L17:
+  93                             	.LBB7:
+  94                             	.LBB6:
+ 660:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_SIZE;
+  95                             		.loc 1 660 0
+  96 0017 75 4A 14                		mov	#20, r10
+  97                             	.LVL11:
+  98                             		.balign 2,3,2
+  99                             	.L9:
+ 100                             	.LBE6:
+ 101                             	.LBE7:
+ 180:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		PLT_ERROR_WARNING(PLT_ERROR_OCFLS_BAD_PARAMS);
+ 102                             		.loc 1 180 0
+ 103 001a 75 41 4E                		mov.L	#0x4e, r1
+ 104 001d 05 00 00 00             		bsr	_LIB_Error_Warning_Handler
+ 105                             	.LVL12:
+ 181:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		return err;
+ 106                             		.loc 1 181 0
+ 107 0021 2E 6D                   		bra	.L11
+ 108                             	.LVL13:
+ 109                             	.L10:
+ 186:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	EndPosition = (position+size);
+ 110                             		.loc 1 186 0
+ 111 0023 FB C2 00 00 00 00       		mov.L	#_EndPosition.10037, r12
+ 112 0029 4B 7B                   		add	r7, r11
+ 113                             	.LVL14:
+ 114 002b E3 CB                   		mov.L	r11, [r12]
+ 191:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EnterCriticalSection();
+ 115                             		.loc 1 191 0
+ 116 002d FB B2 00 00 00 00       		mov.L	#_OS_Global, r11
+ 187:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	while ( position < EndPosition )
+ 117                             		.loc 1 187 0
+ 118 0033 EF CD                   		mov.L	r12, r13
+ 119 0035 EF BC                   		mov.L	r11, r12
+ 120 0037 2E 51                   		bra	.L12
+ 121                             	.L16:
+ 189:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_InitRegsForErasing();
+ 122                             		.loc 1 189 0
+ 123 0039 05 00 00 00             		bsr	_FLS_InitRegsForErasing
+ 124                             	.LVL15:
+ 191:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EnterCriticalSection();
+ 125                             		.loc 1 191 0
+ 126 003d 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 127                             	.LVL16:
+ 128 0041 CD BE 01                		mov.B	1[r11], r14
+ 193:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		err = FLS_Erase(position);
+ 129                             		.loc 1 193 0
+ 130 0044 EF 71                   		mov.L	r7, r1
+ 191:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EnterCriticalSection();
+ 131                             		.loc 1 191 0
+ 132 0046 62 1E                   		add	#1, r14
+ 133 0048 C7 BE 01                		mov.B	r14, 1[r11]
+ 193:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		err = FLS_Erase(position);
+ 134                             		.loc 1 193 0
+ 135 004b 05 00 00 00             		bsr	_FLS_Erase
+ 136                             	.LVL17:
+ 194:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		PLT_ERROR_WARNING_IF(err, PLT_ERROR_OCFLS_BAD_ERASE);
+ 137                             		.loc 1 194 0
+ 138 004f 5B 11                   		movu.B	r1, r1
+ 139 0051 61 01                   		cmp	#0, r1
+ 140 0053 20 09                   		beq	.L13
+ 194:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		PLT_ERROR_WARNING_IF(err, PLT_ERROR_OCFLS_BAD_ERASE);
+ 141                             		.loc 1 194 0 is_stmt 0 discriminator 1
+ 142 0055 75 41 50                		mov.L	#0x50, r1
+ 143                             	.LVL18:
+ 144 0058 05 00 00 00             		bsr	_LIB_Error_Warning_Handler
+ 145                             	.LVL19:
+ 146                             		.balign 2,3,5
+ 147                             	.L13:
+ 197:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ExitCriticalSection();
+ 148                             		.loc 1 197 0 is_stmt 1
+ 149 005c CD CE 01                		mov.B	1[r12], r14
+ 150 005f 60 1E                   		sub	#1, r14
+ 151 0061 C7 CE 01                		mov.B	r14, 1[r12]
+ 152 0064 5B EE                   		movu.B	r14, r14
+ 153 0066 61 0E                   		cmp	#0, r14
+ 154 0068 21 06                   		bne	.L14
+ 197:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ExitCriticalSection();
+ 155                             		.loc 1 197 0 is_stmt 0 discriminator 1
+ 156 006a 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 157                             	.LVL20:
+ 158                             		.balign 2,3,3
+ 159                             	.L14:
+ 202:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if( FLS_CheckErrors() )
+ 160                             		.loc 1 202 0 is_stmt 1
+ 161 006e 05 00 00 00             		bsr	_FLS_CheckErrors
+ 162                             	.LVL21:
+ 163 0072 5B 11                   		movu.B	r1, r1
+ 164 0074 61 01                   		cmp	#0, r1
+ 165 0076 20 0E                   		beq	.L15
+ 204:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			PLT_ERROR_WARNING(PLT_ERROR_OCFLS_BAD_PROGRAMMING);
+ 166                             		.loc 1 204 0
+ 167 0078 75 41 4F                		mov.L	#0x4f, r1
+ 168 007b 05 00 00 00             		bsr	_LIB_Error_Warning_Handler
+ 169                             	.LVL22:
+ 205:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			return (IO_ErrorType)IO_E_PROGRAMMING;
+ 170                             		.loc 1 205 0
+ 171 007f 75 4A 23                		mov	#35, r10
+ 172 0082 2E 0C                   		bra	.L11
+ 173                             	.L15:
+ 210:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			position+=FLASH_PAGE_SIZE_IN_BYTES;
+ 174                             		.loc 1 210 0
+ 175 0084 72 77 00 04             		add	#0x400, r7
+ 176                             	.LVL23:
+ 177                             		.balign 2,3,4
+ 178                             	.L12:
+ 187:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	while ( position < EndPosition )
+ 179                             		.loc 1 187 0 discriminator 1
+ 180 0088 06 84 D7                		cmp	[r13].L, r7
+ 181 008b 23 AE                   		bltu	.L16
+ 182                             	.LVL24:
+ 183 008d 03                      		.balign 2,3,1
+ 184                             	.L11:
+ 217:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** }
+ 185                             		.loc 1 217 0
+ 186 008e 5B A1                   		movu.B	r10, r1
+ 187 0090 3F 7D 07                		rtsd	#28, r7-r13
+ 188                             	.LFE1:
+ 190 0093 03                      		.section	.text.OCFLS_RWriteSync,"ax",@progbits
+ 191                             		.global	_OCFLS_RWriteSync
+ 193                             	_OCFLS_RWriteSync:
+ 194                             	.LFB2:
+ 246:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** {
+ 195                             		.loc 1 246 0
+ 196                             	.LVL25:
+ 197 0000 6E 7C                   		pushm	r7-r12
+ 198                             	.LCFI1:
+ 199                             	.LBB10:
+ 200                             	.LBB11:
+ 658:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	if( (FLS_sizeType)0 == size )
+ 201                             		.loc 1 658 0
+ 202 0002 71 2A 00                		add	#0, r2, r10
+ 203 0005 20 1D                   		beq	.L28
+ 204 0007 EF 1C                   		mov.L	r1, r12
+ 205 0009 EF 32                   		mov.L	r3, r2
+ 206                             	.LVL26:
+ 207 000b EF A1                   		mov.L	r10, r1
+ 208                             	.LVL27:
+ 209 000d EF 3B                   		mov.L	r3, r11
+ 210 000f 05 00 00 00             		bsr	_OCFLS_CheckParams.part.0
+ 211                             	.LVL28:
+ 212                             	.LBE11:
+ 213                             	.LBE10:
+ 252:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	if( ((IO_ErrorType)IO_E_OK != err) && ((IO_ErrorType)IO_E_ERASE_FORBIDDEN != err) )
+ 214                             		.loc 1 252 0
+ 215 0013 5B 1E                   		movu.B	r1, r14
+ 216 0015 61 0E                   		cmp	#0, r14
+ 217 0017 CF 17                   		mov.B	r1, r7
+ 218 0019 20 16                   		beq	.L24
+ 252:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	if( ((IO_ErrorType)IO_E_OK != err) && ((IO_ErrorType)IO_E_ERASE_FORBIDDEN != err) )
+ 219                             		.loc 1 252 0 is_stmt 0 discriminator 1
+ 220 001b 75 5E 25                		cmp	#37, r14
+ 221 001e 20 11                   		beq	.L24
+ 222 0020 2E 06                   		bra	.L23
+ 223                             	.LVL29:
+ 224                             	.L28:
+ 225                             	.LBB13:
+ 226                             	.LBB12:
+ 660:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_SIZE;
+ 227                             		.loc 1 660 0 is_stmt 1
+ 228 0022 75 47 14                		mov	#20, r7
+ 229                             	.LVL30:
+ 230 0025 03                      		.balign 2,3,2
+ 231                             	.L23:
+ 232                             	.LBE12:
+ 233                             	.LBE13:
+ 255:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		PLT_ERROR_WARNING(PLT_ERROR_OCFLS_BAD_PARAMS);
+ 234                             		.loc 1 255 0
+ 235 0026 75 41 4E                		mov.L	#0x4e, r1
+ 236 0029 05 00 00 00             		bsr	_LIB_Error_Warning_Handler
+ 237                             	.LVL31:
+ 256:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		return err;
+ 238                             		.loc 1 256 0
+ 239 002d 2E 4F                   		bra	.L25
+ 240                             	.LVL32:
+ 241                             	.L24:
+ 264:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_EnterCriticalSection();
+ 242                             		.loc 1 264 0
+ 243 002f 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 244                             	.LVL33:
+ 245 0033 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 246 0039 CD 7E 01                		mov.B	1[r7], r14
+ 266:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	err = FLS_Programming((uint8_t *) pSource,size,position);
+ 247                             		.loc 1 266 0
+ 248 003c EF C1                   		mov.L	r12, r1
+ 264:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_EnterCriticalSection();
+ 249                             		.loc 1 264 0
+ 250 003e 62 1E                   		add	#1, r14
+ 266:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	err = FLS_Programming((uint8_t *) pSource,size,position);
+ 251                             		.loc 1 266 0
+ 252 0040 EF A2                   		mov.L	r10, r2
+ 253 0042 EF B3                   		mov.L	r11, r3
+ 264:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_EnterCriticalSection();
+ 254                             		.loc 1 264 0
+ 255 0044 C7 7E 01                		mov.B	r14, 1[r7]
+ 266:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	err = FLS_Programming((uint8_t *) pSource,size,position);
+ 256                             		.loc 1 266 0
+ 257 0047 05 00 00 00             		bsr	_FLS_Programming
+ 258                             	.LVL34:
+ 267:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	PLT_ERROR_WARNING_IF(err, PLT_ERROR_OCFLS_BAD_PROGRAMMING);
+ 259                             		.loc 1 267 0
+ 260 004b 5B 11                   		movu.B	r1, r1
+ 261 004d 61 01                   		cmp	#0, r1
+ 262 004f 20 09                   		beq	.L26
+ 267:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	PLT_ERROR_WARNING_IF(err, PLT_ERROR_OCFLS_BAD_PROGRAMMING);
+ 263                             		.loc 1 267 0 is_stmt 0 discriminator 1
+ 264 0051 75 41 4F                		mov.L	#0x4f, r1
+ 265                             	.LVL35:
+ 266 0054 05 00 00 00             		bsr	_LIB_Error_Warning_Handler
+ 267                             	.LVL36:
+ 268                             		.balign 2,3,5
+ 269                             	.L26:
+ 270:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_ExitCriticalSection();
+ 270                             		.loc 1 270 0 is_stmt 1
+ 271 0058 CD 7A 01                		mov.B	1[r7], r10
+ 272                             	.LVL37:
+ 273 005b 60 1A                   		sub	#1, r10
+ 274 005d C7 7A 01                		mov.B	r10, 1[r7]
+ 275 0060 5B AA                   		movu.B	r10, r10
+ 276 0062 61 0A                   		cmp	#0, r10
+ 277 0064 21 06                   		bne	.L27
+ 270:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_ExitCriticalSection();
+ 278                             		.loc 1 270 0 is_stmt 0 discriminator 1
+ 279 0066 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 280                             	.LVL38:
+ 281                             		.balign 2,3,3
+ 282                             	.L27:
+ 275:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	if( FLS_CheckErrors() )
+ 283                             		.loc 1 275 0 is_stmt 1
+ 284 006a 05 00 00 00             		bsr	_FLS_CheckErrors
+ 285                             	.LVL39:
+ 286 006e 5B 11                   		movu.B	r1, r1
+ 287 0070 61 01                   		cmp	#0, r1
+ 288 0072 20 07                   		beq	.L29
+ 277:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		err = (IO_ErrorType)IO_E_PROGRAMMING;
+ 289                             		.loc 1 277 0
+ 290 0074 75 47 23                		mov	#35, r7
+ 291 0077 2E 05                   		bra	.L25
+ 292                             	.L29:
+ 281:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		err = (IO_ErrorType)IO_E_OK;
+ 293                             		.loc 1 281 0
+ 294 0079 CF 17                   		mov.B	r1, r7
+ 295                             	.LVL40:
+ 296 007b 03                      		.balign 2,3,1
+ 297                             	.L25:
+ 284:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** }
+ 298                             		.loc 1 284 0
+ 299 007c 5B 71                   		movu.B	r7, r1
+ 300 007e 3F 7C 06                		rtsd	#24, r7-r12
+ 301                             	.LFE2:
+ 303 0081 03                      		.section	.text.OCFLS_REraseVerify,"ax",@progbits
+ 304                             		.global	_OCFLS_REraseVerify
+ 306                             	_OCFLS_REraseVerify:
+ 307                             	.LFB3:
+ 310:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** {
+ 308                             		.loc 1 310 0
+ 309                             	.LVL41:
+ 312:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	Err = FLS_BlankCheck(size, position);
+ 310                             		.loc 1 312 0
+ 311 0000 05 00 00 00             		bsr	_FLS_BlankCheck
+ 312                             	.LVL42:
+ 313:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	if(Err != 0)
+ 313                             		.loc 1 313 0
+ 314 0004 5B 1E                   		movu.B	r1, r14
+ 315 0006 61 0E                   		cmp	#0, r14
+ 316 0008 20 06                   		beq	.L41
+ 315:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		Err = IO_E_NOT_BLANK;
+ 317                             		.loc 1 315 0
+ 318 000a 75 41 22                		mov	#34, r1
+ 319                             	.LVL43:
+ 320 000d 03                      		.balign 2,3,1
+ 321                             	.L41:
+ 318:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** }
+ 322                             		.loc 1 318 0
+ 323 000e 5B 11                   		movu.B	r1, r1
+ 324 0010 02                      		rts
+ 325                             	.LFE3:
+ 327 0011 03                      		.section	.text.OCFLS_RWriteVerify,"ax",@progbits
+ 328                             		.global	_OCFLS_RWriteVerify
+ 330                             	_OCFLS_RWriteVerify:
+ 331                             	.LFB4:
+ 396:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** {
+ 332                             		.loc 1 396 0
+ 333                             	.LVL44:
+ 334 0000 6E 7D                   		pushm	r7-r13
+ 335                             	.LCFI2:
+ 396:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** {
+ 336                             		.loc 1 396 0
+ 337 0002 EF 37                   		mov.L	r3, r7
+ 338 0004 EF 1C                   		mov.L	r1, r12
+ 395:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_RWriteVerify (FLS_SourcePtrType pSource, FLS_sizeType size, FLS_positionType pos
+ 339                             		.loc 1 395 0
+ 340 0006 FF 2D 23                		add	r2, r3, r13
+ 400:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType err=IO_E_OK;
+ 341                             		.loc 1 400 0
+ 342 0009 66 0A                   		mov	#0, r10
+ 413:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		NumCheck++;
+ 343                             		.loc 1 413 0
+ 344 000b FB B2 00 00 00 00       		mov.L	#_NumCheck.10057, r11
+ 403:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	while( (size >0) && (err == IO_E_OK))
+ 345                             		.loc 1 403 0
+ 346 0011 2E 23                   		bra	.L55
+ 347                             	.LVL45:
+ 348                             	.L50:
+ 405:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if( *pData++ != *(uint8_t*)position++ )
+ 349                             		.loc 1 405 0
+ 350 0013 FD 38 C4                		movu.B	[r12+], r4
+ 351 0016 FD 38 7E                		movu.B	[r7+], r14
+ 352                             	.LVL46:
+ 353 0019 47 E4                   		cmp	r14, r4
+ 354 001b 20 05                   		beq	.L47
+ 407:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			err = (IO_ErrorType)IO_E_VERIFY;
+ 355                             		.loc 1 407 0
+ 356 001d 75 4A 24                		mov	#36, r10
+ 357                             	.LVL47:
+ 358                             		.balign 2,3,5
+ 359                             	.L47:
+ 413:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		NumCheck++;
+ 360                             		.loc 1 413 0
+ 361 0020 CC BE                   		mov.B	[r11], r14
+ 362 0022 62 1E                   		add	#1, r14
+ 363 0024 C3 BE                   		mov.B	r14, [r11]
+ 414:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if ( NumCheck >= FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG )
+ 364                             		.loc 1 414 0
+ 365 0026 FD 78 CE 80 00          		tst	#0x80, r14
+ 366 002b 20 09                   		beq	.L55
+ 416:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			(void)OCWDT_RefreshSync();
+ 367                             		.loc 1 416 0
+ 368 002d 05 00 00 00             		bsr	_OCWDT_RefreshSync
+ 369                             	.LVL48:
+ 417:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			NumCheck = 0;
+ 370                             		.loc 1 417 0
+ 371 0031 F8 B4 00                		mov.B	#0, [r11]
+ 372                             	.LVL49:
+ 373                             		.balign 2,3,1
+ 374                             	.L55:
+ 403:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	while( (size >0) && (err == IO_E_OK))
+ 375                             		.loc 1 403 0 discriminator 1
+ 376 0034 47 D7                   		cmp	r13, r7
+ 377 0036 21 0F                   		bne	.L49
+ 378                             		.balign 2,3,5
+ 379                             	.L51:
+ 443:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	NumCheck = 0;
+ 380                             		.loc 1 443 0
+ 381 0038 FB 72 00 00 00 00       		mov.L	#_NumCheck.10057, r7
+ 382                             	.LVL50:
+ 383 003e 3C 70 00                		mov.B	#0, [r7]
+ 446:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	return err;
+ 384                             		.loc 1 446 0
+ 385 0041 5B A1                   		movu.B	r10, r1
+ 386 0043 2E 0A                   		bra	.L56
+ 387                             	.LVL51:
+ 388                             	.L49:
+ 403:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	while( (size >0) && (err == IO_E_OK))
+ 389                             		.loc 1 403 0 discriminator 2
+ 390 0045 5B AE                   		movu.B	r10, r14
+ 391 0047 61 0E                   		cmp	#0, r14
+ 392 0049 20 CA                   		beq	.L50
+ 393 004b 2E ED                   		bra	.L51
+ 394                             	.LVL52:
+ 395                             	.L56:
+ 447:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** }
+ 396                             		.loc 1 447 0
+ 397 004d 3F 7D 07                		rtsd	#28, r7-r13
+ 398                             	.LFE4:
+ 400                             		.section	.text.OCFLS_WriteAndVerifyAsync,"ax",@progbits
+ 401                             		.global	_OCFLS_WriteAndVerifyAsync
+ 403                             	_OCFLS_WriteAndVerifyAsync:
+ 404                             	.LFB5:
+ 471:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** {
+ 405                             		.loc 1 471 0
+ 406                             	.LVL53:
+ 407 0000 7E A7                   		push.l	r7
+ 408                             	.LCFI3:
+ 483:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	switch(FLS_WriteSteps)
+ 409                             		.loc 1 483 0
+ 410 0002 FB 72 00 00 00 00       		mov.L	#_FLS_WriteSteps.10073, r7
+ 411 0008 EC 7E                   		mov.L	[r7], r14
+ 412 000a 61 1E                   		cmp	#1, r14
+ 413 000c 20 1F                   		beq	.L61
+ 414 000e 61 0E                   		cmp	#0, r14
+ 415 0010 20 0C                   		beq	.L60
+ 416 0012 61 2E                   		cmp	#2, r14
+ 417 0014 20 2B                   		beq	.L62
+ 418 0016 61 3E                   		cmp	#3, r14
+ 419 0018 21 36                   		bne	.L67
+ 420 001a 2E 2C                   		bra	.L63
+ 421                             	.L60:
+ 487:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_RWriteSync(pSource,size,position);
+ 422                             		.loc 1 487 0
+ 423 001c 05 00 00 00             		bsr	_OCFLS_RWriteSync
+ 424                             	.LVL54:
+ 488:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if((IO_ErrorType)IO_E_OK == err)
+ 425                             		.loc 1 488 0
+ 426 0020 5B 11                   		movu.B	r1, r1
+ 427 0022 61 01                   		cmp	#0, r1
+ 428 0024 21 16                   		bne	.L66
+ 490:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_WriteSteps = FLS_WRITE_VERIFY;
+ 429                             		.loc 1 490 0
+ 430 0026 3E 70 01                		mov.L	#1, [r7]
+ 431 0029 2E 29                   		bra	.L69
+ 432                             	.LVL55:
+ 433                             	.L61:
+ 500:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_RWriteVerify(pSource,size,position);
+ 434                             		.loc 1 500 0
+ 435 002b 05 00 00 00             		bsr	_OCFLS_RWriteVerify
+ 436                             	.LVL56:
+ 501:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if((IO_ErrorType)IO_E_OK == err)
+ 437                             		.loc 1 501 0
+ 438 002f 5B 11                   		movu.B	r1, r1
+ 439 0031 61 01                   		cmp	#0, r1
+ 440 0033 21 07                   		bne	.L66
+ 503:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_WriteSteps = FLS_WRITE_SUCCES;
+ 441                             		.loc 1 503 0
+ 442 0035 3E 70 02                		mov.L	#2, [r7]
+ 443 0038 2E 1A                   		bra	.L69
+ 444                             	.LVL57:
+ 445                             	.L66:
+ 507:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_WriteSteps = FLS_ERR;
+ 446                             		.loc 1 507 0
+ 447 003a 3E 70 03                		mov.L	#3, [r7]
+ 448 003d 2E 15                   		bra	.L69
+ 449                             	.LVL58:
+ 450                             	.L62:
+ 515:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WriteSteps = FLS_WRITE;
+ 451                             		.loc 1 515 0
+ 452 003f 3E 70 00                		mov.L	#0, [r7]
+ 513:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		fls_State = (IO_ErrorType)IO_E_OK;
+ 453                             		.loc 1 513 0
+ 454 0042 66 01                   		mov	#0, r1
+ 455                             	.LVL59:
+ 516:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 456                             		.loc 1 516 0
+ 457 0044 2E 10                   		bra	.L65
+ 458                             	.LVL60:
+ 459                             	.L63:
+ 522:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WriteSteps = FLS_WRITE;
+ 460                             		.loc 1 522 0
+ 461 0046 3E 70 00                		mov.L	#0, [r7]
+ 520:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		fls_State = (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+ 462                             		.loc 1 520 0
+ 463 0049 75 41 17                		mov	#23, r1
+ 464                             	.LVL61:
+ 523:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 465                             		.loc 1 523 0
+ 466 004c 2E 08                   		bra	.L65
+ 467                             	.LVL62:
+ 468                             	.L67:
+ 526:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WriteSteps = FLS_WRITE;
+ 469                             		.loc 1 526 0
+ 470 004e 3E 70 00                		mov.L	#0, [r7]
+ 471                             	.LVL63:
+ 472 0051 03                      		.balign 2,3,1
+ 473                             	.L69:
+ 481:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType fls_State = (IO_ErrorType)IO_E_WORKING;
+ 474                             		.loc 1 481 0
+ 475 0052 66 21                   		mov	#2, r1
+ 476                             	.LVL64:
+ 477                             		.balign 2,3,2
+ 478                             	.L65:
+ 531:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** }
+ 479                             		.loc 1 531 0
+ 480 0054 75 21 17                		and	#23, r1
+ 481                             	.LVL65:
+ 482 0057 3F 77 01                		rtsd	#4, r7-r7
+ 483                             	.LFE5:
+ 485                             		.section	.text.OCFLS_BlankCheckEraseVerifyAsync,"ax",@progbits
+ 486                             		.global	_OCFLS_BlankCheckEraseVerifyAsync
+ 488                             	_OCFLS_BlankCheckEraseVerifyAsync:
+ 489                             	.LFB6:
+ 555:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** {
+ 490                             		.loc 1 555 0
+ 491                             	.LVL66:
+ 568:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	switch(FLS_EraseSteps)
+ 492                             		.loc 1 568 0
+ 493 0000 FB E2 00 00 00 00       		mov.L	#_FLS_EraseSteps.10092, r14
+ 494 0006 EC E4                   		mov.L	[r14], r4
+ 495 0008 61 44                   		cmp	#4, r4
+ 496 000a 24 63                   		bgtu	.L71
+ 497 000c 6C 24                   		shll	#2, r4
+ 498 000e 70 44 00 00 00 00       		add	#.L77, r4
+ 499 0014 EC 44                   		mov.L	[r4], r4
+ 500                             		
+ 501 0016 7F 04                   	1:jmp	r4
+ 502                             		.section	.rodata.OCFLS_BlankCheckEraseVerifyAsync,"a",@progbits
+ 503                             		.balign 4
+ 504                             		.balign 4
+ 505                             	.L77:
+ 506 0000 00 00 00 00             		.long .L72
+ 507 0004 00 00 00 00             		.long .L73
+ 508 0008 00 00 00 00             		.long .L74
+ 509 000c 00 00 00 00             		.long .L75
+ 510 0010 00 00 00 00             		.long .L76
+ 511                             		.section	.text.OCFLS_BlankCheckEraseVerifyAsync
+ 512                             	.L72:
+ 572:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_REraseVerify(size,position);
+ 513                             		.loc 1 572 0
+ 514 0018 05 00 00 00             		bsr	_OCFLS_REraseVerify
+ 515                             	.LVL67:
+ 573:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if ((IO_ErrorType)IO_E_NOT_BLANK == err)
+ 516                             		.loc 1 573 0
+ 517 001c 5B 11                   		movu.B	r1, r1
+ 518 001e 75 51 22                		cmp	#34, r1
+ 519 0021 FB E2 00 00 00 00       		mov.L	#_FLS_EraseSteps.10092, r14
+ 520 0027 21 32                   		bne	.L81
+ 575:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERASE;
+ 521                             		.loc 1 575 0
+ 522 0029 F8 E6 01                		mov.L	#1, [r14]
+ 523 002c 2E 44                   		bra	.L82
+ 524                             	.LVL68:
+ 525                             	.L73:
+ 585:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_REraseSync(size, position);
+ 526                             		.loc 1 585 0
+ 527 002e 05 00 00 00             		bsr	_OCFLS_REraseSync
+ 528                             	.LVL69:
+ 586:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if((IO_ErrorType)IO_E_OK == err)
+ 529                             		.loc 1 586 0
+ 530 0032 5B 11                   		movu.B	r1, r1
+ 531 0034 61 01                   		cmp	#0, r1
+ 532 0036 FB E2 00 00 00 00       		mov.L	#_FLS_EraseSteps.10092, r14
+ 533 003c 21 18                   		bne	.L83
+ 588:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERASE_VERIFY;
+ 534                             		.loc 1 588 0
+ 535 003e F8 E6 02                		mov.L	#2, [r14]
+ 536 0041 2E 2F                   		bra	.L82
+ 537                             	.LVL70:
+ 538                             	.L74:
+ 598:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_REraseVerify(size,position);
+ 539                             		.loc 1 598 0
+ 540 0043 05 00 00 00             		bsr	_OCFLS_REraseVerify
+ 541                             	.LVL71:
+ 599:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		if((IO_ErrorType)IO_E_NOT_BLANK == err)
+ 542                             		.loc 1 599 0
+ 543 0047 5B 11                   		movu.B	r1, r1
+ 544 0049 75 51 22                		cmp	#34, r1
+ 545 004c FB E2 00 00 00 00       		mov.L	#_FLS_EraseSteps.10092, r14
+ 546 0052 21 07                   		bne	.L81
+ 547                             	.LVL72:
+ 548                             		.balign 2,3,4
+ 549                             	.L83:
+ 601:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERR;
+ 550                             		.loc 1 601 0
+ 551 0054 F8 E6 04                		mov.L	#4, [r14]
+ 552 0057 2E 19                   		bra	.L82
+ 553                             	.L81:
+ 605:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERASE_SUCCES;
+ 554                             		.loc 1 605 0
+ 555 0059 F8 E6 03                		mov.L	#3, [r14]
+ 556 005c 2E 14                   		bra	.L82
+ 557                             	.LVL73:
+ 558                             	.L75:
+ 613:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EraseSteps = FLS_CHECK_IF_BLANK;
+ 559                             		.loc 1 613 0
+ 560 005e F8 E6 00                		mov.L	#0, [r14]
+ 611:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		fls_State = (IO_ErrorType)IO_E_OK;
+ 561                             		.loc 1 611 0
+ 562 0061 66 01                   		mov	#0, r1
+ 563                             	.LVL74:
+ 614:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 564                             		.loc 1 614 0
+ 565 0063 2E 0F                   		bra	.L79
+ 566                             	.LVL75:
+ 567                             	.L76:
+ 620:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EraseSteps = FLS_CHECK_IF_BLANK;
+ 568                             		.loc 1 620 0
+ 569 0065 F8 E6 00                		mov.L	#0, [r14]
+ 618:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		fls_State = (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+ 570                             		.loc 1 618 0
+ 571 0068 75 41 17                		mov	#23, r1
+ 572                             	.LVL76:
+ 621:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 573                             		.loc 1 621 0
+ 574 006b 2E 07                   		bra	.L79
+ 575                             	.LVL77:
+ 576                             	.L71:
+ 624:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EraseSteps = FLS_CHECK_IF_BLANK;
+ 577                             		.loc 1 624 0
+ 578 006d F8 E6 00                		mov.L	#0, [r14]
+ 579                             	.LVL78:
+ 580                             		.balign 2,3,1
+ 581                             	.L82:
+ 566:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType fls_State = (IO_ErrorType)IO_E_WORKING;
+ 582                             		.loc 1 566 0
+ 583 0070 66 21                   		mov	#2, r1
+ 584                             	.LVL79:
+ 585                             		.balign 2,3,2
+ 586                             	.L79:
+ 629:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCFLS\OCFLS_drv.c **** }
+ 587                             		.loc 1 629 0
+ 588 0072 75 21 17                		and	#23, r1
+ 589                             	.LVL80:
+ 590 0075 02                      		rts
+ 591                             	.LFE6:
+ 593                             		.section	.bss.EndPosition.10037,"aw",@nobits
+ 594                             		.balign 4
+ 597                             	_EndPosition.10037:
+ 598 0000 00 00 00 00             		.zero	4
+ 599                             		.section	.bss.NumCheck.10057,"aw",@nobits
+ 602                             	_NumCheck.10057:
+ 603 0000 00                      		.zero	1
+ 604                             		.section	.bss.FLS_WriteSteps.10073,"aw",@nobits
+ 605                             		.balign 4
+ 608                             	_FLS_WriteSteps.10073:
+ 609 0000 00 00 00 00             		.zero	4
+ 610                             		.section	.bss.FLS_EraseSteps.10092,"aw",@nobits
+ 611                             		.balign 4
+ 614                             	_FLS_EraseSteps.10092:
+ 615 0000 00 00 00 00             		.zero	4
+ 756                             	.Letext0:
+ 757                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 758                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 759                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_cfg.h"
+ 760                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers/IO_Driver.h"
+ 761                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Error/LIB_Error.h"
+ 762                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_hal_Flash.h"
+ 763                             		.file 8 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCWDT/OCWDT_drv.h"

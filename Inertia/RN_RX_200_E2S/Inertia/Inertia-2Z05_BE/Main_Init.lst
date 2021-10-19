@@ -1,0 +1,1058 @@
+   1                             		.file	"Main_Init.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.Main_SupervisorTask,"ax",@progbits
+   6                             	_Main_SupervisorTask:
+   7                             	.LFB2:
+   8                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Main_Init.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /**
+   6:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+   7:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \addtogroup Main
+   8:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** @{
+   9:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \par Description
+  10:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** This module is the EmbOS-based framework for main board applications.
+  11:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \n EmbOS is a multitasking system that is used as an embedded OS for realtime applications.
+  12:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+  13:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** This framework consists of services as specified in the Modules section.
+  14:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Each service is configurable.
+  15:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+  16:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \par Preprocessing options
+  17:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** As this framework is EmbOS-based you need this preprocessing option:
+  18:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****  \b OS_EmbOS
+  19:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \par Configuration file
+  20:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** The configuration file is "MainConfig.h". This file will contain all custom project properties
+  21:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** for services that will overwrite default value. some of these properties relates to Task Priority,
+  22:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** debug options, task safety, service-specific configuration.
+  23:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+  24:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+  25:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** @}
+  26:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+  27:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /**
+  28:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \n
+  29:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \par		Description.c
+  30:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \n			EmbOS  Main startup and supervisor EmbOS-based .
+  31:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \n
+  32:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \file		Main_Init.c
+  33:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \ingroup	Main
+  34:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \date		Jan , 2011
+  35:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \version	01.00.00
+  36:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \author		Roberto Fioravanti
+  37:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \n
+  38:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \n
+  39:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \par\b	History:
+  40:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \n
+  41:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \n
+  42:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \n 		00.00.95
+  43:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \n		dd/mm/yyyy
+  44:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \n		Roberto Fioravanti
+  45:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \n		changes
+  46:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \n 		- file created
+  47:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \n
+  48:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \n
+  49:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \n etc.
+  50:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+  51:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* ******** */
+  52:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* Includes */
+  53:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* ******** */
+  54:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+  55:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* configuration */
+  56:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "Config.h"
+  57:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+  58:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "BCP_BusCommMng.h"
+  59:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "Main.h"
+  60:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+  61:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* drivers */
+  62:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "OCDIO_drv.h"
+  63:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "OCWDT_drv.h"
+  64:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "OCTPM_drv.h"
+  65:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+  66:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* platform libraries */
+  67:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "Analog.h"
+  68:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "Feedbacks.h"
+  69:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "LIB_Reset.h"
+  70:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "LIB_Zerocrossing.h"
+  71:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined(CONFIG_PL_CLASS_B_CHECK)
+  72:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "LIB_ClassBCheck.h"
+  73:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+  74:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "InputManager.h"
+  75:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "IOSharing.h"
+  76:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "OutputManager.h"
+  77:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined (CONFIG_DIGITAL_OUTPUT_MULTI_NUM_OF_LOADS)
+  78:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "DigitalOutputMulti.h"
+  79:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+  80:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "ZcLoads.h"
+  81:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+  82:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "callback.h"
+  83:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+  84:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined(CONFIG_PL_DEBUG) && defined(CONFIG_CLASS_B_DATA_INTEGRITY)
+  85:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "LIB_ClassBVar.h"
+  86:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+  87:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+  88:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined(CONFIG_MAIN_SUPERVISOR_TASK_TRACE_PIN_ENABLE)
+  89:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "LIB_Trace.h"
+  90:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+  91:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined(CONFIG_LIB_CLASS_B_PERIODIC_CHECK)
+  92:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+  93:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #elif defined(CONFIG_PM_TASK_MONITOR_SUPPORT)
+  94:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "PM_TaskMonitoring.h"
+  95:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+  96:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined(CONFIG_MAIN_SERVICE_ACTIVITY_SUPPORT)
+  97:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "Main_ActivityList.h"
+  98:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+  99:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #include "LIB_Trace.h"
+ 100:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 101:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* ****************** */
+ 102:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* Defines and Macros */
+ 103:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* ****************** */
+ 104:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined(CONFIG_MAIN_SUPERVISOR_TASK_TRACE_PIN_ENABLE) && defined(CONFIG_LIB_TRACE_SUPPORT)
+ 105:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK_TRACE_BEGIN()        TRACE_TO_PIN(ON , (CONFIG_MAIN_SUPERVISOR_TASK_TR
+ 106:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK_TRACE_END()          TRACE_TO_PIN(OFF , (CONFIG_MAIN_SUPERVISOR_TASK_T
+ 107:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #else
+ 108:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK_TRACE_BEGIN()
+ 109:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK_TRACE_END()
+ 110:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 111:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 112:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 113:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 114:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if (MAIN_SUPERVISOR_TASK_PERIOD < OS_TICK_ms_PERIOD)
+ 115:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /*
+ 116:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Lowest period is defined by OS tick defined by OS_TICK_FREQ
+ 117:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+ 118:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #error "OS tick (defined by OS_TICK_FREQ) cannot generate the period set in MAIN_SUPERVISOR_TASK_PE
+ 119:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Change OS_TICK_FREQ or MAIN_SUPERVISOR_TASK_PERIOD"
+ 120:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 121:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 122:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 123:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 124:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 125:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 126:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /** @name Supervisor task safety
+ 127:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \par Example
+ 128:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \code
+ 129:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__MONITOR_IN()                  helloTaskMonitor(PERIODIC_TASK_ID);
+ 130:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__MONITOR_OUT()
+ 131:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \endcode
+ 132:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** @{
+ 133:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+ 134:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined(CONFIG_LIB_CLASS_B_PERIODIC_CHECK)
+ 135:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__MONITOR_IN()
+ 136:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__MONITOR_OUT()
+ 137:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__SYSTEM_MONITOR(x)             /*To be defined */
+ 138:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #elif defined(CONFIG_PM_TASK_MONITOR_SUPPORT)
+ 139:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 140:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__MONITOR_IN()
+ 141:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__MONITOR_OUT()
+ 142:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__SYSTEM_MONITOR(_SystemMode)\
+ 143:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** if (_SystemMode == SYSTEM_NORMAL_MODE)\
+ 144:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {\
+ 145:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     if ( PM_TM_TaskMonitor() == FALSE )\
+ 146:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     {\
+ 147:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****         LIB_Reset_ForceColdReset();\
+ 148:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     }\
+ 149:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** }
+ 150:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #else
+ 151:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__MONITOR_IN()
+ 152:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__MONITOR_OUT()
+ 153:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__SYSTEM_MONITOR(x)
+ 154:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 155:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /*@}*/
+ 156:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 157:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /** @name Supervisor task safety
+ 158:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 159:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \par Properties
+ 160:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Not mandatory. If undefined, they assume by default an empty value.
+ 161:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 162:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \par Examples
+ 163:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \code
+ 164:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__MONITOR_IN()     helloTaskMonitor( SUPERVISOR_TASK_ID );
+ 165:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__MONITOR_OUT()
+ 166:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \endcode
+ 167:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** @{
+ 168:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+ 169:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if !defined(MAIN_SUPERVISOR_TASK__MONITOR_IN) && \
+ 170:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     !defined(MAIN_SUPERVISOR_TASK__MONITOR_OUT) && \
+ 171:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     !defined(MAIN_SUPERVISOR_TASK__SYSTEM_MONITOR)
+ 172:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 173:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /** safety entry */
+ 174:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__MONITOR_IN()
+ 175:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /** safety exit */
+ 176:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__MONITOR_OUT()
+ 177:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__SYSTEM_MONITOR(x)
+ 178:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /*@}*/
+ 179:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 180:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #else
+ 181:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* MAIN_SUPERVISOR_TASK__MONITOR_IN or MAIN_SUPERVISOR_TASK__MONITOR_OUT defined */
+ 182:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if !defined(MAIN_SUPERVISOR_TASK__MONITOR_IN)
+ 183:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #error "MAIN_SUPERVISOR_TASK__MONITOR_IN() missing definition."
+ 184:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #error "Both MAIN_SUPERVISOR_TASK__MONITOR_IN() and MAIN_SUPERVISOR_TASK__MONITOR_OUT() must be def
+ 185:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 186:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 187:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if !defined(MAIN_SUPERVISOR_TASK__MONITOR_OUT)
+ 188:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #error "MAIN_SUPERVISOR_TASK__MONITOR_OUT() missing definition."
+ 189:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #error "Both MAIN_SUPERVISOR_TASK__MONITOR_IN() and MAIN_SUPERVISOR_TASK__MONITOR_OUT() must be def
+ 190:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 191:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 192:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 193:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if !defined(MAIN_SUPERVISOR_TASK__SYSTEM_MONITOR)
+ 194:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #error "MAIN_SUPERVISOR_TASK__SYSTEM_MONITOR() missing definition."
+ 195:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #error "MAIN_SUPERVISOR_TASK__SYSTEM_MONITOR, MAIN_SUPERVISOR_TASK__MONITOR_IN() and MAIN_SUPERVISO
+ 196:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 197:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 198:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif /* !defined(MAIN_SUPERVISOR_TASK__MONITOR_IN) && !defined(MAIN_SUPERVISOR_TASK__MONITOR_OUT)
+ 199:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 200:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #ifndef MAIN_SUPERVISOR_TASK_SET_PERIOD
+ 201:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /**
+ 202:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Period of the supervisor task.
+ 203:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Not mandatory.
+ 204:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Must be defined as a value or a value returned by a function.
+ 205:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** If undefined, they assume by default
+ 206:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \code
+ 207:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK_SET_PERIOD()   (10)
+ 208:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \endcode
+ 209:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+ 210:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK_SET_PERIOD()   (10)
+ 211:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 212:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 213:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #ifndef MAIN_SUPERVISOR_TASK__BODY
+ 214:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /**
+ 215:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Application specific code in supervisor task.
+ 216:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \param [in] _SystemMode system mode
+ 217:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \param [in] _timestamp time
+ 218:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 219:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Not mandatory. If undefined, it assumes by default an empty value.
+ 220:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 221:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \par Example #1: backup
+ 222:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \code
+ 223:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__BODY(_SystemMode, _timestamp)\
+ 224:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     if(TRUE == Main_IsTimeForColdReset())\
+ 225:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     {\
+ 226:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****         Backup_SystemBackup(_SystemMode);\
+ 227:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     }
+ 228:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \endcode
+ 229:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 230:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \par Example #2: calling a callback every 10 ms
+ 231:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \code
+ 232:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__BODY(_SystemMode, _timestamp)\
+ 233:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {\
+ 234:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     uint8_t t10;\
+ 235:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     t10=_timestamp % 10; \ //check if timestamp is a multiple of 10
+ 236:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     if((t10) == 0)\
+ 237:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     {\
+ 238:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****         CALLBACK_Main_GP(_SystemMode);\
+ 239:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     }\
+ 240:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** }
+ 241:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \endcode
+ 242:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 243:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \par Example #3: doing something every 20 ms
+ 244:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \code
+ 245:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__BODY(_SystemMode, _timestamp)\
+ 246:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {\
+ 247:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     uint8_t t20;\
+ 248:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     t20=_timestamp % 20; \ //check if timestamp is a multiple of 20
+ 249:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     if((t20) == 0)\
+ 250:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     {\
+ 251:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****         .....\ //plece here your code
+ 252:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     }\
+ 253:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** }
+ 254:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \endcode
+ 255:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+ 256:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__BODY(_SystemMode, _timestamp)
+ 257:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 258:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 259:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #ifndef MAIN_SUPERVISOR_TASK__SYSTEM_MONITOR
+ 260:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /**
+ 261:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Called at each execution of the task.
+ 262:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \param [in] _SystemMode system mode
+ 263:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 264:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Not mandatory. Must be defined as a value or a value returned by a function.
+ 265:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** If undefined, they assume by default an empty value
+ 266:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \code
+ 267:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__SYSTEM_MONITOR(_SystemMode)       {}
+ 268:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \endcode
+ 269:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+ 270:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define MAIN_SUPERVISOR_TASK__SYSTEM_MONITOR(_SystemMode)
+ 271:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 272:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /*@}*/
+ 273:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 274:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* *************************** */
+ 275:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* Typedef, Structs and Unions */
+ 276:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* *************************** */
+ 277:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 278:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /** Startup mode structure.
+ 279:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \sa ResetManager
+ 280:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+ 281:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** typedef struct Main_StartupModeInfoStruct
+ 282:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {
+ 283:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	SysMode_Type    sysmode;            /**< System Mode*/
+ 284:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	bool_t          coldreset;          /**< cold reset */
+ 285:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** } Main_StartupModeInfoType, *pMain_StartupModeInfoType;
+ 286:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 287:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 288:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* **************************** */
+ 289:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* Prototype of local functions */
+ 290:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* **************************** */
+ 291:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 292:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 293:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 294:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if MEASURE_PERIOD_TASK_PERIODIC_DEBUG
+ 295:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** void Main_Framework_PeriodMeasureInit ( void );
+ 296:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** void Main_Framework_PeriodMeasure ( void );
+ 297:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 298:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #else
+ 299:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define Main_Framework_PeriodMeasureInit()
+ 300:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #define Main_Framework_PeriodMeasure()
+ 301:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 302:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 303:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 304:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* local */
+ 305:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** static void Main_NormalMode ( bool_t bIsColdReset );
+ 306:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 307:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** static void Main_SupervisorTask ( void );
+ 308:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 309:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* ********* */
+ 310:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* Variables */
+ 311:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* ********* */
+ 312:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 313:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* Global */
+ 314:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 315:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 316:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* Static */
+ 317:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined(CONFIG_MAIN_SUPERVISOR_TASK_STACK_MONITOR)
+ 318:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** static TOOLS_STACKUSAGE_MONITOR	Main_SupervisorStackMonitor;
+ 319:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 320:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 321:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if MEASURE_PERIOD_TASK_PERIODIC_DEBUG
+ 322:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /**
+ 323:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** debug
+ 324:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+ 325:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** static TOOLS_PERIOD GP_Period;
+ 326:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif  /* MEASURE_PERIOD_TASK_PERIODIC_DEBUG*/
+ 327:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 328:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 329:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /**
+ 330:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** @name Service variables
+ 331:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** @{
+ 332:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+ 333:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /** Supervisor Task Stack */
+ 334:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** static STACK_SEC OS_STACKPTR int  Main_SupervisorTaskStack[CONFIG_MAIN_SUPERVISOR_TASK_STACK_SIZE] 
+ 335:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 336:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 337:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /** Init Task Task control block*/
+ 338:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** static OS_TASK          Main_SupervisorTCB;
+ 339:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 340:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 341:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /** Global event for restore event. */
+ 342:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** static OS_EVENT         Restore_Event;
+ 343:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 344:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /** Global event that signals Ref is good. */
+ 345:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** static OS_EVENT         ZcSync_Event;
+ 346:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 347:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 348:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /*@}*/
+ 349:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 350:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 351:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined(CONFIG_MAIN_SERVICE_ACTIVITY_SUPPORT)
+ 352:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 353:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** typedef struct Main_SupervisorActivityStruct{
+ 354:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     Main_ActivityList_Type    Activity[2];
+ 355:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** }Main_SupervisorActivitiesType;
+ 356:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 357:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Main_SupervisorActivitiesType Main_SupervisorActivities;
+ 358:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 359:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 360:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 361:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 362:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 363:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* ******************* */
+ 364:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* Functions Prototype */
+ 365:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* ******************* */
+ 366:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 367:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* Exported function */
+ 368:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 369:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 370:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* Local Function */
+ 371:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 372:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 373:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* *************** */
+ 374:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* Function Bodies */
+ 375:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* *************** */
+ 376:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 377:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* Exported function */
+ 378:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 379:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 380:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /**
+ 381:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Main EmbOS framework entry point.
+ 382:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** It's aim is to start OS creating InitTask.
+ 383:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 384:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 385:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \author 	Roberto Fioravanti
+ 386:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \date		29/03/2011
+ 387:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \version	1.0.0
+ 388:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 389:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \note		\par \b Note 1:
+ 390:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 			documentation by Roberto Fioravanti
+ 391:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 392:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+ 393:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** int main ( void )
+ 394:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {
+ 395:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	uint32_t startTime = OS_Time;
+ 396:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 397:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_Clean();                     /* Extension to clean all OS objects */
+ 398:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_IncDI();                      /* Initially disable interrupts  */
+ 399:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 400:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	/* If a warm reset occurred, restart with last time stamp
+ 401:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	 * otherwise all time-stamp based checks will fail!
+ 402:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	*/
+ 403:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	if (!LIB_Reset_IsColdReset())
+ 404:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	{
+ 405:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		OS_Time = startTime;
+ 406:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	}
+ 407:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 408:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_InitKern();                   /* initialize OS                 */
+ 409:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_InitHW();                     /* initialize Hardware for OS    */
+ 410:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	/* You need to create at least one task before calling OS_Start() */
+ 411:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	/*OS_SendString("Creating Init Task...");*/
+ 412:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_CREATETASK ( &Main_SupervisorTCB,
+ 413:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 					"Supervisor Task",
+ 414:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 					Main_SupervisorTask,
+ 415:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 					( OS_U8 ) MAIN_SUPERVISOR_TASK_PRIORITY,
+ 416:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 					Main_SupervisorTaskStack );
+ 417:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	/*OS_SendString ( "created.\n" );
+ 418:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	//OS_CREATETASK(&TCBHP, "HP Task", HPTask, 150, StackHP);
+ 419:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	//OS_CREATETASK(&TCBLP, "LP Task", LPTask,  50, StackLP);*/
+ 420:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if OS_TRACE   && 0
+ 421:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_TraceDisableAll();
+ 422:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_TraceEnableAll();
+ 423:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 424:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	Tools_StackUsageInit();
+ 425:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_Start();                      /* Start multitasking            */
+ 426:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	return 0;
+ 427:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** }
+ 428:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 429:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 430:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined(CONFIG_MAIN_SERVICE_ACTIVITY_SUPPORT)
+ 431:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Main_ActivityList_Type* Main_SupervisorGetActivityInstance(int id)
+ 432:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {
+ 433:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     /*TODO check index*/
+ 434:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     return &(Main_SupervisorActivities.Activity[id]);
+ 435:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** }
+ 436:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif /* defined(CONFIG_MAIN_SERVICE_ACTIVITY_SUPPORT)	*/
+ 437:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 438:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /* Local Functions */
+ 439:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 440:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 441:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /**
+ 442:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Init Task: normal preemptable, task.
+ 443:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 444:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \author 	Roberto Fioravanti
+ 445:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \date		  13/01/2011
+ 446:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \version	1.0.0
+ 447:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 448:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \note		\par \b Note 1:
+ 449:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 			documentation by Roberto Fioravanti
+ 450:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+ 451:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** static void Main_SupervisorTask ( void )
+ 452:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {
+   9                             		.loc 1 452 0
+  10 0000 6E 7B                   		pushm	r7-r11
+  11                             	.LCFI0:
+ 453:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	int t0 = OS_GetTime();
+  12                             		.loc 1 453 0
+  13 0002 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+  14 0008 AA F7                   		mov.L	40[r7], r7
+  15                             	.LVL0:
+ 454:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	static SysMode_Type sysMode;
+ 455:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	static bool_t coldreset;
+ 456:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	static bool_t ZC_Ok = FALSE;
+ 457:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 458:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_EnterRegion();
+  16                             		.loc 1 458 0
+  17 000a 05 00 00 00             		bsr	_OS_EnterRegionFunc
+  18                             	.LVL1:
+ 459:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	/* here the scheduler is switched off */
+ 460:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 461:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	sysMode = LIB_Reset_GetSystemMode();
+  19                             		.loc 1 461 0
+  20 000e 05 00 00 00             		bsr	_LIB_Reset_GetSystemMode
+  21                             	.LVL2:
+  22 0012 FB B2 00 00 00 00       		mov.L	#_sysMode.11688, r11
+  23 0018 C3 B1                   		mov.B	r1, [r11]
+ 462:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	coldreset = LIB_Reset_GetIsColdReset();
+  24                             		.loc 1 462 0
+  25 001a FB A2 00 00 00 00       		mov.L	#_coldreset.11689, r10
+  26 0020 05 00 00 00             		bsr	_LIB_Reset_GetIsColdReset
+  27                             	.LVL3:
+  28 0024 E3 A1                   		mov.L	r1, [r10]
+ 463:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 464:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined(CONFIG_MAIN_SERVICE_ACTIVITY_SUPPORT)
+ 465:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     Main_ActivityList_Init ( &(Main_SupervisorActivities.Activity[0]) );
+  29                             		.loc 1 465 0
+  30 0026 FB 12 00 00 00 00       		mov.L	#_Main_SupervisorActivities, r1
+  31 002c 05 00 00 00             		bsr	_Main_ActivityList_Init
+  32                             	.LVL4:
+ 466:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 467:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 468:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     Main_OnSupervisorStart ();
+  33                             		.loc 1 468 0
+  34 0030 05 00 00 00             		bsr	_Main_OnSupervisorStart
+  35                             	.LVL5:
+ 469:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 470:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	CALLBACK_Main_InitTask ( sysMode, coldreset );
+  36                             		.loc 1 470 0
+  37 0034 CC B1                   		mov.B	[r11], r1
+  38 0036 EC A2                   		mov.L	[r10], r2
+  39 0038 05 00 00 00             		bsr	_CALLBACK_Main_InitTask
+  40                             	.LVL6:
+ 471:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 472:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 473:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined(CONFIG_MAIN_SUPERVISOR_TASK_STACK_MONITOR)
+ 474:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	Tools_CreateTaskStackMonitor(&Main_SupervisorTCB, &Main_SupervisorStackMonitor);
+ 475:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 476:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 477:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	switch ( sysMode )
+  41                             		.loc 1 477 0
+  42 003c 58 BB                   		movu.B	[r11], r11
+  43 003e 61 1B                   		cmp	#1, r11
+  44 0040 20 0C                   		beq	.L3
+  45 0042 61 2B                   		cmp	#2, r11
+  46 0044 21 72                   		bne	.L2
+ 478:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	{
+ 479:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	case SYSTEM_PROGRAMMING_MODE:
+ 480:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		Main_EnableRemoteTimeout();
+  47                             		.loc 1 480 0
+  48 0046 05 00 00 00             		bsr	_Main_EnableRemoteTimeout
+  49                             	.LVL7:
+ 481:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined(CONFIG_PL_DEBUG) && defined(CONFIG_CLASS_B_DATA_INTEGRITY)
+ 482:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     	Sec_InitSafety();
+ 483:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 484:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		break;
+  50                             		.loc 1 484 0
+  51 004a 2E 6C                   		bra	.L2
+  52                             	.L3:
+ 485:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	case SYSTEM_NORMAL_MODE:
+ 486:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		/* Create all Task ...*/
+ 487:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined(CONFIG_DISPATCHER_TASK_ENABLE)
+ 488:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		Main_DispatcherInit();
+ 489:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 490:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		Main_SequencerInit();
+  53                             		.loc 1 490 0
+  54 004c 05 00 00 00             		bsr	_Main_SequencerInit
+  55                             	.LVL8:
+ 491:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		Main_LiveInit();
+  56                             		.loc 1 491 0
+  57 0050 05 00 00 00             		bsr	_Main_LiveInit
+  58                             	.LVL9:
+ 492:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		Main_AnalogInit();
+  59                             		.loc 1 492 0
+  60 0054 05 00 00 00             		bsr	_Main_AnalogInit
+  61                             	.LVL10:
+ 493:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		Main_OutputsInit();
+ 494:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		Main_FeedbacksInit();
+  62                             		.loc 1 494 0
+  63 0058 05 00 00 00             		bsr	_Main_FeedbacksInit
+  64                             	.LVL11:
+ 495:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		Main_BackupInit();
+  65                             		.loc 1 495 0
+  66 005c 05 00 00 00             		bsr	_Main_BackupInit
+  67                             	.LVL12:
+ 496:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		Main_ApplicationInit();
+  68                             		.loc 1 496 0
+  69 0060 05 00 00 00             		bsr	_Main_ApplicationInit
+  70                             	.LVL13:
+ 497:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		OS_EVENT_Create ( &Restore_Event );
+  71                             		.loc 1 497 0
+  72 0064 FB 12 00 00 00 00       		mov.L	#_Restore_Event, r1
+  73 006a 05 00 00 00             		bsr	_OS_EVENT_Create
+  74                             	.LVL14:
+ 498:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		OS_EVENT_Set ( &Restore_Event );
+  75                             		.loc 1 498 0
+  76 006e FB 12 00 00 00 00       		mov.L	#_Restore_Event, r1
+  77 0074 05 00 00 00             		bsr	_OS_EVENT_Set
+  78                             	.LVL15:
+ 499:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		/* ... then initialize hardware */
+ 500:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 501:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if 	defined(CONFIG_LIB_CLASS_B_FLASH)
+ 502:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		CheckFlash_Init(TRUE);
+ 503:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 504:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		Main_NormalMode ( coldreset );
+  79                             		.loc 1 504 0
+  80 0078 EC AA                   		mov.L	[r10], r10
+  81                             	.LVL16:
+  82                             	.LBB4:
+  83                             	.LBB5:
+ 505:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		break;
+ 506:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	case SYSTEM_SLEEP_MODE:
+ 507:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		break;
+ 508:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	default:;
+ 509:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	}
+ 510:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 511:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_EVENT_Create ( &ZcSync_Event );
+ 512:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 513:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	CP_I2CCommunicationPlatformInit();
+ 514:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 515:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_LeaveRegion();
+ 516:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	/* here the scheduler is switched on */
+ 517:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 518:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 519:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	Main_Framework_PeriodMeasureInit();
+ 520:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 521:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	while ( 1 )
+ 522:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	{
+ 523:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		TRACE_CPU_IDLE_END();
+ 524:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 525:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		/*debug begin */
+ 526:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		Main_Framework_PeriodMeasure();
+ 527:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		/*debug end*/
+ 528:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 529:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		MAIN_SUPERVISOR_TASK__MONITOR_IN()
+ 530:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****         MAIN_SUPERVISOR_TASK_TRACE_BEGIN()
+ 531:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 532:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		( void ) OCWDT_RefreshSync();
+ 533:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 534:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		sysMode =   LIB_Reset_GetSystemMode();
+ 535:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		ZC_Ok   =   goodZCSignal();
+ 536:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 537:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if OS_TRACE && SKELETON_TRACE
+ 538:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		OS_TraceData ( SKELETON_TRACE_ID_GP_HP_TASK, v );
+ 539:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 540:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 541:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		MAIN_SUPERVISOR_TASK__BODY ( sysMode,  ZC_Ok )
+ 542:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 543:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		/* Communication protocol monitoring */
+ 544:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		BCP_BusMonitor(); 
+ 545:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		MAIN_SUPERVISOR_TASK__SYSTEM_MONITOR ( sysMode )
+ 546:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****         MAIN_SUPERVISOR_TASK_TRACE_END()
+ 547:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		MAIN_SUPERVISOR_TASK__MONITOR_OUT()
+ 548:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 549:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		OS_DelayUntil( t0 );
+ 550:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	}
+ 551:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** }
+ 552:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 553:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 554:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /**
+ 555:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     If 'Zc' is synchronized sets ZcSync_Event to signaled state.
+ 556:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     Calls LIB_ZC_SyncCompleted.
+ 557:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+ 558:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** void Main_ZcSyncMonitor ( void )
+ 559:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {
+ 560:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	if ( LIB_ZC_SyncCompleted() )
+ 561:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	{
+ 562:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		OS_EVENT_Set ( &ZcSync_Event );
+ 563:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	}
+ 564:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	else
+ 565:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	{
+ 566:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		OS_EVENT_Reset ( &ZcSync_Event );
+ 567:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	}
+ 568:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** }
+ 569:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 570:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 571:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /**
+ 572:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     If 'Zc' is synchronized sets Main_AnalogRef_Event to signaled state.
+ 573:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     Calls LIB_ADC_Is_Ref_Good.
+ 574:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+ 575:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** uint8_t Main_IsZcSync ( void )
+ 576:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {
+ 577:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	return OS_EVENT_Get ( &ZcSync_Event );
+ 578:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** }
+ 579:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 580:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /**
+ 581:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Returns if restore is completed
+ 582:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \return uint8_t
+ 583:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \retval TRUE, completed
+ 584:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \retval FALSE non completed
+ 585:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \author 	Roberto Fioravanti
+ 586:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \date       22/04/2011
+ 587:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \version	1.0.0
+ 588:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 589:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \note		\par \b Note 1:
+ 590:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 			documentation by Roberto Fioravanti
+ 591:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+ 592:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** uint8_t Main_IsRestoreCompleted ( void )
+ 593:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {
+ 594:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	return (uint8_t) !(OS_EVENT_Get (&Restore_Event));
+ 595:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** }
+ 596:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 597:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /**
+ 598:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** Signals restoring activity as completed
+ 599:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \author 	Roberto Fioravanti
+ 600:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \date       22/04/2011
+ 601:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \version	1.0.0
+ 602:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 603:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** \note		\par \b Note 1:
+ 604:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 			documentation by Roberto Fioravanti
+ 605:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+ 606:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** void Main_CompleteRestore ( void )
+ 607:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {
+ 608:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_EVENT_Reset ( &Restore_Event );
+ 609:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** }
+ 610:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 611:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 612:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** /**
+ 613:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** */
+ 614:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** static void Main_NormalMode ( bool_t bIsColdReset )
+ 615:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {
+ 616:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OCTPM_InitSync();
+  84                             		.loc 1 616 0
+  85 007a 05 00 00 00             		bsr	_OCTPM_InitSync
+  86                             	.LVL17:
+ 617:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     ( void ) OCDIO_InitSync();
+  87                             		.loc 1 617 0
+  88 007e 05 00 00 00             		bsr	_OCDIO_InitSync
+  89                             	.LVL18:
+ 618:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	( void ) OCADC_DeInitSync();
+  90                             		.loc 1 618 0
+  91 0082 05 00 00 00             		bsr	_OCADC_DeInitSync
+  92                             	.LVL19:
+ 619:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	( void ) OCADC_InitSync();
+  93                             		.loc 1 619 0
+  94 0086 05 00 00 00             		bsr	_OCADC_InitSync
+  95                             	.LVL20:
+ 620:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 621:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	SetupHw();
+  96                             		.loc 1 621 0
+  97 008a 05 00 00 00             		bsr	_SetupHw
+  98                             	.LVL21:
+ 622:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 623:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	LIB_IOM_IO_Manager_Init();
+  99                             		.loc 1 623 0
+ 100 008e 05 00 00 00             		bsr	_LIB_IOM_IO_Manager_Init
+ 101                             	.LVL22:
+ 624:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	
+ 625:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined(Func_Main_PM_Init)
+ 626:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     Main_PM_Init();
+ 627:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 628:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	
+ 629:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     if ( TRUE == bIsColdReset )
+ 102                             		.loc 1 629 0
+ 103 0092 61 1A                   		cmp	#1, r10
+ 104 0094 21 0A                   		bne	.L5
+ 630:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     {
+ 631:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     	LIB_DIO_InitDigInputs();
+ 105                             		.loc 1 631 0
+ 106 0096 05 00 00 00             		bsr	_LIB_DIO_InitDigInputs
+ 107                             	.LVL23:
+ 632:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****         LIB_ZcLoads_InitSync();
+ 633:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****         LIB_FDB_InitSync();
+ 108                             		.loc 1 633 0
+ 109 009a 05 00 00 00             		bsr	_LIB_FDB_InitSync
+ 110                             	.LVL24:
+ 111                             		.balign 2,3,3
+ 112                             	.L5:
+ 634:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined (CONFIG_LIB_LOADSREQUEST_SUPPORT)
+ 635:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****         LIB_IOM_InitLoadsPos();
+ 636:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 637:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 638:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****         LIB_SFT_SafetySupervisorInit();
+ 639:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 640:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 
+ 641:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     }
+ 642:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     
+ 643:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     LIB_ADC_InitSync();
+ 113                             		.loc 1 643 0
+ 114 009e 05 00 00 00             		bsr	_LIB_ADC_InitSync
+ 115                             	.LVL25:
+ 644:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     LIB_ZC_InitSync();
+ 116                             		.loc 1 644 0
+ 117 00a2 05 00 00 00             		bsr	_LIB_ZC_InitSync
+ 118                             	.LVL26:
+ 645:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #if defined(CONFIG_DIGITAL_OUTPUT_MULTI_NUM_OF_LOADS)
+ 646:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     PM_DigDelayedMulti_InitSync();
+ 119                             		.loc 1 646 0
+ 120 00a6 05 00 00 00             		bsr	_PM_DigDelayedMulti_InitSync
+ 121                             	.LVL27:
+ 647:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** #endif
+ 648:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     LIB_IOM_OutputInitialization( bIsColdReset );
+ 122                             		.loc 1 648 0
+ 123 00aa CF A1                   		mov.B	r10, r1
+ 124 00ac 05 00 00 00             		bsr	_LIB_IOM_OutputInitialization
+ 125                             	.LVL28:
+ 649:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     LIB_IOM_InputInitialization( bIsColdReset );
+ 126                             		.loc 1 649 0
+ 127 00b0 CF A1                   		mov.B	r10, r1
+ 128 00b2 05 00 00 00             		bsr	_LIB_IOM_InputInitialization
+ 129                             	.LVL29:
+ 130                             		.balign 2,3,5
+ 131                             	.L2:
+ 132                             	.LBE5:
+ 133                             	.LBE4:
+ 511:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_EVENT_Create ( &ZcSync_Event );
+ 134                             		.loc 1 511 0
+ 135 00b6 FB 12 00 00 00 00       		mov.L	#_ZcSync_Event, r1
+ 136 00bc 05 00 00 00             		bsr	_OS_EVENT_Create
+ 137                             	.LVL30:
+ 534:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		sysMode =   LIB_Reset_GetSystemMode();
+ 138                             		.loc 1 534 0
+ 139 00c0 FB A2 00 00 00 00       		mov.L	#_sysMode.11688, r10
+ 513:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	CP_I2CCommunicationPlatformInit();
+ 140                             		.loc 1 513 0
+ 141 00c6 05 00 00 00             		bsr	_CP_I2CCommunicationPlatformInit
+ 142                             	.LVL31:
+ 535:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		ZC_Ok   =   goodZCSignal();
+ 143                             		.loc 1 535 0
+ 144 00ca FB B2 00 00 00 00       		mov.L	#_ZC_Ok.11690, r11
+ 515:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_LeaveRegion();
+ 145                             		.loc 1 515 0
+ 146 00d0 05 00 00 00             		bsr	_OS_LeaveRegion
+ 147                             	.LVL32:
+ 148                             		.balign 2,3,3
+ 149                             	.L6:
+ 532:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		( void ) OCWDT_RefreshSync();
+ 150                             		.loc 1 532 0 discriminator 1
+ 151 00d4 05 00 00 00             		bsr	_OCWDT_RefreshSync
+ 152                             	.LVL33:
+ 534:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		sysMode =   LIB_Reset_GetSystemMode();
+ 153                             		.loc 1 534 0 discriminator 1
+ 154 00d8 05 00 00 00             		bsr	_LIB_Reset_GetSystemMode
+ 155                             	.LVL34:
+ 156 00dc C3 A1                   		mov.B	r1, [r10]
+ 535:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		ZC_Ok   =   goodZCSignal();
+ 157                             		.loc 1 535 0 discriminator 1
+ 158 00de 05 00 00 00             		bsr	_goodZCSignal
+ 159                             	.LVL35:
+ 160 00e2 EF 12                   		mov.L	r1, r2
+ 161 00e4 E3 B1                   		mov.L	r1, [r11]
+ 541:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		MAIN_SUPERVISOR_TASK__BODY ( sysMode,  ZC_Ok )
+ 162                             		.loc 1 541 0 discriminator 1
+ 163 00e6 62 A7                   		add	#10, r7
+ 164                             	.LVL36:
+ 165 00e8 CC A1                   		mov.B	[r10], r1
+ 166 00ea EF 73                   		mov.L	r7, r3
+ 167 00ec 05 00 00 00             		bsr	_Main_SupervisorBody
+ 168                             	.LVL37:
+ 544:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		BCP_BusMonitor(); 
+ 169                             		.loc 1 544 0 discriminator 1
+ 170 00f0 05 00 00 00             		bsr	_BCP_BusMonitor
+ 171                             	.LVL38:
+ 549:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		OS_DelayUntil( t0 );
+ 172                             		.loc 1 549 0 discriminator 1
+ 173 00f4 EF 71                   		mov.L	r7, r1
+ 174 00f6 05 00 00 00             		bsr	_OS_DelayUntil
+ 175                             	.LVL39:
+ 176 00fa 2E DA                   		bra	.L6
+ 177                             	.LFE2:
+ 179                             		.section	.rodata.str1.1,"aMS",@progbits,1
+ 180                             	.LC0:
+ 181 0000 53 75 70 65 72 76 69 73 		.string	"Supervisor Task"
+ 181      6F 72 20 54 61 73 6B 00 
+ 182                             		.section	.text.startup.main,"ax",@progbits
+ 183                             		.global	_main
+ 185                             	_main:
+ 186                             	.LFB0:
+ 394:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {
+ 187                             		.loc 1 394 0
+ 188 0000 6E 7A                   		pushm	r7-r10
+ 189                             	.LCFI1:
+ 190 0002 60 80                   		sub	#8, r0
+ 191                             	.LCFI2:
+ 395:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	uint32_t startTime = OS_Time;
+ 192                             		.loc 1 395 0
+ 193 0004 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 194 000a ED 7A 0A                		mov.L	40[r7], r10
+ 195                             	.LVL40:
+ 397:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_Clean();                     /* Extension to clean all OS objects */
+ 196                             		.loc 1 397 0
+ 197 000d 05 00 00 00             		bsr	_OS_Clean
+ 198                             	.LVL41:
+ 398:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_IncDI();                      /* Initially disable interrupts  */
+ 199                             		.loc 1 398 0
+ 200 0011 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 201                             	.LVL42:
+ 202 0015 CD 7E 01                		mov.B	1[r7], r14
+ 203 0018 62 1E                   		add	#1, r14
+ 204 001a C7 7E 01                		mov.B	r14, 1[r7]
+ 403:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	if (!LIB_Reset_IsColdReset())
+ 205                             		.loc 1 403 0
+ 206 001d 05 00 00 00             		bsr	_LIB_Reset_IsColdReset
+ 207                             	.LVL43:
+ 208 0021 61 01                   		cmp	#0, r1
+ 209 0023 21 05                   		bne	.L9
+ 405:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		OS_Time = startTime;
+ 210                             		.loc 1 405 0
+ 211 0025 E7 7A 0A                		mov.L	r10, 40[r7]
+ 212                             		.balign 2,3,3
+ 213                             	.L9:
+ 408:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_InitKern();                   /* initialize OS                 */
+ 214                             		.loc 1 408 0
+ 215 0028 05 00 00 00             		bsr	_OS_InitKern
+ 216                             	.LVL44:
+ 409:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_InitHW();                     /* initialize Hardware for OS    */
+ 217                             		.loc 1 409 0
+ 218 002c 05 00 00 00             		bsr	_OS_InitHW
+ 219                             	.LVL45:
+ 412:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_CREATETASK ( &Main_SupervisorTCB,
+ 220                             		.loc 1 412 0
+ 221 0030 FB 12 00 00 00 00       		mov.L	#_Main_SupervisorTCB, r1
+ 222 0036 FB 22 00 00 00 00       		mov.L	#.LC0, r2
+ 223 003c FB 36 80                		mov	#0xffffff80, r3
+ 224 003f FB 42 00 00 00 00       		mov.L	#_Main_SupervisorTask, r4
+ 225 0045 F8 02 00 00 00 00       		mov.L	#_Main_SupervisorTaskStack, [r0]
+ 226 004b F9 0A 01 00 02          		mov.L	#0x200, 4[r0]
+ 425:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_Start();                      /* Start multitasking            */
+ 227                             		.loc 1 425 0
+ 228 0050 FB 72 00 00 00 00       		mov.L	#_OS_Running, r7
+ 412:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_CREATETASK ( &Main_SupervisorTCB,
+ 229                             		.loc 1 412 0
+ 230 0056 05 00 00 00             		bsr	_OS_CreateTask_S
+ 231                             	.LVL46:
+ 425:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_Start();                      /* Start multitasking            */
+ 232                             		.loc 1 425 0
+ 233 005a 3C 70 01                		mov.B	#1, [r7]
+ 234 005d 05 00 00 00             		bsr	_OS_StartASM
+ 235                             	.LVL47:
+ 427:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** }
+ 236                             		.loc 1 427 0
+ 237 0061 66 01                   		mov.L	#0, r1
+ 238 0063 3F 7A 06                		rtsd	#24, r7-r10
+ 239                             	.LFE0:
+ 241                             		.section	.text.Main_SupervisorGetActivityInstance,"ax",@progbits
+ 242                             		.global	_Main_SupervisorGetActivityInstance
+ 244                             	_Main_SupervisorGetActivityInstance:
+ 245                             	.LFB1:
+ 432:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {
+ 246                             		.loc 1 432 0
+ 247                             	.LVL48:
+ 434:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c ****     return &(Main_SupervisorActivities.Activity[id]);
+ 248                             		.loc 1 434 0
+ 249 0000 6C 31                   		shll	#3, r1
+ 250                             	.LVL49:
+ 435:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** }
+ 251                             		.loc 1 435 0
+ 252 0002 70 11 00 00 00 00       		add	#_Main_SupervisorActivities, r1
+ 253 0008 02                      		rts
+ 254                             	.LFE1:
+ 256                             		.section	.text.Main_ZcSyncMonitor,"ax",@progbits
+ 257                             		.global	_Main_ZcSyncMonitor
+ 259                             	_Main_ZcSyncMonitor:
+ 260                             	.LFB3:
+ 559:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {
+ 261                             		.loc 1 559 0
+ 560:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	if ( LIB_ZC_SyncCompleted() )
+ 262                             		.loc 1 560 0
+ 263 0000 05 00 00 00             		bsr	_LIB_ZC_SyncCompleted
+ 264                             	.LVL50:
+ 265 0004 61 01                   		cmp	#0, r1
+ 562:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		OS_EVENT_Set ( &ZcSync_Event );
+ 266                             		.loc 1 562 0
+ 267 0006 FB 12 00 00 00 00       		mov.L	#_ZcSync_Event, r1
+ 560:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	if ( LIB_ZC_SyncCompleted() )
+ 268                             		.loc 1 560 0
+ 269 000c 20 06                   		beq	.L13
+ 562:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		OS_EVENT_Set ( &ZcSync_Event );
+ 270                             		.loc 1 562 0
+ 271 000e 04 00 00 00             		bra	_OS_EVENT_Set
+ 272                             	.LVL51:
+ 273                             	.L13:
+ 566:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 		OS_EVENT_Reset ( &ZcSync_Event );
+ 274                             		.loc 1 566 0
+ 275 0012 04 00 00 00             		bra	_OS_EVENT_Reset
+ 276                             	.LVL52:
+ 277                             	.LFE3:
+ 279                             		.section	.text.Main_IsZcSync,"ax",@progbits
+ 280                             		.global	_Main_IsZcSync
+ 282                             	_Main_IsZcSync:
+ 283                             	.LFB4:
+ 576:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {
+ 284                             		.loc 1 576 0
+ 577:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	return OS_EVENT_Get ( &ZcSync_Event );
+ 285                             		.loc 1 577 0
+ 286 0000 FB 12 00 00 00 00       		mov.L	#_ZcSync_Event, r1
+ 287 0006 04 00 00 00             		bra	_OS_EVENT_Get
+ 288                             	.LVL53:
+ 289                             	.LFE4:
+ 291                             		.section	.text.Main_IsRestoreCompleted,"ax",@progbits
+ 292                             		.global	_Main_IsRestoreCompleted
+ 294                             	_Main_IsRestoreCompleted:
+ 295                             	.LFB5:
+ 593:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {
+ 296                             		.loc 1 593 0
+ 594:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	return (uint8_t) !(OS_EVENT_Get (&Restore_Event));
+ 297                             		.loc 1 594 0
+ 298 0000 FB 12 00 00 00 00       		mov.L	#_Restore_Event, r1
+ 299 0006 05 00 00 00             		bsr	_OS_EVENT_Get
+ 300                             	.LVL54:
+ 301 000a 5B 11                   		movu.B	r1, r1
+ 595:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** }
+ 302                             		.loc 1 595 0
+ 303 000c 61 01                   		cmp	#0, r1
+ 304 000e FC DB 10                		sceq.L	r1
+ 305 0011 02                      		rts
+ 306                             	.LFE5:
+ 308                             		.section	.text.Main_CompleteRestore,"ax",@progbits
+ 309                             		.global	_Main_CompleteRestore
+ 311                             	_Main_CompleteRestore:
+ 312                             	.LFB6:
+ 607:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** {
+ 313                             		.loc 1 607 0
+ 608:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Init.c **** 	OS_EVENT_Reset ( &Restore_Event );
+ 314                             		.loc 1 608 0
+ 315 0000 FB 12 00 00 00 00       		mov.L	#_Restore_Event, r1
+ 316 0006 04 00 00 00             		bra	_OS_EVENT_Reset
+ 317                             	.LVL55:
+ 318                             	.LFE6:
+ 320                             		.comm	_Main_SupervisorActivities,16,4
+ 321                             		.section	.bss.Main_SupervisorTCB,"aw",@nobits
+ 322                             		.balign 4
+ 325                             	_Main_SupervisorTCB:
+ 326 0000 00 00 00 00 00 00 00 00 		.zero	44
+ 326      00 00 00 00 00 00 00 00 
+ 326      00 00 00 00 00 00 00 00 
+ 326      00 00 00 00 00 00 00 00 
+ 326      00 00 00 00 00 00 00 00 
+ 327                             		.section	.osstack,"aw",@progbits
+ 328                             		.balign 4
+ 331                             	_Main_SupervisorTaskStack:
+ 332 0000 00 00 00 00 00 00 00 00 		.zero	512
+ 332      00 00 00 00 00 00 00 00 
+ 332      00 00 00 00 00 00 00 00 
+ 332      00 00 00 00 00 00 00 00 
+ 332      00 00 00 00 00 00 00 00 
+ 333                             		.section	.bss.sysMode.11688,"aw",@nobits
+ 336                             	_sysMode.11688:
+ 337 0000 00                      		.zero	1
+ 338                             		.section	.bss.coldreset.11689,"aw",@nobits
+ 339                             		.balign 4
+ 342                             	_coldreset.11689:
+ 343 0000 00 00 00 00             		.zero	4
+ 344                             		.section	.bss.Restore_Event,"aw",@nobits
+ 345                             		.balign 4
+ 348                             	_Restore_Event:
+ 349 0000 00 00 00 00 00 00 00 00 		.zero	8
+ 350                             		.section	.bss.ZcSync_Event,"aw",@nobits
+ 351                             		.balign 4
+ 354                             	_ZcSync_Event:
+ 355 0000 00 00 00 00 00 00 00 00 		.zero	8
+ 356                             		.section	.bss.ZC_Ok.11690,"aw",@nobits
+ 357                             		.balign 4
+ 360                             	_ZC_Ok.11690:
+ 361 0000 00 00 00 00             		.zero	4
+ 466                             	.Letext0:
+ 467                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 468                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 469                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers/IO_driver.h"
+ 470                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_BusCOMM/BCP_General.h"
+ 471                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\CFG_DishWasher\\CFG_Inertia/BusCommPltf_cfg.h"
+ 472                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\Main\\EmbOS\\Services\\ActivityList/Main_ActivityLi
+ 473                             		.file 8 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCDIO/OCDIO_drv.h"
+ 474                             		.file 9 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCADC/OCADC_drv.h"
+ 475                             		.file 10 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCTPM/OCTPM_drv.h"
+ 476                             		.file 11 "C:\\Workspace\\FW_Platform2_5\\trunk\\CFG_DishWasher\\CFG_Inertia/Config.h"
+ 477                             		.file 12 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_IOManager/IOSharing.h"
+ 478                             		.file 13 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_DigitalIO/DigitalInputs.h"
+ 479                             		.file 14 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Feedbacks/Feedbacks.h"
+ 480                             		.file 15 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Analog/Analog.h"
+ 481                             		.file 16 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_ZeroCrossing/LIB_ZeroCrossing
+ 482                             		.file 17 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_DigitalOutputMulti/DigitalOutpu
+ 483                             		.file 18 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_IOManager/OutputManager.h"
+ 484                             		.file 19 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_IOManager/InputManager.h"
+ 485                             		.file 20 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Reset/LIB_ResetExp.h"
+ 486                             		.file 21 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary/callback.h"
+ 487                             		.file 22 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/MainInterface.h"
+ 488                             		.file 23 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Main.h"
+ 489                             		.file 24 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCWDT/OCWDT_drv.h"
+ 490                             		.file 25 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_ZeroCrossing/Lib_ZeroCrossing
+ 491                             		.file 26 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_BusCOMM/BCP_BusCommMng.h"
+ 492                             		.file 27 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Reset/LIB_Reset.h"

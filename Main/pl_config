@@ -1,0 +1,519 @@
+#############################################################################
+#
+#	Platform 2 library configuration
+#
+#############################################################################
+
+menu "MainBoard framework configuration"
+#############################################################################
+#		Supervisor
+menu "Task Supervisor Configuration"
+
+	config MAIN_SUPERVISOR_TASK_STACK_SIZE	  
+	  int "Stack size [int]"
+	  default  80
+	  help
+	    Stack size
+
+	config MAIN_SERVICE_ACTIVITY_ENABLE
+		depends on  MAIN_SERVICE_ACTIVITY_SUPPORT
+		bool "Enable ACTIVITY service"
+		default n
+		help
+		This service allows dinamically call a hook routines inside supervisor task.
+		Useful for Product Modules.
+		See 'Main_CreateActivity()'.
+	
+	config MAIN_SUPERVISOR_TASK_TRACE_PIN_ENABLE
+	  depends LIB_TRACE_SUPPORT
+	  bool "Enable trace"
+	  default y
+	  help
+	    If enabled you must choose a pin that will be set to logic level '1'
+	    at the begin of the task, and to '0' at the end
+	
+	config MAIN_SUPERVISOR_TASK_STACK_MONITOR
+		depends TOOLS_STACKUSAGE	  
+	  bool "Enable stack monitor"
+	  default  n
+	  help
+	    The variable Main_SupervisorStackMonitor will be introduced to monitor the stack requirement
+
+	menu "Trace configuration"
+		depends MAIN_SUPERVISOR_TASK_TRACE_PIN_ENABLE
+		
+		config MAIN_SUPERVISOR_TASK_TRACE_PIN
+		  
+		  int "Pin module"
+		  default 38
+		  help
+		    Pin of the module that will be set to logic level '1'
+		    at the begin of the task, and to '0' at the end
+	endmenu    
+endmenu
+
+#############################################################################
+#		Outputs
+menu "Task Outputs Configuration"
+
+	config MAIN_OUTPUTS_TASK_STACK_SIZE
+	  int "Stack size [int]"
+	  default  64
+	  help
+	    Stack size
+	
+	config MAIN_OUTPUTS_TASK_TRACE_PIN_ENABLE
+	  depends LIB_TRACE_SUPPORT
+	  bool "Enable trace"
+	  default y
+	  help
+	    If enabled you must choose a pin that will be set to logic level '1'
+	    at the begin of the task, and to '0' at the end
+    
+	menu "Outputs - Trace configuration"
+		depends MAIN_OUTPUTS_TASK_TRACE_PIN_ENABLE 
+		config MAIN_OUTPUTS_TASK_TRACE_PIN
+		  
+		  int "Pin module"
+		  default 38
+		  help
+		    Pin of the module that will be set to logic level '1'
+		    at the begin of the task, and to '0' at the end
+	endmenu
+endmenu
+
+#############################################################################
+#		Analog Inputs
+menu "Task Analog Inputs Configuration"
+
+	config MAIN_ANALOG_TASK_TASKMONITOR_ENABLE
+	  depends LIB_CLASS_B_PERIODIC_CHECK || PM_TASK_MONITOR_SUPPORT
+	  bool "Enable Task monitor on Main_AnalogInputsTask"
+	  default y
+	  help
+	    Enables Task monitor on task Main_AnalogInputsTask
+	    
+	config MAIN_ANALOG_TASK_TASKMONITOR_TIMEOUT
+	    depends on MAIN_ANALOG_TASK_TASKMONITOR_ENABLE
+		int "Main_AnalogInputsTask Timeout [x 10 ms]"
+		default 50
+		help
+		  Timeout del task di aquisizione input analogici
+	
+	config MAIN_ANALOGINPUTS_TASK_STACK_SIZE
+	  int "Stack size [int]"
+	  default  192
+	  help
+	    Stack size
+	
+	
+	config MAIN_ANALOG_TASK_TRACE_PIN_ENABLE
+	  depends LIB_TRACE_SUPPORT
+	  bool "Enable trace"
+	  default y
+	  help
+	    If enabled you must choose a pin that will be set to logic level '1'
+	    at the begin of the task, and to '0' at the end
+	
+	config MAIN_ANALOG_INPUTS_STACK_MONITOR
+			depends TOOLS_STACKUSAGE	  
+		  bool "Enable stack monitor"
+		  default  n
+		  help
+		    The variable Main_AnalogInputsStackMonitor will be introduced to monitor the stack requirement
+	
+	
+	menu "Analog - Trace configuration"
+	depends MAIN_ANALOG_TASK_TRACE_PIN_ENABLE
+		config MAIN_ANALOG_TASK_TRACE_PIN
+		  
+		  int "Pin module"
+		  default 36
+		  help
+		    Pin of the module that will be set to logic level '1'
+		    at the begin of the task, and to '0' at the end
+	endmenu
+
+endmenu
+
+#############################################################################
+#		Services
+
+config MAIN_SERVICE_ACTIVITY_SUPPORT
+	bool "[PLT] ACTIVITY service support"
+	default n
+	help
+	This service allows dinamically call a hook routines.
+	
+
+#############################################################################
+#		Sequencer
+menu "Sequencer"
+	depends on MAIN_SERVICE_ACTIVITY_SUPPORT
+	config MAIN_SEQUENCER_TASK_SUPPORT
+	bool "Enable"
+	default  n
+	help
+		Sequencer Support - This service allows the sequential excecution of Activities.
+		the sequence can be synchronized with an event.
+		E.g.	action synchronized with ZC
+    
+	choice
+		depends on MAIN_SEQUENCER_TASK_SUPPORT
+		prompt "Length of the sequence"
+	
+	config MAIN_SEQUENCER_LENGTH_2
+		bool "2"
+		help
+		  	Length is 2
+	
+	config MAIN_SEQUENCER_LENGTH_4
+		bool "4"
+		help
+			Length is 4
+	endchoice
+		
+		
+	config MAIN_SEQUENCER_TASK_STACK_SIZE
+		depends on MAIN_SEQUENCER_TASK_SUPPORT
+		int "Stack size [int]"
+		default  64
+		help
+			Stack size
+	
+	config MAIN_SEQUENCER_STACK_MONITOR
+			depends TOOLS_STACKUSAGE	  
+		  bool "Enable stack monitor"
+		  default  n
+		  help
+		    The variable Main_SequencerStackMonitor will be introduced to monitor the stack requirement	
+	
+	config MAIN_SEQUENCER_TASK_TRACE_PIN_ENABLE
+		depends MAIN_SEQUENCER_TASK_SUPPORT && LIB_TRACE_SUPPORT
+		bool "Enable trace"
+		default y
+		help
+			If enabled you must choose a pin that will be set to logic level '1'
+			at the begin of the task, and to '0' at the end
+	
+	menu "Sequencer - Trace configuration"
+		depends MAIN_SEQUENCER_TASK_TRACE_PIN_ENABLE
+			config MAIN_SEQUENCER_TASK_TRACE_PIN
+		  
+			int "Pin module"
+			default 36
+			help
+				Pin of the module that will be set to logic level '1'
+				at the begin of the task, and to '0' at the end
+	endmenu	
+	
+	config MAIN_SEQUENCER_TASK_TASKMONITOR_ENABLE
+	  depends LIB_CLASS_B_PERIODIC_CHECK || PM_TASK_MONITOR_SUPPORT
+	  bool "Enable Task monitor on Main_SequencerTask"
+	  default y
+	  help
+	    Enables Task monitor on task Main_SequencerTask
+
+endmenu
+
+
+#############################################################################
+#		Feedbacks
+menu "Feedbacks"
+	config MAIN_NORMAL_FEEDBACKS_READ_ENABLE
+	  depends FEEDBACK_ENABLE
+	  bool "Enable 'Normal feedbacks' readings"
+	  default y
+	  help
+	    Enables the readings for normal feedbacks.
+	    If not really useful disable it: you'll save flash and ram
+	    
+	config MAIN_DELAYED_FEEDBACKS_READ_ENABLE
+	  depends FEEDBACK_ENABLE
+	  bool "Enable 'Delayed feedbacks' readings"
+	  default y
+	  help
+	    Enables the readings for normal feedbacks
+	    If not really useful disable it: you'll save flash and ram
+	
+	config MAIN_FEEDBACKS_TASK_TASKMONITOR_ENABLE
+	  depends FEEDBACK_ENABLE && (LIB_CLASS_B_PERIODIC_CHECK || PM_TASK_MONITOR_SUPPORT)
+	  bool "Enable task monitor"
+	  default y
+	  help
+	    Enables task monitor
+	    
+	config MAIN_FEEDBACKS_TASK_DELAY_ON_ZC
+	depends  CLASS_B_DATA_INTEGRITY && (MAIN_NORMAL_FEEDBACKS_READ_ENABLE || MAIN_DELAYED_FEEDBACKS_READ_ENABLE)
+	  bool "Enable delay on ZC measurement"
+	  default y
+	  help
+	    Enables measurement of and checking of the delay on ZC.
+	     
+	config MAIN_FEEDBACKS_TASK_DELAY_ON_ZC_MIN_VALUE
+	depends MAIN_FEEDBACKS_TASK_DELAY_ON_ZC
+	  int "Min delay on ZC [us]"
+	  range 0 10000
+	  default 2000
+	  help
+	    minimum acceptable value for the delay on ZC in us.
+	    
+	config MAIN_FEEDBACKS_TASK_DELAY_ON_ZC_MAX_VALUE
+	depends MAIN_FEEDBACKS_TASK_DELAY_ON_ZC
+	  int "Max delay on ZC [us]"
+	  range 0 10000
+	  default 5000
+	  help
+	    maximum acceptable value for the delay on ZC in us.
+	
+	config MAIN_FEEDBACKS_TASK_PERIOD_CHECK
+	depends CLASS_B_DATA_INTEGRITY && (MAIN_NORMAL_FEEDBACKS_READ_ENABLE || MAIN_DELAYED_FEEDBACKS_READ_ENABLE)
+	  bool "Enable tasks period measurement"
+	  default y
+	  help
+	    Enables tasks period measurement.
+	    
+	    
+	config MAIN_FEEDBACKS_TASK_PERIOD_MIN_VALUE
+	depends MAIN_FEEDBACKS_TASK_PERIOD_CHECK
+	  int "Min task period [us]"
+	  range 0 10000
+	  default 4500
+	  help
+	    minimum acceptable value for the delay on ZC in us.
+	    
+	config MAIN_FEEDBACKS_TASK_PERIOD_MAX_VALUE
+	depends MAIN_FEEDBACKS_TASK_PERIOD_CHECK
+	  int "Max task period [us]"
+	  range 0 15000
+	  default 11000
+	  help
+	    maximum acceptable value for the delay on ZC in us.
+	    
+	
+	config MAIN_FEEDBACKS_TASK_STACK_SIZE
+	  depends (MAIN_NORMAL_FEEDBACKS_READ_ENABLE || MAIN_DELAYED_FEEDBACKS_READ_ENABLE)&&FEEDBACK_ENABLE
+	  int "Stack size [int]"
+	  default  32
+	  help
+	    Stack size
+	
+	config MAIN_FEEDBACKS_STACK_MONITOR
+			depends TOOLS_STACKUSAGE && MAIN_NORMAL_FEEDBACKS_READ_ENABLE	  
+		  bool "Enable stack monitor for normal feedbacks"
+		  default  n
+		  help
+		    The variable Main_FeedbacksStackMonitor will be introduced to monitor the stack requirement
+	config MAIN_FEEDBACKSP_STACK_MONITOR
+			depends TOOLS_STACKUSAGE && MAIN_DELAYED_FEEDBACKS_READ_ENABLE	  
+		  bool "Enable stack monitor for delayed feedbacks"
+		  default  n
+		  help
+		    The variable Main_FeedbacksPStackMonitor will be introduced to monitor the stack requirement
+	
+	
+	config MAIN_FEEDBACKS_TASK_TRACE_PIN_ENABLE
+	  depends FEEDBACK_ENABLE && LIB_TRACE_SUPPORT
+	  bool "Enable trace"
+	  default y
+	  help
+	    If enabled you must choose a pin that will be set to logic level '1'
+	    at the begin of the task, and to '0' at the end
+	
+	menu "Feedbacks - Trace configuration"
+		depends MAIN_FEEDBACKS_TASK_TRACE_PIN_ENABLE
+		config MAIN_FEEDBACKS_TASK_TRACE_PIN
+		  
+		  int "Pin module"
+		  default 36
+		  help
+		    Pin of the module that will be set to logic level '1'
+		    at the begin of the task, and to '0' at the end
+	endmenu    
+
+endmenu
+
+
+
+
+
+#############################################################################
+#		Main Application
+menu "Main Application"
+
+	config MAIN_APPLICATION_TASK_TASKMONITOR_ENABLE
+	  depends (LIB_CLASS_B_PERIODIC_CHECK && LIB_TM_MAIN) || PM_TASK_MONITOR_SUPPORT 
+	  bool "Enable Task monitor on Main_ApplicationTask"
+	  default y
+	  help
+	    Enables Task monitor on task Main_ApplicationTask
+		
+	config MAIN_APPLICATION_TASK_TRACE_PIN_ENABLE
+		  depends LIB_TRACE_SUPPORT
+		  bool "Enable trace"
+		  default y
+		  help
+		    If enabled you must choose a pin that will be set to logic level '1'
+		    at the begin of the task, and to '0' at the end
+	
+	config MAIN_APPLICATION_STACK_MONITOR
+			depends TOOLS_STACKUSAGE	  
+		  bool "Enable stack monitor"
+		  default  n
+		  help
+		    The variable Main_ApplicationStackMonitor will be introduced to monitor the stack requirement
+		    
+		menu "Trace configuration"
+			depends MAIN_APPLICATION_TASK_TRACE_PIN_ENABLE
+			
+			config MAIN_APPLICATION_TASK_TRACE_PIN
+			  
+			  int "Pin module"
+			  default 38
+			  help
+			    Pin of the module that will be set to logic level '1'
+			    at the begin of the task, and to '0' at the end
+		endmenu    
+endmenu
+
+
+#############################################################################
+#		Live
+menu "Live"
+
+	config MAIN_LIVE_MEASURE_AS_ACTIVITY
+		depends MAIN_SEQUENCER_TASK_SUPPORT
+		bool "Enable measure as activity in Sequencer"
+	  	default y
+		  help
+		    Enables Task monitor on task Main_LiveTask
+	
+	config MAIN_LIVE_UPDATE_ZC_LINE_VOLTAGE
+		bool "Enable updates Line Voltage presence or not to ZeroCrossing module"
+	  	default y
+		  help
+		    Enabling this option, ZeroCrossing module will get updates if VLine is present or not to enable Vline check
+	
+	config MAIN_LIVE_AVERAGE_GRID_PERIOD
+	bool "Enable average grid period"
+	default n
+	  help
+	    Enabling this option, average grid period measured
+		
+			
+	config MAIN_LIVE_TASK_TASKMONITOR_ENABLE
+	  depends (LIB_CLASS_B_PERIODIC_CHECK || PM_TASK_MONITOR_SUPPORT) && !MAIN_LIVE_MEASURE_AS_ACTIVITY
+	  bool "Enable Task monitor on Main_LiveTask"
+	  default n
+	  help
+	    Enables Task monitor on task Main_LiveTask
+	
+	config MAIN_MEASURELIVE_TASK_STACK_SIZE
+	  depends !MAIN_LIVE_MEASURE_AS_ACTIVITY
+	  int "Stack size [int]"
+	  default  160
+	  help
+	    Stack size
+	
+	config MAIN_LIVE_DELAY_ON_ZC
+		depends CLASS_B_DATA_INTEGRITY
+	  bool "Enable delay on ZC measurement"
+	  default y
+	  help
+	    Enables measurement of and checking of the delay on ZC.
+	     
+	config MAIN_LIVE_DELAY_ZC_ADV_MIN_VALUE
+	depends MAIN_LIVE_DELAY_ON_ZC
+	  int "Min advance [us]"
+	  range 0 1000
+	  default 400
+	  help
+	    minimum anticipation respect to the middle of the halfwave.
+	    
+	config MAIN_LIVE_DELAY_ZC_ADV_MAX_VALUE
+	depends MAIN_LIVE_DELAY_ON_ZC
+	  int "Max delay[us]"
+	  range 0 1000
+	  default 400
+	  help
+	    maximum  for the delay respect to the middle of the halfwave.
+
+endmenu
+
+
+#############################################################################
+#		Backup
+menu "Backup"
+
+	config MAIN_BACKUP_STACK_MONITOR
+			depends TOOLS_STACKUSAGE	  
+		  bool "Enable stack monitor"
+		  default  n
+		  help
+		    The variable Main_BackupStackMonitor will be introduced to monitor the stack requirement
+endmenu
+
+
+#############################################################################
+#		Communication
+menu "Communication task"
+
+	config MAIN_PROTOCOL_STACK_MONITOR
+			depends TOOLS_STACKUSAGE	  
+		  bool "Enable stack monitor (Protocol Task)"
+		  default  n
+		  help
+		    The variable Main_ProtocolStackMonitor will be introduced to monitor the stack requirement
+	
+	
+	config MAIN_UARTPARSER_STACK_MONITOR
+			depends TOOLS_STACKUSAGE && LIB_EXTERNAL_BOARD_SUPPORT	  
+		  bool "Enable stack monitor (Uart Parser Task)"
+		  default  n
+		  help
+		    The variable Main_UartParserStackMonitor will be introduced to monitor the stack requirement
+endmenu
+
+#############################################################################
+#		Event Dispatcher
+menu "Task Event Dispatcher Configuration"
+
+	config DISPATCHER_TASK_ENABLE
+		bool "Enable High priority Dispatcher Task"
+		default n
+		help
+			Used to avoid callback from interrupts, doorlock, .. 
+	
+	config MAIN_DISPATCHER_TASK_STACK_SIZE
+		depends  DISPATCHER_TASK_ENABLE
+	  	int "Stack size [int]"
+	  	default  64
+	  	help
+	    	Stack size
+			
+	config MAIN_DISPATCHER_TASK_TASKMONITOR_ENABLE
+	  depends DISPATCHER_TASK_ENABLE  && (LIB_CLASS_B_PERIODIC_CHECK || PM_TASK_MONITOR_SUPPORT)
+	  bool "Enable Task monitor on Main_DispatcherTask"
+	  default n
+	  help
+	    Enables Task monitor on task Main_DispatcherTask
+	    
+	config MAIN_DISPATCHER_TASK_TASKMONITOR_TIMEOUT
+	    depends on  MAIN_DISPATCHER_TASK_TASKMONITOR_ENABLE
+		int "Main_DispatcherTask Timeout [x 10 ms]"
+		default 50
+		help
+		  Timeout del task dispatcher
+	
+	
+	config MAIN_DISPATCHER_INPUTS_STACK_MONITOR
+		depends  DISPATCHER_TASK_ENABLE  && TOOLS_STACKUSAGE	  
+		bool "Enable stack monitor"
+		default  n
+		help
+			The variable Main_DispatcherStackMonitor will be introduced to monitor the stack requirement
+
+endmenu
+
+endmenu
+#############################################################################

@@ -1,0 +1,1421 @@
+   1                             		.file	"LIB_ProductSafety.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.LIB_SFT_SafetySupervisorInit,"ax",@progbits
+   5                             		.global	_LIB_SFT_SafetySupervisorInit
+   7                             	_LIB_SFT_SafetySupervisorInit:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck/LIB_ProductSafet
+   1:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** Copyright (c) 2004-2013, Indesit Company
+   3:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \par	ProductSafety
+   8:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n	This module contains Safety Supervisor and Safety Action manager modules
+   9:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n
+  10:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \file		LIB_ProductSafety.c
+  11:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \ingroup        LIB_ProductSafety
+  12:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date	    2013-03-24
+  13:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	01.01
+  14:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author		 Alessandro Sabbatini
+  15:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n
+  16:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n
+  17:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \par	History:
+  18:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  19:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n		01.01
+  20:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n		2013-03-24
+  21:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n		Alessandro Sabbatini
+  22:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n		changes
+  23:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n		- Add safety execution check flags in Safety Supervisor for safety modules and safety action ma
+  24:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n
+  25:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n 		01.00
+  26:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n		2013-01-17
+  27:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n		Alessandro Sabbatini
+  28:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n		changes
+  29:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n 			Creation
+  30:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n
+  31:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+  32:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  33:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #define MODULE_BODY_PRODUCTSAFETY
+  34:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  35:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* ******** */
+  36:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* Includes */
+  37:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* ******** */
+  38:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  39:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #include "StandardTypes.h"
+  40:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #include "Config.h"
+  41:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #include "LIB_ProductSafety.h"
+  42:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #include "LIB_UTilities.h"
+  43:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #include "LIB_ClassBVar.h"
+  44:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #include "LIB_TaskMonitoring.h"
+  45:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  46:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+  47:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  48:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #define		SFT_ACTIONS_FULLBMP		((1ul << SFT_NUM_SAFETY_ACTIONS) - 1ul)
+  49:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  50:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if !defined(SFT_CUSTOM_FAULT_PRIO)
+  51:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #define SFT_CUSTOM_FAULT_PRIO SFT_PRIO_NONE
+  52:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+  53:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  54:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* ******** */
+  55:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* typedefs */
+  56:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* ******** */
+  57:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** typedef struct sft_safetyAction_status_s {
+  58:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	sft_safety_action_bmp_t sftActionReq;
+  59:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	sft_safety_action_bmp_t sftActionExec;
+  60:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	sft_safety_action_bmp_t sftActionDone;
+  61:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** } sft_safetyAction_status_t;
+  62:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  63:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** typedef struct sft_supervisor_status_s
+  64:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  65:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	sft_module_status_t moduleStatus[SFT_NUM_SAFETY_MODULES];
+  66:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	sft_safety_action_bmp_t	sftApplReq;
+  67:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t status;
+  68:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t highFaultSrc;
+  69:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t reqFlags;
+  70:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** } sft_supervisor_status_t;
+  71:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  72:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* ******** */
+  73:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* Globals  */
+  74:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* ******** */
+  75:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /** Safety Action Status */
+  76:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** static sft_safetyAction_status_t SafetyActionStatus;
+  77:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /** Safety Supervisor Status - contains overall and per-module status */
+  78:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** static sft_supervisor_status_t SafetySupervisorStatus;
+  79:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /** Safety Module Status Flag - status change notification, last item is used by supervisor
+  80:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c ****  *  Not necessary for safety */
+  81:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** static uint8_t SafetyModuleStatusFlags[SFT_NUM_SAFETY_MODULES+1];
+  82:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  83:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** uint16_t	SafetyModuleTimerCntr[SFT_NUM_SAFETY_MODULES];
+  84:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  85:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+  86:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  87:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** static uint8_t LIB_SFT_GetSafetyPriorityByFaultSrc(uint8_t faultSrcID, uint8_t *prio);
+  88:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** static uint8_t LIB_SFT_GetFaultSrcByModuleFaultSrc(uint8_t reqModule, uint8_t reqModFaultSrc);
+  89:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** static void LIB_SFT_SafetyActionAllReset(void);
+  90:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  91:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  92:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  93:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+  94:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Safety Supervisor init module; initializes Safety Supervisor and modules
+  95:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  96:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		none
+  97:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  98:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	none
+  99:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 100:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 101:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 102:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+ 103:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 104:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 105:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 106:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 107:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 108:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 109:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_SafetySupervisorInit(void)
+ 110:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  10                             		.loc 1 110 0
+  11 0000 02                      		rts
+  12                             	.LFE0:
+  14                             		.section	.text.LIB_SFT_SafetySupervisor,"ax",@progbits
+  15                             		.global	_LIB_SFT_SafetySupervisor
+  17                             	_LIB_SFT_SafetySupervisor:
+  18                             	.LFB1:
+ 111:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t i;
+ 112:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t tmpPrio;
+ 113:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 114:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 115:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 116:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	PLT_ASSERT((sizeof(SafetyModuleInitFuncs)/sizeof(SFT_SafetyModuleInit_t)) == SFT_NUM_SAFETY_MODULE
+ 117:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	PLT_ASSERT((sizeof(SafetyModuleFuncs)/sizeof(SFT_SafetyModuleExec_t)) == SFT_NUM_SAFETY_MODULES )
+ 118:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 119:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_REGION_START();
+ 120:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 121:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	LIB_SFT_SafetySupervisorCommonCfgInit();
+ 122:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 123:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SafetySupervisorStatus.sftApplReq = 0;
+ 124:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 125:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if (LIB_SFT_GetSafetyPriorityByFaultSrc(SFT_FLT_SUPERVISOR_BAD_SETTING, &tmpPrio) != SF_OK)
+ 126:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 127:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.status = SFT_MODULE_FAULT;
+ 128:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.highFaultSrc = SFT_FLT_SUPERVISOR_BAD_SETTING;
+ 129:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetyModuleStatusFlags[SFT_NUM_SAFETY_MODULES] = TRUE;
+ 130:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 131:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	else
+ 132:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 133:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.status = SFT_MODULE_IDLE;
+ 134:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.highFaultSrc = SFT_NO_FAULT_SRC;
+ 135:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetyModuleStatusFlags[SFT_NUM_SAFETY_MODULES] = FALSE;
+ 136:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 137:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 138:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	for (i = 0; i < SFT_NUM_SAFETY_MODULES; i++)
+ 139:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 140:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.moduleStatus[i].status = SafetySupervisorStatus.status;
+ 141:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.moduleStatus[i].faultSrc = SFT_NO_FAULT_SRC;
+ 142:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetyModuleStatusFlags[i] = SafetyModuleStatusFlags[SFT_NUM_SAFETY_MODULES];
+ 143:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 144:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		if ((SafetySupervisorStatus.status != SFT_MODULE_FAULT) && (SafetyModuleInitFuncs[i] != NULL))
+ 145:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 146:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/* Initialization module - may not be used in all modules! */
+ 147:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			SafetyModuleInitFuncs[i](&SafetySupervisorStatus.moduleStatus[i]);
+ 148:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			SafetyModuleTimerCntr[i] = 0;
+ 149:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 150:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 151:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 152:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_DATA_UPDATE(SafetySupervisorStatus);
+ 153:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_REGION_END();
+ 154:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 155:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 156:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 157:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 158:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 159:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 160:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Safety Supervisor core module; it handles call and check of each safety module
+ 161:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n defined according to priority set.
+ 162:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 163:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		newLoads	pointer to a structure containing all loads request/override pointers
+ 164:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 165:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	none
+ 166:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 167:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 168:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 169:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+ 170:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 171:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 172:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 173:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 174:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 175:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 176:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_SafetySupervisor(iom_loads_struct_t *newLoads)
+ 177:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  19                             		.loc 1 177 0
+  20                             	.LVL0:
+  21 0000 02                      		rts
+  22                             	.LFE1:
+  24                             		.section	.text.LIB_SFT_SafetyActionRequest,"ax",@progbits
+  25                             		.global	_LIB_SFT_SafetyActionRequest
+  27                             	_LIB_SFT_SafetyActionRequest:
+  28                             	.LFB2:
+ 178:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 179:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 180:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t chkSafetyExec = 0;
+ 181:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 182:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	LIB_PRODUCTSAFETY_TASK__MONITOR_IN();
+ 183:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 184:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if (!(Main_IsRemoteEnabled() && SAFETY_CHECK_ISDISABLED()))
+ 185:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 186:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		uint8_t tmpBkpOvr[N_MAXLOADS];
+ 187:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if  defined(CONFIG_NUM_EXTDLOADS)
+ 188:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		uint8_t tmpExtBkpOvr[CONFIG_NUM_EXTDLOADS][CONFIG_EXT_LOAD_PARAMDATA_SZ];
+ 189:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 190:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		uint8_t i;
+ 191:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		uint8_t curPrio, newPrio;
+ 192:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		uint8_t  curFaultSrc = SFT_NO_FAULT_SRC, curStatus = SFT_MODULE_IDLE;
+ 193:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		sft_module_status_t tmpStatus;
+ 194:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		sft_safety_action_bmp_t tmpSafetyActionsBmp = SafetySupervisorStatus.sftApplReq;
+ 195:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		sft_safety_action_bmp_t tmpSafetyActionsClrBmp = 0;
+ 196:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 197:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		curPrio = SFT_PRIO_NONE;
+ 198:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SAFETY_DATA_CHECK(SafetySupervisorStatus);
+ 199:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 200:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		if ((SafetySupervisorStatus.status != SFT_MODULE_FAULT) ||
+ 201:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			(SafetySupervisorStatus.highFaultSrc != SFT_FLT_SUPERVISOR_BAD_SETTING))
+ 202:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 203:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			uint8_t tmpSftReqFlags = SafetySupervisorStatus.reqFlags;
+ 204:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 205:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/* If there are any safety action maked in SFT_ACTION_RESET_CHK_MASK still pending,
+ 206:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			 * filter SFT_FLAGS_RESET_REQ flag - reset action is allowed only at end of all safety procedure
+ 207:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			 */
+ 208:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			if (LIB_SFT_GetPendingSafetyActionBmp() & SFT_ACTION_RESET_CHK_MASK)
+ 209:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 210:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				tmpSftReqFlags &= ~SFT_FLAGS_RESET_REQ;
+ 211:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 212:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 213:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/* Execution of all safety modules */
+ 214:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			for (i = 0; i < SFT_NUM_SAFETY_MODULES; i++)
+ 215:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 216:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				uint8_t newFaultSrc;
+ 217:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				uint8_t newStatus;
+ 218:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 219:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				SAFETY_REGION_START();
+ 220:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 221:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				memcpy(&tmpStatus, &SafetySupervisorStatus.moduleStatus[i], sizeof(tmpStatus));
+ 222:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				memcpy(tmpBkpOvr, newLoads->loads_ovr, sizeof(tmpBkpOvr));
+ 223:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if  defined(CONFIG_NUM_EXTDLOADS)
+ 224:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				memcpy(tmpExtBkpOvr, newLoads->extdloads_ovr, sizeof(tmpExtBkpOvr));
+ 225:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 226:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if(SafetyModuleFuncs[i] != 0)
+ 227:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 228:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					/* Execute current Safety Module */
+ 229:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					SafetySupervisorStatus.moduleStatus[i].chkExec = (SFT_CHKEXEC_ENTER | SFT_CHKEXEC_EXIT);
+ 230:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					SafetyModuleFuncs[i](newLoads, &SafetySupervisorStatus.moduleStatus[i], tmpSftReqFlags);
+ 231:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 232:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 233:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if ( (SafetySupervisorStatus.moduleStatus[i].chkExec == 0) && (chkSafetyExec == i))
+ 234:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 235:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					chkSafetyExec++;
+ 236:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 237:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 238:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				SafetySupervisorStatus.moduleStatus[i].chkExec = 0;
+ 239:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 240:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				newStatus = SafetySupervisorStatus.moduleStatus[i].status;
+ 241:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				newFaultSrc = LIB_SFT_GetFaultSrcByModuleFaultSrc(i, SafetySupervisorStatus.moduleStatus[i].fau
+ 242:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 243:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if (SafetyModuleTimer[i] != 0)
+ 244:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 245:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					SafetyModuleTimerCntr[i] = SafetyModuleTimer[i](&SafetySupervisorStatus.moduleStatus[i]);
+ 246:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 247:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 248:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/* If module is in idle state, any Loads Override set will be discarded */
+ 249:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if (newStatus == SFT_MODULE_IDLE)
+ 250:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 251:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					SafetySupervisorStatus.moduleStatus[i].faultSrc = SFT_NO_FAULT_SRC;
+ 252:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 253:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 254:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/* If priority of a fault is not present...
+ 255:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				 * choose! default or go to Setting file fault state? Depends on SFT_DEFAULT_PRIORITY */
+ 256:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if (LIB_SFT_GetSafetyPriorityByFaultSrc(newFaultSrc, &newPrio) != SF_OK)
+ 257:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 258:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(SFT_DEFAULT_PRIORITY)
+ 259:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					newPrio = SFT_DEFAULT_PRIORITY;
+ 260:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #else
+ 261:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 262:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					LIB_SFT_GetSafetyPriorityByFaultSrc(SFT_FLT_SUPERVISOR_BAD_SETTING, &newPrio);
+ 263:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					curStatus = SFT_MODULE_FAULT;
+ 264:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					curFaultSrc = SFT_FLT_SUPERVISOR_BAD_SETTING;
+ 265:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 266:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 267:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 268:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 269:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if ((newStatus != SFT_MODULE_IDLE) && (newPrio == SFT_PRIO_NONE))
+ 270:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 271:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					/* Revert back all load overrides */
+ 272:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					memcpy(newLoads->loads_ovr, tmpBkpOvr, sizeof(tmpBkpOvr));
+ 273:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	#if  defined(CONFIG_NUM_EXTDLOADS)
+ 274:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					memcpy(newLoads->extdloads_ovr, tmpExtBkpOvr, sizeof(tmpExtBkpOvr));
+ 275:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	#endif
+ 276:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 277:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					/* Prevent going to fault state */
+ 278:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					if (newStatus == SFT_MODULE_FAULT)
+ 279:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					{
+ 280:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 						newStatus = SFT_MODULE_PREFAULT;
+ 281:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 						SafetySupervisorStatus.moduleStatus[i].status = SFT_MODULE_PREFAULT;
+ 282:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					}
+ 283:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 284:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 285:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 286:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				SAFETY_DATA_UPDATE(SafetySupervisorStatus);
+ 287:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 288:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if (newStatus != tmpStatus.status)
+ 289:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 290:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					SafetyModuleStatusFlags[i] = TRUE;
+ 291:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 292:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 293:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/* New priority lower than current - previous overrides set take precedence than new ones */
+ 294:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if ((newPrio != SFT_PRIO_NONE) && ((newStatus > curStatus) ||
+ 295:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					((newStatus == curStatus) && (newPrio > curPrio))))
+ 296:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 297:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 298:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					curPrio = newPrio;
+ 299:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					curStatus = newStatus;
+ 300:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					curFaultSrc = newFaultSrc;
+ 301:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 302:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 303:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if (SafetySupervisorStatus.status != curStatus)
+ 304:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 305:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					SafetyModuleStatusFlags[SFT_NUM_SAFETY_MODULES] = TRUE;
+ 306:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 307:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 308:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				SAFETY_REGION_END();
+ 309:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 310:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 311:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 312:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		else
+ 313:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 314:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			curStatus = SFT_MODULE_FAULT;
+ 315:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			curFaultSrc = SFT_FLT_SUPERVISOR_BAD_SETTING;
+ 316:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			chkSafetyExec = SFT_NUM_SAFETY_MODULES;
+ 317:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 318:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 319:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(SFT_NUM_STATUS_ACTIONS)
+ 320:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 321:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		for (i = 0; i < SFT_NUM_SAFETY_MODULES; i++)
+ 322:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 323:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			uint8_t newStatus;
+ 324:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			uint8_t curModule = i;
+ 325:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 326:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			newPrio = SFT_PRIO_NONE;
+ 327:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 328:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			if ((SafetySupervisorStatus.status == SFT_MODULE_FAULT) &&
+ 329:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				(SafetySupervisorStatus.highFaultSrc == SFT_FLT_SUPERVISOR_BAD_SETTING))
+ 330:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 331:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				newStatus = SFT_MODULE_FAULT;
+ 332:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				curModule = 0xff;
+ 333:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				LIB_SFT_GetSafetyPriorityByFaultSrc(SFT_FLT_SUPERVISOR_BAD_SETTING, &newPrio);
+ 334:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 335:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			else
+ 336:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 337:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				uint8_t tmpFaultSrc = LIB_SFT_GetFaultSrcByModuleFaultSrc(i, SafetySupervisorStatus.moduleStatu
+ 338:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 339:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				newStatus = SafetySupervisorStatus.moduleStatus[i].status;
+ 340:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				LIB_SFT_GetSafetyPriorityByFaultSrc(tmpFaultSrc, &newPrio);
+ 341:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 342:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 343:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/* If module is not in IDLE state, it may request some safety actions according to configuration
+ 344:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			if (newStatus != SFT_MODULE_IDLE)
+ 345:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 346:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				uint8_t tmpExecuteItem = SFT_ID_ANY;
+ 347:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				uint8_t j;
+ 348:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 349:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/* Check if a safety action has to be executed */
+ 350:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				for (j = 0; (tmpExecuteItem == SFT_ID_ANY) && (j < SFT_NUM_STATUS_ACTIONS); j++)
+ 351:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 352:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					uint8_t tmpModuleID = SafetyModulesStatusActions[j].moduleID;
+ 353:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					uint8_t tmpFaultSrc = SafetyModulesStatusActions[j].faultSrcID;
+ 354:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 355:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					if (SafetyModulesStatusActions[j].moduleStatus == newStatus)
+ 356:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					{
+ 357:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 						/* SF_ID_ANY wild card case for module ID */
+ 358:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 						if (tmpModuleID == SFT_ID_ANY)
+ 359:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 						{
+ 360:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 							/* SF_ID_ANY wild card case for module fault source */
+ 361:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 							if ( (tmpFaultSrc == SFT_ID_ANY) ||
+ 362:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 									( (SafetySupervisorStatus.highFaultSrc == SFT_FLT_SUPERVISOR_BAD_SETTING) &&
+ 363:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 											(tmpFaultSrc == SFT_FLT_SUPERVISOR_BAD_SETTING) ) )
+ 364:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 							{
+ 365:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 								/* Overrides application request by any safety action requested here */
+ 366:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 								tmpExecuteItem = j;
+ 367:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 							}
+ 368:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 						}
+ 369:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 						else
+ 370:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 						{
+ 371:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 							if (tmpModuleID == curModule)
+ 372:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 							{
+ 373:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 								/* SF_ID_ANY wild card case for module fault source or current fault source matches */
+ 374:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 								if ((tmpFaultSrc == SFT_ID_ANY) ||
+ 375:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 									(tmpFaultSrc == SafetySupervisorStatus.moduleStatus[curModule].faultSrc))
+ 376:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 								{
+ 377:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 									/* Overrides application request by any safety action requested here */
+ 378:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 									tmpExecuteItem = j;
+ 379:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 								}
+ 380:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 							}
+ 381:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 						}
+ 382:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					}
+ 383:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 384:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 385:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 386:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/* If a safety action is found and priority is not null, melt it with others previously set */
+ 387:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if ( (tmpExecuteItem != SFT_ID_ANY) && (newPrio != SFT_PRIO_NONE))
+ 388:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 389:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					tmpSafetyActionsClrBmp |= SafetyModulesStatusActions[tmpExecuteItem].sfyActionReqClrBmp;
+ 390:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					tmpSafetyActionsBmp |= SafetyModulesStatusActions[tmpExecuteItem].sfyActionReqBmp;
+ 391:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 392:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 393:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 394:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 395:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 396:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 397:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 398:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		tmpSafetyActionsBmp &= ~tmpSafetyActionsClrBmp;
+ 399:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 400:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		/* Merge tmpSafetyActionsClrBmp and tmpSafetyActionsBmp
+ 401:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		 * All of these actions must be kept to avoid unwanted resets */
+ 402:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		tmpSafetyActionsClrBmp |= tmpSafetyActionsBmp;
+ 403:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 404:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SAFETY_REGION_START();
+ 405:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.status = curStatus;
+ 406:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.highFaultSrc = curFaultSrc;
+ 407:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.reqFlags = SFT_FLAGS_NONE;
+ 408:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SAFETY_DATA_UPDATE(SafetySupervisorStatus);
+ 409:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SAFETY_REGION_END();
+ 410:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 411:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		/* Call Safety Action Manager */
+ 412:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		tmpStatus.chkExec = (SFT_CHKEXEC_ENTER | SFT_CHKEXEC_EXIT);
+ 413:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		LIB_SFT_SafetyActionMgr(tmpSafetyActionsBmp, tmpSafetyActionsClrBmp, newLoads, &tmpStatus);
+ 414:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		if (tmpStatus.chkExec  == 0)
+ 415:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 416:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			chkSafetyExec++;
+ 417:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 418:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 419:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 420:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	else
+ 421:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 422:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		chkSafetyExec = (SFT_NUM_SAFETY_MODULES+1);
+ 423:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 424:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 425:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if (chkSafetyExec == (SFT_NUM_SAFETY_MODULES+1))
+ 426:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 427:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		LIB_PRODUCTSAFETY_TASK__MONITOR_OUT();
+ 428:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 429:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 430:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 431:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 432:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 433:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 434:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 435:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 436:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 437:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Safety Actions manager core module; it handles call of safety actions as
+ 438:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n their request.
+ 439:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 440:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		newSafetyActionBmp			Bitmap of new safety action requests
+ 441:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		keepDoneSafetyActionBmp		Bitmap of safety action not requested but need to be kept (e.g. ap
+ 442:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		newLoads					pointer to a structure containing all loads request/override pointers
+ 443:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 444:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	none
+ 445:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 446:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 447:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 448:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+ 449:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 450:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 451:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 452:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 453:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 454:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 455:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_SafetyActionMgr(sft_safety_action_bmp_t newSafetyActionBmp, sft_safety_action_bmp_t ke
+ 456:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 457:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** uint32_t i;
+ 458:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** static uint8_t initRequest = _DISABLE_;
+ 459:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** static uint8_t localRet;
+ 460:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 461:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 462:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	/*NTBI Se SW relativo alla sicurezza è nello stato "DISABLE":] */
+ 463:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	/*NTBI	return	*/
+ 464:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	/*NTBI else:	*/
+ 465:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	/*NTBI	niente	*/
+ 466:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 467:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	LIB_SFT_EnterSafetyModule(pChkExec);
+ 468:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 469:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	/*	la bit-map che indica il set di nuove azioni di sicurezza da fare viene subito	*/
+ 470:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	/*	notificata come "richiesta"														*/
+ 471:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SafetyActionStatus.sftActionReq = (newSafetyActionBmp & SFT_ACTIONS_FULLBMP);
+ 472:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 473:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	/*	Per ciascuno dei bits che indicano il pilotaggio di un carico:	*/
+ 474:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	for (i=0; i<SFT_NUM_SAFETY_ACTIONS; i++)
+ 475:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 476:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		sft_safety_action_bmp_t tmpCurrSftAction = ((sft_safety_action_bmp_t)(1) << i);
+ 477:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 478:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		/*	Se è stata richiesta almeno una procedura safety di pilotaggio carico:	*/
+ 479:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		if (SafetyActionStatus.sftActionReq & tmpCurrSftAction)
+ 480:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 481:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/*	Se la corrispondente azione di sicurezza è stata inizializzata:	*/
+ 482:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/*	il relativo bit risulta settato; NON si ripete l'esecuzione		*/
+ 483:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/*	della init														*/
+ 484:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			if (SafetyActionStatus.sftActionExec & ((sft_safety_action_bmp_t)(1) << i))
+ 485:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 486:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				initRequest = _DISABLE_;
+ 487:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 488:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/*	Se la corrispondente azione di sicurezza NON è stata inizializzata:	*/
+ 489:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/*	il relativo bit risulta nullo; si esegue la init in modo one-shot	*/
+ 490:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			else
+ 491:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 492:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				initRequest = _ENABLE_;
+ 493:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/*	La init della azione di sicurezza corrisponde alla condizione 	*/
+ 494:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/*	di START per la esecuzione della stessa							*/
+ 495:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				SafetyActionStatus.sftActionExec |= tmpCurrSftAction;
+ 496:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 497:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 498:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/*	Esecuzione vera e propria della singola procedura individuata dalla bit-map	*/
+ 499:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			if( 0 != SafetyActionFuncs[i] ){
+ 500:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				localRet = SafetyActionFuncs[i](newLoads, initRequest);
+ 501:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}else{
+ 502:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				localRet = TRUE;
+ 503:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 504:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/*	Se Check ritorno della procedura NON è OK:	*/
+ 505:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			if (localRet != TRUE)
+ 506:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/*	Si interrompe immediatamente l'esecuzione del ciclo for:	*/
+ 507:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				break;
+ 508:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			else
+ 509:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 510:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				SafetyActionStatus.sftActionDone |= tmpCurrSftAction;
+ 511:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 512:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 513:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		/*	Se NON è stata richiesta alcuna procedura safety di pilotaggio carico:	*/
+ 514:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		else
+ 515:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 516:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/* Viene azzerata nel caso non sia presente nella keepDoneSafetyActionBmp */
+ 517:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			if ((keepDoneSafetyActionBmp  & tmpCurrSftAction) == 0)
+ 518:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 519:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				SafetyActionStatus.sftActionExec &= ~tmpCurrSftAction;
+ 520:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				SafetyActionStatus.sftActionDone &= ~tmpCurrSftAction;
+ 521:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 522:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 523:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 524:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 525:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 526:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	LIB_SFT_LeaveSafetyModule(pChkExec);
+ 527:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 528:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 529:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 530:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_EnterSafetyModule(sft_module_status_t *sftData)
+ 531:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 532:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	sftData->chkExec ^= SFT_CHKEXEC_ENTER;
+ 533:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 534:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 535:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 536:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_LeaveSafetyModule(sft_module_status_t *sftData)
+ 537:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 538:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	sftData->chkExec ^= SFT_CHKEXEC_EXIT;
+ 539:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 540:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 541:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif	/* defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT) */
+ 542:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 543:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 544:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function to get safety action requests from application
+ 545:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 546:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		newApplSafetyReqBmp	Bitmap of safety actions requested
+ 547:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 548:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	none
+ 549:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 550:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 551:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 552:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+ 553:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 554:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 555:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 556:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 557:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 558:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 559:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_SafetyActionRequest(sft_safety_action_bmp_t newApplSafetyReqBmp)
+ 560:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  29                             		.loc 1 560 0
+  30                             	.LVL1:
+  31 0000 02                      		rts
+  32                             	.LFE2:
+  34                             		.section	.text.LIB_SFT_SafetyFlagsRequest,"ax",@progbits
+  35                             		.global	_LIB_SFT_SafetyFlagsRequest
+  37                             	_LIB_SFT_SafetyFlagsRequest:
+  38                             	.LFB3:
+ 561:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 562:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_REGION_START();
+ 563:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_DATA_CHECK(SafetySupervisorStatus);
+ 564:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SafetySupervisorStatus.sftApplReq = (newApplSafetyReqBmp & SFT_ACTIONS_FULLBMP);
+ 565:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_DATA_UPDATE(SafetySupervisorStatus);
+ 566:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_REGION_END();
+ 567:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 568:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 569:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 570:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 571:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function to get safety flag requests from application
+ 572:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 573:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		newApplSafetyFlagsBmp	Bitmap of safety flags requested
+ 574:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 575:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	none
+ 576:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 577:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 578:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 579:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Feb 13, 2013
+ 580:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 581:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 582:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 583:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 584:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 585:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 586:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_SafetyFlagsRequest(uint8_t newApplSafetyFlagsBmp)
+ 587:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  39                             		.loc 1 587 0
+  40                             	.LVL2:
+  41 0000 02                      		rts
+  42                             	.LFE3:
+  44                             		.section	.text.LIB_SFT_GetAllSafetyFaultStatus,"ax",@progbits
+  45                             		.global	_LIB_SFT_GetAllSafetyFaultStatus
+  47                             	_LIB_SFT_GetAllSafetyFaultStatus:
+  48                             	.LFB4:
+ 588:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 589:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_REGION_START();
+ 590:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_DATA_CHECK(SafetySupervisorStatus);
+ 591:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SafetySupervisorStatus.reqFlags = newApplSafetyFlagsBmp;
+ 592:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_DATA_UPDATE(SafetySupervisorStatus);
+ 593:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_REGION_END();
+ 594:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 595:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 596:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 597:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 598:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 599:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that copies all safety modules status; fault sources is related to SafetyFaultSources
+ 600:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** items (visible to Application) instead of internal fault source.
+ 601:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 602:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[out] newSafetyStatus	Pointer to array where all safety modules status will be saved
+ 603:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 604:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	none
+ 605:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 606:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 607:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 608:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+ 609:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 610:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 611:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 612:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 613:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 614:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 615:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_GetAllSafetyFaultStatus(sft_module_faults_t *newSafetyStatus)
+ 616:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  49                             		.loc 1 616 0
+  50                             	.LVL3:
+  51 0000 02                      		rts
+  52                             	.LFE4:
+  54                             		.section	.text.LIB_SFT_GetResetChangedFaultStatus,"ax",@progbits
+  55                             		.global	_LIB_SFT_GetResetChangedFaultStatus
+  57                             	_LIB_SFT_GetResetChangedFaultStatus:
+  58                             	.LFB5:
+ 617:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 618:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t i;
+ 619:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 620:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	for (i = 0; i < SFT_NUM_SAFETY_MODULES; i++)
+ 621:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 622:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		(void) LIB_SFT_GetSafetyModFaultStatus(i, &newSafetyStatus[i]);
+ 623:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 624:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 625:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 626:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 627:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 628:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 629:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 630:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 631:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that copies safety modules status of changed modules each call, and reset changed statu
+ 632:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** fault sources is related to SafetyFaultSources items (visible to Application) instead of internal f
+ 633:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 634:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[out] newSafetyStatus	Pointer to array where all safety modules status will be saved
+ 635:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 636:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	FALSE					if there are no changes found
+ 637:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	TRUE					if there is a fault status change - update it
+ 638:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 639:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 640:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 641:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+ 642:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 643:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 644:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 645:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 646:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 647:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 648:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** bool_t LIB_SFT_GetResetChangedFaultStatus(sft_module_faults_t *newSafetyStatus)
+ 649:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  59                             		.loc 1 649 0
+  60                             	.LVL4:
+ 650:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 651:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 652:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t i;
+ 653:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	bool_t foundChange = FALSE;
+ 654:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 655:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 656:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	for (i = 0; i < SFT_NUM_SAFETY_MODULES; i++)
+ 657:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 658:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		if (SafetyModuleStatusFlags[i])
+ 659:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 660:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			(void) LIB_SFT_GetSafetyModFaultStatus(i, newSafetyStatus);
+ 661:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			SafetyModuleStatusFlags[i] = 0;
+ 662:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			foundChange = TRUE;
+ 663:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 664:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 665:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 666:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if (!foundChange)
+ 667:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 668:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetyModuleStatusFlags[SFT_NUM_SAFETY_MODULES] = FALSE;
+ 669:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 670:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 671:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return foundChange;
+ 672:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 673:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #else
+ 674:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return FALSE;
+ 675:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 676:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 677:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+  61                             		.loc 1 677 0
+  62 0000 66 01                   		mov.L	#0, r1
+  63                             	.LVL5:
+  64 0002 02                      		rts
+  65                             	.LFE5:
+  67                             		.section	.text.LIB_SFT_ResetStatusChangeNotification,"ax",@progbits
+  68                             		.global	_LIB_SFT_ResetStatusChangeNotification
+  70                             	_LIB_SFT_ResetStatusChangeNotification:
+  71                             	.LFB6:
+ 678:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 679:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 680:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 681:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that resets status change notifications
+ 682:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 683:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		none
+ 684:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 685:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	none
+ 686:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 687:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 688:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 689:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+ 690:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 691:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 692:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 693:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 694:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 695:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 696:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_ResetStatusChangeNotification(void)
+ 697:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  72                             		.loc 1 697 0
+  73 0000 02                      		rts
+  74                             	.LFE6:
+  76                             		.section	.text.LIB_SFT_GetOverallFaultStatus,"ax",@progbits
+  77                             		.global	_LIB_SFT_GetOverallFaultStatus
+  79                             	_LIB_SFT_GetOverallFaultStatus:
+  80                             	.LFB7:
+ 698:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 699:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t i;
+ 700:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 701:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	for (i=0; i < (SFT_NUM_SAFETY_MODULES+1); i++)
+ 702:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 703:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetyModuleStatusFlags[i] = FALSE;
+ 704:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 705:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 706:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 707:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 708:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 709:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 710:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that copies safety Supervisor status
+ 711:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 712:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[out] newSafetyStatus	Pointer to array where all safety modules status will be saved
+ 713:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 714:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	none
+ 715:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 716:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 717:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 718:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+ 719:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 720:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 721:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 722:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 723:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 724:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_GetOverallFaultStatus(sft_module_faults_t *newSafetyStatus)
+ 725:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  81                             		.loc 1 725 0
+  82                             	.LVL6:
+ 726:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 727:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t tmpStatus = SFT_MODULE_IDLE;
+ 728:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t tmpFaultSrc = SafetySupervisorStatus.highFaultSrc;
+ 729:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t tmpIsChanged = SafetyModuleStatusFlags[SFT_NUM_SAFETY_MODULES];
+ 730:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t tmpFaultCode = 0;
+ 731:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t tmpFaultSubCode = 0;
+ 732:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 733:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if (LIB_SFT_GetSafetyFaultCode(tmpFaultSrc, &tmpFaultCode, &tmpFaultSubCode) == SF_OK)
+ 734:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 735:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		tmpStatus = SafetySupervisorStatus.status;
+ 736:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 737:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 738:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	newSafetyStatus->status = (tmpStatus & 0x7f) | ((tmpIsChanged != 0) ? 0x80 : 0 );
+ 739:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	newSafetyStatus->fault.code = tmpFaultCode;
+ 740:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	newSafetyStatus->fault.subCode = tmpFaultSubCode;
+ 741:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 742:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #else
+ 743:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	newSafetyStatus->status = SFT_MODULE_IDLE;
+  83                             		.loc 1 743 0
+  84 0000 3C 12 00                		mov.B	#0, 2[r1]
+ 744:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	newSafetyStatus->fault.code = 0;
+  85                             		.loc 1 744 0
+  86 0003 3C 10 00                		mov.B	#0, [r1]
+ 745:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	newSafetyStatus->fault.subCode = 0;
+  87                             		.loc 1 745 0
+  88 0006 3C 11 00                		mov.B	#0, 1[r1]
+  89 0009 02                      		rts
+  90                             	.LFE7:
+  92                             		.section	.text.LIB_SFT_GetFaultSourceStatus,"ax",@progbits
+  93                             		.global	_LIB_SFT_GetFaultSourceStatus
+  95                             	_LIB_SFT_GetFaultSourceStatus:
+  96                             	.LFB8:
+ 746:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 747:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 748:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 749:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 750:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 751:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 752:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 753:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that gives status of a specific fault source
+ 754:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 755:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[in] faultSrcItem	Fault source item from array SafetyFaultSources
+ 756:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 757:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	status				Status of requested fault source; SFT_MODULE_IDLE if fault source has no errors
+ 758:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 759:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 760:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 761:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Feb 111, 2013
+ 762:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 763:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 764:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 765:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 766:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 767:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 768:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** uint8_t LIB_SFT_GetFaultSourceStatus(uint8_t faultSrcItem)
+ 769:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  97                             		.loc 1 769 0
+  98                             	.LVL7:
+ 770:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t tmpCurStatus = SFT_MODULE_IDLE;
+ 771:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 772:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 773:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if ((faultSrcItem == SFT_FLT_SV_NO_SETTING) && (faultSrcItem == SafetySupervisorStatus.highFaultSr
+ 774:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 775:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		tmpCurStatus = SafetySupervisorStatus.status;
+ 776:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 777:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 778:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if ((faultSrcItem > SFT_FLT_SV_NO_SETTING) && (faultSrcItem < SFT_NUM_FAULT_SOURCES))
+ 779:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 780:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		if (SafetyFaultSources[faultSrcItem].moduleFaultSrcID ==
+ 781:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			SafetySupervisorStatus.moduleStatus[SafetyFaultSources[faultSrcItem].moduleID].faultSrc)
+ 782:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 783:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			tmpCurStatus = SafetySupervisorStatus.moduleStatus[SafetyFaultSources[faultSrcItem].moduleID].st
+ 784:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 785:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 786:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 787:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 788:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return tmpCurStatus;
+ 789:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 790:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+  99                             		.loc 1 790 0
+ 100 0000 66 01                   		mov.L	#0, r1
+ 101                             	.LVL8:
+ 102 0002 02                      		rts
+ 103                             	.LFE8:
+ 105                             		.section	.text.LIB_SFT_GetSafetyFaultCode,"ax",@progbits
+ 106                             		.global	_LIB_SFT_GetSafetyFaultCode
+ 108                             	_LIB_SFT_GetSafetyFaultCode:
+ 109                             	.LFB9:
+ 791:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 792:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 793:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that gives status of a specific fault source
+ 794:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 795:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		 [in] faultSrcItem	Fault source item from array SafetyFaultSources
+ 796:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[out] faultCode		Fault code of fault source requested (if exists)
+ 797:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[out] faultSubCode	Fault sub code of fault source requested (if exists)
+ 798:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 799:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return		Returns if fault source is found or not
+ 800:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 801:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	== 0				if fault source is found
+ 802:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	!= 0				if fault source is not found - result codes are unchanged
+ 803:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 804:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 805:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Feb 111, 2013
+ 806:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 807:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 808:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 809:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 810:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 811:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 812:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** uint8_t LIB_SFT_GetSafetyFaultCode(uint8_t faultSrcItem, uint8_t *faultCode, uint8_t *faultSubcode)
+ 813:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 110                             		.loc 1 813 0
+ 111                             	.LVL9:
+ 814:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t tmpNotFound = TRUE;
+ 815:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 816:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 817:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if (faultSrcItem < SFT_NUM_FAULT_SOURCES)
+ 818:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 819:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(SFT_NUM_CUSTOM_FAULTCODES)
+ 820:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		uint8_t i;
+ 821:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 822:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		for (i = 0; (tmpNotFound && (i< SFT_NUM_CUSTOM_FAULTCODES)) ; i++)
+ 823:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 824:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/* Looks for a custom fault code */
+ 825:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			if ( (SafetyCustomCodeFaultSrc[i] == faultSrcItem) && (SafetyCustomCodeFuncs[i] != 0))
+ 826:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 827:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/* If function returns TRUE, values are updated */
+ 828:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if (SafetyCustomCodeFuncs[i](faultCode, faultSubcode) == FALSE)
+ 829:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 830:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					faultCode = 0;
+ 831:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					faultSubcode = 0;
+ 832:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 833:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				tmpNotFound = FALSE;
+ 834:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 835:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 836:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 837:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 838:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		if (tmpNotFound)
+ 839:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 840:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			*faultCode = SafetyFaultSources[faultSrcItem].faultCode;
+ 841:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			*faultSubcode = SafetyFaultSources[faultSrcItem].faultSubcode;
+ 842:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			tmpNotFound = FALSE;
+ 843:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 844:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 845:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 846:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 847:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return tmpNotFound;
+ 848:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 849:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 112                             		.loc 1 849 0
+ 113 0000 66 11                   		mov.L	#1, r1
+ 114                             	.LVL10:
+ 115 0002 02                      		rts
+ 116                             	.LFE9:
+ 118                             		.section	.text.LIB_SFT_GetSafetyModFaultStatus,"ax",@progbits
+ 119                             		.global	_LIB_SFT_GetSafetyModFaultStatus
+ 121                             	_LIB_SFT_GetSafetyModFaultStatus:
+ 122                             	.LFB10:
+ 850:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 851:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 852:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that copies fault code and status of a given safety module
+ 853:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 854:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[in] safetyModule		Safety module ID to get status
+ 855:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[out] newSafetyStatus	Pointer to array where all modules status will be saved
+ 856:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 857:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	== 0 if success
+ 858:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	!= 0 if an error occurred
+ 859:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 860:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 861:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+ 862:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 863:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 864:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 865:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 866:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 867:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 868:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** uint8_t LIB_SFT_GetSafetyModFaultStatus(uint8_t safetyModuleID, sft_module_faults_t *newSafetyStatu
+ 869:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 123                             		.loc 1 869 0
+ 124                             	.LVL11:
+ 870:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t retVal = 0xff;
+ 871:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 872:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined CONFIG_LIB_PRODUCTSAFETY_SUPPORT
+ 873:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	sft_module_status_t tmpSafetyStatus;
+ 874:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 875:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if (0 == LIB_SFT_GetSafetyModStatus(safetyModuleID, &tmpSafetyStatus))
+ 876:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 877:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		uint8_t tmpFaultCode = 0;
+ 878:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		uint8_t tmpFaultSubCode = 0;
+ 879:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 880:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		if (LIB_SFT_GetSafetyFaultCode(tmpSafetyStatus.faultSrc, &tmpFaultCode, &tmpFaultSubCode) == SF_O
+ 881:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 882:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			newSafetyStatus->status = tmpSafetyStatus.status | ((SafetyModuleStatusFlags[safetyModuleID] != 
+ 883:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			newSafetyStatus->fault.code = tmpFaultCode;
+ 884:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			newSafetyStatus->fault.subCode = tmpFaultSubCode;
+ 885:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			retVal = 0;
+ 886:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 887:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 888:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 889:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 890:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 891:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 892:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return retVal;
+ 893:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 125                             		.loc 1 893 0
+ 126 0000 75 41 FF                		mov.L	#0xff, r1
+ 127                             	.LVL12:
+ 128 0003 02                      		rts
+ 129                             	.LFE10:
+ 131                             		.section	.text.LIB_SFT_GetSafetyModStatus,"ax",@progbits
+ 132                             		.global	_LIB_SFT_GetSafetyModStatus
+ 134                             	_LIB_SFT_GetSafetyModStatus:
+ 135                             	.LFB11:
+ 894:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 895:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 896:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that copies fault source and status of a given safety module
+ 897:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 898:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[in] safetyModule		Safety module ID to get status
+ 899:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[out] newSafetyStatus	Pointer to array where all modules status will be saved;
+ 900:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 									FaultSrc field is get from SafetyFaultSources, not from module itself.
+ 901:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 902:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	== 0 if success, newSafetyStatus has been updated
+ 903:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	!= 0 if an error occurred
+ 904:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 905:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 906:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Mar 08, 2013
+ 907:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 908:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 909:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 910:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 911:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 912:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 913:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** uint8_t LIB_SFT_GetSafetyModStatus(uint8_t safetyModuleID, sft_module_status_t *newSafetyStatus)
+ 914:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 136                             		.loc 1 914 0
+ 137                             	.LVL13:
+ 915:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t retVal = 0xff;
+ 916:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 917:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined CONFIG_LIB_PRODUCTSAFETY_SUPPORT
+ 918:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 919:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if (SafetySupervisorStatus.highFaultSrc == SFT_FLT_SUPERVISOR_BAD_SETTING)
+ 920:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 921:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		newSafetyStatus->status = SFT_MODULE_FAULT;
+ 922:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		newSafetyStatus->faultSrc = SFT_FLT_SUPERVISOR_BAD_SETTING;
+ 923:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		retVal = 0;
+ 924:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 925:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	else if (safetyModuleID < SFT_NUM_SAFETY_MODULES)
+ 926:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 927:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		newSafetyStatus->status = SafetySupervisorStatus.moduleStatus[safetyModuleID].status;
+ 928:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		newSafetyStatus->faultSrc = LIB_SFT_GetFaultSrcByModuleFaultSrc(safetyModuleID, SafetySupervisorS
+ 929:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		retVal = 0;
+ 930:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 931:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	else
+ 932:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 933:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		/* Do nothing */
+ 934:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 935:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 936:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 937:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return retVal;
+ 938:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 138                             		.loc 1 938 0
+ 139 0000 75 41 FF                		mov.L	#0xff, r1
+ 140                             	.LVL14:
+ 141 0003 02                      		rts
+ 142                             	.LFE11:
+ 144                             		.section	.text.LIB_SFT_GetPendingSafetyActionBmp,"ax",@progbits
+ 145                             		.global	_LIB_SFT_GetPendingSafetyActionBmp
+ 147                             	_LIB_SFT_GetPendingSafetyActionBmp:
+ 148                             	.LFB12:
+ 939:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 940:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 941:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that return which safety actions are pending
+ 942:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 943:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		none
+ 944:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 945:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	== 0 		if all safety actions have been completed
+ 946:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	!= 0 		A bitmap of pending safety actions
+ 947:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 948:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 949:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Feb 15, 2013
+ 950:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 951:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 952:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 953:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 954:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 955:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** sft_safety_action_bmp_t LIB_SFT_GetPendingSafetyActionBmp(void)
+ 956:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 149                             		.loc 1 956 0
+ 957:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 958:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return ((SafetyActionStatus.sftActionReq ^ SafetyActionStatus.sftActionDone) & ( SafetyActionStatu
+ 959:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #else
+ 960:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return 0;
+ 961:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 962:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 150                             		.loc 1 962 0
+ 151 0000 66 01                   		mov.L	#0, r1
+ 152 0002 02                      		rts
+ 153                             	.LFE12:
+ 155                             		.section	.text.LIB_SFT_GetRequestSafetyActionBmp,"ax",@progbits
+ 156                             		.global	_LIB_SFT_GetRequestSafetyActionBmp
+ 158                             	_LIB_SFT_GetRequestSafetyActionBmp:
+ 159                             	.LFB13:
+ 963:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 964:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 965:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that return which safety actions are under request
+ 966:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 967:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		none
+ 968:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 969:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return		sft_safety_action_bmp_t		Bitmap of current safety actions requested
+ 970:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 971:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Francesco Barletta
+ 972:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Feb 19, 2013
+ 973:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 974:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 975:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 976:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Francesco Barletta
+ 977:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 978:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 979:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** sft_safety_action_bmp_t LIB_SFT_GetRequestSafetyActionBmp(void)
+ 980:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 160                             		.loc 1 980 0
+ 981:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 982:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return ( SafetyActionStatus.sftActionReq & SFT_ACTIONS_FULLBMP );
+ 983:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #else
+ 984:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return 0;
+ 985:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 986:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 161                             		.loc 1 986 0
+ 162 0000 66 01                   		mov.L	#0, r1
+ 163 0002 02                      		rts
+ 164                             	.LFE13:
+ 166                             		.section	.text.LIB_SFT_GetSafetyActionDoneBmp,"ax",@progbits
+ 167                             		.global	_LIB_SFT_GetSafetyActionDoneBmp
+ 169                             	_LIB_SFT_GetSafetyActionDoneBmp:
+ 170                             	.LFB14:
+ 987:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 988:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 989:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that return which safety actions are pending
+ 990:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 991:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		none
+ 992:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 993:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	== 0 		if all safety actions have been completed
+ 994:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	!= 0 		A bitmap of pending safety actions
+ 995:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 996:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 997:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Feb 15, 2013
+ 998:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 999:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+1000:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+1001:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+1002:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+1003:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** sft_safety_action_bmp_t LIB_SFT_GetSafetyActionDoneBmp(void)
+1004:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 171                             		.loc 1 1004 0
+1005:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+1006:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return (SafetyActionStatus.sftActionDone & SFT_ACTIONS_FULLBMP);
+1007:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #else
+1008:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return 0;
+1009:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+1010:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 172                             		.loc 1 1010 0
+ 173 0000 66 01                   		mov.L	#0, r1
+ 174 0002 02                      		rts
+ 175                             	.LFE14:
+ 177                             		.section	.text.LIB_SFT_GetSafetyActionExecBmp,"ax",@progbits
+ 178                             		.global	_LIB_SFT_GetSafetyActionExecBmp
+ 180                             	_LIB_SFT_GetSafetyActionExecBmp:
+ 181                             	.LFB15:
+1011:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+1012:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+1013:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that return which safety actions are executing
+1014:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+1015:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		none
+1016:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+1017:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	== 0 		if no safety actions are executing
+1018:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	!= 0 		A bitmap of executing safety actions
+1019:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+1020:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+1021:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		May 14, 2013
+1022:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+1023:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+1024:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+1025:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+1026:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+1027:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** sft_safety_action_bmp_t LIB_SFT_GetSafetyActionExecBmp(void)
+1028:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 182                             		.loc 1 1028 0
+1029:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+1030:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return (SafetyActionStatus.sftActionExec & SFT_ACTIONS_FULLBMP);
+1031:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #else
+1032:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return 0;
+1033:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+1034:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 183                             		.loc 1 1034 0
+ 184 0000 66 01                   		mov.L	#0, r1
+ 185 0002 02                      		rts
+ 186                             	.LFE15:
+ 188                             		.section	.text.LIB_SFT_GetMySafetyPriority,"ax",@progbits
+ 189                             		.global	_LIB_SFT_GetMySafetyPriority
+ 191                             	_LIB_SFT_GetMySafetyPriority:
+ 192                             	.LFB16:
+1035:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+1036:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+1037:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that return module's safety priority to itself
+1038:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n ** This function must be called within a safety module only ** outside this scope it doesn't mak
+1039:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+1040:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[in] mySftData		Pointer to module's safety status
+1041:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[in] newMyFaultSrc	New fault source to get priority; if 0 current fault source is used
+1042:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+1043:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	uint8_t 			Priority value of current/new fault source
+1044:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+1045:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+1046:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		May 14, 2013
+1047:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+1048:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+1049:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+1050:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+1051:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+1052:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** uint8_t LIB_SFT_GetMySafetyPriority( sft_module_status_t *mySftData, uint8_t newMyFaultSrc)
+1053:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 193                             		.loc 1 1053 0
+ 194                             	.LVL15:
+1054:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t	tmpRes = 0;
+1055:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+1056:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t tmpModFaultSrc = newMyFaultSrc;
+1057:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+1058:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if ((tmpModFaultSrc == 0) && (mySftData->faultSrc != SFT_NO_FAULT_SRC)
+1059:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			&& (mySftData->status != SFT_MODULE_IDLE))
+1060:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+1061:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		tmpModFaultSrc = mySftData->faultSrc;
+1062:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+1063:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+1064:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if (tmpModFaultSrc != 0)
+1065:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+1066:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		uint8_t i;
+1067:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+1068:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		for (i = 0; i < SFT_NUM_SAFETY_MODULES; i++)
+1069:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+1070:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			if (mySftData == &SafetySupervisorStatus.moduleStatus[i])
+1071:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+1072:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				uint8_t tmpFaultSrc = LIB_SFT_GetFaultSrcByModuleFaultSrc(i, tmpModFaultSrc);
+1073:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				LIB_SFT_GetSafetyPriorityByFaultSrc(tmpFaultSrc, &tmpRes);
+1074:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+1075:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+1076:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+1077:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+1078:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+1079:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+1080:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return tmpRes;
+1081:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 195                             		.loc 1 1081 0
+ 196 0000 66 01                   		mov.L	#0, r1
+ 197                             	.LVL16:
+ 198 0002 02                      		rts
+ 199                             	.LFE16:
+ 355                             	.Letext0:
+ 356                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 357                             		.file 3 "C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_SecurityCheck/LIB_ProductSafet
+ 358                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_IOManager/LoadsRequest.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 LIB_ProductSafety.c
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:7      .text.LIB_SFT_SafetySupervisorInit:00000000 _LIB_SFT_SafetySupervisorInit
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:11     .text.LIB_SFT_SafetySupervisorInit:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:17     .text.LIB_SFT_SafetySupervisor:00000000 _LIB_SFT_SafetySupervisor
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:21     .text.LIB_SFT_SafetySupervisor:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:27     .text.LIB_SFT_SafetyActionRequest:00000000 _LIB_SFT_SafetyActionRequest
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:31     .text.LIB_SFT_SafetyActionRequest:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:37     .text.LIB_SFT_SafetyFlagsRequest:00000000 _LIB_SFT_SafetyFlagsRequest
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:41     .text.LIB_SFT_SafetyFlagsRequest:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:47     .text.LIB_SFT_GetAllSafetyFaultStatus:00000000 _LIB_SFT_GetAllSafetyFaultStatus
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:51     .text.LIB_SFT_GetAllSafetyFaultStatus:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:57     .text.LIB_SFT_GetResetChangedFaultStatus:00000000 _LIB_SFT_GetResetChangedFaultStatus
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:62     .text.LIB_SFT_GetResetChangedFaultStatus:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:70     .text.LIB_SFT_ResetStatusChangeNotification:00000000 _LIB_SFT_ResetStatusChangeNotification
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:73     .text.LIB_SFT_ResetStatusChangeNotification:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:79     .text.LIB_SFT_GetOverallFaultStatus:00000000 _LIB_SFT_GetOverallFaultStatus
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:84     .text.LIB_SFT_GetOverallFaultStatus:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:95     .text.LIB_SFT_GetFaultSourceStatus:00000000 _LIB_SFT_GetFaultSourceStatus
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:100    .text.LIB_SFT_GetFaultSourceStatus:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:108    .text.LIB_SFT_GetSafetyFaultCode:00000000 _LIB_SFT_GetSafetyFaultCode
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:113    .text.LIB_SFT_GetSafetyFaultCode:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:121    .text.LIB_SFT_GetSafetyModFaultStatus:00000000 _LIB_SFT_GetSafetyModFaultStatus
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:126    .text.LIB_SFT_GetSafetyModFaultStatus:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:134    .text.LIB_SFT_GetSafetyModStatus:00000000 _LIB_SFT_GetSafetyModStatus
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:139    .text.LIB_SFT_GetSafetyModStatus:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:147    .text.LIB_SFT_GetPendingSafetyActionBmp:00000000 _LIB_SFT_GetPendingSafetyActionBmp
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:151    .text.LIB_SFT_GetPendingSafetyActionBmp:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:158    .text.LIB_SFT_GetRequestSafetyActionBmp:00000000 _LIB_SFT_GetRequestSafetyActionBmp
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:162    .text.LIB_SFT_GetRequestSafetyActionBmp:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:169    .text.LIB_SFT_GetSafetyActionDoneBmp:00000000 _LIB_SFT_GetSafetyActionDoneBmp
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:173    .text.LIB_SFT_GetSafetyActionDoneBmp:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:180    .text.LIB_SFT_GetSafetyActionExecBmp:00000000 _LIB_SFT_GetSafetyActionExecBmp
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:184    .text.LIB_SFT_GetSafetyActionExecBmp:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:191    .text.LIB_SFT_GetMySafetyPriority:00000000 _LIB_SFT_GetMySafetyPriority
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:196    .text.LIB_SFT_GetMySafetyPriority:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:202    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:8      .text.LIB_SFT_SafetySupervisorInit:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:18     .text.LIB_SFT_SafetySupervisor:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:28     .text.LIB_SFT_SafetyActionRequest:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:38     .text.LIB_SFT_SafetyFlagsRequest:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:48     .text.LIB_SFT_GetAllSafetyFaultStatus:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:58     .text.LIB_SFT_GetResetChangedFaultStatus:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:71     .text.LIB_SFT_ResetStatusChangeNotification:00000000 .LFB6
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:80     .text.LIB_SFT_GetOverallFaultStatus:00000000 .LFB7
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:96     .text.LIB_SFT_GetFaultSourceStatus:00000000 .LFB8
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:109    .text.LIB_SFT_GetSafetyFaultCode:00000000 .LFB9
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:122    .text.LIB_SFT_GetSafetyModFaultStatus:00000000 .LFB10
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:135    .text.LIB_SFT_GetSafetyModStatus:00000000 .LFB11
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:148    .text.LIB_SFT_GetPendingSafetyActionBmp:00000000 .LFB12
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:159    .text.LIB_SFT_GetRequestSafetyActionBmp:00000000 .LFB13
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:170    .text.LIB_SFT_GetSafetyActionDoneBmp:00000000 .LFB14
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:181    .text.LIB_SFT_GetSafetyActionExecBmp:00000000 .LFB15
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:192    .text.LIB_SFT_GetMySafetyPriority:00000000 .LFB16
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1020   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1631   .debug_str:00000026 .LASF71
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1677   .debug_str:000001d8 .LASF72
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1589   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1627   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1667   .debug_str:00000186 .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1723   .debug_str:000003a3 .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1707   .debug_str:00000320 .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1715   .debug_str:00000359 .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1679   .debug_str:00000235 .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1705   .debug_str:00000309 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1673   .debug_str:000001b4 .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1657   .debug_str:0000011b .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1691   .debug_str:00000295 .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1703   .debug_str:000002fd .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1733   .debug_str:000003d6 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1711   .debug_str:0000033c .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1641   .debug_str:00000096 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1753   .debug_str:0000048a .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1717   .debug_str:0000036b .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1637   .debug_str:0000007d .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1755   .debug_str:0000049c .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1751   .debug_str:00000476 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1741   .debug_str:0000040c .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1725   .debug_str:000003b6 .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1761   .debug_str:000004df .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1721   .debug_str:0000038b .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1727   .debug_str:000003bd .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1771   .debug_str:00000547 .LASF73
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1713   .debug_str:00000349 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1639   .debug_str:00000085 .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1697   .debug_str:000002bc .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1709   .debug_str:00000329 .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1675   .debug_str:000001c2 .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1769   .debug_str:00000533 .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1695   .debug_str:000002ab .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1743   .debug_str:00000412 .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1685   .debug_str:0000025b .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1651   .debug_str:000000f5 .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1745   .debug_str:00000426 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1653   .debug_str:000000fe .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1775   .debug_str:0000057e .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1729   .debug_str:000003c2 .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1757   .debug_str:000004ae .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1737   .debug_str:000003f1 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1681   .debug_str:0000023e .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1765   .debug_str:0000050f .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:12     .text.LIB_SFT_SafetySupervisorInit:00000001 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1693   .debug_str:000002a3 .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1663   .debug_str:00000151 .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:22     .text.LIB_SFT_SafetySupervisor:00000001 .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1669   .debug_str:00000190 .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1763   .debug_str:000004f3 .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:32     .text.LIB_SFT_SafetyActionRequest:00000001 .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1735   .debug_str:000003dd .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1719   .debug_str:00000370 .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:42     .text.LIB_SFT_SafetyFlagsRequest:00000001 .LFE3
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1635   .debug_str:00000067 .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1645   .debug_str:000000c1 .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:52     .text.LIB_SFT_GetAllSafetyFaultStatus:00000001 .LFE4
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1689   .debug_str:00000285 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1759   .debug_str:000004bc .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:65     .text.LIB_SFT_GetResetChangedFaultStatus:00000003 .LFE5
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1460   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1629   .debug_str:00000000 .LASF74
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:74     .text.LIB_SFT_ResetStatusChangeNotification:00000001 .LFE6
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1701   .debug_str:000002df .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:90     .text.LIB_SFT_GetOverallFaultStatus:0000000a .LFE7
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1747   .debug_str:0000043a .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:103    .text.LIB_SFT_GetFaultSourceStatus:00000003 .LFE8
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1699   .debug_str:000002d2 .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1474   .debug_loc:00000021 .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1739   .debug_str:000003ff .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1633   .debug_str:0000004c .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:116    .text.LIB_SFT_GetSafetyFaultCode:00000003 .LFE9
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1488   .debug_loc:00000042 .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1731   .debug_str:000003cc .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1647   .debug_str:000000e1 .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1655   .debug_str:0000010f .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1659   .debug_str:00000123 .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:129    .text.LIB_SFT_GetSafetyModFaultStatus:00000004 .LFE10
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1777   .debug_str:00000588 .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1502   .debug_loc:00000063 .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1767   .debug_str:0000052c .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1671   .debug_str:00000199 .LASF62
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:142    .text.LIB_SFT_GetSafetyModStatus:00000004 .LFE11
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1516   .debug_loc:00000084 .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1643   .debug_str:0000009f .LASF63
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:153    .text.LIB_SFT_GetPendingSafetyActionBmp:00000003 .LFE12
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1687   .debug_str:00000263 .LASF64
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:164    .text.LIB_SFT_GetRequestSafetyActionBmp:00000003 .LFE13
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1773   .debug_str:0000055f .LASF65
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:175    .text.LIB_SFT_GetSafetyActionDoneBmp:00000003 .LFE14
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1749   .debug_str:00000457 .LASF66
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:186    .text.LIB_SFT_GetSafetyActionExecBmp:00000003 .LFE15
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1665   .debug_str:0000016a .LASF67
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:199    .text.LIB_SFT_GetMySafetyPriority:00000003 .LFE16
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1683   .debug_str:00000251 .LASF68
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1530   .debug_loc:000000a5 .LLST5
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1661   .debug_str:00000143 .LASF69
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:1649   .debug_str:000000ee .LASF70
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:60     .text.LIB_SFT_GetResetChangedFaultStatus:00000000 .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:63     .text.LIB_SFT_GetResetChangedFaultStatus:00000002 .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:98     .text.LIB_SFT_GetFaultSourceStatus:00000000 .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:101    .text.LIB_SFT_GetFaultSourceStatus:00000002 .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:111    .text.LIB_SFT_GetSafetyFaultCode:00000000 .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:114    .text.LIB_SFT_GetSafetyFaultCode:00000002 .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:124    .text.LIB_SFT_GetSafetyModFaultStatus:00000000 .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:127    .text.LIB_SFT_GetSafetyModFaultStatus:00000003 .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:137    .text.LIB_SFT_GetSafetyModStatus:00000000 .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:140    .text.LIB_SFT_GetSafetyModStatus:00000003 .LVL14
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:194    .text.LIB_SFT_GetMySafetyPriority:00000000 .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:197    .text.LIB_SFT_GetMySafetyPriority:00000002 .LVL16
+C:\Users\Andrea\AppData\Local\Temp\ccTkJfUI.s:360    .debug_info:00000000 .Ldebug_info0
+
+NO UNDEFINED SYMBOLS

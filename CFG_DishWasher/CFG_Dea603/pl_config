@@ -1,0 +1,94 @@
+#############################################################################
+
+#
+#	Platform 2 library configuration
+#
+
+#############################################################################
+
+menu "Platform II Configuration"
+
+# source "core/Kconfig"
+
+choice
+	prompt "Product selection"
+
+config PL_OVEN
+	bool "Oven"
+	help
+	  Owen product line
+
+config PL_DRYER
+	bool "Dryer"
+	help
+	  Dryer product line
+	  
+config PL_REFRIGERATOR
+	bool "Refrigerator"
+	help
+	  Refrigerator product line	  
+
+config PL_WASHER
+	bool "Washer"
+	help
+	  Washer product line
+
+endchoice
+
+config PL_DEBUG
+    bool "Debug Platform"
+	default n
+    help
+        Abilta il debug per la Piattaforma,
+    	ogni modulo deve poi essere ablitato singolarmente.
+    	Se questa opzione viene disabilitata tutte le opzioni di debug
+    	dobrebbe essere disabilitata.
+
+config PL_FOR_ATTILIO
+    bool "ATTILIO BOARD"
+	default n
+    help
+        Abilta la piattaforma per la Board Attilio.
+
+#****** Configurazione Servizi Base / Librerie ***************
+menu "Configurazione Librerie/Servizi Base"
+  
+config FEEDBACK_ENABLE
+  bool "Enable Feedbacks"
+  default y
+  help
+    Abilita la gestione dei feedbacks
+source "../../PlatformLibrary/LIB_Feedbacks/pl_config"
+ 
+config LIB_ANALOG
+	bool "LIB ANALOG"
+	default y
+	help
+    	  Configure l'acquisizione analogica
+    	  e di conseguenza i moduli da esso dipendenti
+
+source "../../PlatformLibrary/LIB_Analog/pl_config"    
+
+     
+
+
+
+endmenu
+#*******Configurazione Drivers *******************************
+#source "Drivers/pl_config"
+#*************************************************************
+
+menu "Configurazione Moduli Prodotto (PM)"
+
+config PM_ANALOG_FEEDBACK
+  depends on LIB_ANALOG
+  bool "Modulo ANALOG FEEDBACK"
+  default y
+  help
+    Abilita il modulo dei Feedback Analogici
+source "../../ProductModules/PM_AnalogFeedbacks/pl_config"
+endmenu # menu moduli prodotto
+
+endmenu
+
+#############################################################################

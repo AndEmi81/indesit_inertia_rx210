@@ -1,0 +1,862 @@
+   1                             		.file	"Main_AnalogInputs.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.Main_AnalogInputsTask,"ax",@progbits
+   6                             	_Main_AnalogInputsTask:
+   7                             	.LFB5:
+   8                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Main_AnalogInputs.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+   7:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \n
+   8:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \par		AnalogInputs
+   9:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \n			This file contains the EmbOS-based service for the acquisition of analog channels (ADC).
+  10:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** It makes use of Platform Library modules.
+  11:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \n
+  12:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \file		Main_AnalogInputs.c
+  13:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \ingroup	Main
+  14:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \date		Feb 7, 2011
+  15:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \version	01.00.00
+  16:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \author		Roberto Fioravanti
+  17:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \n
+  18:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \n
+  19:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \par\b	History:
+  20:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \n
+  21:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \n 		00.00.00
+  22:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \n		29/03/2011
+  23:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \n		Roberto Fioravanti
+  24:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \n		changes
+  25:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \n 		- file created
+  26:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \n
+  27:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \n
+  28:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \n etc.
+  29:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+  30:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* ******** */
+  31:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* Includes */
+  32:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* ******** */
+  33:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #include "Main.h"
+  34:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #include "Analog.h"
+  35:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #include "LIB_Trace.h"
+  36:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+  37:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #ifdef CONFIG_PM_ANALOG_FEEDBACKS_SUPPORT
+  38:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #include "PM_AnalogFeedback.h"
+  39:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif /* CONFIG_PM_ANALOG_FEEDBACK */
+  40:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+  41:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if defined(CONFIG_PM_TASK_MONITOR_SUPPORT)
+  42:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #include "PM_TaskMonitoring.h"
+  43:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif
+  44:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+  45:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if defined(CONFIG_LIB_CLASS_B_PERIODIC_CHECK)
+  46:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #include "LIB_TaskMonitoring.h"
+  47:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif
+  48:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+  49:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if defined(CONFIG_MAIN_ANALOG_TASK_TRACE_PIN_ENABLE)
+  50:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #include "LIB_Trace.h"
+  51:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif
+  52:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+  53:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* ****************** */
+  54:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* Defines and Macros */
+  55:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* ****************** */
+  56:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+  57:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+  58:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /** 
+  59:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @name Trace to pin
+  60:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** If CONFIG_MAIN_ANALOG_TASK_TRACE_PIN_ENABLE and CONFIG_LIB_TRACE_SUPPORT are both defined the pin
+  61:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** CONFIG_MAIN_ANALOG_TASK_TRACE_PIN geneates a pulse during the execution of a task.
+  62:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+  63:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \attention:
+  64:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** This section show the default definition that may not reflect the real configuration of your projec
+  65:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @{
+  66:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+  67:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if defined(CONFIG_MAIN_ANALOG_TASK_TRACE_PIN_ENABLE) && defined(CONFIG_LIB_TRACE_SUPPORT)
+  68:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_TASK_TRACE_BEGIN()        TRACE_TO_PIN(ON , (CONFIG_MAIN_ANALOG_TASK_TRACE_PIN)
+  69:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_TASK_TRACE_END()          TRACE_TO_PIN(OFF , (CONFIG_MAIN_ANALOG_TASK_TRACE_PIN
+  70:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #else
+  71:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_TASK_TRACE_BEGIN()	{}
+  72:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_TASK_TRACE_END()	{}
+  73:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif
+  74:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+  75:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+  76:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if !defined(MAIN_ANALOG_INPUTS_TASK__MONITOR_IN) && \
+  77:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****     !defined(MAIN_ANALOG_INPUTS_TASK__MONITOR_OUT) && \
+  78:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****     !defined(START_ANALOG_TASK_MONITORING)
+  79:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****       
+  80:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /** @name Analog task safety
+  81:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+  82:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \par Properties
+  83:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** Not mandatory. If they remain undefined assume by default an empty value.
+  84:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @{
+  85:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+  86:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define START_ANALOG_TASK_MONITORING()
+  87:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /** safety entry */
+  88:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_INPUTS_TASK__MONITOR_IN()
+  89:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /** safety exit */
+  90:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_INPUTS_TASK__MONITOR_OUT()
+  91:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+  92:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+  93:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #else
+  94:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* MAIN_ANALOG_INPUTS_TASK__MONITOR_IN or MAIN_ANALOG_INPUTS_TASK__MONITOR_OUT defined */
+  95:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if !defined(MAIN_ANALOG_INPUTS_TASK__MONITOR_IN)
+  96:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #error "MAIN_ANALOG_INPUTS_TASK__MONITOR_IN() missing definition."
+  97:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #error "START_ANALOG_TASK_MONITORING, MAIN_ANALOG_INPUTS_TASK__MONITOR_IN() and MAIN_ANALOG_INPUTS_
+  98:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif
+  99:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 100:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if !defined(MAIN_ANALOG_INPUTS_TASK__MONITOR_OUT)
+ 101:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #error "MAIN_ANALOG_INPUTS_TASK__MONITOR_OUT() missing definition."
+ 102:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #error "START_ANALOG_TASK_MONITORING, MAIN_ANALOG_INPUTS_TASK__MONITOR_IN() and MAIN_ANALOG_INPUTS_
+ 103:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif
+ 104:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****       
+ 105:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if !defined(START_ANALOG_TASK_MONITORING)
+ 106:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #error "START_ANALOG_TASK_MONITORING() missing definition."
+ 107:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #error "START_ANALOG_TASK_MONITORING, MAIN_ANALOG_INPUTS_TASK__MONITOR_IN() and MAIN_ANALOG_INPUTS_
+ 108:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif
+ 109:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****              
+ 110:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif /* !defined(MAIN_ANALOG_INPUTS_TASK__MONITOR_IN) && !defined(MAIN_ANALOG_INPUTS_TASK__MONITO
+ 111:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 112:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 113:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 114:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @name Debug Configuration
+ 115:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \par Properties
+ 116:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** Not mandatory. If not defined they assume the default values
+ 117:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 118:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** In order to save ram and flash this options should be disabled.
+ 119:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \code
+ 120:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define ANALOG_INPUTS_TASK_DEBUG                (1)
+ 121:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define ANALOG_INPUTS_TASK_DURATION             (1)
+ 122:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define ANALOG_INPUTS_TASK_DELAY_ON_ZC          (1)
+ 123:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define ANALOG_INPUTS_TASK_TUNING               (1)
+ 124:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \endcode
+ 125:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 126:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 127:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if !defined(ANALOG_INPUTS_TASK_DEBUG)
+ 128:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 129:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /** Debug enable
+ 130:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \li 0: all debug features disabled
+ 131:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \li 1: allows to enable the debug level for ANALOG_INPUTS_TASK_DURATION, ANALOG_INPUTS_TASK_DELAY_O
+ 132:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** ANALOG_INPUTS_TASK_TUNING
+ 133:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 134:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define ANALOG_INPUTS_TASK_DEBUG                (1)
+ 135:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif
+ 136:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if !defined(ANALOG_INPUTS_TASK_DURATION)
+ 137:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /** Measurement of the duration of the task
+ 138:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \li 0: disabled
+ 139:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \li 1: enabled
+ 140:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 141:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** If enabled defines:
+ 142:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \li Main_AnalogInputsTask_Duration_Init
+ 143:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \li Main_AnalogInputsTask_Duration_End
+ 144:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \li Main_AnalogInputsTask_Duration_Start
+ 145:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 146:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define ANALOG_INPUTS_TASK_DURATION             (1)
+ 147:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif
+ 148:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 149:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if !defined(ANALOG_INPUTS_TASK_DELAY_ON_ZC)
+ 150:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /** delay measurement of the activation of the task in [us] 
+ 151:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \li 0: disabled
+ 152:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \li 1: enabled
+ 153:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 154:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** If enabled defines:
+ 155:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \li Main_AnalogInputsTask_DelayOnZC_Init
+ 156:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \li Main_AnalogInputsTask_DelayOnZC_SetRef
+ 157:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \li Main_AnalogInputsTask_DelayOnZC_GetTiming
+ 158:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 159:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define ANALOG_INPUTS_TASK_DELAY_ON_ZC          (1)
+ 160:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif
+ 161:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 162:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if !defined(ANALOG_INPUTS_TASK_TUNING)
+ 163:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /** Allows dynamic correction of the delay of the activation of the task in [us]. This options prov
+ 164:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** variable AnalogInputsTuning that allows the correction of delay the task activation.
+ 165:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 166:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** Once the system is tuned, it is good practice apply the value to the property MAIN_ANALOG_INPUTS_AC
+ 167:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** in order to save ram.
+ 168:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****  
+ 169:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \li 0: disabled
+ 170:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \li 1: enabled
+ 171:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 172:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** If enabled defines:
+ 173:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \li Main_AnalogInputsTask_Tuning_Init 
+ 174:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \li Main_AnalogInputsTask_Tuning_Tuner
+ 175:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 176:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define ANALOG_INPUTS_TASK_TUNING               (1)
+ 177:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif
+ 178:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 179:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 180:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 181:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 182:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 183:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 184:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @name Static Tuning
+ 185:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \par Properties
+ 186:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** Not mandatory. If not defined it assumes the default value
+ 187:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \code
+ 188:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define ANALOG_INPUTS_ACTIVATION_TUNING_VAL         (0)
+ 189:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \endcode
+ 190:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \attention Used only if \ref ANALOG_INPUTS_TASK_DEBUG is defined as 0, otherwise 
+ 191:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** dynamic correction is available.
+ 192:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 193:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 194:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 195:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #ifndef MAIN_ANALOG_INPUTS_ACTIVATION_TUNING_VAL
+ 196:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 197:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** Signed static delay correction in [us] analog task activation
+ 198:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \par Type
+ 199:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** Type: OS_I32
+ 200:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 201:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_INPUTS_ACTIVATION_TUNING_VAL             (0)
+ 202:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif  /* ANALOG_INPUTS_OFFSET_ACTIVATION */
+ 203:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 204:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /*}@*/
+ 205:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* *************************** */
+ 206:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* Typedef, Structs and Unions */
+ 207:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* *************************** */
+ 208:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 209:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* **************************** */
+ 210:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* Prototype of local functions */
+ 211:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* **************************** */
+ 212:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 213:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* ********* */
+ 214:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* Variables */
+ 215:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* ********* */
+ 216:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 217:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* Global */
+ 218:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 219:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* Static */
+ 220:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 221:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @name Service variables
+ 222:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 223:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 224:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /** Task Stack */
+ 225:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static STACK_SEC OS_STACKPTR int  Main_AnalogInputsTaskStack[CONFIG_MAIN_ANALOGINPUTS_TASK_STACK_SI
+ 226:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 227:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /** Task Control Block*/
+ 228:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static OS_TASK          Main_AnalogInputsTaskTCB;
+ 229:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 230:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /** high resolution Alarm */
+ 231:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static OS_ALARM         Main_AlmMeasureAnalog;
+ 232:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 233:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /** Global event that signals Ref is good. */
+ 234:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static OS_EVENT         Main_AnalogRef_Event;
+ 235:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 236:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 237:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if defined(CONFIG_MAIN_ANALOG_INPUTS_STACK_MONITOR)
+ 238:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static 	TOOLS_STACKUSAGE_MONITOR	Main_AnalogInputsStackMonitor;
+ 239:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif
+ 240:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 241:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 242:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @name Debug - Delay measurement
+ 243:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 244:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 245:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if     MAIN_ANALOG_INPUTS_TASK_DEBUG
+ 246:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 247:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if     MAIN_ANALOG_INPUTS_TASK_DELAY_ON_ZC
+ 248:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /** task delay in [us]
+ 249:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \attention Available only if \ref MAIN_ANALOG_INPUTS_TASK_DEBUG and MAIN_ANALOG_INPUTS_TASK_DELAY_O
+ 250:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** defined as 1.
+ 251:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 252:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static  TOOLS_TIMING    AnalogInputsDelayOnZC;
+ 253:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif  /* ANALOG_INPUTS_TASK_DELAY_ON_ZC */
+ 254:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 255:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 256:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 257:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 258:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @name Debug - Duration measurement
+ 259:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 260:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 261:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if     MAIN_ANALOG_INPUTS_TASK_DURATION
+ 262:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /** task duration in [us]
+ 263:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \attention Available only if \ref MAIN_ANALOG_INPUTS_TASK_DEBUG and MAIN_ANALOG_INPUTS_TASK_DURATIO
+ 264:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** defined as 1.
+ 265:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 266:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static  TOOLS_TIMING    AnalogInputsDuration;
+ 267:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /** statistics about task duration [us]
+ 268:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \attention Available only if \ref MAIN_ANALOG_INPUTS_TASK_DEBUG and MAIN_ANALOG_INPUTS_TASK_DURATIO
+ 269:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** defined as 1.
+ 270:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 271:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static  TOOLS_TIMING_STATS  AnalogInputsTaskDurationStat;
+ 272:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif  /* MAIN_ANALOG_INPUTS_TASK_DURATION */
+ 273:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 274:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 275:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 276:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @name Debug - Dynamic Tuning
+ 277:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 278:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 279:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if     MAIN_ANALOG_INPUTS_TASK_TUNING
+ 280:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /** Dynamic delay correction in [us] of the task activation
+ 281:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \attention Available only if \ref MAIN_ANALOG_INPUTS_TASK_DEBUG and MAIN_ANALOG_INPUTS_TASK_TUNING 
+ 282:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** defined as 1.
+ 283:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 284:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static  OS_I32  AnalogInputsTuning;
+ 285:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif /* MAIN_ANALOG_INPUTS_TASK_ACTIVATION_TUNING */
+ 286:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 287:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif  /* MAIN_ANALOG_INPUTS_TASK_DEBUG */
+ 288:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 289:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 290:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 291:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 292:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* ******************* */
+ 293:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* Functions Prototype */
+ 294:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* ******************* */
+ 295:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 296:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* Exported function */
+ 297:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 298:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 299:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* Local Function */
+ 300:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 301:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static void AlmAnalogCallback ( void );
+ 302:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static void Main_AnalogInputsTask ( void );
+ 303:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 304:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 305:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 306:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @name Debug - Delay measurement
+ 307:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** They are called by framework to measure the delay between the event and the intant of the task acti
+ 308:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 309:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 310:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 311:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /*lint -idlen(60) */
+ 312:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /*lint -esym(621,Main_AnalogInputsTask_DelayOnZC_GetTiming)*/
+ 313:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /*lint -esym(621,Main_AnalogInputsTask_DelayOnZC_SetRef)*/
+ 314:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 315:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 316:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if     MAIN_ANALOG_INPUTS_TASK_DEBUG   &&   MAIN_ANALOG_INPUTS_TASK_DELAY_ON_ZC
+ 317:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static void Main_AnalogInputsTask_DelayOnZC_Init ( void );
+ 318:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static void Main_AnalogInputsTask_DelayOnZC_SetRef ( void );
+ 319:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static void Main_AnalogInputsTask_DelayOnZC_GetTiming ( void );
+ 320:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #else
+ 321:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define Main_AnalogInputsTask_DelayOnZC_Init()
+ 322:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define Main_AnalogInputsTask_DelayOnZC_SetRef()
+ 323:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define Main_AnalogInputsTask_DelayOnZC_GetTiming()
+ 324:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif /* MAIN_ANALOG_INPUTS_TASK_DEBUG   &&   MAIN_ANALOG_INPUTS_TASK_DELAY_ON_ZC */
+ 325:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 326:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 327:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 328:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 329:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @name Debug - Duration Measurement
+ 330:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** They are called by framework to measure the task duration
+ 331:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 332:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 333:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 334:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if     MAIN_ANALOG_INPUTS_TASK_DEBUG   &&   MAIN_ANALOG_INPUTS_TASK_DURATION
+ 335:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInputsTask_Duration_Init ( void );
+ 336:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInputsTask_Duration_Start ( void );
+ 337:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInputsTask_Duration_End ( void );
+ 338:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #else
+ 339:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define Main_AnalogInputsTask_Duration_Init()
+ 340:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define Main_AnalogInputsTask_Duration_Start()
+ 341:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define Main_AnalogInputsTask_Duration_End()
+ 342:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif /* MAIN_ANALOG_INPUTS_TASK_DEBUG   &&   MAIN_ANALOG_INPUTS_TASK_DURATION */
+ 343:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 344:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 345:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 346:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 347:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @name Debug - Dynamic Tuning
+ 348:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** They are called by framework to apply the correction to the delay.
+ 349:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 350:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 351:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if     MAIN_ANALOG_INPUTS_TASK_DEBUG   &&   MAIN_ANALOG_INPUTS_TASK_TUNING
+ 352:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInputsTask_Tuning_Init ( void );
+ 353:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** OS_I32 Main_AnalogInputsTask_Tuner ( OS_U32 usOffset );
+ 354:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #else
+ 355:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define Main_AnalogInputsTask_Tuning_Init()
+ 356:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #define Main_AnalogInputsTask_Tuner(dummy)     ((OS_I32)MAIN_ANALOG_INPUTS_ACTIVATION_TUNING_VAL)
+ 357:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif /* MAIN_ANALOG_INPUTS_TASK_DEBUG   &&   MAIN_ANALOG_INPUTS_TASK_TUNING */
+ 358:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 359:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 360:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 361:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 362:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* *************** */
+ 363:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* Function Bodies */
+ 364:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* *************** */
+ 365:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 366:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* Exported function */
+ 367:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 368:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @name APIs
+ 369:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \page APIs APIs
+ 370:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 371:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 372:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 373:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 374:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** Analog inputs service initialization.
+ 375:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** It creates task Main_AnalogInputsTask and the high resolution alarm.
+ 376:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** If debug (\ref ANALOG_INPUTS_TASK_DEBUG and \ref ANALOG_INPUTS_TASK_DELAY_ON_ZC or
+ 377:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \ref ANALOG_INPUTS_TASK_DURATION or \ref ANALOG_INPUTS_TASK_TUNING) is enabled
+ 378:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** initializes tools for timing measurement.
+ 379:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 380:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInit ( void )
+ 381:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 382:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	OS_CREATETASK ( &Main_AnalogInputsTaskTCB,
+ 383:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 					"AnalogInputsTask",
+ 384:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 					Main_AnalogInputsTask,
+ 385:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 					( OS_U8 ) MAIN_ANALOG_TASK_PRIORITY,
+ 386:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 					Main_AnalogInputsTaskStack );
+ 387:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	OS_CreateAlarm ( &Main_AlmMeasureAnalog, AlmAnalogCallback, ( OS_U32 ) 0, ( OS_U32 ) 0 );
+ 388:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	OS_EVENT_Create ( &Main_AnalogRef_Event );
+ 389:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	Main_AnalogInputsTask_DelayOnZC_Init();
+ 390:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	Main_AnalogInputsTask_Duration_Init();
+ 391:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	Main_AnalogInputsTask_Tuning_Init();
+ 392:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if defined(CONFIG_MAIN_ANALOG_INPUTS_STACK_MONITOR)
+ 393:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	Tools_CreateTaskStackMonitor(&Main_AnalogInputsTaskTCB, &Main_AnalogInputsStackMonitor);
+ 394:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif
+ 395:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** }
+ 396:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 397:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 398:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 399:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****     If 'Ref' is good sets Main_AnalogRef_Event to signaled state.
+ 400:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****     Calls LIB_ADC_Is_Ref_Good.
+ 401:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 402:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogRefMonitor ( void )
+ 403:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 404:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	if ( LIB_ADC_Is_Ref_Good() )
+ 405:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	{
+ 406:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		OS_EVENT_Set ( &Main_AnalogRef_Event );
+ 407:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	}
+ 408:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	else
+ 409:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	{
+ 410:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		OS_EVENT_Reset ( &Main_AnalogRef_Event );
+ 411:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	}
+ 412:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** }
+ 413:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 414:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 415:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 416:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****     If 'Ref' is good sets Main_AnalogRef_Event to signaled state.
+ 417:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****     Calls LIB_ADC_Is_Ref_Good.
+ 418:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 419:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** uint8_t Main_Analog_IsRefOk ( void )
+ 420:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 421:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	return OS_EVENT_Get ( &Main_AnalogRef_Event );
+ 422:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** }
+ 423:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 424:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 425:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 426:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** Resumes task
+ 427:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 428:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** void Main_ActivateAnalogInputs ( void )
+ 429:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 430:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	if ( OS_GetSuspendCnt ( &Main_AnalogInputsTaskTCB ) > 0 )
+ 431:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	{
+ 432:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		OS_Resume ( &Main_AnalogInputsTaskTCB );
+ 433:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	}
+ 434:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** }
+ 435:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 436:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 437:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** Sets the Alarm on high resolution timer for analog task
+ 438:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 439:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \param [in] usOffset alarm expiration in microseconds
+ 440:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \attention For sync readings it must bel called in sync with ZC.
+ 441:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 442:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \author 	Roberto Fioravanti
+ 443:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \date		29/03/2011
+ 444:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \version	1.0.0
+ 445:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 446:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** void Main_ScheduleAnalogMeasure ( OS_U32 usOffset, OS_U32 TickRef )
+ 447:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 448:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****     OS_ALARM_TICK ref = (OS_ALARM_TICK)TickRef;	
+ 449:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	usOffset += Main_AnalogInputsTask_Tuner ( usOffset );
+ 450:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	if(OS_IsTask(&Main_AnalogInputsTaskTCB))
+ 451:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****     {
+ 452:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****         OS_START_ABSALARM_ONESHOT ( &Main_AlmMeasureAnalog, usOffset, &ref );
+ 453:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****     }
+ 454:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	Main_AnalogInputsTask_DelayOnZC_SetRef();
+ 455:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** }
+ 456:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 457:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 458:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 459:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 460:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 461:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 462:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /* Local Functions */
+ 463:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 464:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 465:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** @name Local functions
+ 466:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 467:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 468:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 469:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 470:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** normal Non-preemptable periodic task for ADC channels readings.
+ 471:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** When its activity has been completed the task suspends itself, waiting for the next alamr expiratio
+ 472:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \warning	none
+ 473:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 474:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \author 	Roberto Fioravanti
+ 475:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \date		29/03/2011
+ 476:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \version	1.0.0
+ 477:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 478:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \note		\par \b Note 1:
+ 479:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 			documentation by Roberto Fioravanti
+ 480:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 481:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 482:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static void Main_AnalogInputsTask ( void )
+ 483:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+   9                             		.loc 1 483 0
+ 484:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	START_ANALOG_TASK_MONITORING();
+  10                             		.loc 1 484 0
+  11 0000 66 11                   		mov	#1, r1
+  12 0002 75 42 1E                		mov	#30, r2
+  13 0005 66 03                   		mov.L	#0, r3
+  14 0007 05 00 00 00             		bsr	_LIB_TaskMonitoringConfig
+  15                             	.LVL0:
+  16 000b 03                      		.balign 2,3,1
+  17                             	.L3:
+ 485:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	while ( 1 )
+ 486:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	{
+ 487:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		TRACE_CPU_IDLE_END();
+ 488:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 489:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		OS_Suspend ( (OS_TASK*)NULL );
+  18                             		.loc 1 489 0
+  19 000c 66 01                   		mov.L	#0, r1
+  20 000e 05 00 00 00             		bsr	_OS_Suspend
+  21                             	.LVL1:
+ 490:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****         MAIN_ANALOG_TASK_TRACE_BEGIN();
+ 491:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		/*OS_EnterRegion();*/
+ 492:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		/* here the scheduler is switched off */
+ 493:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		/* debug: begin */
+ 494:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		Main_AnalogInputsTask_DelayOnZC_GetTiming();
+ 495:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		Main_AnalogInputsTask_Duration_Start();
+ 496:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		/* debug: end */
+ 497:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		MAIN_ANALOG_INPUTS_TASK__MONITOR_IN()
+  22                             		.loc 1 497 0
+  23 0012 66 12                   		mov.L	#1, r2
+  24 0014 66 11                   		mov	#1, r1
+  25 0016 05 00 00 00             		bsr	_LIB_SetTask
+  26                             	.LVL2:
+  27 001a 66 11                   		mov	#1, r1
+  28 001c 05 00 00 00             		bsr	_LIB_TaskStartActivity
+  29                             	.LVL3:
+ 498:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #ifdef CONFIG_PM_ANALOG_FEEDBACKS_SUPPORT
+ 499:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		PM_AnalogFeedbackManager();
+  30                             		.loc 1 499 0
+  31 0020 05 00 00 00             		bsr	_PM_AnalogFeedbackManager
+  32                             	.LVL4:
+ 500:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif /* CONFIG_PM_ANALOG_FEEDBACKS_SUPPORT*/
+ 501:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		LIB_ADC_Manager();
+  33                             		.loc 1 501 0
+  34 0024 05 00 00 00             		bsr	_LIB_ADC_Manager
+  35                             	.LVL5:
+ 502:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		ANALOG_INPUT_TASK__BODY ( 1 );
+  36                             		.loc 1 502 0
+  37 0028 66 11                   		mov	#1, r1
+  38 002a 05 00 00 00             		bsr	_LIB_Backup_CheckIfIsTimeToBackup
+  39                             	.LVL6:
+  40 002e 61 11                   		cmp	#1, r1
+  41 0030 21 06                   		bne	.L2
+  42                             		.loc 1 502 0 is_stmt 0 discriminator 1
+  43 0032 05 00 00 00             		bsr	_Main_ActivateBackup
+  44                             	.LVL7:
+  45                             		.balign 2,3,1
+  46                             	.L2:
+ 503:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		MAIN_ANALOG_INPUTS_TASK__MONITOR_OUT()
+  47                             		.loc 1 503 0 is_stmt 1
+  48 0036 66 11                   		mov	#1, r1
+  49 0038 05 00 00 00             		bsr	_LIB_TaskEndActivity
+  50                             	.LVL8:
+ 504:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		/* debug: begin */
+ 505:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		Main_AnalogInputsTask_Duration_End();
+ 506:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		/* debug: end */
+ 507:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		/*OS_LeaveRegion();*/
+ 508:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		/* here the scheduler is switched on */
+ 509:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****         MAIN_ANALOG_TASK_TRACE_END();
+ 510:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	}
+  51                             		.loc 1 510 0
+  52 003c 2E D0                   		bra	.L3
+  53                             	.LFE5:
+  55                             		.section	.rodata.str1.1,"aMS",@progbits,1
+  56                             	.LC0:
+  57 0000 41 6E 61 6C 6F 67 49 6E 		.string	"AnalogInputsTask"
+  57      70 75 74 73 54 61 73 6B 
+  57      00 
+  58                             		.section	.text.Main_AnalogInit,"ax",@progbits
+  59                             		.global	_Main_AnalogInit
+  61                             	_Main_AnalogInit:
+  62                             	.LFB0:
+ 381:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+  63                             		.loc 1 381 0
+  64 0000 60 80                   		sub	#8, r0
+  65                             	.LCFI0:
+ 382:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	OS_CREATETASK ( &Main_AnalogInputsTaskTCB,
+  66                             		.loc 1 382 0
+  67 0002 F8 02 00 00 00 00       		mov.L	#_Main_AnalogInputsTaskStack, [r0]
+  68 0008 F9 0A 01 00 03          		mov.L	#0x300, 4[r0]
+  69 000d FB 12 00 00 00 00       		mov.L	#_Main_AnalogInputsTaskTCB, r1
+  70 0013 FB 22 00 00 00 00       		mov.L	#.LC0, r2
+  71 0019 75 43 46                		mov	#0x46, r3
+  72 001c FB 42 00 00 00 00       		mov.L	#_Main_AnalogInputsTask, r4
+  73 0022 05 00 00 00             		bsr	_OS_CreateTask_S
+  74                             	.LVL9:
+ 387:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	OS_CreateAlarm ( &Main_AlmMeasureAnalog, AlmAnalogCallback, ( OS_U32 ) 0, ( OS_U32 ) 0 );
+  75                             		.loc 1 387 0
+  76 0026 66 03                   		mov.L	#0, r3
+  77 0028 FB 12 00 00 00 00       		mov.L	#_Main_AlmMeasureAnalog, r1
+  78 002e FB 22 00 00 00 00       		mov.L	#_AlmAnalogCallback, r2
+  79 0034 EF 34                   		mov.L	r3, r4
+  80 0036 05 00 00 00             		bsr	_OS_CreateAlarm_
+  81                             	.LVL10:
+ 388:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	OS_EVENT_Create ( &Main_AnalogRef_Event );
+  82                             		.loc 1 388 0
+  83 003a FB 12 00 00 00 00       		mov.L	#_Main_AnalogRef_Event, r1
+ 395:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** }
+  84                             		.loc 1 395 0
+  85 0040 62 80                   		add	#8, r0
+ 388:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	OS_EVENT_Create ( &Main_AnalogRef_Event );
+  86                             		.loc 1 388 0
+  87 0042 04 00 00 00             		bra	_OS_EVENT_Create
+  88                             	.LVL11:
+  89                             	.LFE0:
+  91                             		.section	.text.Main_AnalogRefMonitor,"ax",@progbits
+  92                             		.global	_Main_AnalogRefMonitor
+  94                             	_Main_AnalogRefMonitor:
+  95                             	.LFB1:
+ 403:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+  96                             		.loc 1 403 0
+ 404:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	if ( LIB_ADC_Is_Ref_Good() )
+  97                             		.loc 1 404 0
+  98 0000 05 00 00 00             		bsr	_LIB_ADC_Is_Ref_Good
+  99                             	.LVL12:
+ 100 0004 61 01                   		cmp	#0, r1
+ 406:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		OS_EVENT_Set ( &Main_AnalogRef_Event );
+ 101                             		.loc 1 406 0
+ 102 0006 FB 12 00 00 00 00       		mov.L	#_Main_AnalogRef_Event, r1
+ 404:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	if ( LIB_ADC_Is_Ref_Good() )
+ 103                             		.loc 1 404 0
+ 104 000c 20 06                   		beq	.L7
+ 406:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		OS_EVENT_Set ( &Main_AnalogRef_Event );
+ 105                             		.loc 1 406 0
+ 106 000e 04 00 00 00             		bra	_OS_EVENT_Set
+ 107                             	.LVL13:
+ 108                             	.L7:
+ 410:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		OS_EVENT_Reset ( &Main_AnalogRef_Event );
+ 109                             		.loc 1 410 0
+ 110 0012 04 00 00 00             		bra	_OS_EVENT_Reset
+ 111                             	.LVL14:
+ 112                             	.LFE1:
+ 114                             		.section	.text.Main_Analog_IsRefOk,"ax",@progbits
+ 115                             		.global	_Main_Analog_IsRefOk
+ 117                             	_Main_Analog_IsRefOk:
+ 118                             	.LFB2:
+ 420:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 119                             		.loc 1 420 0
+ 421:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	return OS_EVENT_Get ( &Main_AnalogRef_Event );
+ 120                             		.loc 1 421 0
+ 121 0000 FB 12 00 00 00 00       		mov.L	#_Main_AnalogRef_Event, r1
+ 122 0006 04 00 00 00             		bra	_OS_EVENT_Get
+ 123                             	.LVL15:
+ 124                             	.LFE2:
+ 126                             		.section	.text.Main_ActivateAnalogInputs,"ax",@progbits
+ 127                             		.global	_Main_ActivateAnalogInputs
+ 129                             	_Main_ActivateAnalogInputs:
+ 130                             	.LFB3:
+ 429:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 131                             		.loc 1 429 0
+ 430:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	if ( OS_GetSuspendCnt ( &Main_AnalogInputsTaskTCB ) > 0 )
+ 132                             		.loc 1 430 0
+ 133 0000 FB 12 00 00 00 00       		mov.L	#_Main_AnalogInputsTaskTCB, r1
+ 134 0006 05 00 00 00             		bsr	_OS_GetSuspendCnt
+ 135                             	.LVL16:
+ 136 000a 5B 11                   		movu.B	r1, r1
+ 137 000c 61 01                   		cmp	#0, r1
+ 138 000e 20 0C                   		beq	.L9
+ 432:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		OS_Resume ( &Main_AnalogInputsTaskTCB );
+ 139                             		.loc 1 432 0
+ 140 0010 FB 12 00 00 00 00       		mov.L	#_Main_AnalogInputsTaskTCB, r1
+ 141 0016 04 00 00 00             		bra	_OS_Resume
+ 142                             	.LVL17:
+ 143                             	.L9:
+ 144 001a 02                      		rts
+ 145                             	.LFE3:
+ 147                             		.section	.text.AlmAnalogCallback,"ax",@progbits
+ 149                             	_AlmAnalogCallback:
+ 150                             	.LFB6:
+ 511:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** }
+ 512:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 513:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 514:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 515:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 516:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 517:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 518:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 519:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if MAIN_ANALOG_INPUTS_TASK_DEBUG   &&   MAIN_ANALOG_INPUTS_TASK_DELAY_ON_ZC
+ 520:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 521:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** Init Duration  measurement
+ 522:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 523:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static void Main_AnalogInputsTask_DelayOnZC_Init ( void )
+ 524:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 525:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	Tools_CreateTimingMeasure ( &AnalogInputsDelayOnZC );
+ 526:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** }
+ 527:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 528:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** Starts the delay measurement
+ 529:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 530:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static void Main_AnalogInputsTask_DelayOnZC_SetRef ( void )
+ 531:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 532:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	Tools_TimingSetRef ( &AnalogInputsDelayOnZC );
+ 533:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** }
+ 534:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 535:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 536:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** Stops the delay measurement
+ 537:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 538:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static void Main_AnalogInputsTask_DelayOnZC_GetTiming ( void )
+ 539:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 540:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	( void ) Tools_GetTiming ( &AnalogInputsDelayOnZC );
+ 541:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** }
+ 542:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif /* MAIN_ANALOG_INPUTS_TASK_DEBUG   &&   MAIN_ANALOG_INPUTS_TASK_DELAY_ON_ZC */
+ 543:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 544:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 545:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if MAIN_ANALOG_INPUTS_TASK_DEBUG && MAIN_ANALOG_INPUTS_TASK_DURATION
+ 546:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInputsTask_Duration_Init ( void )
+ 547:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 548:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	Tools_CreateTimingMeasure ( &AnalogInputsDuration );
+ 549:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	Tools_CreateTimingStats ( &AnalogInputsTaskDurationStat );
+ 550:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** }
+ 551:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 552:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInputsTask_Duration_Start ( void )
+ 553:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 554:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	Tools_TimingSetRef ( &AnalogInputsDuration );
+ 555:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** }
+ 556:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 557:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInputsTask_Duration_End ( void )
+ 558:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 559:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	Tools_ProcessValue ( &AnalogInputsTaskDurationStat, Tools_GetTiming ( &AnalogInputsDuration ) );
+ 560:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** }
+ 561:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif /* MAIN_ANALOG_INPUTS_TASK_DEBUG && MAIN_ANALOG_INPUTS_TASK_DURATION */
+ 562:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 563:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 564:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #if     MAIN_ANALOG_INPUTS_TASK_DEBUG && MAIN_ANALOG_INPUTS_TASK_TUNING
+ 565:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInputsTask_Tuning_Init ( void )
+ 566:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 567:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	AnalogInputsTuning = 0;
+ 568:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** }
+ 569:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 570:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** OS_I32 Main_AnalogInputsTask_Tuner ( OS_U32 usOffset )
+ 571:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 572:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	if ( AnalogInputsTuning < 0 )
+ 573:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	{
+ 574:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		if ( -AnalogInputsTuning > usOffset )
+ 575:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		{
+ 576:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 			AnalogInputsTuning = - ( ( OS_I32 ) usOffset );
+ 577:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 		}
+ 578:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	}
+ 579:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	
+ 580:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	return AnalogInputsTuning;
+ 581:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** }
+ 582:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** #endif /* MAIN_ANALOG_INPUTS_TASK_DEBUG && MAIN_ANALOG_INPUTS_TASK_TUNING */
+ 583:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 584:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 585:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 586:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** High resolution timer Alarm callback is called when Main_AlmMeasureAnalog expires.
+ 587:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** It resumes task Main_AnalogInputsTask
+ 588:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 
+ 589:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \author 	Roberto Fioravanti
+ 590:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \date		29/03/2011
+ 591:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** \version	1.0.0
+ 592:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** */
+ 593:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** static void AlmAnalogCallback ( void )
+ 594:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 151                             		.loc 1 594 0
+ 595:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	Main_ActivateAnalogInputs();
+ 152                             		.loc 1 595 0
+ 153 0000 04 00 00 00             		bra	_Main_ActivateAnalogInputs
+ 154                             	.LVL18:
+ 155                             	.LFE6:
+ 157                             		.section	.text.Main_ScheduleAnalogMeasure,"ax",@progbits
+ 158                             		.global	_Main_ScheduleAnalogMeasure
+ 160                             	_Main_ScheduleAnalogMeasure:
+ 161                             	.LFB4:
+ 447:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 162                             		.loc 1 447 0
+ 163                             	.LVL19:
+ 164 0000 6E 7A                   		pushm	r7-r10
+ 165                             	.LCFI1:
+ 166 0002 60 40                   		sub	#4, r0
+ 167                             	.LCFI2:
+ 447:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** {
+ 168                             		.loc 1 447 0
+ 169 0004 EF 1A                   		mov.L	r1, r10
+ 450:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	if(OS_IsTask(&Main_AnalogInputsTaskTCB))
+ 170                             		.loc 1 450 0
+ 171 0006 FB 12 00 00 00 00       		mov.L	#_Main_AnalogInputsTaskTCB, r1
+ 172                             	.LVL20:
+ 448:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****     OS_ALARM_TICK ref = (OS_ALARM_TICK)TickRef;	
+ 173                             		.loc 1 448 0
+ 174 000c D3 02                   		mov.W	r2, [r0]
+ 175                             	.LVL21:
+ 450:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** 	if(OS_IsTask(&Main_AnalogInputsTaskTCB))
+ 176                             		.loc 1 450 0
+ 177 000e 05 00 00 00             		bsr	_OS_IsTask
+ 178                             	.LVL22:
+ 179 0012 5B 11                   		movu.B	r1, r1
+ 180 0014 61 01                   		cmp	#0, r1
+ 181 0016 20 54                   		beq	.L12
+ 452:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****         OS_START_ABSALARM_ONESHOT ( &Main_AlmMeasureAnalog, usOffset, &ref );
+ 182                             		.loc 1 452 0
+ 183 0018 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 184                             	.LVL23:
+ 185 001c FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 186 0022 CD 7E 01                		mov.B	1[r7], r14
+ 187 0025 FB 12 00 00 00 00       		mov.L	#_Main_AlmMeasureAnalog, r1
+ 188 002b 62 1E                   		add	#1, r14
+ 189 002d C7 7E 01                		mov.B	r14, 1[r7]
+ 190 0030 05 00 00 00             		bsr	_OS_StopAlarm
+ 191                             	.LVL24:
+ 192 0034 FB 12 00 00 00 00       		mov.L	#_Main_AlmMeasureAnalog, r1
+ 193 003a 66 02                   		mov.L	#0, r2
+ 194 003c 05 00 00 00             		bsr	_OS_SetAlarmPeriod_
+ 195                             	.LVL25:
+ 196 0040 FB 12 00 00 00 00       		mov.L	#_Main_AlmMeasureAnalog, r1
+ 197 0046 EF A2                   		mov.L	r10, r2
+ 198 0048 05 00 00 00             		bsr	_OS_SetAlarmOffset_
+ 199                             	.LVL26:
+ 200 004c FB 12 00 00 00 00       		mov.L	#_Main_AlmMeasureAnalog, r1
+ 201 0052 EF 02                   		mov.L	r0, r2
+ 202 0054 05 00 00 00             		bsr	_OS_StartAbsAlarm
+ 203                             	.LVL27:
+ 204 0058 CD 7E 01                		mov.B	1[r7], r14
+ 205 005b 60 1E                   		sub	#1, r14
+ 206 005d C7 7E 01                		mov.B	r14, 1[r7]
+ 207 0060 5B EE                   		movu.B	r14, r14
+ 208 0062 61 0E                   		cmp	#0, r14
+ 209 0064 21 06                   		bne	.L12
+ 452:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c ****         OS_START_ABSALARM_ONESHOT ( &Main_AlmMeasureAnalog, usOffset, &ref );
+ 210                             		.loc 1 452 0 is_stmt 0 discriminator 1
+ 211 0066 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 212                             	.LVL28:
+ 213                             		.balign 2,3,2
+ 214                             	.L12:
+ 455:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_AnalogInputs.c **** }
+ 215                             		.loc 1 455 0 is_stmt 1
+ 216 006a 3F 7A 05                		rtsd	#20, r7-r10
+ 217                             	.LFE4:
+ 219 006d 03                      		.section	.bss.Main_AnalogInputsTaskTCB,"aw",@nobits
+ 220                             		.balign 4
+ 223                             	_Main_AnalogInputsTaskTCB:
+ 224 0000 00 00 00 00 00 00 00 00 		.zero	44
+ 224      00 00 00 00 00 00 00 00 
+ 224      00 00 00 00 00 00 00 00 
+ 224      00 00 00 00 00 00 00 00 
+ 224      00 00 00 00 00 00 00 00 
+ 225                             		.section	.osstack,"aw",@progbits
+ 226                             		.balign 4
+ 229                             	_Main_AnalogInputsTaskStack:
+ 230 0000 00 00 00 00 00 00 00 00 		.zero	768
+ 230      00 00 00 00 00 00 00 00 
+ 230      00 00 00 00 00 00 00 00 
+ 230      00 00 00 00 00 00 00 00 
+ 230      00 00 00 00 00 00 00 00 
+ 231                             		.section	.bss.Main_AlmMeasureAnalog,"aw",@nobits
+ 232                             		.balign 4
+ 235                             	_Main_AlmMeasureAnalog:
+ 236 0000 00 00 00 00 00 00 00 00 		.zero	20
+ 236      00 00 00 00 00 00 00 00 
+ 236      00 00 00 00 
+ 237                             		.section	.bss.Main_AnalogRef_Event,"aw",@nobits
+ 238                             		.balign 4
+ 241                             	_Main_AnalogRef_Event:
+ 242 0000 00 00 00 00 00 00 00 00 		.zero	8
+ 337                             	.Letext0:
+ 338                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 339                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 340                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_SecurityCheck/LIB_TaskMonitori
+ 341                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_AnalogFeedbacks/PM_AnalogFeedbac
+ 342                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Analog/Analog.h"
+ 343                             		.file 7 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Main.h"
+ 344                             		.file 8 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_BackUp/LIB_Backup.h"
+ 345                             		.file 9 "C:\\Workspace\\FW_Platform2_5\\trunk\\CFG_DishWasher\\CFG_Inertia/TaskMonitor_Cfg.h"
+ 346                             		.file 10 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Analog/AnalogExp.h"

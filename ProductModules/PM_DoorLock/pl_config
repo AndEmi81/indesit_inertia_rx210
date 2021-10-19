@@ -1,0 +1,161 @@
+#############################################################################
+#
+#	Platform 2 library configuration
+#
+#############################################################################
+
+menu "Configurazione Modulo Blocco Porta"
+  depends on PM_DOORLOCK
+
+	config CONSISTENCY_FILTER_MAX_CNT
+		int
+		default 20
+		range 2 200
+		prompt "filter for consistency stability x 20ms"
+		help
+			Filtro per stabilià della consistency
+
+	config MIN_ZC_STABILITY
+		int
+		default 100
+		range 2 200
+		prompt "filter for zc stability x 10ms"
+		help
+			Filtro per stabilià del segnale ZeroCrossing
+
+	config PM_DOORLOCK_MAX_ERRORS
+		int
+		default 20
+		range 2 100
+		prompt "Max diver errors"
+		help
+			Number of error filtered by the driver 
+			before declare consistency error 
+			
+
+	config DOORLOCK_WARNING_DOOR_DISABLE
+	    depends on PM_DOORLOCK 
+		bool "WARNING_DOOR_DISABLE"
+		default y
+		help
+			Disabilita la gestione del warning door. Usato nella configurazione della CK ( Forno )
+		
+	config ZC_ALWAYS_ON
+	    depends on PM_DOORLOCK &&  !PM_DOORLOCK_MR_ENABLE
+		bool "ZC always ON (Forno)"
+		default n
+		help
+			The ZC signal is preset also with the door open.
+			Usato nella configurazione del Forno, lo ZC è presente solo dopo aver chiuso il master rele delle ventole.
+	
+	config DOORLOCK_NO_FB
+	    depends on PM_DOORLOCK &&  !PM_DOORLOCK_MR_ENABLE
+		bool "Ignore FB (Motore a Collettore)"
+		default n
+		help
+			Circuito del FB in comune con quello del motore, si puo leggere il FB solo a motore spento.
+			Usato nella configurazione del motore a collettore. 
+	
+	
+	
+	config PM_DOORLOCK_PULSE_ENABLE
+	    depends on PM_DOORLOCK &&  !PM_DOORLOCK_MR_ENABLE
+		bool "Pulse driver"
+		help
+			Enables the driver for a doorlock pulse
+	  
+	menu "Pulses doorlock configuration"
+		depends on PM_DOORLOCK_PULSE_ENABLE
+					
+		config DL_PULSE_RETRY_ON_STABLE
+		    depends on PM_DOORLOCK
+			bool "DL_PULSE_RETRY_ON_STABLE"
+			default n
+			help
+				Abilita l'azione fare dei tentativi interni al modulo per riportarsi in stat
+		
+		config DL_PULSE_ZC_STABILITY_FILTER_ENABLED
+		    depends on PM_DOORLOCK
+			bool "DL_PULSE_ZC_STABILITY_FILTER_ENABLED"
+			default n
+			help
+				Enable the zc stability filter
+		
+				
+		config PM_DOORLOCK_PULSE_ZC_STABILITY_FILTER
+			depends on DOORLOCK_NO_FB || ZC_ALWAYS_ON || DL_PULSE_ZC_STABILITY_FILTER_ENABLED
+			int "Filter on init and retry x10ms"
+			default 200
+			range 2 250
+			help
+				ZC stability before init state or retry on stable		
+	endmenu
+
+	config PM_DOORLOCK_WAX_ENABLE
+		depends on PM_DOORLOCK &&  !PM_DOORLOCK_MR_ENABLE
+		bool "wax driver"
+		help
+		  Wax doorlock.
+		  expansion of the wax pushes a piston which locks the door
+	  
+	menu "WAX doorlock configuration"
+	depends on PM_DOORLOCK_WAX_ENABLE
+	
+		config PM_DOORLOCK_WAX_PARTIALIZE_LOAD
+		    depends on PM_DOORLOCK_WAX_ENABLE
+		    bool "Partialize load"
+		    default n
+		    help
+		        Partialize the load on the pin.
+		
+		config PM_DOORLOCK_WAX_MAX_BDR_TIME
+			int "filtro lunghezza buco di rete in unlock, x20ms"
+			default 500
+			help
+				Filtraggio buco di rete in apertura doorlock wax
+		
+		config PM_DOORLOCK_WAX_PARTIALIZE_LOAD_N_ON
+		  depends on PM_DOORLOCK_WAX_PARTIALIZE_LOAD
+			int "Numero cicli on"
+			default 2
+			help
+				Number of ON cycles
+		
+		config PM_DOORLOCK_WAX_PARTIALIZELOAD_LEN
+		  depends on PM_DOORLOCK_WAX_PARTIALIZE_LOAD
+			int "Number of cycles"
+			default 10
+			help
+				Number of cycles
+				
+		config DL_WAX_RETRY_ON_STABLE
+	    	depends on PM_DOORLOCK
+			bool "DL_WAX_RETRY_ON_STABLE"
+			default n
+			help
+			Abilita l'azione fare dei tentativi interni al modulo per riportarsi in stato stabile.		
+	
+	endmenu
+
+	config PM_DOORLOCK_MR_ENABLE
+		depends on PM_DOORLOCK
+		bool "DoorLock Impulse+Relay driver"
+		default n
+		help
+		  Impulsive DiirLock under the control of Relay with duble pin to enable it.
+
+	menu "DoorLock MR configuration"
+		depends on PM_DOORLOCK_MR_ENABLE
+	
+		config DL_MR_RETRY_ON_STABLE
+		    depends on PM_DOORLOCK_MR_ENABLE
+			bool "DL_MR_RETRY_ON_STABLE"
+			default n
+			help
+				Abilita l'azione fare dei tentativi interni al modulo per riportarsi nello stato richiesto.
+		
+
+	endmenu
+endmenu
+
+#############################################################################

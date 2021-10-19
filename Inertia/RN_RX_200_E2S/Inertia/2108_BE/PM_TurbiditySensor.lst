@@ -1,0 +1,2009 @@
+   1                             		.file	"PM_TurbiditySensor.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.PM_TurbSens_IdleEntry,"ax",@progbits
+   6                             	_PM_TurbSens_IdleEntry:
+   7                             	.LFB9:
+   8                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor/PM_TurbiditySens
+   1:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Copyright (c) 2013-2015, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \n
+   8:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \par		PM_TurbiditySensor
+   9:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \n			The aim of the Turbidity Sensor module is to provide an index of the transparency
+  10:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** of the water drain. To obtain that index it makes use of:
+  11:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c ****  	 	 	 - PWM channel that drives a LED
+  12:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c ****  	 	 	 - ADC channel driven by a photo-sensitive component coupled with the LED.
+  13:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  14:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c ****  	 	 	 The module provides the following operations:
+  15:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c ****  	 	 	 -   calibration: the module must find the PWM value so that
+  16:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c ****  	 	 	 the output from ADC reaches the nearest value to the reference.
+  17:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c ****  	 	 	 - acquisition: given a PWM, the module acquire the related ADC value.
+  18:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  19:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c ****  	 	 	 The period of the PWM is given as it depends on the features of the hw components.
+  20:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  21:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  22:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \n
+  23:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \n
+  24:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \file		PM_TurbiditySensor.c
+  25:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \ingroup	PM_TurbiditySensor
+  26:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \date		14/10/2013
+  27:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \author		Roberto Fioravanti
+  28:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \n
+  29:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+  30:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  31:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* ******** */
+  32:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Includes */
+  33:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* ******** */
+  34:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** #include "PM_TurbiditySensor.h"
+  35:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  36:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** #include "Analog.h"
+  37:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  38:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** #include "OCTPM_drv.h"
+  39:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** #include "OCDIO_drv.h"
+  40:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  41:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** #include "Tools.h"
+  42:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  43:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  44:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  45:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** #if defined(CONFIG_PM_TURBIDITY_SENSOR_SUPPORT)
+  46:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  47:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* ****************** */
+  48:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Defines and Macros */
+  49:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* ****************** */
+  50:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  51:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /**/
+  52:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** #define TURB_SENS_PWM_PERIOD 							1638400 /* given by period [ticks] x tick duration [ns] x presc
+  53:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  54:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Turbidity Sensor LLI settings macro*/
+  55:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** #define SF_TURBSENS_GET_MAXDELAY_RAW(_ptr)				MBGET(1, _ptr, delay)
+  56:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** #define SF_TURBSENS_GET_FLAGS(_ptr)						MBGET(1, _ptr, flags)
+  57:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** #define SF_TURBSENS_GET_POLARITY(_ptr)					BF_8_GET(MBGET(1, _ptr, flags), 0, 1)
+  58:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  59:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Events bit */
+  60:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** enum ePM_TurbSensInputsBmp
+  61:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+  62:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_TIME_TO_SETUP_AD=0,		/* 0 */
+  63:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_CORRECTION_EMPTY,			/* 1 */
+  64:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_AD_READY,					/* 2 */
+  65:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_INPUTS_NUM/* current maximum: 7 -> PM_TurbSensCalibFsmInType*/
+  66:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** };
+  67:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  68:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Actions bit */
+  69:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** enum ePM_TurbSensActionsBmp
+  70:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+  71:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_SETUP_AD_BIT=0,			/* 0 */
+  72:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_DONE_BIT,					/* 1 */
+  73:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_INIT_PWM_BIT,				/* 2 */
+  74:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_EVAL_PWM_BIT,				/* 3 */
+  75:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_BEFORE_SETUP_AD_BIT,		/* 4 */
+  76:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_ACQ_PWM_INIT,				/* 5 */
+  77:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_ACQ_DONE_BIT,				/* 6 */
+  78:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_ACTIONS_NUM/* current maximum: 16 -> PM_TurbSensCalibFsmOutType*/
+  79:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** };
+  80:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  81:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Sensor Calibration */
+  82:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** typedef enum ePM_TurbSensCalibState
+  83:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+  84:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Calibration */
+  85:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_CALIB_ENTRY=0,
+  86:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_CALIB_WAIT_FOR_AD_SETUP,
+  87:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_CALIB_WAIT_FOR_AD_READY,
+  88:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_CALIB_DONE,
+  89:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_CALIB_EXIT,
+  90:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  91:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Idle */
+  92:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_IDLE_ENTRY,
+  93:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_IDLE,
+  94:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_IDLE_EXIT,
+  95:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  96:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+  97:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Acquisition */
+  98:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_ACQ_ENTRY,
+  99:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_ACQ_WAIT_FOR_AD_READY,
+ 100:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_ACQ_DONE,
+ 101:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_ACQ_EXIT,
+ 102:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 103:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* End of states */
+ 104:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_STATE_NUM
+ 105:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }PM_TurbSensStateType;
+ 106:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 107:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 108:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Sensor Commands */
+ 109:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** typedef enum ePM_TurbSensCmd
+ 110:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 111:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_CMD_IDLE = 0,
+ 112:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_CMD_CALIBRATION,
+ 113:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_CMD_ACQUISITION,
+ 114:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /*End of commands Id */
+ 115:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_CMD_NUM,
+ 116:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TURB_SENS_CMD_UNDEFINED
+ 117:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }PM_TurbSensCmdType;
+ 118:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 119:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* general */
+ 120:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 121:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 122:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 123:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 124:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* *************************** */
+ 125:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Typedef, Structs and Unions */
+ 126:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* *************************** */
+ 127:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 128:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 129:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 130:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* general */
+ 131:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /*
+ 132:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Delay between PWM and AD conversion to start in ms.
+ 133:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Its definition is affected by the size of the field 'delay' in PM_TurbSensLLISettingsType:
+ 134:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** To define PM_TurbSensDelayType maximum allowed value of the field 'delay'.
+ 135:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+ 136:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** typedef	uint16_t PM_TurbSensDelayType;
+ 137:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 138:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /*
+ 139:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Flags: see 'flags' field documentation in PM_TurbSensLLISettingsType.
+ 140:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Its definition is affected by the size of the field 'flags' in PM_TurbSensLLISettingsType:
+ 141:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+ 142:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** typedef	uint8_t PM_TurbSensFlagsType;
+ 143:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 144:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 145:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* flow table */
+ 146:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Events bitmap */
+ 147:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** typedef 	uint8_t		PM_TurbSensFsmEventsBmpType;
+ 148:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Action bitmap*/
+ 149:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** typedef 	uint16_t	PM_TurbSensFsmActionsBmpType;
+ 150:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 151:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 152:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 153:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** typedef		IO_ErrorType (* pTurbSensCalibFsmStateProcessType)(PM_TurbSensStateType* pState, PM_TurbSe
+ 154:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** typedef		struct sPM_TurbSensCalibFsmConfig
+ 155:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 156:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	const pTurbSensCalibFsmStateProcessType 	pProcess;
+ 157:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }PM_TurbSensCalibFsmConfigType;
+ 158:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 159:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 160:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** typedef struct sPM_TurbSensFsm
+ 161:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 162:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensStateType						state;				/* state */
+ 163:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pTurbSensCalibFsmStateProcessType 			pStateProc;			/* state procedure */
+ 164:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }PM_TurbSensFsmType;
+ 165:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 166:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 167:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** typedef		struct sPM_TurbSensCmdToState
+ 168:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 169:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensStateType						state;
+ 170:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }PM_TurbSensCmdToStateType;
+ 171:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 172:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 173:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* TurbiditySensor */
+ 174:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** typedef struct sPM_TurbSens
+ 175:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 176:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	/*
+ 177:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pwm channel
+ 178:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	*/
+ 179:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ChannelType								pwm;
+ 180:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	/*
+ 181:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	current pwm val [ns], for calibration only
+ 182:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	*/
+ 183:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_TimingValueType							pwmVal;
+ 184:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	/*
+ 185:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	current pwm val [ns], for acquisition only
+ 186:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	*/
+ 187:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_TimingValueType							pwmAcq;
+ 188:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	/*
+ 189:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	current tuning value for pwm val [ns], for calibration only
+ 190:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	*/
+ 191:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_TimingValueType							pwmTuning;
+ 192:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	/*
+ 193:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	AD channel
+ 194:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	 */
+ 195:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ChannelType								ad;
+ 196:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	/*
+ 197:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	AD reference value for calibration
+ 198:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	*/
+ 199:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	ADC_ValueType								adref;
+ 200:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	/*
+ 201:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	delay before start acquisition
+ 202:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	*/
+ 203:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensDelayType						delay;
+ 204:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	/*
+ 205:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	LLI flags
+ 206:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	*/
+ 207:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensFlagsType						flags;
+ 208:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	/* current command */
+ 209:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensCmdType							cmd;
+ 210:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	/* next command */
+ 211:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensCmdType							cmdNext;
+ 212:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	/* fsm */
+ 213:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensFsmType							fsm;
+ 214:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	/*
+ 215:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	Interface
+ 216:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	*/
+ 217:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	bool8_t										acqReady;
+ 218:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	/* timer for timings: see delay */
+ 219:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	TOOLS_TIMER									timer;
+ 220:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }PM_TurbSensType;
+ 221:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 222:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 223:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 224:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 225:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 226:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* ******************* */
+ 227:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Functions Prototype */
+ 228:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* ******************* */
+ 229:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 230:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Local Function */
+ 231:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType	PM_TurbSens_InitPWM(IO_ChannelType chPWM, uint8_t options);
+ 232:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType	PM_TurbSens_DeInitPWM(IO_ChannelType chPWM);
+ 233:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 234:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Idle cmd  related state procedures prototypes */
+ 235:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType PM_TurbSens_IdleEntry (PM_TurbSensStateType* pState, PM_TurbSensFsmEventsBmpTyp
+ 236:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 237:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Calibration cmd related state procedures prototypes */
+ 238:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType PM_TurbSens_CalibEntry (PM_TurbSensStateType* pState, PM_TurbSensFsmEventsBmpTy
+ 239:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType PM_TurbSens_CalibWait4ADSetup (PM_TurbSensStateType* pState, PM_TurbSensFsmEven
+ 240:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType PM_TurbSens_CalibWait4ADReady (PM_TurbSensStateType* pState, PM_TurbSensFsmEven
+ 241:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType PM_TurbSens_CalibDone (PM_TurbSensStateType* pState, PM_TurbSensFsmEventsBmpTyp
+ 242:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 243:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Acquisition cmd related state procedures prototypes */
+ 244:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType PM_TurbSens_AcqEntry (PM_TurbSensStateType* pState, PM_TurbSensFsmEventsBmpType
+ 245:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType PM_TurbSens_AcqWait4ADReady (PM_TurbSensStateType* pState, PM_TurbSensFsmEvents
+ 246:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 247:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* ********* */
+ 248:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Variables */
+ 249:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* ********* */
+ 250:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Global */
+ 251:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 252:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Static */
+ 253:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static PM_TurbSensType	TurbiditySensors;	/* Turbidity sensor */
+ 254:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 255:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* State procedures
+ 256:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Each row reflects the value of PM_TurbSensStateType */
+ 257:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static const pTurbSensCalibFsmStateProcessType PM_TurbSensCalibFsmConfig[TURB_SENS_STATE_NUM]=
+ 258:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 259:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		/* Calibration */
+ 260:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		&PM_TurbSens_CalibEntry,			/* Calibration Entry state */
+ 261:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		&PM_TurbSens_CalibWait4ADSetup,		/* waits for AD setup */
+ 262:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		&PM_TurbSens_CalibWait4ADReady,		/* waits for AD ready */
+ 263:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		&PM_TurbSens_CalibDone,				/* Calibration done*/
+ 264:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		NULL,								/* Calibration Exit (unused)*/
+ 265:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		/* Idle */
+ 266:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		&PM_TurbSens_IdleEntry,				/* Idle Entry state */
+ 267:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		NULL,								/* Idle state (unused) */
+ 268:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		NULL,								/* Idle Exit (unused) */
+ 269:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		/* Acquisition */
+ 270:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		&PM_TurbSens_AcqEntry,				/* Acquisition Entry state */
+ 271:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		&PM_TurbSens_AcqWait4ADReady,		/* waits for AD ready */
+ 272:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		NULL,								/* Acquisition Done (unused) */
+ 273:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		NULL,								/* Acquisition Exit (unused)*/
+ 274:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 275:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** };
+ 276:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 277:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 278:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Entryes by command.
+ 279:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Each row reflects the value of PM_TurbSensCmdType
+ 280:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+ 281:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static const PM_TurbSensCmdToStateType PM_TurbSensCmdToState[TURB_SENS_CMD_NUM]=
+ 282:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 283:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{TURB_SENS_IDLE_ENTRY},				/* Idle cmd entry state */
+ 284:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{TURB_SENS_CALIB_ENTRY},			/* Calibration cmd entry state */
+ 285:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{TURB_SENS_ACQ_ENTRY}				/* Acquisition cmd entry state */
+ 286:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** };
+ 287:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 288:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 289:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 290:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* *************** */
+ 291:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Function Bodies */
+ 292:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* *************** */
+ 293:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 294:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Exported Functions */
+ 295:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 296:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /**
+ 297:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Input manager initialization for turbidity sensor
+ 298:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in]		chADC	AD channel
+ 299:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in]		chPWM	PWM channel
+ 300:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in]		pParam	pointer to Low Level Input (LLI) turidity sensor params structure PM_TurbSensLL
+ 301:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+ 302:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** void PM_TurbiditySensor_SetParam( IO_ChannelType chADC, IO_ChannelType pinPWM, PM_TurbSensLLISettin
+ 303:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 304:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensType* pSensor = &TurbiditySensors;
+ 305:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ModuleIOMapType* pPinStruct=0;
+ 306:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ChannelType tmrCh = 0xFF;
+ 307:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 308:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->ad = chADC;
+ 309:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	/* AD Channel has to be configured Automatic.
+ 310:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	 * Since setting file may have it not configured as is, force it
+ 311:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	 */
+ 312:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	LIB_ADC_ForceAutoRead(LIB_ADC_ADChVsAnalogInputParamIndex(chADC), TRUE);
+ 313:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 314:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->delay = SF_TURBSENS_GET_MAXDELAY_RAW(pParam)*20;
+ 315:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->flags = SF_TURBSENS_GET_FLAGS(pParam);
+ 316:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 317:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->cmd = TURB_SENS_CMD_UNDEFINED;
+ 318:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->cmdNext = TURB_SENS_CMD_IDLE;
+ 319:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 320:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->fsm.pStateProc = NULL;
+ 321:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->fsm.state=0xFF;
+ 322:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 323:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->acqReady=0;
+ 324:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 325:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pPinStruct =  (IO_ModuleIOMapType*) OCDIO_GetIOMapItem( pinPWM );
+ 326:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 327:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	if ( (pPinStruct ) && (OCTPM_GetChannelSync(pPinStruct,&tmrCh) == (IO_ErrorType)IO_E_OK ))
+ 328:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	{
+ 329:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if ( PM_TurbSens_InitPWM(tmrCh, pSensor->flags & 1) == (IO_ErrorType)IO_E_OK )
+ 330:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{
+ 331:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->acqReady |= 4;
+ 332:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->pwm = tmrCh;
+ 333:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		}
+ 334:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	}
+ 335:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 336:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 337:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /**
+ 338:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Starts calibration command
+ 339:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in]		val	AD reference value
+ 340:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+ 341:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** void PM_TurbiditySensor_StartCalib(ADC_ValueType val)
+ 342:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 343:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensType* pSensor = &TurbiditySensors;
+ 344:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 345:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->adref = val;
+ 346:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->cmdNext = TURB_SENS_CMD_CALIBRATION;
+ 347:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 348:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 349:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /**
+ 350:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Starts acquisition command
+ 351:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in]		val	PWM value
+ 352:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+ 353:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** void PM_TurbiditySensor_StartAcq(IO_TimingValueType val)
+ 354:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 355:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensType* pSensor = &TurbiditySensors;
+ 356:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 357:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->pwmAcq = val;
+ 358:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->cmdNext = TURB_SENS_CMD_ACQUISITION;
+ 359:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 360:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 361:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /**
+ 362:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** returns whether acquisition is ready
+ 363:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in]		val	AD reference value
+ 364:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+ 365:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** bool8_t PM_TurbiditySensor_AcqIsReady(void)
+ 366:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 367:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensType* pSensor = &TurbiditySensors;
+ 368:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 369:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	return (pSensor->acqReady & 1)?1:0;
+ 370:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 371:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 372:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /**
+ 373:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** returns the period of the PWM signal in ns
+ 374:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in]		val	AD reference value
+ 375:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+ 376:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** IO_TimingValueType PM_TurbiditySensor_GetPWMPeriod(void)
+ 377:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 378:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	return TURB_SENS_PWM_PERIOD;
+ 379:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 380:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /**
+ 381:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** returns whether acquisition is ready
+ 382:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [out]		pVal	pointer to  PWM value, updated if returned value is TRUE
+ 383:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 384:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \return TRUE	calibration ready
+ 385:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \return FALSE	calibration not ready
+ 386:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+ 387:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** bool8_t PM_TurbiditySensor_GetCalibration(IO_TimingValueType* pVal)
+ 388:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 389:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensType* pSensor = &TurbiditySensors;
+ 390:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	if(pVal)
+ 391:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	{
+ 392:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		*pVal = pSensor->pwmVal;
+ 393:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	}
+ 394:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 395:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	return (pSensor->acqReady & 2)? TRUE : FALSE;
+ 396:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 397:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 398:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /**
+ 399:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Turbidity sensor manager
+ 400:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+ 401:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** void PM_TurbiditySensor_Manager(void)
+ 402:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 403:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensType* pSensor = &TurbiditySensors;
+ 404:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensFsmEventsBmpType in = 0;
+ 405:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensFsmActionsBmpType out = 0;
+ 406:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType	error = IO_E_FAIL;
+ 407:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 408:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensStateType	state;
+ 409:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 410:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	ADC_ValueType	adVal = 0;
+ 411:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 412:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	if(pSensor->acqReady & 4)
+ 413:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	{
+ 414:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 415:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(pSensor->cmd != pSensor->cmdNext)
+ 416:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{
+ 417:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->cmd = pSensor->cmdNext;
+ 418:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->fsm.state = PM_TurbSensCmdToState[pSensor->cmd].state;
+ 419:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 420:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			if((pSensor->cmd == TURB_SENS_CMD_ACQUISITION) || pSensor->cmd == TURB_SENS_CMD_CALIBRATION)
+ 421:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			{
+ 422:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 				pSensor->acqReady &= 4;
+ 423:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			}
+ 424:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		}
+ 425:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 426:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		state = pSensor->fsm.state;
+ 427:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		pSensor->fsm.pStateProc = PM_TurbSensCalibFsmConfig[state];
+ 428:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 429:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		/*	evaluating inputs	*/
+ 430:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 431:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if( LIB_ADC_IsAnalogReady( LIB_ADC_ADChVsAnalogInputParamIndex(pSensor->ad) ))
+ 432:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{
+ 433:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			in |= BFMASK(TURB_SENS_AD_READY, 1);
+ 434:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			adVal = LIB_ADC_GetAnalogValue(LIB_ADC_AnalogChRamPos(pSensor->ad));
+ 435:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		}
+ 436:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 437:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(Tools_IsTimerElapsed ( &(pSensor->timer) , (OS_TIME)pSensor->delay))
+ 438:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{
+ 439:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			in |= BFMASK(TURB_SENS_TIME_TO_SETUP_AD, 1);
+ 440:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		}
+ 441:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 442:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(!pSensor->pwmTuning)
+ 443:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{
+ 444:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			in |= BFMASK(TURB_SENS_CORRECTION_EMPTY, 1);
+ 445:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		}
+ 446:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 447:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 448:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		/* state process */
+ 449:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(pSensor->fsm.pStateProc)
+ 450:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{
+ 451:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			error = (pSensor->fsm.pStateProc) (&state, in, &out);
+ 452:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		}
+ 453:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 454:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		/*	actions	*/
+ 455:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(out & BFMASK(TURB_SENS_INIT_PWM_BIT, 1))
+ 456:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{
+ 457:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			adVal=0;
+ 458:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 459:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->pwmVal = 0;
+ 460:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 461:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 462:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			/* whole range initialization: pwmAcq recycled to optimize demand of RAM */
+ 463:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->pwmAcq = TURB_SENS_PWM_PERIOD;
+ 464:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			/* tuning value initialization */
+ 465:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->pwmTuning = TURB_SENS_PWM_PERIOD/2 ;
+ 466:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		}
+ 467:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 468:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(out & BFMASK(TURB_SENS_EVAL_PWM_BIT, 1))
+ 469:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{
+ 470:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			/* eval PWM calib val */
+ 471:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 472:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			if(adVal < pSensor->adref)
+ 473:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			{
+ 474:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 				pSensor->pwmVal += pSensor->pwmTuning;
+ 475:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			}
+ 476:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			else
+ 477:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			{
+ 478:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 				pSensor->pwmVal -= pSensor->pwmTuning;
+ 479:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			}
+ 480:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 481:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			/* eval next tuning value taking into account the remaining range.
+ 482:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			available range is the current one minus current tuning: this takes into account
+ 483:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			the remainder of the division by two */
+ 484:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->pwmAcq -= pSensor->pwmTuning;
+ 485:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			/* next tuning is the remaining range divided by 2 */
+ 486:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->pwmTuning = pSensor->pwmAcq >> 1;
+ 487:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 488:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			/* enable PWM with Ton @ pSensor->pwmVal;  */
+ 489:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			if( PM_TurbSens_InitPWM(pSensor->pwm, pSensor->flags & 1) == (IO_ErrorType)IO_E_OK)
+ 490:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			{
+ 491:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 				OCPWM_SetSync(pSensor->pwm, pSensor->pwmVal);
+ 492:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			}
+ 493:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 494:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		}
+ 495:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 496:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 497:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(out & BFMASK(TURB_SENS_BEFORE_SETUP_AD_BIT, 1))
+ 498:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{
+ 499:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			/* start timeout before read AD */
+ 500:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			Tools_StartTimer ( &(pSensor->timer) );
+ 501:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		}
+ 502:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 503:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(out & BFMASK(TURB_SENS_SETUP_AD_BIT, 1))
+ 504:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{
+ 505:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			 LIB_ADC_InitMeasureForCh ( pSensor->ad );
+ 506:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		}
+ 507:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 508:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(out & BFMASK(TURB_SENS_DONE_BIT, 1))
+ 509:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{
+ 510:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->cmd = TURB_SENS_CMD_IDLE;
+ 511:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			OCPWM_DeInitSync(pSensor->pwm);
+ 512:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			/*OCPWM_SetSync(pSensor->pwm, 0);*/
+ 513:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->acqReady |= 2;
+ 514:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		}
+ 515:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 516:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(out & BFMASK(TURB_SENS_ACQ_PWM_INIT, 1))
+ 517:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{
+ 518:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			/* enable PWM with Ton @ pSensor->pwmAcq;  */
+ 519:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 520:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			if( PM_TurbSens_InitPWM(pSensor->pwm, pSensor->flags & 1) == (IO_ErrorType)IO_E_OK)
+ 521:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			{
+ 522:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 				OCPWM_SetSync(pSensor->pwm, pSensor->pwmAcq);
+ 523:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			}
+ 524:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		}
+ 525:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 526:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(out & BFMASK(TURB_SENS_ACQ_DONE_BIT, 1))
+ 527:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{
+ 528:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->cmd = TURB_SENS_CMD_IDLE;
+ 529:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->acqReady |= 1;
+ 530:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			OCPWM_DeInitSync(pSensor->pwm);
+ 531:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			/*OCPWM_SetSync(pSensor->pwm, 0);*/
+ 532:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		}
+ 533:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 534:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		pSensor->fsm.state = state; /* apply */
+ 535:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 536:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	}
+ 537:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 538:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 539:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 540:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /* Local Functions */
+ 541:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType	PM_TurbSens_InitPWM(IO_ChannelType chPWM, uint8_t options)
+ 542:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 543:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType err = (IO_ErrorType)IO_E_FAIL;
+ 544:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_PWM_CfgType PWM_ChCfg={0};
+ 545:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 546:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PWM_ChCfg.PWM_Id=chPWM;
+ 547:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PWM_ChCfg.dfltPeriod=TURB_SENS_PWM_PERIOD;  /*[ns] */
+ 548:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PWM_ChCfg.inverted = options & 1;
+ 549:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 550:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	if (OCPWM_InitSync(&PWM_ChCfg) == IO_E_OK)
+ 551:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	{
+ 552:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		err = (IO_ErrorType)IO_E_OK;
+ 553:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	}
+ 554:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 555:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	return err;
+ 556:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 557:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 558:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 559:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 560:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType	PM_TurbSens_DeInitPWM(IO_ChannelType chPWM)
+ 561:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 562:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType err = (IO_ErrorType)IO_E_FAIL;
+ 563:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 564:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	if (OCPWM_DeInitSync(chPWM) == IO_E_OK)
+ 565:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	{
+ 566:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		err = (IO_ErrorType)IO_E_OK;
+ 567:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	}
+ 568:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 569:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	return err;
+ 570:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 571:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 572:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /**
+ 573:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Entry point of idle FSM
+ 574:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** It goes immediately into TURB_SENS_IDLE without actions
+ 575:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 576:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in,out] pState	pointer to current state
+ 577:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in]		input flags
+ 578:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [out]	pointer to actions
+ 579:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+ 580:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType PM_TurbSens_IdleEntry (PM_TurbSensStateType* pState, PM_TurbSensFsmEventsBmpTyp
+ 581:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+   9                             		.loc 1 581 0
+  10                             	.LVL0:
+ 582:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType error = IO_E_FAIL;
+ 583:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensStateType	state = TURB_SENS_IDLE;
+ 584:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	if(pState)
+  11                             		.loc 1 584 0
+  12 0000 61 01                   		cmp	#0, r1
+  13 0002 17                      		beq	.L3
+ 585:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	{
+ 586:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		*pState = state;
+  14                             		.loc 1 586 0
+  15 0003 3E 10 06                		mov.L	#6, [r1]
+  16                             	.LVL1:
+ 587:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		error= (IO_ErrorType)IO_E_OK;
+  17                             		.loc 1 587 0
+  18 0006 66 01                   		mov	#0, r1
+  19                             	.LVL2:
+  20 0008 0C                      		bra	.L2
+  21                             	.LVL3:
+  22                             	.L3:
+ 582:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType error = IO_E_FAIL;
+  23                             		.loc 1 582 0
+  24 0009 75 41 1A                		mov	#26, r1
+  25                             	.LVL4:
+  26                             		.balign 2,3,2
+  27                             	.L2:
+ 588:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	}
+ 589:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	return error;
+ 590:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+  28                             		.loc 1 590 0
+  29 000c 75 21 1A                		and #26, r1
+  30                             	.LVL5:
+  31 000f 02                      		rts
+  32                             	.LFE9:
+  34                             		.section	.text.PM_TurbSens_CalibEntry,"ax",@progbits
+  36                             	_PM_TurbSens_CalibEntry:
+  37                             	.LFB10:
+ 591:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 592:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /**
+ 593:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Entry point of Calibration command FSM
+ 594:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** It goes immediately into TURB_SENS_CALIB_WAIT_FOR_AD_SETUP.
+ 595:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Actions:
+ 596:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** - PWM initialization
+ 597:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** - timer started up
+ 598:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 599:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in,out] pState	pointer to current state
+ 600:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in]		input flags
+ 601:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [out]	pointer to actions
+ 602:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+ 603:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType PM_TurbSens_CalibEntry (PM_TurbSensStateType* pState, PM_TurbSensFsmEventsBmpTy
+ 604:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+  38                             		.loc 1 604 0
+  39                             	.LVL6:
+ 605:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType error = IO_E_FAIL;
+ 606:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensStateType	state = TURB_SENS_CALIB_WAIT_FOR_AD_SETUP;
+ 607:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	if(pState)
+  40                             		.loc 1 607 0
+  41 0000 61 01                   		cmp	#0, r1
+  42 0002 20 0F                   		beq	.L6
+ 608:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	{
+ 609:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		/* TODO: PWM Init */
+ 610:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		*pOut |= BFMASK(TURB_SENS_BEFORE_SETUP_AD_BIT, 1)|BFMASK(TURB_SENS_INIT_PWM_BIT, 1)|BFMASK(TURB_S
+  43                             		.loc 1 610 0
+  44 0004 DC 3E                   		mov.W	[r3], r14
+  45 0006 75 3E 1C                		or	#28, r14
+  46 0009 D3 3E                   		mov.W	r14, [r3]
+ 611:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 612:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		*pState = state;
+  47                             		.loc 1 612 0
+  48 000b 3E 10 01                		mov.L	#1, [r1]
+  49                             	.LVL7:
+ 613:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		error= (IO_ErrorType)IO_E_OK;
+  50                             		.loc 1 613 0
+  51 000e 66 01                   		mov	#0, r1
+  52                             	.LVL8:
+  53 0010 0C                      		bra	.L5
+  54                             	.LVL9:
+  55                             	.L6:
+ 605:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType error = IO_E_FAIL;
+  56                             		.loc 1 605 0
+  57 0011 75 41 1A                		mov	#26, r1
+  58                             	.LVL10:
+  59                             		.balign 2,3,2
+  60                             	.L5:
+ 614:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	}
+ 615:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	return error;
+ 616:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+  61                             		.loc 1 616 0
+  62 0014 75 21 1A                		and #26, r1
+  63                             	.LVL11:
+  64 0017 02                      		rts
+  65                             	.LFE10:
+  67                             		.section	.text.PM_TurbSens_CalibWait4ADSetup,"ax",@progbits
+  69                             	_PM_TurbSens_CalibWait4ADSetup:
+  70                             	.LFB11:
+ 617:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 618:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /**
+ 619:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Waiting for AD setup
+ 620:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** it it's time to setup AD it goes into TURB_SENS_CALIB_WAIT_FOR_AD_READY to wait for AD acquisition.
+ 621:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Actions:
+ 622:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** - setup AD channel
+ 623:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 624:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in,out] pState	pointer to current state
+ 625:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in]		input flags
+ 626:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [out]	pointer to actions
+ 627:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+ 628:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType PM_TurbSens_CalibWait4ADSetup (PM_TurbSensStateType* pState, PM_TurbSensFsmEven
+ 629:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+  71                             		.loc 1 629 0
+  72                             	.LVL12:
+ 630:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType error = IO_E_FAIL;
+ 631:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensStateType	state = TURB_SENS_CALIB_WAIT_FOR_AD_SETUP;
+ 632:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 633:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	if(pState)
+  73                             		.loc 1 633 0
+  74 0000 61 01                   		cmp	#0, r1
+  75 0002 20 17                   		beq	.L10
+ 634:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	{
+ 635:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(in & (BFMASK(TURB_SENS_TIME_TO_SETUP_AD, 1)))
+  76                             		.loc 1 635 0
+  77 0004 FD 74 C2 01             		tst	#1, r2
+  78 0008 12                      		beq	.L11
+  79                             	.LVL13:
+ 636:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{
+ 637:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			state = TURB_SENS_CALIB_WAIT_FOR_AD_READY;
+ 638:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			*pOut |= BFMASK(TURB_SENS_SETUP_AD_BIT, 1);
+  80                             		.loc 1 638 0
+  81 0009 DC 3E                   		mov.W	[r3], r14
+  82 000b 78 0E                   		bset #0, r14
+  83 000d D3 3E                   		mov.W	r14, [r3]
+ 637:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			state = TURB_SENS_CALIB_WAIT_FOR_AD_READY;
+  84                             		.loc 1 637 0
+  85 000f 66 2E                   		mov.L	#2, r14
+  86 0011 0B                      		bra	.L9
+  87                             	.LVL14:
+  88                             	.L11:
+ 631:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensStateType	state = TURB_SENS_CALIB_WAIT_FOR_AD_SETUP;
+  89                             		.loc 1 631 0
+  90 0012 66 1E                   		mov.L	#1, r14
+  91                             	.LVL15:
+  92                             		.balign 2,3,1
+  93                             	.L9:
+ 639:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		}
+ 640:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 641:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		*pState = state;
+  94                             		.loc 1 641 0
+  95 0014 E3 1E                   		mov.L	r14, [r1]
+  96                             	.LVL16:
+ 642:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 643:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		error= (IO_ErrorType)IO_E_OK;
+  97                             		.loc 1 643 0
+  98 0016 66 01                   		mov	#0, r1
+  99                             	.LVL17:
+ 100 0018 0C                      		bra	.L8
+ 101                             	.LVL18:
+ 102                             	.L10:
+ 630:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType error = IO_E_FAIL;
+ 103                             		.loc 1 630 0
+ 104 0019 75 41 1A                		mov	#26, r1
+ 105                             	.LVL19:
+ 106                             		.balign 2,3,2
+ 107                             	.L8:
+ 644:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	}
+ 645:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	return error;
+ 646:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 108                             		.loc 1 646 0
+ 109 001c 75 21 1A                		and #26, r1
+ 110                             	.LVL20:
+ 111 001f 02                      		rts
+ 112                             	.LFE11:
+ 114                             		.section	.text.PM_TurbSens_CalibWait4ADReady,"ax",@progbits
+ 116                             	_PM_TurbSens_CalibWait4ADReady:
+ 117                             	.LFB12:
+ 647:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 648:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /**
+ 649:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Waiting for AD ready.
+ 650:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** If not available tuning and AD ready then it goes into TURB_SENS_CALIB_DONE, without doing any acti
+ 651:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** If AD ready then it goes into TURB_SENS_CALIB_WAIT_FOR_AD_SETUP
+ 652:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Actions:
+ 653:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** - timer started up
+ 654:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** - update tuning value
+ 655:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 656:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in,out] pState	pointer to current state
+ 657:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in]		input flags
+ 658:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [out]	pointer to actions
+ 659:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+ 660:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType PM_TurbSens_CalibWait4ADReady (PM_TurbSensStateType* pState, PM_TurbSensFsmEven
+ 661:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 118                             		.loc 1 661 0
+ 119                             	.LVL21:
+ 662:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType error = IO_E_FAIL;
+ 663:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensStateType	state = TURB_SENS_CALIB_WAIT_FOR_AD_READY;
+ 664:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensFsmEventsBmpType in2 = in & (BFMASK(TURB_SENS_CORRECTION_EMPTY, 1) | BFMASK(TURB_SENS_A
+ 665:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 666:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	if(pState)
+ 120                             		.loc 1 666 0
+ 121 0000 61 01                   		cmp	#0, r1
+ 122 0002 20 21                   		beq	.L15
+ 667:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	{
+ 668:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(in2 == (BFMASK(TURB_SENS_CORRECTION_EMPTY, 1) | BFMASK(TURB_SENS_AD_READY, 1)))
+ 123                             		.loc 1 668 0
+ 124 0004 64 62                   		and #6, r2
+ 125                             	.LVL22:
+ 126 0006 61 62                   		cmp	#6, r2
+ 127 0008 20 10                   		beq	.L16
+ 669:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{
+ 670:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			state = TURB_SENS_CALIB_DONE;
+ 671:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		}
+ 672:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		else if (in2 == BFMASK(TURB_SENS_AD_READY, 1))
+ 128                             		.loc 1 672 0
+ 129 000a 61 42                   		cmp	#4, r2
+ 130 000c 21 0F                   		bne	.L17
+ 673:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{
+ 674:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			*pOut |= BFMASK(TURB_SENS_BEFORE_SETUP_AD_BIT, 1)|BFMASK(TURB_SENS_EVAL_PWM_BIT, 1);
+ 131                             		.loc 1 674 0
+ 132 000e DC 3E                   		mov.W	[r3], r14
+ 133 0010 75 3E 18                		or	#24, r14
+ 134 0013 D3 3E                   		mov.W	r14, [r3]
+ 135                             	.LVL23:
+ 675:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			state = TURB_SENS_CALIB_WAIT_FOR_AD_SETUP;
+ 136                             		.loc 1 675 0
+ 137 0015 66 1E                   		mov.L	#1, r14
+ 138 0017 0F                      		bra	.L14
+ 139                             	.LVL24:
+ 140                             	.L16:
+ 670:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			state = TURB_SENS_CALIB_DONE;
+ 141                             		.loc 1 670 0
+ 142 0018 66 3E                   		mov.L	#3, r14
+ 143 001a 0C                      		bra	.L14
+ 144                             	.L17:
+ 663:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensStateType	state = TURB_SENS_CALIB_WAIT_FOR_AD_READY;
+ 145                             		.loc 1 663 0
+ 146 001b 66 2E                   		mov.L	#2, r14
+ 147                             	.LVL25:
+ 148 001d 03                      		.balign 2,3,1
+ 149                             	.L14:
+ 676:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		}
+ 677:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		*pState = state;
+ 150                             		.loc 1 677 0
+ 151 001e E3 1E                   		mov.L	r14, [r1]
+ 152                             	.LVL26:
+ 678:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		error= (IO_ErrorType)IO_E_OK;
+ 153                             		.loc 1 678 0
+ 154 0020 66 01                   		mov	#0, r1
+ 155                             	.LVL27:
+ 156 0022 0C                      		bra	.L13
+ 157                             	.LVL28:
+ 158                             	.L15:
+ 662:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType error = IO_E_FAIL;
+ 159                             		.loc 1 662 0
+ 160 0023 75 41 1A                		mov	#26, r1
+ 161                             	.LVL29:
+ 162                             		.balign 2,3,2
+ 163                             	.L13:
+ 679:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	}
+ 680:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	return error;
+ 681:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 164                             		.loc 1 681 0
+ 165 0026 75 21 1A                		and #26, r1
+ 166                             	.LVL30:
+ 167 0029 02                      		rts
+ 168                             	.LFE12:
+ 170                             		.section	.text.PM_TurbSens_CalibDone,"ax",@progbits
+ 172                             	_PM_TurbSens_CalibDone:
+ 173                             	.LFB13:
+ 682:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 683:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /**
+ 684:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Calibration done
+ 685:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Exit pseudo state
+ 686:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Actions:
+ 687:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** - Calibration done
+ 688:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 689:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in,out] pState	pointer to current state
+ 690:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in]		input flags
+ 691:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [out]	pointer to actions
+ 692:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+ 693:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType PM_TurbSens_CalibDone (PM_TurbSensStateType* pState, PM_TurbSensFsmEventsBmpTyp
+ 694:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 174                             		.loc 1 694 0
+ 175                             	.LVL31:
+ 695:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType error = IO_E_FAIL;
+ 696:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	if(pState)
+ 176                             		.loc 1 696 0
+ 177 0000 61 01                   		cmp	#0, r1
+ 178 0002 12                      		beq	.L20
+ 697:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	{
+ 698:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		*pOut |= BFMASK(TURB_SENS_DONE_BIT, 1);
+ 179                             		.loc 1 698 0
+ 180 0003 DC 3E                   		mov.W	[r3], r14
+ 181 0005 78 1E                   		bset #1, r14
+ 182 0007 D3 3E                   		mov.W	r14, [r3]
+ 183                             	.LVL32:
+ 699:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		error= (IO_ErrorType)IO_E_OK;
+ 184                             		.loc 1 699 0
+ 185 0009 66 01                   		mov	#0, r1
+ 186                             	.LVL33:
+ 187 000b 0D                      		bra	.L19
+ 188                             	.LVL34:
+ 189                             	.L20:
+ 695:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType error = IO_E_FAIL;
+ 190                             		.loc 1 695 0
+ 191 000c 75 41 1A                		mov	#26, r1
+ 192                             	.LVL35:
+ 193 000f 03                      		.balign 2,3,2
+ 194                             	.L19:
+ 700:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	}
+ 701:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	return error;
+ 702:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 195                             		.loc 1 702 0
+ 196 0010 75 21 1A                		and #26, r1
+ 197                             	.LVL36:
+ 198 0013 02                      		rts
+ 199                             	.LFE13:
+ 201                             		.section	.text.PM_TurbSens_AcqEntry,"ax",@progbits
+ 203                             	_PM_TurbSens_AcqEntry:
+ 204                             	.LFB14:
+ 703:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 704:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 705:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /**
+ 706:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Acquisition Entry point
+ 707:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** it goes into TURB_SENS_ACQ_WAIT_FOR_AD_READY
+ 708:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Actions:
+ 709:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** -	timer start up
+ 710:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** -	AD setun
+ 711:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** -	PWM init
+ 712:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 713:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in,out] pState	pointer to current state
+ 714:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in]		input flags
+ 715:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [out]	pointer to actions
+ 716:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+ 717:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType PM_TurbSens_AcqEntry (PM_TurbSensStateType* pState, PM_TurbSensFsmEventsBmpType
+ 718:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 205                             		.loc 1 718 0
+ 206                             	.LVL37:
+ 719:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType error = IO_E_FAIL;
+ 720:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensStateType	state = TURB_SENS_ACQ_WAIT_FOR_AD_READY;
+ 721:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	if(pState)
+ 207                             		.loc 1 721 0
+ 208 0000 61 01                   		cmp	#0, r1
+ 209 0002 20 0F                   		beq	.L23
+ 722:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	{
+ 723:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		/* TODO: PWM Init */
+ 724:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		*pOut |= BFMASK(TURB_SENS_BEFORE_SETUP_AD_BIT, 1)|BFMASK(TURB_SENS_SETUP_AD_BIT, 1)|BFMASK(TURB_S
+ 210                             		.loc 1 724 0
+ 211 0004 DC 3E                   		mov.W	[r3], r14
+ 212 0006 75 3E 31                		or	#49, r14
+ 213 0009 D3 3E                   		mov.W	r14, [r3]
+ 725:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 726:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		*pState = state;
+ 214                             		.loc 1 726 0
+ 215 000b 3E 10 09                		mov.L	#9, [r1]
+ 216                             	.LVL38:
+ 727:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		error= (IO_ErrorType)IO_E_OK;
+ 217                             		.loc 1 727 0
+ 218 000e 66 01                   		mov	#0, r1
+ 219                             	.LVL39:
+ 220 0010 0C                      		bra	.L22
+ 221                             	.LVL40:
+ 222                             	.L23:
+ 719:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType error = IO_E_FAIL;
+ 223                             		.loc 1 719 0
+ 224 0011 75 41 1A                		mov	#26, r1
+ 225                             	.LVL41:
+ 226                             		.balign 2,3,2
+ 227                             	.L22:
+ 728:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	}
+ 729:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	return error;
+ 730:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 228                             		.loc 1 730 0
+ 229 0014 75 21 1A                		and #26, r1
+ 230                             	.LVL42:
+ 231 0017 02                      		rts
+ 232                             	.LFE14:
+ 234                             		.section	.text.PM_TurbSens_AcqWait4ADReady,"ax",@progbits
+ 236                             	_PM_TurbSens_AcqWait4ADReady:
+ 237                             	.LFB15:
+ 731:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 732:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** /**
+ 733:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Waiting for AD ready
+ 734:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** If AD ready it goes into TURB_SENS_ACQ_DONE
+ 735:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** Actions:
+ 736:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** -	acquisition done
+ 737:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 738:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in,out] pState	pointer to current state
+ 739:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [in]		input flags
+ 740:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** \param [out]	pointer to actions
+ 741:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** */
+ 742:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** static IO_ErrorType PM_TurbSens_AcqWait4ADReady (PM_TurbSensStateType* pState, PM_TurbSensFsmEvents
+ 743:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 238                             		.loc 1 743 0
+ 239                             	.LVL43:
+ 744:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType error = IO_E_FAIL;
+ 745:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensStateType	state = TURB_SENS_ACQ_WAIT_FOR_AD_READY;
+ 746:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 
+ 747:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	if(pState)
+ 240                             		.loc 1 747 0
+ 241 0000 61 01                   		cmp	#0, r1
+ 242 0002 20 15                   		beq	.L27
+ 748:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	{
+ 749:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if (in & BFMASK(TURB_SENS_AD_READY, 1))
+ 243                             		.loc 1 749 0
+ 244 0004 64 42                   		and #4, r2
+ 245                             	.LVL44:
+ 246 0006 12                      		beq	.L28
+ 750:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		{
+ 751:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			*pOut |= BFMASK(TURB_SENS_ACQ_DONE_BIT, 1);
+ 247                             		.loc 1 751 0
+ 248 0007 DC 3E                   		mov.W	[r3], r14
+ 249 0009 78 6E                   		bset #6, r14
+ 250 000b D3 3E                   		mov.W	r14, [r3]
+ 251                             	.LVL45:
+ 752:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			state = TURB_SENS_ACQ_DONE;
+ 252                             		.loc 1 752 0
+ 253 000d 66 AE                   		mov.L	#10, r14
+ 254 000f 0B                      		bra	.L26
+ 255                             	.LVL46:
+ 256                             	.L28:
+ 745:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensStateType	state = TURB_SENS_ACQ_WAIT_FOR_AD_READY;
+ 257                             		.loc 1 745 0
+ 258 0010 66 9E                   		mov.L	#9, r14
+ 259                             	.LVL47:
+ 260                             		.balign 2,3,1
+ 261                             	.L26:
+ 753:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		}
+ 754:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		*pState = state;
+ 262                             		.loc 1 754 0
+ 263 0012 E3 1E                   		mov.L	r14, [r1]
+ 264                             	.LVL48:
+ 755:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		error= (IO_ErrorType)IO_E_OK;
+ 265                             		.loc 1 755 0
+ 266 0014 66 01                   		mov	#0, r1
+ 267                             	.LVL49:
+ 268 0016 0C                      		bra	.L25
+ 269                             	.LVL50:
+ 270                             	.L27:
+ 744:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType error = IO_E_FAIL;
+ 271                             		.loc 1 744 0
+ 272 0017 75 41 1A                		mov	#26, r1
+ 273                             	.LVL51:
+ 274                             		.balign 2,3,2
+ 275                             	.L25:
+ 756:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	}
+ 757:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	return error;
+ 758:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 276                             		.loc 1 758 0
+ 277 001a 75 21 1A                		and #26, r1
+ 278                             	.LVL52:
+ 279 001d 02                      		rts
+ 280                             	.LFE15:
+ 282                             		.section	.text.PM_TurbSens_InitPWM,"ax",@progbits
+ 284                             	_PM_TurbSens_InitPWM:
+ 285                             	.LFB7:
+ 542:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 286                             		.loc 1 542 0
+ 287                             	.LVL53:
+ 288 0000 60 C0                   		sub	#12, r0
+ 289                             	.LCFI0:
+ 290 0002 CF 14                   		mov.B	r1, r4
+ 291 0004 CF 2E                   		mov.B	r2, r14
+ 292                             	.LVL54:
+ 544:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_PWM_CfgType PWM_ChCfg={0};
+ 293                             		.loc 1 544 0
+ 294 0006 EF 01                   		mov.L	r0, r1
+ 295                             	.LVL55:
+ 296 0008 66 C3                   		mov.L	#12, r3
+ 297 000a 66 02                   		mov	#0, r2
+ 298                             	.LVL56:
+ 299 000c 7F 88                   		sstr.b
+ 546:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PWM_ChCfg.PWM_Id=chPWM;
+ 300                             		.loc 1 546 0
+ 301 000e C3 04                   		mov.B	r4, [r0]
+ 547:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PWM_ChCfg.dfltPeriod=TURB_SENS_PWM_PERIOD;  /*[ns] */
+ 302                             		.loc 1 547 0
+ 303 0010 F9 0E 01 00 00 19       		mov.L	#0x190000, 4[r0]
+ 548:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PWM_ChCfg.inverted = options & 1;
+ 304                             		.loc 1 548 0
+ 305 0016 64 1E                   		and #1, r14
+ 306                             	.LVL57:
+ 307 0018 C7 0E 08                		mov.B	r14, 8[r0]
+ 550:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	if (OCPWM_InitSync(&PWM_ChCfg) == IO_E_OK)
+ 308                             		.loc 1 550 0
+ 309 001b EF 01                   		mov.L	r0, r1
+ 310 001d 05 00 00 00             		bsr	_OCPWM_InitSync
+ 311                             	.LVL58:
+ 312 0021 5B 11                   		movu.B	r1, r1
+ 313 0023 61 01                   		cmp	#0, r1
+ 314 0025 15                      		beq	.L30
+ 543:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ErrorType err = (IO_ErrorType)IO_E_FAIL;
+ 315                             		.loc 1 543 0
+ 316 0026 75 41 1A                		mov	#26, r1
+ 317 0029 03                      		.balign 2,3,1
+ 318                             	.L30:
+ 319                             	.LVL59:
+ 557:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 320                             		.loc 1 557 0
+ 321 002a 5B 11                   		movu.B	r1, r1
+ 322 002c 67 03                   		rtsd	#12
+ 323                             	.LFE7:
+ 325                             		.section	.text.PM_TurbiditySensor_SetParam,"ax",@progbits
+ 326                             		.global	_PM_TurbiditySensor_SetParam
+ 328                             	_PM_TurbiditySensor_SetParam:
+ 329                             	.LFB0:
+ 303:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 330                             		.loc 1 303 0
+ 331                             	.LVL60:
+ 332 0000 6E 7B                   		pushm	r7-r11
+ 333                             	.LCFI1:
+ 334 0002 60 40                   		sub	#4, r0
+ 335                             	.LCFI2:
+ 336 0004 CF 2B                   		mov.B	r2, r11
+ 337 0006 EF 3A                   		mov.L	r3, r10
+ 338                             	.LVL61:
+ 306:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	IO_ChannelType tmrCh = 0xFF;
+ 339                             		.loc 1 306 0
+ 340 0008 F8 04 FF                		mov.B	#-1, [r0]
+ 341                             	.LVL62:
+ 308:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->ad = chADC;
+ 342                             		.loc 1 308 0
+ 343 000b FB 72 00 00 00 00       		mov.L	#_TurbiditySensors, r7
+ 344 0011 84 71                   		mov.B	r1, 16[r7]
+ 312:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	LIB_ADC_ForceAutoRead(LIB_ADC_ADChVsAnalogInputParamIndex(chADC), TRUE);
+ 345                             		.loc 1 312 0
+ 346 0013 05 00 00 00             		bsr	_LIB_ADC_ADChVsAnalogInputParamIndex
+ 347                             	.LVL63:
+ 348 0017 66 12                   		mov.L	#1, r2
+ 349 0019 05 00 00 00             		bsr	_LIB_ADC_ForceAutoRead
+ 350                             	.LVL64:
+ 314:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->delay = SF_TURBSENS_GET_MAXDELAY_RAW(pParam)*20;
+ 351                             		.loc 1 314 0
+ 352 001d 59 AE 02                		movu.B	2[r10], r14
+ 353 0020 75 1E 14                		mul	#20, r14
+ 354 0023 D7 7E 0A                		mov.W	r14, 20[r7]
+ 315:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->flags = SF_TURBSENS_GET_FLAGS(pParam);
+ 355                             		.loc 1 315 0
+ 356 0026 C5 A7 03 16             		mov.B	3[r10], 22[r7]
+ 317:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->cmd = TURB_SENS_CMD_UNDEFINED;
+ 357                             		.loc 1 317 0
+ 358 002a 3E 76 04                		mov.L	#4, 24[r7]
+ 318:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->cmdNext = TURB_SENS_CMD_IDLE;
+ 359                             		.loc 1 318 0
+ 360 002d 3E 77 00                		mov.L	#0, 28[r7]
+ 320:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->fsm.pStateProc = NULL;
+ 361                             		.loc 1 320 0
+ 362 0030 3E 79 00                		mov.L	#0, 36[r7]
+ 321:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->fsm.state=0xFF;
+ 363                             		.loc 1 321 0
+ 364 0033 3E 78 FF                		mov.L	#0xff, 32[r7]
+ 323:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->acqReady=0;
+ 365                             		.loc 1 323 0
+ 366 0036 F9 74 28 00             		mov.B	#0, 40[r7]
+ 325:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pPinStruct =  (IO_ModuleIOMapType*) OCDIO_GetIOMapItem( pinPWM );
+ 367                             		.loc 1 325 0
+ 368 003a CF B1                   		mov.B	r11, r1
+ 369 003c 05 00 00 00             		bsr	_OCDIO_GetIOMapItem
+ 370                             	.LVL65:
+ 327:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	if ( (pPinStruct ) && (OCTPM_GetChannelSync(pPinStruct,&tmrCh) == (IO_ErrorType)IO_E_OK ))
+ 371                             		.loc 1 327 0
+ 372 0040 61 01                   		cmp	#0, r1
+ 373 0042 20 22                   		beq	.L33
+ 327:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	if ( (pPinStruct ) && (OCTPM_GetChannelSync(pPinStruct,&tmrCh) == (IO_ErrorType)IO_E_OK ))
+ 374                             		.loc 1 327 0 is_stmt 0 discriminator 1
+ 375 0044 EF 02                   		mov.L	r0, r2
+ 376 0046 05 00 00 00             		bsr	_OCTPM_GetChannelSync
+ 377                             	.LVL66:
+ 378 004a 76 21 FF 00             		and #0xff, r1
+ 379 004e 21 16                   		bne	.L33
+ 329:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if ( PM_TurbSens_InitPWM(tmrCh, pSensor->flags & 1) == (IO_ErrorType)IO_E_OK )
+ 380                             		.loc 1 329 0 is_stmt 1
+ 381 0050 8D F2                   		mov.B	22[r7], r2
+ 382 0052 CC 01                   		mov.B	[r0], r1
+ 383 0054 64 12                   		and #1, r2
+ 384 0056 05 00 00 00             		bsr	_PM_TurbSens_InitPWM
+ 385                             	.LVL67:
+ 386 005a 76 21 FF 00             		and #0xff, r1
+ 387 005e 1E                      		bne	.L33
+ 331:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->acqReady |= 4;
+ 388                             		.loc 1 331 0
+ 389                             	.LVL68:
+ 390 005f F1 72 28                		bset #2, 40[r7].B
+ 332:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->pwm = tmrCh;
+ 391                             		.loc 1 332 0
+ 392 0062 C0 07                   		mov.B	[r0], [r7]
+ 393                             		.balign 2,3,2
+ 394                             	.L33:
+ 335:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 395                             		.loc 1 335 0
+ 396 0064 3F 7B 06                		rtsd	#24, r7-r11
+ 397                             	.LFE0:
+ 399 0067 03                      		.section	.text.PM_TurbiditySensor_StartCalib,"ax",@progbits
+ 400                             		.global	_PM_TurbiditySensor_StartCalib
+ 402                             	_PM_TurbiditySensor_StartCalib:
+ 403                             	.LFB1:
+ 342:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 404                             		.loc 1 342 0
+ 405                             	.LVL69:
+ 345:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->adref = val;
+ 406                             		.loc 1 345 0
+ 407 0000 FB E2 00 00 00 00       		mov.L	#_TurbiditySensors, r14
+ 408 0006 D7 E1 09                		mov.W	r1, 18[r14]
+ 346:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->cmdNext = TURB_SENS_CMD_CALIBRATION;
+ 409                             		.loc 1 346 0
+ 410 0009 F9 E6 07 01             		mov.L	#1, 28[r14]
+ 411 000d 02                      		rts
+ 412                             	.LFE1:
+ 414                             		.section	.text.PM_TurbiditySensor_StartAcq,"ax",@progbits
+ 415                             		.global	_PM_TurbiditySensor_StartAcq
+ 417                             	_PM_TurbiditySensor_StartAcq:
+ 418                             	.LFB2:
+ 354:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 419                             		.loc 1 354 0
+ 420                             	.LVL70:
+ 357:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->pwmAcq = val;
+ 421                             		.loc 1 357 0
+ 422 0000 FB E2 00 00 00 00       		mov.L	#_TurbiditySensors, r14
+ 423 0006 E7 E1 02                		mov.L	r1, 8[r14]
+ 358:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	pSensor->cmdNext = TURB_SENS_CMD_ACQUISITION;
+ 424                             		.loc 1 358 0
+ 425 0009 F9 E6 07 02             		mov.L	#2, 28[r14]
+ 426 000d 02                      		rts
+ 427                             	.LFE2:
+ 429                             		.section	.text.PM_TurbiditySensor_AcqIsReady,"ax",@progbits
+ 430                             		.global	_PM_TurbiditySensor_AcqIsReady
+ 432                             	_PM_TurbiditySensor_AcqIsReady:
+ 433                             	.LFB3:
+ 366:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 434                             		.loc 1 366 0
+ 435                             	.LVL71:
+ 369:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	return (pSensor->acqReady & 1)?1:0;
+ 436                             		.loc 1 369 0
+ 437 0000 FB E2 00 00 00 00       		mov.L	#_TurbiditySensors, r14
+ 438 0006 CD E1 28                		mov.B 40[r14], r1
+ 439 0009 64 11                   		and #1, r1
+ 370:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 440                             		.loc 1 370 0
+ 441 000b 02                      		rts
+ 442                             	.LFE3:
+ 444                             		.section	.text.PM_TurbiditySensor_GetPWMPeriod,"ax",@progbits
+ 445                             		.global	_PM_TurbiditySensor_GetPWMPeriod
+ 447                             	_PM_TurbiditySensor_GetPWMPeriod:
+ 448                             	.LFB4:
+ 377:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 449                             		.loc 1 377 0
+ 379:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 450                             		.loc 1 379 0
+ 451 0000 FB 1E 00 00 19          		mov.L	#0x190000, r1
+ 452 0005 02                      		rts
+ 453                             	.LFE4:
+ 455                             		.section	.text.PM_TurbiditySensor_GetCalibration,"ax",@progbits
+ 456                             		.global	_PM_TurbiditySensor_GetCalibration
+ 458                             	_PM_TurbiditySensor_GetCalibration:
+ 459                             	.LFB5:
+ 388:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 460                             		.loc 1 388 0
+ 461                             	.LVL72:
+ 462 0000 FB E2 00 00 00 00       		mov.L	#_TurbiditySensors, r14
+ 390:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	if(pVal)
+ 463                             		.loc 1 390 0
+ 464 0006 61 01                   		cmp	#0, r1
+ 465 0008 14                      		beq	.L43
+ 392:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		*pVal = pSensor->pwmVal;
+ 466                             		.loc 1 392 0
+ 467 0009 E1 E1 01                		mov.L	4[r14], [r1]
+ 468                             		.balign 2,3,5
+ 469                             	.L43:
+ 395:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	return (pSensor->acqReady & 2)? TRUE : FALSE;
+ 470                             		.loc 1 395 0
+ 471 000c CD E1 28                		mov.B	40[r14], r1
+ 472                             	.LVL73:
+ 473 000f 6A 11                   		shar	#1, r1
+ 396:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 474                             		.loc 1 396 0
+ 475 0011 64 11                   		and #1, r1
+ 476 0013 02                      		rts
+ 477                             	.LFE5:
+ 479                             		.section	.text.PM_TurbiditySensor_Manager,"ax",@progbits
+ 480                             		.global	_PM_TurbiditySensor_Manager
+ 482                             	_PM_TurbiditySensor_Manager:
+ 483                             	.LFB6:
+ 402:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** {
+ 484                             		.loc 1 402 0
+ 485 0000 6E 7B                   		pushm	r7-r11
+ 486                             	.LCFI3:
+ 487 0002 60 80                   		sub	#8, r0
+ 488                             	.LCFI4:
+ 489                             	.LVL74:
+ 405:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensFsmActionsBmpType out = 0;
+ 490                             		.loc 1 405 0
+ 491 0004 3D 02 00                		mov.W	#0, 4[r0]
+ 492                             	.LVL75:
+ 412:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	if(pSensor->acqReady & 4)
+ 493                             		.loc 1 412 0
+ 494 0007 FB 72 00 00 00 00       		mov.L	#_TurbiditySensors, r7
+ 495 000d CD 7B 28                		mov.B	40[r7], r11
+ 496 0010 64 4B                   		and	#4, r11
+ 497 0012 3A A8 01                		beq	.L47
+ 415:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(pSensor->cmd != pSensor->cmdNext)
+ 498                             		.loc 1 415 0
+ 499 0015 ED 7A 07                		mov.L	28[r7], r10
+ 500 0018 ED 7E 06                		mov.L	24[r7], r14
+ 501 001b 47 AE                   		cmp	r10, r14
+ 502 001d 20 1B                   		beq	.L50
+ 417:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->cmd = pSensor->cmdNext;
+ 503                             		.loc 1 417 0
+ 504 001f E7 7A 06                		mov.L	r10, 24[r7]
+ 418:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->fsm.state = PM_TurbSensCmdToState[pSensor->cmd].state;
+ 505                             		.loc 1 418 0
+ 506 0022 FB E2 00 00 00 00       		mov.L	#_PM_TurbSensCmdToState, r14
+ 507 0028 FE 6A EE                		mov.L	[r10,r14], r14
+ 508 002b E7 7E 08                		mov.L	r14, 32[r7]
+ 420:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			if((pSensor->cmd == TURB_SENS_CMD_ACQUISITION) || pSensor->cmd == TURB_SENS_CMD_CALIBRATION)
+ 509                             		.loc 1 420 0
+ 510 002e 60 1A                   		sub	#1, r10
+ 511 0030 61 1A                   		cmp	#1, r10
+ 512 0032 24 06                   		bgtu	.L50
+ 422:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 				pSensor->acqReady &= 4;
+ 513                             		.loc 1 422 0
+ 514 0034 C7 7B 28                		mov.B	r11, 40[r7]
+ 515 0037 03                      		.balign 2,3,5
+ 516                             	.L50:
+ 426:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		state = pSensor->fsm.state;
+ 517                             		.loc 1 426 0
+ 518 0038 FB 72 00 00 00 00       		mov.L	#_TurbiditySensors, r7
+ 519 003e ED 7A 08                		mov.L	32[r7], r10
+ 520                             	.LVL76:
+ 521 0041 E3 0A                   		mov.L	r10, [r0]
+ 522                             	.LVL77:
+ 427:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		pSensor->fsm.pStateProc = PM_TurbSensCalibFsmConfig[state];
+ 523                             		.loc 1 427 0
+ 524 0043 FB B2 00 00 00 00       		mov.L	#_PM_TurbSensCalibFsmConfig, r11
+ 525 0049 FE 6A BB                		mov.L	[r10,r11], r11
+ 526 004c E7 7B 09                		mov.L	r11, 36[r7]
+ 431:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if( LIB_ADC_IsAnalogReady( LIB_ADC_ADChVsAnalogInputParamIndex(pSensor->ad) ))
+ 527                             		.loc 1 431 0
+ 528 004f 8C 71                   		mov.B	16[r7], r1
+ 529 0051 05 00 00 00             		bsr	_LIB_ADC_ADChVsAnalogInputParamIndex
+ 530                             	.LVL78:
+ 531 0055 05 00 00 00             		bsr	_LIB_ADC_IsAnalogReady
+ 532                             	.LVL79:
+ 533 0059 61 01                   		cmp	#0, r1
+ 534 005b 20 11                   		beq	.L69
+ 535                             	.LVL80:
+ 434:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			adVal = LIB_ADC_GetAnalogValue(LIB_ADC_AnalogChRamPos(pSensor->ad));
+ 536                             		.loc 1 434 0
+ 537 005d 8C 71                   		mov.B	16[r7], r1
+ 538 005f 05 00 00 00             		bsr	_LIB_ADC_AnalogChRamPos
+ 539                             	.LVL81:
+ 540 0063 05 00 00 00             		bsr	_LIB_ADC_GetAnalogValue
+ 541                             	.LVL82:
+ 542 0067 DF 1A                   		mov.W	r1, r10
+ 543                             	.LVL83:
+ 433:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			in |= BFMASK(TURB_SENS_AD_READY, 1);
+ 544                             		.loc 1 433 0
+ 545 0069 66 47                   		mov	#4, r7
+ 546 006b 0D                      		bra	.L52
+ 547                             	.LVL84:
+ 548                             	.L69:
+ 410:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	ADC_ValueType	adVal = 0;
+ 549                             		.loc 1 410 0
+ 550 006c DF 1A                   		mov.W	r1, r10
+ 551                             	.LVL85:
+ 404:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 	PM_TurbSensFsmEventsBmpType in = 0;
+ 552                             		.loc 1 404 0
+ 553 006e CF 17                   		mov.B	r1, r7
+ 554                             	.LVL86:
+ 555                             		.balign 2,3,5
+ 556                             	.L52:
+ 437:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(Tools_IsTimerElapsed ( &(pSensor->timer) , (OS_TIME)pSensor->delay))
+ 557                             		.loc 1 437 0
+ 558 0070 FB B2 00 00 00 00       		mov.L	#_TurbiditySensors, r11
+ 559 0076 FB 12 2C 00 00 00       		mov.L	#_TurbiditySensors+44, r1
+ 560 007c 5D B2 0A                		movu.W	20[r11], r2
+ 561 007f 05 00 00 00             		bsr	_Tools_IsTimerElapsed
+ 562                             	.LVL87:
+ 563 0083 76 21 FF 00             		and #0xff, r1
+ 564 0087 13                      		beq	.L53
+ 439:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			in |= BFMASK(TURB_SENS_TIME_TO_SETUP_AD, 1);
+ 565                             		.loc 1 439 0
+ 566 0088 78 07                   		bset #0, r7
+ 567                             	.LVL88:
+ 568                             		.balign 2,3,1
+ 569                             	.L53:
+ 442:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(!pSensor->pwmTuning)
+ 570                             		.loc 1 442 0
+ 571 008a ED BB 03                		mov.L	12[r11], r11
+ 572 008d 61 0B                   		cmp	#0, r11
+ 573 008f 1B                      		bne	.L54
+ 444:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			in |= BFMASK(TURB_SENS_CORRECTION_EMPTY, 1);
+ 574                             		.loc 1 444 0
+ 575 0090 78 17                   		bset #1, r7
+ 576                             	.LVL89:
+ 577                             		.balign 2,3,5
+ 578                             	.L54:
+ 449:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(pSensor->fsm.pStateProc)
+ 579                             		.loc 1 449 0
+ 580 0092 FB B2 00 00 00 00       		mov.L	#_TurbiditySensors, r11
+ 581 0098 ED BE 09                		mov.L	36[r11], r14
+ 582 009b 61 0E                   		cmp	#0, r14
+ 583 009d 20 0B                   		beq	.L55
+ 451:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			error = (pSensor->fsm.pStateProc) (&state, in, &out);
+ 584                             		.loc 1 451 0
+ 585 009f EF 01                   		mov.L	r0, r1
+ 586 00a1 CF 72                   		mov.B	r7, r2
+ 587 00a3 71 03 04                		add	#4, r0, r3
+ 588 00a6 7F 1E                   		jsr	r14
+ 589                             	.LVL90:
+ 590                             		.balign 2,3,5
+ 591                             	.L55:
+ 455:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(out & BFMASK(TURB_SENS_INIT_PWM_BIT, 1))
+ 592                             		.loc 1 455 0
+ 593 00a8 DD 0B 02                		mov.W	4[r0], r11
+ 594 00ab EF B7                   		mov.L	r11, r7
+ 595                             	.LVL91:
+ 596 00ad 64 47                   		and #4, r7
+ 597 00af 5F 77                   		movu.W	r7, r7
+ 598 00b1 61 07                   		cmp	#0, r7
+ 599 00b3 20 19                   		beq	.L56
+ 600                             	.LVL92:
+ 459:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->pwmVal = 0;
+ 601                             		.loc 1 459 0
+ 602 00b5 FB 72 00 00 00 00       		mov.L	#_TurbiditySensors, r7
+ 603 00bb 3E 71 00                		mov.L	#0, 4[r7]
+ 463:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->pwmAcq = TURB_SENS_PWM_PERIOD;
+ 604                             		.loc 1 463 0
+ 605 00be F9 7E 02 00 00 19       		mov.L	#0x190000, 8[r7]
+ 465:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->pwmTuning = TURB_SENS_PWM_PERIOD/2 ;
+ 606                             		.loc 1 465 0
+ 607 00c4 F9 7E 03 00 80 0C       		mov.L	#0xc8000, 12[r7]
+ 457:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			adVal=0;
+ 608                             		.loc 1 457 0
+ 609 00ca 66 0A                   		mov	#0, r10
+ 610                             	.LVL93:
+ 611                             		.balign 2,3,1
+ 612                             	.L56:
+ 468:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(out & BFMASK(TURB_SENS_EVAL_PWM_BIT, 1))
+ 613                             		.loc 1 468 0
+ 614 00cc 64 8B                   		and #8, r11
+ 615 00ce 5F BB                   		movu.W	r11, r11
+ 616 00d0 61 0B                   		cmp	#0, r11
+ 617 00d2 20 52                   		beq	.L58
+ 472:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			if(adVal < pSensor->adref)
+ 618                             		.loc 1 472 0
+ 619 00d4 FB E2 00 00 00 00       		mov.L	#_TurbiditySensors, r14
+ 620 00da 5F AA                   		movu.W	r10, r10
+ 621 00dc 06 C5 EA 09             		cmp	18[r14].UW, r10
+ 622 00e0 22 0A                   		bgeu	.L59
+ 474:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 				pSensor->pwmVal += pSensor->pwmTuning;
+ 623                             		.loc 1 474 0
+ 624 00e2 ED E7 03                		mov.L	12[r14], r7
+ 625 00e5 06 89 E7 01             		add	4[r14].L, r7
+ 626 00e9 09                      		bra	.L95
+ 627                             	.L59:
+ 478:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 				pSensor->pwmVal -= pSensor->pwmTuning;
+ 628                             		.loc 1 478 0
+ 629 00ea ED E7 01                		mov.L	4[r14], r7
+ 630 00ed 06 81 E7 03             		sub	12[r14].L, r7
+ 631 00f1 03                      		.balign 2,3,5
+ 632                             	.L95:
+ 633 00f2 E7 E7 01                		mov.L	r7, 4[r14]
+ 484:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->pwmAcq -= pSensor->pwmTuning;
+ 634                             		.loc 1 484 0
+ 635 00f5 FB A2 00 00 00 00       		mov.L	#_TurbiditySensors, r10
+ 636                             	.LVL94:
+ 637 00fb ED E7 02                		mov.L	8[r14], r7
+ 638 00fe 06 81 E7 03             		sub	12[r14].L, r7
+ 639 0102 E7 E7 02                		mov.L	r7, 8[r14]
+ 486:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->pwmTuning = pSensor->pwmAcq >> 1;
+ 640                             		.loc 1 486 0
+ 641 0105 68 17                   		shlr	#1, r7
+ 642 0107 E7 E7 03                		mov.L	r7, 12[r14]
+ 489:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			if( PM_TurbSens_InitPWM(pSensor->pwm, pSensor->flags & 1) == (IO_ErrorType)IO_E_OK)
+ 643                             		.loc 1 489 0
+ 644 010a CD E2 16                		mov.B	22[r14], r2
+ 645 010d CC E1                   		mov.B	[r14], r1
+ 646 010f 64 12                   		and #1, r2
+ 647 0111 05 00 00 00             		bsr	_PM_TurbSens_InitPWM
+ 648                             	.LVL95:
+ 649 0115 76 21 FF 00             		and #0xff, r1
+ 650 0119 21 0B                   		bne	.L58
+ 491:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 				OCPWM_SetSync(pSensor->pwm, pSensor->pwmVal);
+ 651                             		.loc 1 491 0
+ 652 011b CC A1                   		mov.B	[r10], r1
+ 653 011d ED A2 01                		mov.L	4[r10], r2
+ 654 0120 05 00 00 00             		bsr	_OCPWM_SetSync
+ 655                             	.LVL96:
+ 656                             		.balign 2,3,5
+ 657                             	.L58:
+ 497:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(out & BFMASK(TURB_SENS_BEFORE_SETUP_AD_BIT, 1))
+ 658                             		.loc 1 497 0
+ 659 0124 98 87                   		mov.W	4[r0], r7
+ 660 0126 75 27 10                		and #16, r7
+ 661 0129 5F 77                   		movu.W	r7, r7
+ 662 012b 61 07                   		cmp	#0, r7
+ 663 012d 20 0D                   		beq	.L62
+ 500:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			Tools_StartTimer ( &(pSensor->timer) );
+ 664                             		.loc 1 500 0
+ 665 012f FB 12 2C 00 00 00       		mov.L	#_TurbiditySensors+44, r1
+ 666 0135 05 00 00 00             		bsr	_Tools_StartTimer
+ 667                             	.LVL97:
+ 668 0139 03                      		.balign 2,3,5
+ 669                             	.L62:
+ 503:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(out & BFMASK(TURB_SENS_SETUP_AD_BIT, 1))
+ 670                             		.loc 1 503 0
+ 671 013a 98 87                   		mov.W	4[r0], r7
+ 672 013c FD 74 C7 01             		tst	#1, r7
+ 673 0140 20 0E                   		beq	.L63
+ 505:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			 LIB_ADC_InitMeasureForCh ( pSensor->ad );
+ 674                             		.loc 1 505 0
+ 675 0142 FB 72 00 00 00 00       		mov.L	#_TurbiditySensors, r7
+ 676 0148 8C 71                   		mov.B	16[r7], r1
+ 677 014a 05 00 00 00             		bsr	_LIB_ADC_InitMeasureForCh
+ 678                             	.LVL98:
+ 679                             		.balign 2,3,5
+ 680                             	.L63:
+ 508:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(out & BFMASK(TURB_SENS_DONE_BIT, 1))
+ 681                             		.loc 1 508 0
+ 682 014e 98 87                   		mov.W	4[r0], r7
+ 683 0150 64 27                   		and #2, r7
+ 684 0152 5F 77                   		movu.W	r7, r7
+ 685 0154 61 07                   		cmp	#0, r7
+ 686 0156 20 14                   		beq	.L64
+ 510:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->cmd = TURB_SENS_CMD_IDLE;
+ 687                             		.loc 1 510 0
+ 688 0158 FB 72 00 00 00 00       		mov.L	#_TurbiditySensors, r7
+ 689 015e 3E 76 00                		mov.L	#0, 24[r7]
+ 511:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			OCPWM_DeInitSync(pSensor->pwm);
+ 690                             		.loc 1 511 0
+ 691 0161 CC 71                   		mov.B	[r7], r1
+ 692 0163 05 00 00 00             		bsr	_OCPWM_DeInitSync
+ 693                             	.LVL99:
+ 513:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->acqReady |= 2;
+ 694                             		.loc 1 513 0
+ 695 0167 F1 71 28                		bset #1, 40[r7].B
+ 696                             		.balign 2,3,5
+ 697                             	.L64:
+ 516:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(out & BFMASK(TURB_SENS_ACQ_PWM_INIT, 1))
+ 698                             		.loc 1 516 0
+ 699 016a 98 87                   		mov.W	4[r0], r7
+ 700 016c 75 27 20                		and #32, r7
+ 701 016f 5F 77                   		movu.W	r7, r7
+ 702 0171 61 07                   		cmp	#0, r7
+ 703 0173 20 1F                   		beq	.L66
+ 520:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			if( PM_TurbSens_InitPWM(pSensor->pwm, pSensor->flags & 1) == (IO_ErrorType)IO_E_OK)
+ 704                             		.loc 1 520 0
+ 705 0175 FB 72 00 00 00 00       		mov.L	#_TurbiditySensors, r7
+ 706 017b 8D F2                   		mov.B	22[r7], r2
+ 707 017d CC 71                   		mov.B	[r7], r1
+ 708 017f 64 12                   		and #1, r2
+ 709 0181 05 00 00 00             		bsr	_PM_TurbSens_InitPWM
+ 710                             	.LVL100:
+ 711 0185 76 21 FF 00             		and #0xff, r1
+ 712 0189 19                      		bne	.L66
+ 522:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 				OCPWM_SetSync(pSensor->pwm, pSensor->pwmAcq);
+ 713                             		.loc 1 522 0
+ 714 018a CC 71                   		mov.B	[r7], r1
+ 715 018c A8 F2                   		mov.L	8[r7], r2
+ 716 018e 05 00 00 00             		bsr	_OCPWM_SetSync
+ 717                             	.LVL101:
+ 718                             		.balign 2,3,5
+ 719                             	.L66:
+ 526:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		if(out & BFMASK(TURB_SENS_ACQ_DONE_BIT, 1))
+ 720                             		.loc 1 526 0
+ 721 0192 98 87                   		mov.W	4[r0], r7
+ 722 0194 75 27 40                		and #64, r7
+ 723 0197 5F 77                   		movu.W	r7, r7
+ 724 0199 61 07                   		cmp	#0, r7
+ 725 019b 20 15                   		beq	.L68
+ 528:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->cmd = TURB_SENS_CMD_IDLE;
+ 726                             		.loc 1 528 0
+ 727 019d FB 72 00 00 00 00       		mov.L	#_TurbiditySensors, r7
+ 728 01a3 3E 76 00                		mov.L	#0, 24[r7]
+ 529:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			pSensor->acqReady |= 1;
+ 729                             		.loc 1 529 0
+ 730 01a6 F1 70 28                		bset #0, 40[r7].B
+ 530:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 			OCPWM_DeInitSync(pSensor->pwm);
+ 731                             		.loc 1 530 0
+ 732 01a9 CC 71                   		mov.B	[r7], r1
+ 733 01ab 05 00 00 00             		bsr	_OCPWM_DeInitSync
+ 734                             	.LVL102:
+ 735 01af 03                      		.balign 2,3,5
+ 736                             	.L68:
+ 534:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** 		pSensor->fsm.state = state; /* apply */
+ 737                             		.loc 1 534 0
+ 738 01b0 FB 72 00 00 00 00       		mov.L	#_TurbiditySensors, r7
+ 739 01b6 E4 07 08                		mov.L	[r0], 32[r7]
+ 740 01b9 03                      		.balign 2,3,2
+ 741                             	.L47:
+ 537:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor\PM_TurbiditySensor.c **** }
+ 742                             		.loc 1 537 0
+ 743 01ba 3F 7B 07                		rtsd	#28, r7-r11
+ 744                             	.LFE6:
+ 746 01bd 03                      		.section	.bss.TurbiditySensors,"aw",@nobits
+ 747                             		.balign 4
+ 750                             	_TurbiditySensors:
+ 751 0000 00 00 00 00 00 00 00 00 		.zero	48
+ 751      00 00 00 00 00 00 00 00 
+ 751      00 00 00 00 00 00 00 00 
+ 751      00 00 00 00 00 00 00 00 
+ 751      00 00 00 00 00 00 00 00 
+ 752                             		.section	.rodata.PM_TurbSensCmdToState,"a",@progbits
+ 753                             		.balign 4
+ 756                             	_PM_TurbSensCmdToState:
+ 757 0000 00 00 00 05             		.long	5
+ 758 0004 00 00 00 00             		.long	0
+ 759 0008 00 00 00 08             		.long	8
+ 760                             		.section	.rodata.PM_TurbSensCalibFsmConfig,"a",@progbits
+ 761                             		.balign 4
+ 764                             	_PM_TurbSensCalibFsmConfig:
+ 765 0000 00 00 00 00             		.long	_PM_TurbSens_CalibEntry
+ 766 0004 00 00 00 00             		.long	_PM_TurbSens_CalibWait4ADSetup
+ 767 0008 00 00 00 00             		.long	_PM_TurbSens_CalibWait4ADReady
+ 768 000c 00 00 00 00             		.long	_PM_TurbSens_CalibDone
+ 769 0010 00 00 00 00             		.long	0
+ 770 0014 00 00 00 00             		.long	_PM_TurbSens_IdleEntry
+ 771 0018 00 00 00 00             		.long	0
+ 772 001c 00 00 00 00             		.long	0
+ 773 0020 00 00 00 00             		.long	_PM_TurbSens_AcqEntry
+ 774 0024 00 00 00 00             		.long	_PM_TurbSens_AcqWait4ADReady
+ 775 0028 00 00 00 00             		.long	0
+ 776 002c 00 00 00 00             		.long	0
+ 955                             	.Letext0:
+ 956                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 957                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\RN_RX200/RN_RX200_cfg.h"
+ 958                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Drivers/IO_driver.h"
+ 959                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Drivers\\OCADC/OCADC_drv.h"
+ 960                             		.file 6 "C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_TurbiditySensor/PM_TurbiditySens
+ 961                             		.file 7 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Drivers\\OCTPM/OCTPM_drv.h"
+ 962                             		.file 8 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Main\\EmbOS\\tools/Tools.h"
+ 963                             		.file 9 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_Analog/Analog.h"
+ 964                             		.file 10 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Drivers\\OCDIO/OCDIO_drv.h"
+ 965                             		.file 11 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_Analog/AnalogExp.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 PM_TurbiditySensor.c
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:6      .text.PM_TurbSens_IdleEntry:00000000 _PM_TurbSens_IdleEntry
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:12     .text.PM_TurbSens_IdleEntry:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:36     .text.PM_TurbSens_CalibEntry:00000000 _PM_TurbSens_CalibEntry
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:41     .text.PM_TurbSens_CalibEntry:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:69     .text.PM_TurbSens_CalibWait4ADSetup:00000000 _PM_TurbSens_CalibWait4ADSetup
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:74     .text.PM_TurbSens_CalibWait4ADSetup:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:116    .text.PM_TurbSens_CalibWait4ADReady:00000000 _PM_TurbSens_CalibWait4ADReady
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:121    .text.PM_TurbSens_CalibWait4ADReady:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:172    .text.PM_TurbSens_CalibDone:00000000 _PM_TurbSens_CalibDone
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:177    .text.PM_TurbSens_CalibDone:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:203    .text.PM_TurbSens_AcqEntry:00000000 _PM_TurbSens_AcqEntry
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:208    .text.PM_TurbSens_AcqEntry:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:236    .text.PM_TurbSens_AcqWait4ADReady:00000000 _PM_TurbSens_AcqWait4ADReady
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:241    .text.PM_TurbSens_AcqWait4ADReady:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:284    .text.PM_TurbSens_InitPWM:00000000 _PM_TurbSens_InitPWM
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:288    .text.PM_TurbSens_InitPWM:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:328    .text.PM_TurbiditySensor_SetParam:00000000 _PM_TurbiditySensor_SetParam
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:332    .text.PM_TurbiditySensor_SetParam:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:750    .bss.TurbiditySensors:00000000 _TurbiditySensors
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:402    .text.PM_TurbiditySensor_StartCalib:00000000 _PM_TurbiditySensor_StartCalib
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:407    .text.PM_TurbiditySensor_StartCalib:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:417    .text.PM_TurbiditySensor_StartAcq:00000000 _PM_TurbiditySensor_StartAcq
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:422    .text.PM_TurbiditySensor_StartAcq:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:432    .text.PM_TurbiditySensor_AcqIsReady:00000000 _PM_TurbiditySensor_AcqIsReady
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:437    .text.PM_TurbiditySensor_AcqIsReady:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:447    .text.PM_TurbiditySensor_GetPWMPeriod:00000000 _PM_TurbiditySensor_GetPWMPeriod
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:451    .text.PM_TurbiditySensor_GetPWMPeriod:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:458    .text.PM_TurbiditySensor_GetCalibration:00000000 _PM_TurbiditySensor_GetCalibration
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:462    .text.PM_TurbiditySensor_GetCalibration:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:482    .text.PM_TurbiditySensor_Manager:00000000 _PM_TurbiditySensor_Manager
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:485    .text.PM_TurbiditySensor_Manager:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:756    .rodata.PM_TurbSensCmdToState:00000000 _PM_TurbSensCmdToState
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:764    .rodata.PM_TurbSensCalibFsmConfig:00000000 _PM_TurbSensCalibFsmConfig
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:778    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:7      .text.PM_TurbSens_IdleEntry:00000000 .LFB9
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:37     .text.PM_TurbSens_CalibEntry:00000000 .LFB10
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:70     .text.PM_TurbSens_CalibWait4ADSetup:00000000 .LFB11
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:117    .text.PM_TurbSens_CalibWait4ADReady:00000000 .LFB12
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:173    .text.PM_TurbSens_CalibDone:00000000 .LFB13
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:204    .text.PM_TurbSens_AcqEntry:00000000 .LFB14
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:237    .text.PM_TurbSens_AcqWait4ADReady:00000000 .LFB15
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:285    .text.PM_TurbSens_InitPWM:00000000 .LFB7
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:329    .text.PM_TurbiditySensor_SetParam:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:403    .text.PM_TurbiditySensor_StartCalib:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:418    .text.PM_TurbiditySensor_StartAcq:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:433    .text.PM_TurbiditySensor_AcqIsReady:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:448    .text.PM_TurbiditySensor_GetPWMPeriod:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:459    .text.PM_TurbiditySensor_GetCalibration:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:483    .text.PM_TurbiditySensor_Manager:00000000 .LFB6
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:2592   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4136   .debug_str:00000373 .LASF167
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4140   .debug_str:000003b3 .LASF168
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4002   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4036   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4266   .debug_str:000007fe .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4116   .debug_str:000002c1 .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4316   .debug_str:000009eb .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4288   .debug_str:000008e8 .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4088   .debug_str:000001c0 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4108   .debug_str:0000027d .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4070   .debug_str:0000011c .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4112   .debug_str:0000029d .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4342   .debug_str:00000add .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4256   .debug_str:000007c0 .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4086   .debug_str:000001b4 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4262   .debug_str:000007db .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4090   .debug_str:000001d2 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4144   .debug_str:0000042f .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4350   .debug_str:00000b11 .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4298   .debug_str:00000944 .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4120   .debug_str:000002e7 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4102   .debug_str:00000245 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4234   .debug_str:000006ff .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4128   .debug_str:00000336 .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4098   .debug_str:00000231 .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4292   .debug_str:00000907 .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4306   .debug_str:00000993 .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4212   .debug_str:00000671 .LASF64
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4124   .debug_str:00000317 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4226   .debug_str:000006c7 .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4078   .debug_str:0000015d .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4160   .debug_str:0000049a .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4058   .debug_str:000000a2 .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4080   .debug_str:0000016a .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4308   .debug_str:000009a6 .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4172   .debug_str:00000517 .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4146   .debug_str:0000043c .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4362   .debug_str:00000b79 .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4198   .debug_str:00000607 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4300   .debug_str:00000949 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4052   .debug_str:00000064 .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4372   .debug_str:00000bd2 .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4174   .debug_str:0000052a .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4162   .debug_str:000004ac .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4250   .debug_str:00000789 .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4336   .debug_str:00000ab2 .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4204   .debug_str:00000645 .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4180   .debug_str:0000055c .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4328   .debug_str:00000a54 .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4152   .debug_str:00000464 .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4356   .debug_str:00000b4a .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4320   .debug_str:00000a1e .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4338   .debug_str:00000abe .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4218   .debug_str:00000695 .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4072   .debug_str:00000133 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4276   .debug_str:00000864 .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4364   .debug_str:00000b8f .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4310   .debug_str:000009be .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4360   .debug_str:00000b61 .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4210   .debug_str:0000066a .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4284   .debug_str:000008c6 .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4040   .debug_str:0000001c .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4178   .debug_str:00000541 .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4322   .debug_str:00000a2f .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4042   .debug_str:00000023 .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4314   .debug_str:000009e0 .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4046   .debug_str:00000039 .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4202   .debug_str:00000636 .LASF62
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4190   .debug_str:000005bd .LASF63
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4114   .debug_str:000002ab .LASF65
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4286   .debug_str:000008cd .LASF66
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4304   .debug_str:00000978 .LASF67
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4168   .debug_str:000004ed .LASF68
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4274   .debug_str:0000084f .LASF69
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4192   .debug_str:000005c9 .LASF70
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4064   .debug_str:000000dd .LASF71
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4130   .debug_str:00000353 .LASF72
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4126   .debug_str:0000031f .LASF73
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4166   .debug_str:000004d6 .LASF74
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4142   .debug_str:00000411 .LASF75
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4200   .debug_str:0000061f .LASF76
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4110   .debug_str:00000286 .LASF77
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4290   .debug_str:000008f1 .LASF78
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4170   .debug_str:00000500 .LASF79
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4092   .debug_str:000001d9 .LASF80
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4068   .debug_str:000000fa .LASF81
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4270   .debug_str:00000818 .LASF82
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4082   .debug_str:0000017d .LASF83
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4302   .debug_str:00000963 .LASF84
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4280   .debug_str:00000895 .LASF85
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4044   .debug_str:0000002a .LASF86
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4054   .debug_str:00000079 .LASF87
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4312   .debug_str:000009cc .LASF88
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4346   .debug_str:00000aeb .LASF89
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4370   .debug_str:00000bbf .LASF90
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4244   .debug_str:00000761 .LASF91
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4076   .debug_str:00000149 .LASF92
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4330   .debug_str:00000a67 .LASF93
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4216   .debug_str:00000685 .LASF94
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4340   .debug_str:00000aca .LASF95
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4138   .debug_str:00000399 .LASF96
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4236   .debug_str:00000705 .LASF97
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4158   .debug_str:00000488 .LASF98
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4252   .debug_str:00000797 .LASF99
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4208   .debug_str:00000657 .LASF100
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4368   .debug_str:00000baa .LASF101
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4062   .debug_str:000000c8 .LASF102
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4038   .debug_str:00000000 .LASF103
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4118   .debug_str:000002ca .LASF104
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4084   .debug_str:00000192 .LASF105
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4220   .debug_str:000006aa .LASF106
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4106   .debug_str:00000277 .LASF107
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4154   .debug_str:00000477 .LASF108
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4230   .debug_str:000006e7 .LASF109
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4354   .debug_str:00000b33 .LASF110
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4374   .debug_str:00000be2 .LASF111
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4176   .debug_str:00000534 .LASF112
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4224   .debug_str:000006c0 .LASF113
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4246   .debug_str:00000774 .LASF114
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4376   .debug_str:00000bfc .LASF115
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4132   .debug_str:00000366 .LASF116
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4260   .debug_str:000007d5 .LASF117
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4344   .debug_str:00000ae5 .LASF118
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4100   .debug_str:0000023d .LASF119
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4074   .debug_str:00000140 .LASF120
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4348   .debug_str:00000b0b .LASF121
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4268   .debug_str:00000808 .LASF122
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4184   .debug_str:0000057d .LASF126
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:32     .text.PM_TurbSens_IdleEntry:00000010 .LFE9
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4258   .debug_str:000007ce .LASF123
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3226   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4206   .debug_str:00000652 .LASF124
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4240   .debug_str:0000073d .LASF125
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3251   .debug_loc:0000003a .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4294   .debug_str:0000090f .LASF127
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:65     .text.PM_TurbSens_CalibEntry:00000018 .LFE10
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3273   .debug_loc:00000071 .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3298   .debug_loc:000000ab .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4096   .debug_str:00000213 .LASF128
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:112    .text.PM_TurbSens_CalibWait4ADSetup:00000020 .LFE11
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3320   .debug_loc:000000e2 .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3345   .debug_loc:0000011c .LLST5
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3367   .debug_loc:00000153 .LLST6
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4296   .debug_str:00000926 .LASF129
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:168    .text.PM_TurbSens_CalibWait4ADReady:0000002a .LFE12
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3394   .debug_loc:00000196 .LLST7
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3419   .debug_loc:000001d0 .LLST8
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3444   .debug_loc:0000020a .LLST9
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3466   .debug_loc:00000241 .LLST10
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3493   .debug_loc:00000284 .LLST11
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4182   .debug_str:00000567 .LASF130
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:199    .text.PM_TurbSens_CalibDone:00000014 .LFE13
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3530   .debug_loc:000002ca .LLST12
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3555   .debug_loc:00000304 .LLST13
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4272   .debug_str:0000083a .LASF131
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:232    .text.PM_TurbSens_AcqEntry:00000018 .LFE14
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3577   .debug_loc:0000033b .LLST14
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3602   .debug_loc:00000375 .LLST15
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4282   .debug_str:000008aa .LASF132
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:280    .text.PM_TurbSens_AcqWait4ADReady:0000001e .LFE15
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3624   .debug_loc:000003ac .LLST16
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3649   .debug_loc:000003e6 .LLST17
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3674   .debug_loc:00000420 .LLST18
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3696   .debug_loc:00000457 .LLST19
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4188   .debug_str:000005a9 .LASF133
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:323    .text.PM_TurbSens_InitPWM:0000002e .LFE7
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3723   .debug_loc:0000049a .LLST20
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4156   .debug_str:00000482 .LASF134
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3736   .debug_loc:000004ba .LLST21
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4358   .debug_str:00000b59 .LASF135
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3754   .debug_loc:000004e6 .LLST22
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3772   .debug_loc:00000512 .LLST23
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4214   .debug_str:0000067b .LASF136
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:311    .text.PM_TurbSens_InitPWM:00000021 .LVL58
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4334   .debug_str:00000a96 .LASF143
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:397    .text.PM_TurbiditySensor_SetParam:00000067 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3784   .debug_loc:00000531 .LLST24
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4222   .debug_str:000006ba .LASF137
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3802   .debug_loc:0000055d .LLST25
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4148   .debug_str:0000044e .LASF138
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3816   .debug_loc:0000057e .LLST26
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4134   .debug_str:0000036c .LASF139
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3827   .debug_loc:0000059c .LLST27
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4366   .debug_str:00000ba2 .LASF140
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4048   .debug_str:00000042 .LASF141
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3845   .debug_loc:000005c8 .LLST28
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4066   .debug_str:000000f4 .LASF142
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:347    .text.PM_TurbiditySensor_SetParam:00000017 .LVL63
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:350    .text.PM_TurbiditySensor_SetParam:0000001d .LVL64
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:370    .text.PM_TurbiditySensor_SetParam:00000040 .LVL65
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:377    .text.PM_TurbiditySensor_SetParam:0000004a .LVL66
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:385    .text.PM_TurbiditySensor_SetParam:0000005a .LVL67
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4242   .debug_str:00000743 .LASF144
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:412    .text.PM_TurbiditySensor_StartCalib:0000000e .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4104   .debug_str:0000025b .LASF145
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:427    .text.PM_TurbiditySensor_StartAcq:0000000e .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4238   .debug_str:0000071f .LASF146
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:442    .text.PM_TurbiditySensor_AcqIsReady:0000000c .LFE3
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4318   .debug_str:000009fe .LASF169
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:453    .text.PM_TurbiditySensor_GetPWMPeriod:00000006 .LFE4
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4278   .debug_str:00000873 .LASF147
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:477    .text.PM_TurbiditySensor_GetCalibration:00000014 .LFE5
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4232   .debug_str:000006fa .LASF148
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3857   .debug_loc:000005e7 .LLST29
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4264   .debug_str:000007e3 .LASF149
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:744    .text.PM_TurbiditySensor_Manager:000001bd .LFE6
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3871   .debug_loc:00000608 .LLST30
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3889   .debug_loc:00000634 .LLST31
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3911   .debug_loc:0000066b .LLST32
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3919   .debug_loc:0000067f .LLST33
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4324   .debug_str:00000a3d .LASF150
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:3931   .debug_loc:0000069e .LLST34
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:530    .text.PM_TurbiditySensor_Manager:00000055 .LVL78
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:532    .text.PM_TurbiditySensor_Manager:00000059 .LVL79
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:539    .text.PM_TurbiditySensor_Manager:00000063 .LVL81
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:541    .text.PM_TurbiditySensor_Manager:00000067 .LVL82
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:562    .text.PM_TurbiditySensor_Manager:00000083 .LVL87
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:589    .text.PM_TurbiditySensor_Manager:000000a8 .LVL90
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:648    .text.PM_TurbiditySensor_Manager:00000115 .LVL95
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:655    .text.PM_TurbiditySensor_Manager:00000124 .LVL96
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:667    .text.PM_TurbiditySensor_Manager:00000139 .LVL97
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:678    .text.PM_TurbiditySensor_Manager:0000014e .LVL98
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:693    .text.PM_TurbiditySensor_Manager:00000167 .LVL99
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:710    .text.PM_TurbiditySensor_Manager:00000185 .LVL100
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:717    .text.PM_TurbiditySensor_Manager:00000192 .LVL101
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:734    .text.PM_TurbiditySensor_Manager:000001af .LVL102
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4196   .debug_str:000005f6 .LASF151
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4332   .debug_str:00000a7c .LASF152
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4228   .debug_str:000006d1 .LASF153
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4150   .debug_str:00000455 .LASF154
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4094   .debug_str:000001ef .LASF155
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4186   .debug_str:00000593 .LASF163
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4060   .debug_str:000000b5 .LASF156
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4164   .debug_str:000004c1 .LASF157
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4194   .debug_str:000005e0 .LASF158
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4122   .debug_str:00000300 .LASF159
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4050   .debug_str:0000004d .LASF160
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4056   .debug_str:0000008d .LASF161
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4248   .debug_str:0000077b .LASF162
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4326   .debug_str:00000a43 .LASF164
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4352   .debug_str:00000b1a .LASF165
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:4254   .debug_str:000007af .LASF166
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:10     .text.PM_TurbSens_IdleEntry:00000000 .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:19     .text.PM_TurbSens_IdleEntry:00000008 .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:21     .text.PM_TurbSens_IdleEntry:00000009 .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:25     .text.PM_TurbSens_IdleEntry:0000000c .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:16     .text.PM_TurbSens_IdleEntry:00000006 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:30     .text.PM_TurbSens_IdleEntry:0000000f .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:39     .text.PM_TurbSens_CalibEntry:00000000 .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:52     .text.PM_TurbSens_CalibEntry:00000010 .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:54     .text.PM_TurbSens_CalibEntry:00000011 .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:58     .text.PM_TurbSens_CalibEntry:00000014 .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:49     .text.PM_TurbSens_CalibEntry:0000000e .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:63     .text.PM_TurbSens_CalibEntry:00000017 .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:72     .text.PM_TurbSens_CalibWait4ADSetup:00000000 .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:99     .text.PM_TurbSens_CalibWait4ADSetup:00000018 .LVL17
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:101    .text.PM_TurbSens_CalibWait4ADSetup:00000019 .LVL18
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:105    .text.PM_TurbSens_CalibWait4ADSetup:0000001c .LVL19
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:96     .text.PM_TurbSens_CalibWait4ADSetup:00000016 .LVL16
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:110    .text.PM_TurbSens_CalibWait4ADSetup:0000001f .LVL20
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:79     .text.PM_TurbSens_CalibWait4ADSetup:00000009 .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:87     .text.PM_TurbSens_CalibWait4ADSetup:00000012 .LVL14
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:91     .text.PM_TurbSens_CalibWait4ADSetup:00000014 .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:119    .text.PM_TurbSens_CalibWait4ADReady:00000000 .LVL21
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:155    .text.PM_TurbSens_CalibWait4ADReady:00000022 .LVL27
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:157    .text.PM_TurbSens_CalibWait4ADReady:00000023 .LVL28
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:161    .text.PM_TurbSens_CalibWait4ADReady:00000026 .LVL29
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:125    .text.PM_TurbSens_CalibWait4ADReady:00000006 .LVL22
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:152    .text.PM_TurbSens_CalibWait4ADReady:00000020 .LVL26
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:166    .text.PM_TurbSens_CalibWait4ADReady:00000029 .LVL30
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:135    .text.PM_TurbSens_CalibWait4ADReady:00000015 .LVL23
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:139    .text.PM_TurbSens_CalibWait4ADReady:00000018 .LVL24
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:147    .text.PM_TurbSens_CalibWait4ADReady:0000001d .LVL25
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:175    .text.PM_TurbSens_CalibDone:00000000 .LVL31
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:186    .text.PM_TurbSens_CalibDone:0000000b .LVL33
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:188    .text.PM_TurbSens_CalibDone:0000000c .LVL34
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:192    .text.PM_TurbSens_CalibDone:0000000f .LVL35
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:183    .text.PM_TurbSens_CalibDone:00000009 .LVL32
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:197    .text.PM_TurbSens_CalibDone:00000013 .LVL36
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:206    .text.PM_TurbSens_AcqEntry:00000000 .LVL37
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:219    .text.PM_TurbSens_AcqEntry:00000010 .LVL39
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:221    .text.PM_TurbSens_AcqEntry:00000011 .LVL40
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:225    .text.PM_TurbSens_AcqEntry:00000014 .LVL41
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:216    .text.PM_TurbSens_AcqEntry:0000000e .LVL38
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:230    .text.PM_TurbSens_AcqEntry:00000017 .LVL42
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:239    .text.PM_TurbSens_AcqWait4ADReady:00000000 .LVL43
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:267    .text.PM_TurbSens_AcqWait4ADReady:00000016 .LVL49
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:269    .text.PM_TurbSens_AcqWait4ADReady:00000017 .LVL50
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:273    .text.PM_TurbSens_AcqWait4ADReady:0000001a .LVL51
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:245    .text.PM_TurbSens_AcqWait4ADReady:00000006 .LVL44
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:264    .text.PM_TurbSens_AcqWait4ADReady:00000014 .LVL48
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:278    .text.PM_TurbSens_AcqWait4ADReady:0000001d .LVL52
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:251    .text.PM_TurbSens_AcqWait4ADReady:0000000d .LVL45
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:255    .text.PM_TurbSens_AcqWait4ADReady:00000010 .LVL46
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:259    .text.PM_TurbSens_AcqWait4ADReady:00000012 .LVL47
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:289    .text.PM_TurbSens_InitPWM:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:287    .text.PM_TurbSens_InitPWM:00000000 .LVL53
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:295    .text.PM_TurbSens_InitPWM:00000008 .LVL55
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:298    .text.PM_TurbSens_InitPWM:0000000c .LVL56
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:306    .text.PM_TurbSens_InitPWM:00000018 .LVL57
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:292    .text.PM_TurbSens_InitPWM:00000006 .LVL54
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:319    .text.PM_TurbSens_InitPWM:0000002a .LVL59
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:333    .text.PM_TurbiditySensor_SetParam:00000002 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:335    .text.PM_TurbiditySensor_SetParam:00000004 .LCFI2
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:331    .text.PM_TurbiditySensor_SetParam:00000000 .LVL60
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:389    .text.PM_TurbiditySensor_SetParam:0000005f .LVL68
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:338    .text.PM_TurbiditySensor_SetParam:00000008 .LVL61
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:461    .text.PM_TurbiditySensor_GetCalibration:00000000 .LVL72
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:472    .text.PM_TurbiditySensor_GetCalibration:0000000f .LVL73
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:486    .text.PM_TurbiditySensor_Manager:00000002 .LCFI3
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:488    .text.PM_TurbiditySensor_Manager:00000004 .LCFI4
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:489    .text.PM_TurbiditySensor_Manager:00000004 .LVL74
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:535    .text.PM_TurbiditySensor_Manager:0000005d .LVL80
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:547    .text.PM_TurbiditySensor_Manager:0000006c .LVL84
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:554    .text.PM_TurbiditySensor_Manager:00000070 .LVL86
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:595    .text.PM_TurbiditySensor_Manager:000000ad .LVL91
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:492    .text.PM_TurbiditySensor_Manager:00000007 .LVL75
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:522    .text.PM_TurbiditySensor_Manager:00000043 .LVL77
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:551    .text.PM_TurbiditySensor_Manager:0000006e .LVL85
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:543    .text.PM_TurbiditySensor_Manager:00000069 .LVL83
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:600    .text.PM_TurbiditySensor_Manager:000000b5 .LVL92
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:610    .text.PM_TurbiditySensor_Manager:000000cc .LVL93
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:636    .text.PM_TurbiditySensor_Manager:000000fb .LVL94
+C:\Users\Andrea\AppData\Local\Temp\ccjfYXZF.s:967    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_OCPWM_InitSync
+_LIB_ADC_ADChVsAnalogInputParamIndex
+_LIB_ADC_ForceAutoRead
+_OCDIO_GetIOMapItem
+_OCTPM_GetChannelSync
+_LIB_ADC_IsAnalogReady
+_LIB_ADC_AnalogChRamPos
+_LIB_ADC_GetAnalogValue
+_Tools_IsTimerElapsed
+_OCPWM_SetSync
+_Tools_StartTimer
+_LIB_ADC_InitMeasureForCh
+_OCPWM_DeInitSync

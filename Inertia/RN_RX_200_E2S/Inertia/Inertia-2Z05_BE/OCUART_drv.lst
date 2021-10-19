@@ -1,0 +1,2119 @@
+   1                             		.file	"OCUART_drv.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.OCUART_CallBack,"ax",@progbits
+   5                             		.global	_OCUART_CallBack
+   7                             	_OCUART_CallBack:
+   8                             	.LFB5:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART/OCUART_drv.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** Copyright (c) 2009-2010, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+   7:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+   8:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+   9:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n
+  10:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \par		Description
+  11:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n		On chip UART driver (\ref OCUART_Class) implementation. Peripheral configuration, data transmis
+  12:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		Data transmission and reception is managed through DMA. SW DMA driver is used if not available
+  13:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		On chip DMA. The DMA channel used CPU-dependent.
+  14:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		\warning On chip DMA tested for Freescale AG128
+  15:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n
+  16:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \file		OCUART_drv.c
+  17:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \ingroup	OCUART
+  18:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \date		06/07/2009
+  19:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \version	00.00.01
+  20:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \author		Roberto Fioravanti
+  21:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n
+  22:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n
+  23:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \par		History
+  24:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n 		00.00.45
+  25:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n		06/05/2010
+  26:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n		developper Roberto Fioravanti
+  27:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n		changes
+  28:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n 		- faster STX syncro (OCUART_RxStreamMngr)
+  29:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n		- changed prototype (OCUART_RxStreamMngr)
+  30:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n 		00.00.41
+  31:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n		06/07/2009
+  32:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n		developper Roberto Fioravanti
+  33:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n		changes
+  34:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n 		- cast void form memcopy functions
+  35:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n 		00.00.25
+  36:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n		06/07/2009
+  37:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n		developper Roberto Fioravanti
+  38:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n		changes
+  39:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n 		- bug fix: param to OCUART_ReadData in OCUART_RxStreamMngr
+  40:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n
+  41:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n 		00.00.03
+  42:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n		06/07/2009
+  43:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n		developper Roberto Fioravanti
+  44:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n		changes
+  45:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \n 		- Creazione
+  46:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+  47:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+  48:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+  49:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+  50:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #define __DRIVER_H
+  51:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* ******** */
+  52:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* Includes */
+  53:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* ******** */
+  54:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #include <string.h>
+  55:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+  56:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #include "OCUART_drv.h"
+  57:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #include HAL
+  58:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+  59:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if !defined(_HAL_DMA_CAPABILITY)  || !defined(UART_OCDMA_SUPPORT)
+  60:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #include "SWDMA_drv.h"
+  61:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #else
+  62:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #include "OCDMA_drv.h"
+  63:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif /* !defined(_HAL_DMA_CAPABILITY) */
+  64:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+  65:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #include "LIB_TaskMonitoring.h"
+  66:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+  67:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if defined(HAL_UART_SUPPORT)
+  68:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+  69:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* ****************** */
+  70:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* Defines and Macros */
+  71:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* ****************** */
+  72:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+  73:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if defined(OCUART_BUFFER_SIZE)
+  74:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** typedef uint8_t OCUART_CircularBufferType;
+  75:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #else
+  76:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** typedef uint32_t OCUART_CircularBufferType;
+  77:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif
+  78:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+  79:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #define UART_DEVICE						HAL_UART_DEV		/*impostazione da configurazione*/
+  80:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if defined(OCUART_BUFFER_SIZE)
+  81:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #define OCUART_CIRCULAR_BUFFER_SIZE     OCUART_BUFFER_SIZE
+  82:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #else
+  83:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #define OCUART_BUFFER_SIZE              (OCUART_BUFFER_LSIZE*4)
+  84:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #define OCUART_CIRCULAR_BUFFER_SIZE     OCUART_BUFFER_LSIZE
+  85:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif
+  86:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+  87:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+  88:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+  89:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+  90:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* *************************** */
+  91:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* Typedef, Structs and Unions */
+  92:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* *************************** */
+  93:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** typedef uint8_t OCUART_State;
+  94:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+  95:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** typedef struct OCUART_tag {
+  96:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     uint8_t *pHead; /* Puntatore alla testa dell'InpBuffer (scrittura) */
+  97:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     uint8_t *pTail; /* Puntatore alla coda dell'InpBuffer  (lettura) */
+  98:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     uint8_t *pRead;
+  99:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     Comm_Notification     EOO_callback;         /* End Of Operation callback */
+ 100:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 101:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     IO_MemPtrType         TxBuffer;             /* pnt buffer trasmissione */
+ 102:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     IO_MemPtrType         RxBuffer;             /* pnt buffer ricezione */
+ 103:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if defined(_HAL_DMA_CAPABILITY) && defined(UART_OCDMA_SUPPORT)
+ 104:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     IO_MemPtrType         CircBuffer;           /* pnt buffer trasmissione */
+ 105:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif    
+ 106:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if (!defined(_HAL_DMA_CAPABILITY) || !defined(UART_OCDMA_SUPPORT)) && defined(UART_CHECK_RXBUFFER_
+ 107:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     IO_MemPtrType         pMaxRxBuffer;           /* */
+ 108:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif    
+ 109:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     IO_PacketSizeType       TxLen;              /* numero byte da trasmettere */
+ 110:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     IO_PacketSizeType    	RxLen;              /* numero byte da ricevere */
+ 111:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     IO_ChannelType        DmaCh;                /* canale dma */
+ 112:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     I2C_SlaveAddressType  CurrentSlave;         /* indirizzo slave corrente comunicazione */
+ 113:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 114:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     IO_OptionType        options;
+ 115:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     IO_OptionType        toptions;
+ 116:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCUART_State           state;
+ 117:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     IO_ChannelType        id;                   /* Driver channel ID */
+ 118:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 119:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     /* slave */
+ 120:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     Comm_Notification      notifyCB;            /* notification callback */
+ 121:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     uint8_t InputLen;
+ 122:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     uint8_t MngrState;
+ 123:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     uint8_t ErrorFound;
+ 124:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }OCUART_Type;
+ 125:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 126:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* **************************** */
+ 127:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* Prototype of local functions */
+ 128:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* **************************** */
+ 129:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** static uint8_t OCUART_Data2Read(void);
+ 130:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** static uint8_t OCUART_GetDataFromTail(void);
+ 131:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** static void RemoveTail(void);
+ 132:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if defined(_HAL_DMA_CAPABILITY) && defined(UART_OCDMA_SUPPORT)
+ 133:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** static IO_ErrorType UartRxCallback(IO_NotificationType notifVal, IO_ChannelType chid, IO_ErrorType 
+ 134:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif /* #if defined(_HAL_DMA_CAPABILITY) && defined(UART_OCDMA_SUPPORT) */
+ 135:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* ****************** */
+ 136:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* Exported variables */
+ 137:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* ****************** */
+ 138:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 139:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* **************** */
+ 140:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* Global variables */
+ 141:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* **************** */
+ 142:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 143:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 144:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** OCUART_CircularBufferType OCUART_Buffer[OCUART_CIRCULAR_BUFFER_SIZE];
+ 145:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** OCUART_Type OCUART;
+ 146:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 147:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 148:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* ***************** */
+ 149:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* Exported function */
+ 150:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* ***************** */
+ 151:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 152:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** UART driver variables initialization.
+ 153:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 154:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \return 		IO_ErrorType
+ 155:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \retvalue       IO_E_OK - successful
+ 156:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \warning
+ 157:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 158:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \version		1.0.0
+ 159:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \date 			08/07/2009
+ 160:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \author			Roberto Fioravanti
+ 161:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 162:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** IO_ErrorType OCUART_InitSWSync(void)
+ 163:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 164:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 165:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	#if !defined(_HAL_DMA_CAPABILITY) || !defined(UART_OCDMA_SUPPORT)
+ 166:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.pHead = OCUART.pTail = OCUART.pRead = (uint8_t*)OCUART_Buffer;
+ 167:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	#endif
+ 168:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     
+ 169:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.InputLen=0;
+ 170:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.MngrState=0;
+ 171:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.ErrorFound=0;
+ 172:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.RxLen=0;
+ 173:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	(void)memset(OCUART_Buffer, 0, sizeof(OCUART_Buffer));
+ 174:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	return IO_E_OK;
+ 175:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 176:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 177:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 178:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** Driver UART initialization
+ 179:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 180:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 181:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \param [in] 	BCP_PhyInitSyncType * initSync
+ 182:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 183:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \return 		IO_ErrorType
+ 184:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \retvalue   IO_E_OK - successful
+ 185:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \warning
+ 186:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 187:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \version		1.0.0
+ 188:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \date 			08/07/2009
+ 189:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \author			Roberto Fioravanti
+ 190:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 191:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** IO_ErrorType OCUART_InitSync(IO_PhyInitSyncType * initSync)
+ 192:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 193:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****   
+ 194:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if defined(_HAL_DMA_CAPABILITY) && defined(UART_OCDMA_SUPPORT)
+ 195:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****   OCDMA_TransferType  transfer = {0};
+ 196:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 197:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****   OCUART.pHead =  OCUART.pTail = OCUART.pRead = (uint8_t*)OCUART_Buffer;
+ 198:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 199:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****   OCUART.CircBuffer = (uint8_t*)OCUART_Buffer;
+ 200:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif
+ 201:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 202:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.notifyCB=initSync->eventCB;
+ 203:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.id=initSync->id;
+ 204:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if (!defined(_HAL_DMA_CAPABILITY) || !defined(UART_OCDMA_SUPPORT)) && defined(UART_CHECK_RXBUFFER_
+ 205:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.pMaxRxBuffer = initSync->pMaxRxData;
+ 206:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif	
+ 207:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 208:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     UART_ClkDisable(UART_DEVICE);
+ 209:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	
+ 210:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	(void)memset(OCUART_Buffer, 0, sizeof(OCUART_Buffer));
+ 211:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     
+ 212:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     
+ 213:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     
+ 214:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART_DisableSync(); 		/* disabilita per impostare il clock */
+ 215:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_ClkEnable(UART_DEVICE);
+ 216:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 217:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_ResetPeError(UART_DEVICE)
+ 218:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 219:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	/*periferica*/
+ 220:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if HAL_UART_DATALEN
+ 221:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_SetParityVal(UART_DEVICE,	val)
+ 222:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif
+ 223:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 224:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 225:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_SetParityMode	    (UART_DEVICE,		HAL_UART_PARITY)
+ 226:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_SetDataLen			(UART_DEVICE,		HAL_UART_DATALEN)
+ 227:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_SetStop			(UART_DEVICE,		HAL_UART_STOP)
+ 228:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_SetMode			(UART_DEVICE,		HAL_UART_MODE)
+ 229:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_SetClockDivisor    (UART_DEVICE,		HAL_UART_BAUDRATE_DIVISOR);
+ 230:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 231:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_SetBaudRate (UART_DEVICE, _HALUART_CALC_BAUD(HAL_OPTION_UART_BAUDRATE,	HAL_UART_DIVISOR));
+ 232:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 233:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 234:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 235:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if defined(_HAL_DMA_CAPABILITY) && defined(UART_OCDMA_SUPPORT)
+ 236:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if (UART_AUTOMATIC_CIRCULAR_BUFFER == TRUE)
+ 237:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	  transfer.bcr = 1024;
+ 238:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.sar = UART_pReceiveDataRegister(UART_DEVICE);
+ 239:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.dar = initSync -> rxbuffer;
+ 240:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 241:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.channel = OCDMA_CHANNEL_ID(UART_RX_DMA_CH) | OCDMA_CHANNEL_DEVICE(UART_RX_DMA_DEV);
+ 242:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.addr = OCDMA_ADDR_DINC | OCDMA_ADDR_SSIZE_BYTE | OCDMA_ADDR_DSIZE_BYTE | OCDMA_ADDR_CS
+ 243:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.perlink = OCDMA_PERLINK_ERQ | OCDMA_PERLINK_D_ERQ;  
+ 244:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.modulo = OCDMA_MODULO_DMOD(3);
+ 245:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     
+ 246:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCDMA_SetChannelDeviceSync(&transfer);
+ 247:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCDMA_SetTransferParamSync(&transfer);    
+ 248:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCDMA_SetTransferSync(&transfer);
+ 249:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCDMA_StartTransferSync(0, &transfer, NULL);
+ 250:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 251:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     UART_RxDMAEnable(UART_DEVICE);
+ 252:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #else
+ 253:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.bcr = OCUART_BUFFER_SIZE;
+ 254:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.sar = UART_pReceiveDataRegister(UART_DEVICE);
+ 255:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     //transfer.dar = initSync -> rxbuffer;
+ 256:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.dar = (uint8_t*)OCUART_Buffer;
+ 257:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 258:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.channel = OCDMA_CHANNEL_ID(UART_RX_DMA_CH) | OCDMA_CHANNEL_DEVICE(UART_RX_DMA_DEV);
+ 259:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.addr = OCDMA_ADDR_DINC | OCDMA_ADDR_SSIZE_BYTE | OCDMA_ADDR_DSIZE_BYTE | OCDMA_ADDR_CS
+ 260:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.perlink = OCDMA_PERLINK_ERQ;  
+ 261:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     
+ 262:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCDMA_SetChannelDeviceSync(&transfer);
+ 263:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCDMA_SetTransferParamSync(&transfer);    
+ 264:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCDMA_SetTransferSync(&transfer);
+ 265:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCDMA_StartTransferSync(0, &transfer, UartRxCallback);
+ 266:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 267:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     UART_RxDMAEnable(UART_DEVICE);
+ 268:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif 	/*	(UART_AUTOMATIC_CIRCULAR_BUFFER == TRUE) */
+ 269:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif	/* defined(_HAL_DMA_CAPABILITY) && defined(UART_OCDMA_SUPPORT) */
+ 270:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 271:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART_EnableSync();
+ 272:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 273:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	return IO_E_OK;
+ 274:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 275:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 276:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if defined(OCUART_USE_SET_BAUDRATESYNC)
+ 277:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 278:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** Sets the baud rate.
+ 279:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 280:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** void OCUART_SetBaudRateSync(UART_BaudRateType baudRateRegType) 
+ 281:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 282:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_SetBaudRate(UART_DEVICE, _HALUART_CALC_BAUD(baudRateRegType, HAL_UART_DIVISOR));
+ 283:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 284:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif
+ 285:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 286:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 287:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** Enables UART peripheral (both RX and TX) and initilizes sw variables.
+ 288:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 289:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \version		1.0.0
+ 290:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \date 			08/07/2009
+ 291:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \author			Roberto Fioravanti
+ 292:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 293:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** void OCUART_EnableSync(void)
+ 294:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 295:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	(void)OCUART_InitSWSync();
+ 296:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	
+ 297:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_ClkEnable(UART_DEVICE);
+ 298:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_Enable(UART_DEVICE) 	/**\todo deve dipendere da UART_DEVICE*/
+ 299:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_TxEnable				(UART_DEVICE)
+ 300:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_RxEnable				(UART_DEVICE)
+ 301:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 302:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_RxIntEnable		(UART_DEVICE)
+ 303:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 304:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 305:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 306:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** Disables UART peripheral (RX and TX) and iitializaes variables.
+ 307:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 308:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \version		1.0.0
+ 309:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \date 			08/07/2009
+ 310:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \author			Roberto Fioravanti
+ 311:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 312:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** void OCUART_DisableSync(void)
+ 313:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 314:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     UART_ClkDisable(UART_DEVICE);  				/* if not implemented, UART_Disable() does it*/
+ 315:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_Disable				(UART_DEVICE)
+ 316:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_TxDisable				(UART_DEVICE)
+ 317:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_RxDisable				(UART_DEVICE)
+ 318:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 319:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_RxIntDisable			(UART_DEVICE)
+ 320:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_TxIntDisable			(UART_DEVICE)
+ 321:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	
+ 322:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	(void)OCUART_InitSWSync();
+ 323:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	
+ 324:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 325:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 326:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 327:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 328:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** Deinitializes UART driver
+ 329:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 330:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \param [in] 	void * deinitSync (ignored)
+ 331:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 332:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \return 		IO_ErrorType
+ 333:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \retvalue   IO_E_OK
+ 334:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \warning
+ 335:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 336:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \version		1.0.0
+ 337:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \date 			07/07/2009
+ 338:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \author			Roberto Fioravanti
+ 339:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 340:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** IO_ErrorType OCUART_DeInitSync(void * deinitSync)
+ 341:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 342:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     (void) deinitSync;
+ 343:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     
+ 344:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_ClkDisable(UART_DEVICE);
+ 345:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART_DisableSync();
+ 346:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 347:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     return IO_E_OK;
+ 348:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 349:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 350:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 351:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 352:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** Callback (slave mode)
+ 353:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \param [in] 	IO_NotificationType notifVal notification code
+ 354:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \param [in]     IO_ChannelType channel communication channel
+ 355:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \param [in]     IO_ErrorType error
+ 356:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 357:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \version		00.00.32
+ 358:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \date 			24/02/2010
+ 359:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \author			Roberto Fioravanti
+ 360:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 361:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** IO_ErrorType OCUART_CallBack(IO_NotificationType notifVal, IO_ChannelType channel, IO_ErrorType err
+ 362:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+  10                             		.loc 1 362 0
+  11                             	.LVL0:
+ 363:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     (void) error;
+ 364:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     (void) channel;
+ 365:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     (void) notifVal;
+ 366:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     
+ 367:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****   if(OCUART.notifyCB)
+  12                             		.loc 1 367 0
+  13 0000 FB E2 00 00 00 00       		mov.L	#_OCUART, r14
+  14 0006 ED E4 09                		mov.L	36[r14], r4
+  15 0009 61 04                   		cmp	#0, r4
+  16 000b 20 1D                   		beq	.L2
+ 368:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****   {
+ 369:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     if(OCUART.toptions & IO_CLOSE_TX)
+  17                             		.loc 1 369 0
+  18 000d CD E3 1F                		mov.B	31[r14], r3
+  19                             	.LVL1:
+  20 0010 64 43                   		and	#4, r3
+  21 0012 5B 33                   		movu.B	r3, r3
+  22 0014 61 03                   		cmp	#0, r3
+  23 0016 20 0B                   		beq	.L3
+ 370:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     {
+ 371:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****       /* notifica */
+ 372:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		(void)(OCUART.notifyCB)((IO_NotificationType)IO_N_COMPLETED, OCUART.id, (IO_ErrorType)IO_E_OK);
+  24                             		.loc 1 372 0
+  25 0018 66 61                   		mov	#6, r1
+  26                             	.LVL2:
+  27 001a CD E2 21                		mov.B	33[r14], r2
+  28                             	.LVL3:
+  29 001d 66 03                   		mov	#0, r3
+  30 001f 2E 07                   		bra	.L7
+  31                             	.LVL4:
+  32                             	.L3:
+ 373:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     } else
+ 374:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     {
+ 375:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	(void)(OCUART.notifyCB)((IO_NotificationType)IO_N_TX_DONE, OCUART.id, (IO_ErrorType)IO_E_OK);
+  33                             		.loc 1 375 0
+  34 0021 CD E2 21                		mov.B	33[r14], r2
+  35                             	.LVL5:
+  36 0024 66 41                   		mov	#4, r1
+  37                             	.LVL6:
+  38                             		.balign 2,3,1
+  39                             	.L7:
+  40 0026 7F 14                   		jsr	r4
+  41                             	.LVL7:
+  42                             		.balign 2,3,1
+  43                             	.L2:
+ 376:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     }
+ 377:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****   }
+ 378:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	return IO_E_OK;
+ 379:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+  44                             		.loc 1 379 0
+  45 0028 66 01                   		mov.L	#0, r1
+  46 002a 02                      		rts
+  47                             	.LFE5:
+  49 002b 03                      		.section	.text.OCUART_InitSWSync,"ax",@progbits
+  50                             		.global	_OCUART_InitSWSync
+  52                             	_OCUART_InitSWSync:
+  53                             	.LFB0:
+ 163:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+  54                             		.loc 1 163 0
+ 166:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.pHead = OCUART.pTail = OCUART.pRead = (uint8_t*)OCUART_Buffer;
+  55                             		.loc 1 166 0
+  56 0000 FB E2 00 00 00 00       		mov.L	#_OCUART, r14
+  57 0006 F9 E2 02 00 00 00 00    		mov.L	#_OCUART_Buffer, 8[r14]
+  58 000d F9 E2 01 00 00 00 00    		mov.L	#_OCUART_Buffer, 4[r14]
+  59 0014 F8 E2 00 00 00 00       		mov.L	#_OCUART_Buffer, [r14]
+ 169:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.InputLen=0;
+  60                             		.loc 1 169 0
+  61 001a F9 E4 28 00             		mov.B	#0, 40[r14]
+ 170:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.MngrState=0;
+  62                             		.loc 1 170 0
+  63 001e F9 E4 29 00             		mov.B	#0, 41[r14]
+ 171:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.ErrorFound=0;
+  64                             		.loc 1 171 0
+  65 0022 F9 E4 2A 00             		mov.B	#0, 42[r14]
+ 172:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.RxLen=0;
+  66                             		.loc 1 172 0
+  67 0026 F9 E5 0D 00             		mov.W	#0, 26[r14]
+ 173:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	(void)memset(OCUART_Buffer, 0, sizeof(OCUART_Buffer));
+  68                             		.loc 1 173 0
+  69 002a FB 12 00 00 00 00       		mov.L	#_OCUART_Buffer, r1
+  70 0030 75 43 40                		mov.L	#64, r3
+  71 0033 66 02                   		mov	#0, r2
+  72 0035 7F 88                   		sstr.b
+ 175:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+  73                             		.loc 1 175 0
+  74 0037 66 01                   		mov.L	#0, r1
+  75 0039 02                      		rts
+  76                             	.LFE0:
+  78                             		.section	.text.OCUART_EnableSync,"ax",@progbits
+  79                             		.global	_OCUART_EnableSync
+  81                             	_OCUART_EnableSync:
+  82                             	.LFB2:
+ 294:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+  83                             		.loc 1 294 0
+ 295:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	(void)OCUART_InitSWSync();
+  84                             		.loc 1 295 0
+  85 0000 05 00 00 00             		bsr	_OCUART_InitSWSync
+  86                             	.LVL8:
+ 297:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_ClkEnable(UART_DEVICE);
+  87                             		.loc 1 297 0
+  88 0004 FB EE 00 00 08          		mov.L	#0x80000, r14
+  89 0009 FA E9 FF 01 0F A5       		mov.W	#0xffffa50f, 1022[r14]
+  90 000f ED E4 05                		mov.L	20[r14], r4
+  91 0012 75 24 EF                		and	#-17, r4
+  92 0015 E7 E4 05                		mov.L	r4, 20[r14]
+  93 0018 FA E9 FF 01 00 A5       		mov.W	#0xffffa500, 1022[r14]
+ 298:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_Enable(UART_DEVICE) 	/**\todo deve dipendere da UART_DEVICE*/
+  94                             		.loc 1 298 0
+  95 001e FB EE 0E C0 08          		mov.L	#0x8c00e, r14
+  96 0023 CD E4 60                		mov.B	96[r14], r4
+  97 0026 65 24                   		or	#2, r4
+  98 0028 C7 E4 60                		mov.B	r4, 96[r14]
+  99 002b CD E4 60                		mov.B	96[r14], r4
+ 100 002e 65 44                   		or	#4, r4
+ 101 0030 C7 E4 60                		mov.B	r4, 96[r14]
+ 102 0033 FB EE 00 C1 08          		mov.L	#0x8c100, r14
+ 103 0038 F9 E4 1F 00             		mov.B	#0, 31[r14]
+ 104 003c CD E4 1F                		mov.B	31[r14], r4
+ 105 003f 75 34 40                		or	#64, r4
+ 106 0042 C7 E4 1F                		mov.B	r4, 31[r14]
+ 107 0045 CD E4 B1                		mov.B	177[r14], r4
+ 108 0048 65 C4                   		or	#12, r4
+ 109 004a C7 E4 B1                		mov.B	r4, 177[r14]
+ 110 004d CD E4 B2                		mov.B	178[r14], r4
+ 111 0050 65 C4                   		or	#12, r4
+ 112 0052 C7 E4 B2                		mov.B	r4, 178[r14]
+ 113 0055 F9 E4 1F 00             		mov.B	#0, 31[r14]
+ 114 0059 F9 E4 1F 80             		mov.B	#0xffffff80, 31[r14]
+ 299:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_TxEnable				(UART_DEVICE)
+ 115                             		.loc 1 299 0
+ 116 005d FB EE 00 B3 08          		mov.L	#0x8b300, r14
+ 117 0062 CD E4 02                		mov.B	2[r14], r4
+ 118 0065 75 34 20                		or	#32, r4
+ 119 0068 C7 E4 02                		mov.B	r4, 2[r14]
+ 300:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_RxEnable				(UART_DEVICE)
+ 120                             		.loc 1 300 0
+ 121 006b CD E4 02                		mov.B	2[r14], r4
+ 122 006e 75 34 10                		or	#16, r4
+ 123 0071 C7 E4 02                		mov.B	r4, 2[r14]
+ 302:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_RxIntEnable		(UART_DEVICE)
+ 124                             		.loc 1 302 0
+ 125 0074 FB 4E 00 70 08          		mov.L	#0x87000, r4
+ 126 0079 CE 43 EE 03             		mov.B	1006[r4], r3
+ 127 007d 65 13                   		or	#1, r3
+ 128 007f CB 43 EE 03             		mov.B	r3, 1006[r4]
+ 129 0083 CE 43 1D 02             		mov.B	541[r4], r3
+ 130 0087 75 33 80                		or	#0xffffff80, r3
+ 131 008a CB 43 1D 02             		mov.B	r3, 541[r4]
+ 132 008e F9 44 EF 00             		mov.B	#0, 239[r4]
+ 133 0092 CD E4 02                		mov.B	2[r14], r4
+ 134 0095 75 34 40                		or	#64, r4
+ 135 0098 C7 E4 02                		mov.B	r4, 2[r14]
+ 136 009b 02                      		rts
+ 137                             	.LFE2:
+ 139                             		.section	.text.OCUART_DisableSync,"ax",@progbits
+ 140                             		.global	_OCUART_DisableSync
+ 142                             	_OCUART_DisableSync:
+ 143                             	.LFB3:
+ 313:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 144                             		.loc 1 313 0
+ 314:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     UART_ClkDisable(UART_DEVICE);  				/* if not implemented, UART_Disable() does it*/
+ 145                             		.loc 1 314 0
+ 146 0000 FB EE 00 00 08          		mov.L	#0x80000, r14
+ 147 0005 FA E9 FF 01 0F A5       		mov.W	#0xffffa50f, 1022[r14]
+ 148 000b ED E4 05                		mov.L	20[r14], r4
+ 149 000e 75 34 10                		or	#16, r4
+ 150 0011 E7 E4 05                		mov.L	r4, 20[r14]
+ 151 0014 FA E9 FF 01 00 A5       		mov.W	#0xffffa500, 1022[r14]
+ 315:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_Disable				(UART_DEVICE)
+ 152                             		.loc 1 315 0
+ 153 001a FB EE 0E C0 08          		mov.L	#0x8c00e, r14
+ 154 001f CD E4 60                		mov.B	96[r14], r4
+ 155 0022 75 24 FD                		and	#-3, r4
+ 156 0025 C7 E4 60                		mov.B	r4, 96[r14]
+ 157 0028 CD E4 60                		mov.B	96[r14], r4
+ 158 002b 75 24 FB                		and	#-5, r4
+ 159 002e C7 E4 60                		mov.B	r4, 96[r14]
+ 160 0031 FB EE 00 C1 08          		mov.L	#0x8c100, r14
+ 161 0036 F9 E4 1F 00             		mov.B	#0, 31[r14]
+ 162 003a CD E4 1F                		mov.B	31[r14], r4
+ 163 003d 75 34 40                		or	#64, r4
+ 164 0040 C7 E4 1F                		mov.B	r4, 31[r14]
+ 165 0043 CD E4 B1                		mov.B	177[r14], r4
+ 166 0046 75 24 F3                		and	#-13, r4
+ 167 0049 C7 E4 B1                		mov.B	r4, 177[r14]
+ 168 004c CD E4 B2                		mov.B	178[r14], r4
+ 169 004f 75 24 F3                		and	#-13, r4
+ 170 0052 C7 E4 B2                		mov.B	r4, 178[r14]
+ 171 0055 F9 E4 1F 00             		mov.B	#0, 31[r14]
+ 172 0059 F9 E4 1F 80             		mov.B	#0xffffff80, 31[r14]
+ 316:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_TxDisable				(UART_DEVICE)
+ 173                             		.loc 1 316 0
+ 174 005d FB EE 00 B3 08          		mov.L	#0x8b300, r14
+ 175 0062 CD E4 02                		mov.B	2[r14], r4
+ 176 0065 75 24 DF                		and	#-33, r4
+ 177 0068 C7 E4 02                		mov.B	r4, 2[r14]
+ 317:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_RxDisable				(UART_DEVICE)
+ 178                             		.loc 1 317 0
+ 179 006b CD E4 02                		mov.B	2[r14], r4
+ 180 006e 75 24 EF                		and	#-17, r4
+ 181 0071 C7 E4 02                		mov.B	r4, 2[r14]
+ 319:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_RxIntDisable			(UART_DEVICE)
+ 182                             		.loc 1 319 0
+ 183 0074 FB 4E 00 70 08          		mov.L	#0x87000, r4
+ 184 0079 CE 43 1D 02             		mov.B	541[r4], r3
+ 185 007d 75 23 7F                		and	#0x7f, r3
+ 186 0080 CB 43 1D 02             		mov.B	r3, 541[r4]
+ 187 0084 F9 44 EF 00             		mov.B	#0, 239[r4]
+ 188 0088 CD E3 02                		mov.B	2[r14], r3
+ 189 008b 75 23 BF                		and	#0xffffffbf, r3
+ 190 008e C7 E3 02                		mov.B	r3, 2[r14]
+ 320:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_TxIntDisable			(UART_DEVICE)
+ 191                             		.loc 1 320 0
+ 192 0091 CE 43 1E 02             		mov.B	542[r4], r3
+ 193 0095 75 23 FD                		and	#-3, r3
+ 194 0098 CB 43 1E 02             		mov.B	r3, 542[r4]
+ 195 009c F9 44 F1 00             		mov.B	#0, 241[r4]
+ 196 00a0 CD E4 02                		mov.B	2[r14], r4
+ 197 00a3 75 24 FB                		and	#-5, r4
+ 198 00a6 C7 E4 02                		mov.B	r4, 2[r14]
+ 322:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	(void)OCUART_InitSWSync();
+ 199                             		.loc 1 322 0
+ 200 00a9 04 00 00 00             		bra	_OCUART_InitSWSync
+ 201                             	.LVL9:
+ 202                             	.LFE3:
+ 204                             		.section	.text.OCUART_InitSync,"ax",@progbits
+ 205                             		.global	_OCUART_InitSync
+ 207                             	_OCUART_InitSync:
+ 208                             	.LFB1:
+ 192:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 209                             		.loc 1 192 0
+ 210                             	.LVL10:
+ 211 0000 6E 7A                   		pushm	r7-r10
+ 212                             	.LCFI0:
+ 202:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.notifyCB=initSync->eventCB;
+ 213                             		.loc 1 202 0
+ 214 0002 EC 1A                   		mov.L	[r1], r10
+ 215 0004 FB 72 00 00 00 00       		mov.L	#_OCUART, r7
+ 216 000a E7 7A 09                		mov.L	r10, 36[r7]
+ 203:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.id=initSync->id;
+ 217                             		.loc 1 203 0
+ 218 000d 8B 11                   		mov.B	12[r1], r1
+ 219                             	.LVL11:
+ 210:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	(void)memset(OCUART_Buffer, 0, sizeof(OCUART_Buffer));
+ 220                             		.loc 1 210 0
+ 221 000f 75 43 40                		mov.L	#64, r3
+ 203:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.id=initSync->id;
+ 222                             		.loc 1 203 0
+ 223 0012 C7 71 21                		mov.B	r1, 33[r7]
+ 208:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     UART_ClkDisable(UART_DEVICE);
+ 224                             		.loc 1 208 0
+ 225 0015 FB 7E 00 00 08          		mov.L	#0x80000, r7
+ 226 001a FA 79 FF 01 0F A5       		mov.W	#0xffffa50f, 1022[r7]
+ 227 0020 ED 7E 05                		mov.L	20[r7], r14
+ 210:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	(void)memset(OCUART_Buffer, 0, sizeof(OCUART_Buffer));
+ 228                             		.loc 1 210 0
+ 229 0023 FB 12 00 00 00 00       		mov.L	#_OCUART_Buffer, r1
+ 208:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     UART_ClkDisable(UART_DEVICE);
+ 230                             		.loc 1 208 0
+ 231 0029 75 3E 10                		or	#16, r14
+ 232 002c E7 7E 05                		mov.L	r14, 20[r7]
+ 233 002f FA 79 FF 01 00 A5       		mov.W	#0xffffa500, 1022[r7]
+ 210:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	(void)memset(OCUART_Buffer, 0, sizeof(OCUART_Buffer));
+ 234                             		.loc 1 210 0
+ 235 0035 66 02                   		mov	#0, r2
+ 236 0037 7F 88                   		sstr.b
+ 214:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART_DisableSync(); 		/* disabilita per impostare il clock */
+ 237                             		.loc 1 214 0
+ 238 0039 05 00 00 00             		bsr	_OCUART_DisableSync
+ 239                             	.LVL12:
+ 215:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_ClkEnable(UART_DEVICE);
+ 240                             		.loc 1 215 0
+ 241 003d FA 79 FF 01 0F A5       		mov.W	#0xffffa50f, 1022[r7]
+ 242 0043 ED 7E 05                		mov.L	20[r7], r14
+ 243 0046 75 2E EF                		and	#-17, r14
+ 244 0049 E7 7E 05                		mov.L	r14, 20[r7]
+ 245 004c FA 79 FF 01 00 A5       		mov.W	#0xffffa500, 1022[r7]
+ 217:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_ResetPeError(UART_DEVICE)
+ 246                             		.loc 1 217 0
+ 247 0052 FB EE 00 B3 08          		mov.L	#0x8b300, r14
+ 248 0057 CD E7 04                		mov.B	4[r14], r7
+ 249 005a 75 27 F7                		and	#-9, r7
+ 250 005d C7 E7 04                		mov.B	r7, 4[r14]
+ 225:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_SetParityMode	    (UART_DEVICE,		HAL_UART_PARITY)
+ 251                             		.loc 1 225 0
+ 252 0060 CC E7                   		mov.B	[r14], r7
+ 253 0062 C3 E7                   		mov.B	r7, [r14]
+ 226:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_SetDataLen			(UART_DEVICE,		HAL_UART_DATALEN)
+ 254                             		.loc 1 226 0
+ 255 0064 CC E7                   		mov.B	[r14], r7
+ 256 0066 C3 E7                   		mov.B	r7, [r14]
+ 229:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_SetClockDivisor    (UART_DEVICE,		HAL_UART_BAUDRATE_DIVISOR);
+ 257                             		.loc 1 229 0
+ 258 0068 CC E7                   		mov.B	[r14], r7
+ 259 006a C3 E7                   		mov.B	r7, [r14]
+ 231:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_SetBaudRate (UART_DEVICE, _HALUART_CALC_BAUD(HAL_OPTION_UART_BAUDRATE,	HAL_UART_DIVISOR));
+ 260                             		.loc 1 231 0
+ 261 006c F9 E4 01 40             		mov.B	#64, 1[r14]
+ 271:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART_EnableSync();
+ 262                             		.loc 1 271 0
+ 263 0070 05 00 00 00             		bsr	_OCUART_EnableSync
+ 264                             	.LVL13:
+ 274:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 265                             		.loc 1 274 0
+ 266 0074 66 01                   		mov.L	#0, r1
+ 267 0076 3F 7A 04                		rtsd	#16, r7-r10
+ 268                             	.LFE1:
+ 270                             		.section	.text.OCUART_DeInitSync,"ax",@progbits
+ 271                             		.global	_OCUART_DeInitSync
+ 273                             	_OCUART_DeInitSync:
+ 274                             	.LFB4:
+ 341:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 275                             		.loc 1 341 0
+ 276                             	.LVL14:
+ 344:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_ClkDisable(UART_DEVICE);
+ 277                             		.loc 1 344 0
+ 278 0000 FB EE 00 00 08          		mov.L	#0x80000, r14
+ 279 0005 FA E9 FF 01 0F A5       		mov.W	#0xffffa50f, 1022[r14]
+ 280 000b ED E4 05                		mov.L	20[r14], r4
+ 281 000e 75 34 10                		or	#16, r4
+ 282 0011 E7 E4 05                		mov.L	r4, 20[r14]
+ 283 0014 FA E9 FF 01 00 A5       		mov.W	#0xffffa500, 1022[r14]
+ 345:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART_DisableSync();
+ 284                             		.loc 1 345 0
+ 285 001a 05 00 00 00             		bsr	_OCUART_DisableSync
+ 286                             	.LVL15:
+ 348:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 287                             		.loc 1 348 0
+ 288 001e 66 01                   		mov.L	#0, r1
+ 289 0020 02                      		rts
+ 290                             	.LFE4:
+ 292                             		.section	.text.OCUART_TxSync,"ax",@progbits
+ 293                             		.global	_OCUART_TxSync
+ 295                             	_OCUART_TxSync:
+ 296                             	.LFB6:
+ 380:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 381:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 382:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** Transmits data
+ 383:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 384:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \param [in] 	CommDriverParamType * param transmit paramenters
+ 385:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 386:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \return 		IO_ErrorType
+ 387:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \retvalue   IO_E_INVALID_VALUE: buffer o len non validi
+ 388:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****             IO_E_BUSY: bus occupato (solo master)
+ 389:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****             IO_E_OK: trasmissione avviata regolarmente.
+ 390:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 391:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \warning
+ 392:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 393:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \notes:
+ 394:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 395:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \version		1.0.0
+ 396:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \date 			07/07/2009
+ 397:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \author			Roberto Fioravanti
+ 398:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 399:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** IO_ErrorType OCUART_TxSync(CommDriverParamType * param)
+ 400:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 297                             		.loc 1 400 0
+ 298                             	.LVL16:
+ 299 0000 6E 7A                   		pushm	r7-r10
+ 300                             	.LCFI1:
+ 301 0002 71 00 F0                		add	#-16, r0
+ 302                             	.LCFI2:
+ 303                             		.loc 1 400 0
+ 304 0005 EF 1E                   		mov.L	r1, r14
+ 401:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if !defined(_HAL_DMA_CAPABILITY) || !defined(UART_OCDMA_SUPPORT)
+ 402:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	SWDMA_TransferType  transfer={0};
+ 305                             		.loc 1 402 0
+ 306 0007 75 43 10                		mov.L	#16, r3
+ 307 000a EF 01                   		mov.L	r0, r1
+ 308                             	.LVL17:
+ 309 000c 66 02                   		mov	#0, r2
+ 310 000e 7F 88                   		sstr.b
+ 403:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #else
+ 404:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCDMA_TransferType  transfer = {0};
+ 405:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif /* !defined(_HAL_DMA_CAPABILITY) || !defined(UART_OCDMA_SUPPORT) */
+ 406:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****   
+ 407:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	if(!param->buffer) 
+ 311                             		.loc 1 407 0
+ 312 0010 ED E7 02                		mov.L	8[r14], r7
+ 313 0013 61 07                   		cmp	#0, r7
+ 314 0015 20 75                   		beq	.L17
+ 408:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	{
+ 409:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		return IO_E_INVALID_VALUE;
+ 410:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	}
+ 411:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 412:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	if(!param->len)
+ 315                             		.loc 1 412 0
+ 316 0017 5D E7 02                		movu.W	4[r14], r7
+ 317 001a 61 07                   		cmp	#0, r7
+ 318 001c 20 6E                   		beq	.L17
+ 413:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	{
+ 414:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		return IO_E_INVALID_VALUE;
+ 415:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	}
+ 416:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 417:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.toptions=param->option;
+ 319                             		.loc 1 417 0
+ 320 001e CD EA 0C                		mov.B	12[r14], r10
+ 321 0021 FB 72 00 00 00 00       		mov.L	#_OCUART, r7
+ 322 0027 C7 7A 1F                		mov.B	r10, 31[r7]
+ 418:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 419:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_TxEnable(UART_DEVICE);
+ 323                             		.loc 1 419 0
+ 324 002a FB 7E 00 B3 08          		mov.L	#0x8b300, r7
+ 325 002f 88 F4                   		mov.B	2[r7], r4
+ 420:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 421:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.bcr=param->len;
+ 422:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.sar=param->buffer;
+ 423:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.dar=UART_pTransmitDataRegister(UART_DEVICE);
+ 424:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if !defined(_HAL_DMA_CAPABILITY) || !defined(UART_OCDMA_SUPPORT)
+ 425:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.channel=1;        /** \todo search for the channel */
+ 426:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.options.optionbyte = 	SWDMA_OPTION_SSIZE_BYTE|
+ 427:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     								 SWDMA_OPTION_DSIZE_BYTE|
+ 428:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     								 SWDMA_OPTION_SINC|
+ 429:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     								 SWDMA_OPTION_START|
+ 430:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     								 SWDMA_OPTION_CS;
+ 431:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     (void)SWDMA_ChannelEnableSync(1);
+ 326                             		.loc 1 431 0
+ 327 0031 66 11                   		mov	#1, r1
+ 419:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_TxEnable(UART_DEVICE);
+ 328                             		.loc 1 419 0
+ 329 0033 75 34 20                		or	#32, r4
+ 330 0036 80 F4                   		mov.B	r4, 2[r7]
+ 421:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.bcr=param->len;
+ 331                             		.loc 1 421 0
+ 332 0038 DD EA 02                		mov.W	4[r14], r10
+ 422:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.sar=param->buffer;
+ 333                             		.loc 1 422 0
+ 334 003b ED EE 02                		mov.L	8[r14], r14
+ 335                             	.LVL18:
+ 421:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.bcr=param->len;
+ 336                             		.loc 1 421 0
+ 337 003e D7 0A 06                		mov.W	r10, 12[r0]
+ 422:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.sar=param->buffer;
+ 338                             		.loc 1 422 0
+ 339 0041 E7 0E 01                		mov.L	r14, 4[r0]
+ 423:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.dar=UART_pTransmitDataRegister(UART_DEVICE);
+ 340                             		.loc 1 423 0
+ 341 0044 F9 0E 02 03 B3 08       		mov.L	#0x8b303, 8[r0]
+ 425:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.channel=1;        /** \todo search for the channel */
+ 342                             		.loc 1 425 0
+ 343 004a 3C 00 01                		mov.B	#1, [r0]
+ 426:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.options.optionbyte = 	SWDMA_OPTION_SSIZE_BYTE|
+ 344                             		.loc 1 426 0
+ 345 004d 3C 0E 4F                		mov.B	#0x4f, 14[r0]
+ 346                             		.loc 1 431 0
+ 347 0050 05 00 00 00             		bsr	_SWDMA_ChannelEnableSync
+ 348                             	.LVL19:
+ 432:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     (void)SWDMA_SetTransferSync(&transfer);
+ 349                             		.loc 1 432 0
+ 350 0054 EF 01                   		mov.L	r0, r1
+ 351 0056 05 00 00 00             		bsr	_SWDMA_SetTransferSync
+ 352                             	.LVL20:
+ 433:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 434:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     (void)SWDMA_StartTransferSync(1, OCUART_CallBack);
+ 353                             		.loc 1 434 0
+ 354 005a 66 11                   		mov	#1, r1
+ 355 005c FB 22 00 00 00 00       		mov.L	#_OCUART_CallBack, r2
+ 356 0062 05 00 00 00             		bsr	_SWDMA_StartTransferSync
+ 357                             	.LVL21:
+ 435:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #else
+ 436:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.channel = OCDMA_CHANNEL_ID(UART_TX_DMA_CH) | OCDMA_CHANNEL_DEVICE(UART_TX_DMA_DEV);
+ 437:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.addr = OCDMA_ADDR_SINC | OCDMA_ADDR_SSIZE_BYTE | OCDMA_ADDR_DSIZE_BYTE | OCDMA_ADDR_CS
+ 438:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     transfer.perlink = OCDMA_PERLINK_ERQ | OCDMA_PERLINK_D_ERQ;    
+ 439:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 440:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     UART_TxDMAEnable(UART_DEVICE);
+ 441:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 442:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCDMA_SetChannelDeviceSync(&transfer);
+ 443:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCDMA_SetTransferParamSync(&transfer);    
+ 444:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCDMA_SetTransferSync(&transfer);
+ 445:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCDMA_StartTransferSync(0, &transfer, param -> callback);
+ 446:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 447:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 448:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif	/* !defined(_HAL_DMA_CAPABILITY) || !defined(UART_OCDMA_SUPPORT) */
+ 449:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     UART_TxIntEnable			(UART_DEVICE)
+ 358                             		.loc 1 449 0
+ 359 0066 FB EE 00 70 08          		mov.L	#0x87000, r14
+ 360 006b FA E4 EE 03 01          		mov.B	#1, 1006[r14]
+ 361 0070 CE E4 1E 02             		mov.B	542[r14], r4
+ 450:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 451:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	return IO_E_OK;
+ 362                             		.loc 1 451 0
+ 363 0074 66 01                   		mov	#0, r1
+ 449:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     UART_TxIntEnable			(UART_DEVICE)
+ 364                             		.loc 1 449 0
+ 365 0076 65 24                   		or	#2, r4
+ 366 0078 CB E4 1E 02             		mov.B	r4, 542[r14]
+ 367 007c F9 E4 F1 00             		mov.B	#0, 241[r14]
+ 368 0080 CD 7E 02                		mov.B	2[r7], r14
+ 369 0083 65 4E                   		or	#4, r14
+ 370 0085 C7 7E 02                		mov.B	r14, 2[r7]
+ 371 0088 2E 06                   		bra	.L15
+ 372                             	.LVL22:
+ 373                             	.L17:
+ 409:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		return IO_E_INVALID_VALUE;
+ 374                             		.loc 1 409 0
+ 375 008a 75 41 13                		mov	#19, r1
+ 376                             	.LVL23:
+ 377 008d 03                      		.balign 2,3,2
+ 378                             	.L15:
+ 452:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 379                             		.loc 1 452 0
+ 380 008e 75 21 13                		and	#19, r1
+ 381 0091 3F 7A 08                		rtsd	#32, r7-r10
+ 382                             	.LFE6:
+ 384                             		.section	.text.OCUART_TxByteSync,"ax",@progbits
+ 385                             		.global	_OCUART_TxByteSync
+ 387                             	_OCUART_TxByteSync:
+ 388                             	.LFB7:
+ 453:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 454:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 455:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** Transmits a single byte and waits for transmission completed.
+ 456:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 457:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \param [in] 	data uint8_t byte to be sent
+ 458:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 459:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \version		1.0.0
+ 460:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \date 			13/10/2009
+ 461:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \author			Roberto Fioravanti
+ 462:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 463:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** void OCUART_TxByteSync(uint8_t data)
+ 464:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 389                             		.loc 1 464 0
+ 390                             	.LVL24:
+ 465:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	while(UART_IsTxDataRegFull(UART_DEVICE)){
+ 391                             		.loc 1 465 0
+ 392 0000 FB 4E 00 B3 08          		mov.L	#0x8b300, r4
+ 393 0005 03                      		.balign 2,3,5
+ 394                             	.L20:
+ 395                             		.loc 1 465 0 is_stmt 0 discriminator 1
+ 396 0006 CD 4E 04                		mov.B	4[r4], r14
+ 397 0009 64 4E                   		and	#4, r14
+ 398 000b 5B EE                   		movu.B	r14, r14
+ 399 000d 61 0E                   		cmp	#0, r14
+ 400 000f 20 F7                   		beq	.L20
+ 466:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	}
+ 467:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_WriteData(UART_DEVICE, data);
+ 401                             		.loc 1 467 0 is_stmt 1
+ 402 0011 FB EE 00 B3 08          		mov.L	#0x8b300, r14
+ 403 0016 C7 E1 03                		mov.B	r1, 3[r14]
+ 404 0019 02                      		rts
+ 405                             	.LFE7:
+ 407                             		.section	.text.OCUART_RxSync,"ax",@progbits
+ 408                             		.global	_OCUART_RxSync
+ 410                             	_OCUART_RxSync:
+ 411                             	.LFB8:
+ 468:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 469:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 470:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 471:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** Starts reception.
+ 472:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 473:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 474:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \param [in] 	CommDriverParamType * param
+ 475:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 476:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \return 		IO_ErrorType
+ 477:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \retvalue   IO_E_INVALID_VALUE: buffer o len invalid (I2C e DMA)
+ 478:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****             IO_E_INVALID_CHANNEL_ID:  DMA channel invalid
+ 479:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****             IO_E_OK: success
+ 480:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \warning
+ 481:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 482:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \notes:
+ 483:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 484:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \version		1.0.0
+ 485:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \date 			16/03/2009
+ 486:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \author			Roberto Fioravanti
+ 487:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 488:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** IO_ErrorType OCUART_RxSync(CommDriverParamType * param)
+ 489:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 412                             		.loc 1 489 0
+ 413                             	.LVL25:
+ 490:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if defined(_HAL_DMA_CAPABILITY) && defined(UART_OCDMA_SUPPORT)
+ 491:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCDMA_TransferType  transfer = {0};
+ 492:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif
+ 493:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	if((!param->buffer) || (!param->len))
+ 414                             		.loc 1 493 0
+ 415 0000 A8 93                   		mov.L	8[r1], r3
+ 416 0002 61 03                   		cmp	#0, r3
+ 417 0004 20 1F                   		beq	.L28
+ 418                             		.loc 1 493 0 is_stmt 0 discriminator 1
+ 419 0006 98 94                   		mov.W	4[r1], r4
+ 420 0008 5F 4E                   		movu.W	r4, r14
+ 421 000a 61 0E                   		cmp	#0, r14
+ 422 000c 20 17                   		beq	.L28
+ 494:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	{
+ 495:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 496:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	}
+ 497:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 498:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.RxBuffer=param->buffer;
+ 423                             		.loc 1 498 0 is_stmt 1
+ 424 000e FB E2 00 00 00 00       		mov.L	#_OCUART, r14
+ 425 0014 E7 E3 05                		mov.L	r3, 20[r14]
+ 499:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.RxLen=param->len;
+ 426                             		.loc 1 499 0
+ 427 0017 D7 E4 0D                		mov.W	r4, 26[r14]
+ 500:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.options=param->option;
+ 428                             		.loc 1 500 0
+ 429 001a 8B 11                   		mov.B	12[r1], r1
+ 430                             	.LVL26:
+ 431 001c C7 E1 1E                		mov.B	r1, 30[r14]
+ 501:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 502:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 432                             		.loc 1 502 0
+ 433 001f 66 01                   		mov	#0, r1
+ 434 0021 2E 05                   		bra	.L26
+ 435                             	.LVL27:
+ 436                             	.L28:
+ 495:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 437                             		.loc 1 495 0
+ 438 0023 75 41 13                		mov	#19, r1
+ 439                             	.LVL28:
+ 440                             		.balign 2,3,2
+ 441                             	.L26:
+ 503:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 442                             		.loc 1 503 0
+ 443 0026 75 21 13                		and	#19, r1
+ 444 0029 02                      		rts
+ 445                             	.LFE8:
+ 447                             		.section	.text.OCUART_GetError,"ax",@progbits
+ 448                             		.global	_OCUART_GetError
+ 450                             	_OCUART_GetError:
+ 451                             	.LFB9:
+ 504:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 505:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 506:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** uint8_t OCUART_GetError(void)
+ 507:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {                       
+ 452                             		.loc 1 507 0
+ 453                             	.LVL29:
+ 508:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     uint8_t err=(uint8_t)(OCUART.ErrorFound & 6);
+ 454                             		.loc 1 508 0
+ 455 0000 FB E2 00 00 00 00       		mov.L	#_OCUART, r14
+ 456 0006 CD E1 2A                		mov.B	42[r14], r1
+ 509:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     
+ 510:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     return err;
+ 511:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 457                             		.loc 1 511 0
+ 458 0009 64 61                   		and	#6, r1
+ 459 000b 02                      		rts
+ 460                             	.LFE9:
+ 462                             		.section	.text.OCUART_ErrMngr,"ax",@progbits
+ 463                             		.global	_OCUART_ErrMngr
+ 465                             	_OCUART_ErrMngr:
+ 466                             	.LFB10:
+ 512:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 513:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** void OCUART_ErrMngr(void)
+ 514:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 467                             		.loc 1 514 0
+ 515:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	if(UART_IsError(UART_DEVICE))
+ 468                             		.loc 1 515 0
+ 469 0000 FB EE 00 B3 08          		mov.L	#0x8b300, r14
+ 470 0005 CD E4 04                		mov.B	4[r14], r4
+ 471 0008 75 24 38                		and	#56, r4
+ 472 000b 20 48                   		beq	.L30
+ 516:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	{
+ 517:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		/** \todo gestione errori OCUART */
+ 518:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		if(UART_IsOerError(UART_DEVICE))
+ 473                             		.loc 1 518 0
+ 474 000d CD E4 04                		mov.B	4[r14], r4
+ 475 0010 75 24 20                		and	#32, r4
+ 476 0013 5B 44                   		movu.B	r4, r4
+ 477 0015 61 04                   		cmp	#0, r4
+ 478 0017 20 0F                   		beq	.L32
+ 519:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		{
+ 520:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		    OCUART.ErrorFound |=2;
+ 479                             		.loc 1 520 0
+ 480 0019 FB E2 00 00 00 00       		mov.L	#_OCUART, r14
+ 481 001f CD E4 2A                		mov.B	42[r14], r4
+ 482 0022 65 24                   		or	#2, r4
+ 483 0024 2E 1E                   		bra	.L38
+ 484                             	.L32:
+ 521:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		} else if(UART_IsFerError(UART_DEVICE))
+ 485                             		.loc 1 521 0
+ 486 0026 CD E4 04                		mov.B	4[r14], r4
+ 487 0029 FB E2 00 00 00 00       		mov.L	#_OCUART, r14
+ 488 002f 75 24 10                		and	#16, r4
+ 489 0032 5B 44                   		movu.B	r4, r4
+ 490 0034 61 04                   		cmp	#0, r4
+ 522:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		{
+ 523:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		    OCUART.ErrorFound |=4;
+ 491                             		.loc 1 523 0
+ 492 0036 CD E4 2A                		mov.B	42[r14], r4
+ 521:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		} else if(UART_IsFerError(UART_DEVICE))
+ 493                             		.loc 1 521 0
+ 494 0039 20 06                   		beq	.L34
+ 495                             		.loc 1 523 0
+ 496 003b 65 44                   		or	#4, r4
+ 497 003d 2E 05                   		bra	.L38
+ 498                             	.L34:
+ 524:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		    
+ 525:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		}else
+ 526:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		{
+ 527:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		    OCUART.ErrorFound |=1;
+ 499                             		.loc 1 527 0
+ 500 003f 65 14                   		or	#1, r4
+ 501 0041 03                      		.balign 2,3,5
+ 502                             	.L38:
+ 503 0042 C7 E4 2A                		mov.B	r4, 42[r14]
+ 528:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		}
+ 529:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		
+ 530:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		
+ 531:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		UART_ClearError(UART_DEVICE)
+ 504                             		.loc 1 531 0
+ 505 0045 FB EE 00 B3 08          		mov.L	#0x8b300, r14
+ 506 004a CD E4 04                		mov.B	4[r14], r4
+ 507 004d 75 24 C7                		and	#-57, r4
+ 508 0050 C7 E4 04                		mov.B	r4, 4[r14]
+ 509                             	.L30:
+ 510 0053 02                      		rts
+ 511                             	.LFE10:
+ 513                             		.section	.text.OCUART_TxDataMngrEx,"ax",@progbits
+ 514                             		.global	_OCUART_TxDataMngrEx
+ 516                             	_OCUART_TxDataMngrEx:
+ 517                             	.LFB11:
+ 532:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		
+ 533:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	}
+ 534:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 535:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 536:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 537:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 538:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** void OCUART_TxDataMngrEx(void)
+ 539:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 518                             		.loc 1 539 0
+ 540:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	/*if(UART_IsTxEvent(event))*/
+ 541:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	{
+ 542:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		UART_ClearTxIrq(UART_DEVICE);
+ 543:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 544:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if !defined(_HAL_DMA_CAPABILITY)
+ 545:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		if(SWDMA_CheckChannelEnableSync(1) == IO_STATE_ACTIVE)
+ 519                             		.loc 1 545 0
+ 520 0000 66 11                   		mov	#1, r1
+ 521 0002 05 00 00 00             		bsr	_SWDMA_CheckChannelEnableSync
+ 522                             	.LVL30:
+ 523 0006 5B 11                   		movu.B	r1, r1
+ 524 0008 61 11                   		cmp	#1, r1
+ 525 000a 21 06                   		bne	.L40
+ 546:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		{
+ 547:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			(void)SWDMA_ExeTransferMngrSync(1);
+ 526                             		.loc 1 547 0
+ 527 000c 04 00 00 00             		bra	_SWDMA_ExeTransferMngrSync
+ 528                             	.LVL31:
+ 529                             	.L40:
+ 548:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		} else
+ 549:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif /* !defined(_HAL_DMA_CAPABILITY) */
+ 550:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		{
+ 551:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			UART_TxIntDisable			(UART_DEVICE);
+ 530                             		.loc 1 551 0
+ 531 0010 FB EE 00 70 08          		mov.L	#0x87000, r14
+ 532 0015 CE E4 1E 02             		mov.B	542[r14], r4
+ 533 0019 75 24 FD                		and	#-3, r4
+ 534 001c CB E4 1E 02             		mov.B	r4, 542[r14]
+ 535 0020 F9 E4 F1 00             		mov.B	#0, 241[r14]
+ 536 0024 FB EE 00 B3 08          		mov.L	#0x8b300, r14
+ 537 0029 CD E4 02                		mov.B	2[r14], r4
+ 538 002c 75 24 FB                		and	#-5, r4
+ 539 002f C7 E4 02                		mov.B	r4, 2[r14]
+ 552:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			UART_TxDisable(UART_DEVICE);
+ 540                             		.loc 1 552 0
+ 541 0032 CD E4 02                		mov.B	2[r14], r4
+ 542 0035 75 24 DF                		and	#-33, r4
+ 543 0038 C7 E4 02                		mov.B	r4, 2[r14]
+ 544 003b 02                      		rts
+ 545                             	.LFE11:
+ 547                             		.section	.text.OCUART_TxDataMngr,"ax",@progbits
+ 548                             		.global	_OCUART_TxDataMngr
+ 550                             	_OCUART_TxDataMngr:
+ 551                             	.LFB12:
+ 553:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		}
+ 554:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	}
+ 555:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 556:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 557:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 558:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** void OCUART_TxDataMngr(void)
+ 559:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 552                             		.loc 1 559 0
+ 553 0000 7E A7                   		push.l	r7
+ 554                             	.LCFI3:
+ 560:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	IRQ_MONITOR_ENTER();
+ 555                             		.loc 1 560 0
+ 556 0002 05 00 00 00             		bsr	_LIB_IRQMonitor_Enter
+ 557                             	.LVL32:
+ 561:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 562:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	if(UART_IsTxInt(UART_DEVICE) )
+ 558                             		.loc 1 562 0
+ 559 0006 FB 7E 00 B3 08          		mov.L	#0x8b300, r7
+ 560 000b CD 7E 04                		mov.B	4[r7], r14
+ 561 000e 61 0E                   		cmp	#0, r14
+ 562 0010 28 3A                   		bge	.L42
+ 563:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	{
+ 564:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		UART_ClearTxIrq(UART_DEVICE);
+ 565:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 566:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if !defined(_HAL_DMA_CAPABILITY)
+ 567:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		if(SWDMA_CheckChannelEnableSync(1) == IO_STATE_ACTIVE)
+ 563                             		.loc 1 567 0
+ 564 0012 66 11                   		mov	#1, r1
+ 565 0014 05 00 00 00             		bsr	_SWDMA_CheckChannelEnableSync
+ 566                             	.LVL33:
+ 567 0018 5B 11                   		movu.B	r1, r1
+ 568 001a 61 11                   		cmp	#1, r1
+ 569 001c 21 08                   		bne	.L43
+ 568:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		{
+ 569:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			(void)SWDMA_ExeTransferMngrSync(1);
+ 570                             		.loc 1 569 0
+ 571 001e 05 00 00 00             		bsr	_SWDMA_ExeTransferMngrSync
+ 572                             	.LVL34:
+ 573 0022 2E 28                   		bra	.L42
+ 574                             	.L43:
+ 570:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		} else
+ 571:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif /* !defined(_HAL_DMA_CAPABILITY) */
+ 572:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		{
+ 573:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			UART_TxIntDisable			(UART_DEVICE);
+ 575                             		.loc 1 573 0
+ 576 0024 FB EE 00 70 08          		mov.L	#0x87000, r14
+ 577 0029 CE E4 1E 02             		mov.B	542[r14], r4
+ 578 002d 75 24 FD                		and	#-3, r4
+ 579 0030 CB E4 1E 02             		mov.B	r4, 542[r14]
+ 580 0034 F9 E4 F1 00             		mov.B	#0, 241[r14]
+ 581 0038 CD 7E 02                		mov.B	2[r7], r14
+ 582 003b 75 2E FB                		and	#-5, r14
+ 583 003e C7 7E 02                		mov.B	r14, 2[r7]
+ 574:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			UART_TxDisable(UART_DEVICE);
+ 584                             		.loc 1 574 0
+ 585 0041 CD 7E 02                		mov.B	2[r7], r14
+ 586 0044 75 2E DF                		and	#-33, r14
+ 587 0047 C7 7E 02                		mov.B	r14, 2[r7]
+ 588                             		.balign 2,3,1
+ 589                             	.L42:
+ 575:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		}
+ 576:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	}
+ 577:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 578:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	IRQ_MONITOR_EXIT();
+ 579:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 590                             		.loc 1 579 0
+ 591 004a 7E B7                   		pop	r7
+ 578:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	IRQ_MONITOR_EXIT();
+ 592                             		.loc 1 578 0
+ 593 004c 04 00 00 00             		bra	_LIB_IRQMonitor_Exit
+ 594                             	.LVL35:
+ 595                             	.LFE12:
+ 597                             		.section	.text.OCUART_RxDataMngr,"ax",@progbits
+ 598                             		.global	_OCUART_RxDataMngr
+ 600                             	_OCUART_RxDataMngr:
+ 601                             	.LFB13:
+ 580:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 581:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 582:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** Manages the circular buffer.
+ 583:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 584:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** void OCUART_RxDataMngr(void)
+ 585:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 602                             		.loc 1 585 0
+ 586:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	IRQ_MONITOR_ENTER();
+ 603                             		.loc 1 586 0
+ 604 0000 05 00 00 00             		bsr	_LIB_IRQMonitor_Enter
+ 605                             	.LVL36:
+ 587:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 588:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	if(UART_IsRxInt(UART_DEVICE))
+ 606                             		.loc 1 588 0
+ 607 0004 FB 4E 00 B3 08          		mov.L	#0x8b300, r4
+ 608 0009 CD 4E 04                		mov.B	4[r4], r14
+ 609 000c 75 2E 40                		and	#64, r14
+ 610 000f 5B EE                   		movu.B	r14, r14
+ 611 0011 61 0E                   		cmp	#0, r14
+ 612 0013 20 5F                   		beq	.L47
+ 589:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	{
+ 590:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		*OCUART.pHead = UART_ReadData(UART_DEVICE);
+ 613                             		.loc 1 590 0
+ 614 0015 FB E2 00 00 00 00       		mov.L	#_OCUART, r14
+ 615 001b 89 4C                   		mov.B	5[r4], r4
+ 616 001d EC E3                   		mov.L	[r14], r3
+ 617 001f C3 34                   		mov.B	r4, [r3]
+ 591:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		OCUART.pHead++;
+ 618                             		.loc 1 591 0
+ 619 0021 EC E4                   		mov.L	[r14], r4
+ 620 0023 62 14                   		add	#1, r4
+ 592:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 593:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		if ( OCUART.pHead >= ( (uint8_t*)OCUART_Buffer + OCUART_BUFFER_SIZE) )
+ 621                             		.loc 1 593 0
+ 622 0025 74 04 00 00 00 00       		cmp	#_OCUART_Buffer+64, r4
+ 623 002b 22 06                   		bgeu	.L48
+ 591:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		OCUART.pHead++;
+ 624                             		.loc 1 591 0
+ 625 002d E3 E4                   		mov.L	r4, [r14]
+ 626 002f 2E 09                   		bra	.L49
+ 627                             	.L48:
+ 594:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		{
+ 595:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			OCUART.pHead = (uint8_t*)OCUART_Buffer;
+ 628                             		.loc 1 595 0
+ 629 0031 F8 E2 00 00 00 00       		mov.L	#_OCUART_Buffer, [r14]
+ 630 0037 03                      		.balign 2,3,1
+ 631                             	.L49:
+ 596:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		}
+ 597:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		if ( OCUART.pHead == OCUART.pTail )
+ 632                             		.loc 1 597 0
+ 633 0038 EC E3                   		mov.L	[r14], r3
+ 634 003a FB 42 00 00 00 00       		mov.L	#_OCUART, r4
+ 635 0040 06 85 E3 01             		cmp	4[r14].L, r3
+ 636 0044 21 18                   		bne	.L51
+ 598:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		{
+ 599:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			OCUART.pTail++;
+ 637                             		.loc 1 599 0
+ 638 0046 71 3E 01                		add	#1, r3, r14
+ 639 0049 E7 4E 01                		mov.L	r14, 4[r4]
+ 600:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			if ( OCUART.pTail >= ( (uint8_t*)OCUART_Buffer + OCUART_BUFFER_SIZE) )
+ 640                             		.loc 1 600 0
+ 641 004c 74 0E 00 00 00 00       		cmp	#_OCUART_Buffer+64, r14
+ 642 0052 23 0A                   		bltu	.L51
+ 601:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			{
+ 602:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		    	OCUART.pTail = (uint8_t*)OCUART_Buffer;
+ 643                             		.loc 1 602 0
+ 644 0054 F9 42 01 00 00 00 00    		mov.L	#_OCUART_Buffer, 4[r4]
+ 645 005b 03                      		.balign 2,3,5
+ 646                             	.L51:
+ 603:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		  }
+ 604:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		}
+ 605:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		if( OCUART.InputLen < OCUART_BUFFER_SIZE )
+ 647                             		.loc 1 605 0
+ 648 005c FB E2 00 00 00 00       		mov.L	#_OCUART, r14
+ 649 0062 CD E4 28                		mov.B	40[r14], r4
+ 650 0065 5B 43                   		movu.B	r4, r3
+ 651 0067 75 53 3F                		cmp	#63, r3
+ 652 006a 24 08                   		bgtu	.L47
+ 606:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		{
+ 607:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			OCUART.InputLen++;
+ 653                             		.loc 1 607 0
+ 654 006c 62 14                   		add	#1, r4
+ 655 006e C7 E4 28                		mov.B	r4, 40[r14]
+ 656 0071 03                      		.balign 2,3,3
+ 657                             	.L47:
+ 608:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		}
+ 609:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	}
+ 610:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 611:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	IRQ_MONITOR_EXIT();
+ 658                             		.loc 1 611 0
+ 659 0072 04 00 00 00             		bra	_LIB_IRQMonitor_Exit
+ 660                             	.LVL37:
+ 661                             	.LFE13:
+ 663                             		.section	.text.OCUART_RxDataMngrEx,"ax",@progbits
+ 664                             		.global	_OCUART_RxDataMngrEx
+ 666                             	_OCUART_RxDataMngrEx:
+ 667                             	.LFB14:
+ 612:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 613:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 614:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 615:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 616:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 617:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 618:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 619:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** Manages the circular buffer.
+ 620:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 621:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** void OCUART_RxDataMngrEx(void)
+ 622:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 668                             		.loc 1 622 0
+ 623:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	IRQ_MONITOR_ENTER();
+ 669                             		.loc 1 623 0
+ 670 0000 05 00 00 00             		bsr	_LIB_IRQMonitor_Enter
+ 671                             	.LVL38:
+ 624:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 625:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	/*if(UART_IsRxEvent(event))*/
+ 626:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	{
+ 627:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		*OCUART.pHead = UART_ReadData(UART_DEVICE);
+ 672                             		.loc 1 627 0
+ 673 0004 FB E2 00 00 00 00       		mov.L	#_OCUART, r14
+ 674 000a FB 3E 00 B3 08          		mov.L	#0x8b300, r3
+ 675 000f EC E4                   		mov.L	[r14], r4
+ 676 0011 89 3B                   		mov.B	5[r3], r3
+ 677 0013 C3 43                   		mov.B	r3, [r4]
+ 628:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		OCUART.pHead++;
+ 678                             		.loc 1 628 0
+ 679 0015 EC E4                   		mov.L	[r14], r4
+ 680 0017 62 14                   		add	#1, r4
+ 629:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 630:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		if ( OCUART.pHead >= ( (uint8_t*)OCUART_Buffer + OCUART_BUFFER_SIZE) )
+ 681                             		.loc 1 630 0
+ 682 0019 74 04 00 00 00 00       		cmp	#_OCUART_Buffer+64, r4
+ 683 001f 22 06                   		bgeu	.L55
+ 628:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		OCUART.pHead++;
+ 684                             		.loc 1 628 0
+ 685 0021 E3 E4                   		mov.L	r4, [r14]
+ 686 0023 2E 09                   		bra	.L56
+ 687                             	.L55:
+ 631:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		{
+ 632:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			OCUART.pHead = (uint8_t*)OCUART_Buffer;
+ 688                             		.loc 1 632 0
+ 689 0025 F8 E2 00 00 00 00       		mov.L	#_OCUART_Buffer, [r14]
+ 690 002b 03                      		.balign 2,3,1
+ 691                             	.L56:
+ 633:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****         }
+ 634:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		if ( OCUART.pHead == OCUART.pTail )
+ 692                             		.loc 1 634 0
+ 693 002c EC E3                   		mov.L	[r14], r3
+ 694 002e FB 42 00 00 00 00       		mov.L	#_OCUART, r4
+ 695 0034 06 85 E3 01             		cmp	4[r14].L, r3
+ 696 0038 21 18                   		bne	.L58
+ 635:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		{
+ 636:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			OCUART.pTail++;
+ 697                             		.loc 1 636 0
+ 698 003a 71 3E 01                		add	#1, r3, r14
+ 699 003d E7 4E 01                		mov.L	r14, 4[r4]
+ 637:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			if ( OCUART.pTail >= ( (uint8_t*)OCUART_Buffer + OCUART_BUFFER_SIZE) )
+ 700                             		.loc 1 637 0
+ 701 0040 74 0E 00 00 00 00       		cmp	#_OCUART_Buffer+64, r14
+ 702 0046 23 0A                   		bltu	.L58
+ 638:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			{
+ 639:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		    	OCUART.pTail = (uint8_t*)OCUART_Buffer;
+ 703                             		.loc 1 639 0
+ 704 0048 F9 42 01 00 00 00 00    		mov.L	#_OCUART_Buffer, 4[r4]
+ 705 004f 03                      		.balign 2,3,5
+ 706                             	.L58:
+ 640:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		  }
+ 641:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		}
+ 642:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		if( OCUART.InputLen < OCUART_BUFFER_SIZE )
+ 707                             		.loc 1 642 0
+ 708 0050 FB E2 00 00 00 00       		mov.L	#_OCUART, r14
+ 709 0056 CD E4 28                		mov.B	40[r14], r4
+ 710 0059 5B 43                   		movu.B	r4, r3
+ 711 005b 75 53 3F                		cmp	#63, r3
+ 712 005e 24 08                   		bgtu	.L60
+ 643:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		{
+ 644:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			OCUART.InputLen++;
+ 713                             		.loc 1 644 0
+ 714 0060 62 14                   		add	#1, r4
+ 715 0062 C7 E4 28                		mov.B	r4, 40[r14]
+ 716 0065 03                      		.balign 2,3,3
+ 717                             	.L60:
+ 645:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		}
+ 646:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	}
+ 647:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 648:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	IRQ_MONITOR_EXIT();
+ 718                             		.loc 1 648 0
+ 719 0066 04 00 00 00             		bra	_LIB_IRQMonitor_Exit
+ 720                             	.LVL39:
+ 721                             	.LFE14:
+ 723                             		.section	.text.OCUART_OutputStreamMngr,"ax",@progbits
+ 724                             		.global	_OCUART_OutputStreamMngr
+ 726                             	_OCUART_OutputStreamMngr:
+ 727                             	.LFB15:
+ 649:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 650:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 651:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 652:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 653:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 654:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** (not yet implemented)
+ 655:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 656:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** void OCUART_OutputStreamMngr(IO_ChannelType ch)
+ 657:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 728                             		.loc 1 657 0
+ 729                             	.LVL40:
+ 730 0000 FB E2 00 00 00 00       		mov.L	#_OCUART, r14
+ 731 0006 F9 E5 0C FF             		mov.W	#-1, 24[r14]
+ 732 000a 02                      		rts
+ 733                             	.LFE15:
+ 735                             		.section	.text.OCUART_ReadData,"ax",@progbits
+ 736                             		.global	_OCUART_ReadData
+ 738                             	_OCUART_ReadData:
+ 739                             	.LFB16:
+ 658:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     (void) ch;
+ 659:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	while(OCUART.TxLen--)
+ 660:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	{
+ 661:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		/*\todo send data */
+ 662:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 663:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	}
+ 664:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	/*\todo specific application code: example NewSysteMode */
+ 665:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	/*\todo enable rx and rx Int*/
+ 666:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 667:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 668:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 669:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** If any data received, this method passes by pointer the first character \n
+ 670:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** extracted from the queue,
+ 671:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** otherwise it returns error code (it does not wait for data)\n
+ 672:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 673:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \param  [out]  \b Chr  pointer to char
+ 674:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 675:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \return \c uint8_t
+ 676:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \author 	AA.VV.
+ 677:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \date		molto tempo fa
+ 678:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \version	1.0.0
+ 679:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \attention \b during the char extraction uart rx interrupt is disabled
+ 680:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 681:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \note		\par \b Nota 1:
+ 682:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			documented by Roberto Fioravanti
+ 683:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			\par \b Nota 2:
+ 684:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			Target Dependent
+ 685:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 686:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** void OCUART_ReadData(uint8_t *data)
+ 687:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 740                             		.loc 1 687 0
+ 741                             	.LVL41:
+ 742                             		.loc 1 687 0
+ 743 0000 7E A7                   		push.l	r7
+ 744                             	.LCFI4:
+ 688:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_RxIntDisable(UART_DEVICE);
+ 745                             		.loc 1 688 0
+ 746 0002 FB EE 00 70 08          		mov.L	#0x87000, r14
+ 747 0007 CE E4 1D 02             		mov.B	541[r14], r4
+ 748 000b 75 24 7F                		and	#0x7f, r4
+ 749 000e CB E4 1D 02             		mov.B	r4, 541[r14]
+ 750 0012 F9 E4 EF 00             		mov.B	#0, 239[r14]
+ 751 0016 FB EE 00 B3 08          		mov.L	#0x8b300, r14
+ 752 001b CD E4 02                		mov.B	2[r14], r4
+ 753 001e 75 24 BF                		and	#0xffffffbf, r4
+ 754 0021 C7 E4 02                		mov.B	r4, 2[r14]
+ 689:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 690:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****    	*data = *OCUART.pTail;               			/* Received char */
+ 755                             		.loc 1 690 0
+ 756 0024 FB E2 00 00 00 00       		mov.L	#_OCUART, r14
+ 757 002a ED E4 01                		mov.L	4[r14], r4
+ 758 002d CC 44                   		mov.B	[r4], r4
+ 759 002f C3 14                   		mov.B	r4, [r1]
+ 691:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****    /* INCREMENTO TAIL */
+ 692:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	if ( OCUART.InputLen )
+ 760                             		.loc 1 692 0
+ 761 0031 CD E3 28                		mov.B	40[r14], r3
+ 762 0034 5B 34                   		movu.B	r3, r4
+ 763 0036 61 04                   		cmp	#0, r4
+ 764 0038 20 1E                   		beq	.L64
+ 693:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	{
+ 694:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		OCUART.pTail++;
+ 765                             		.loc 1 694 0
+ 766 003a ED E4 01                		mov.L	4[r14], r4
+ 695:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if defined(_HAL_DMA_CAPABILITY) && defined(UART_OCDMA_SUPPORT)
+ 696:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****         if (OCUART.pTail >= (OCUART.CircBuffer + OCUART_BUFFER_SIZE))
+ 697:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		{
+ 698:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			OCUART.pTail = OCUART.CircBuffer;
+ 699:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		}
+ 700:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #else	
+ 701:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		OCUART.InputLen--;
+ 767                             		.loc 1 701 0
+ 768 003d 60 13                   		sub	#1, r3
+ 694:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		OCUART.pTail++;
+ 769                             		.loc 1 694 0
+ 770 003f 62 14                   		add	#1, r4
+ 771 0041 E7 E4 01                		mov.L	r4, 4[r14]
+ 772                             		.loc 1 701 0
+ 773 0044 C7 E3 28                		mov.B	r3, 40[r14]
+ 702:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		if ( OCUART.pTail >= ( (uint8_t*)OCUART_Buffer + OCUART_BUFFER_SIZE) )
+ 774                             		.loc 1 702 0
+ 775 0047 74 04 00 00 00 00       		cmp	#_OCUART_Buffer+64, r4
+ 776 004d 23 09                   		bltu	.L64
+ 703:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		{
+ 704:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			OCUART.pTail = (uint8_t*)OCUART_Buffer;
+ 777                             		.loc 1 704 0
+ 778 004f F9 E2 01 00 00 00 00    		mov.L	#_OCUART_Buffer, 4[r14]
+ 779                             		.balign 2,3,5
+ 780                             	.L64:
+ 705:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		}		
+ 706:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif /* defined(_HAL_DMA_CAPABILITY) && defined(UART_OCDMA_SUPPORT)*/
+ 707:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	}
+ 708:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 709:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****    	OCUART.pRead=OCUART.pTail;
+ 781                             		.loc 1 709 0
+ 782 0056 FB E2 00 00 00 00       		mov.L	#_OCUART, r14
+ 783 005c ED E7 01                		mov.L	4[r14], r7
+ 784 005f E7 E7 02                		mov.L	r7, 8[r14]
+ 710:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 711:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_RxIntEnable(UART_DEVICE);
+ 785                             		.loc 1 711 0
+ 786 0062 FB EE 00 70 08          		mov.L	#0x87000, r14
+ 787 0067 CE E4 EE 03             		mov.B	1006[r14], r4
+ 788 006b 65 14                   		or	#1, r4
+ 789 006d CB E4 EE 03             		mov.B	r4, 1006[r14]
+ 790 0071 CE E4 1D 02             		mov.B	541[r14], r4
+ 791 0075 75 34 80                		or	#0xffffff80, r4
+ 792 0078 CB E4 1D 02             		mov.B	r4, 541[r14]
+ 793 007c F9 E4 EF 00             		mov.B	#0, 239[r14]
+ 794 0080 FB EE 00 B3 08          		mov.L	#0x8b300, r14
+ 795 0085 CD E4 02                		mov.B	2[r14], r4
+ 796 0088 75 34 40                		or	#64, r4
+ 797 008b C7 E4 02                		mov.B	r4, 2[r14]
+ 712:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 798                             		.loc 1 712 0
+ 799 008e 3F 77 01                		rtsd	#4, r7-r7
+ 800                             	.LFE16:
+ 802 0091 03                      		.section	.text.OCUART_RxStreamMngr,"ax",@progbits
+ 803                             		.global	_OCUART_RxStreamMngr
+ 805                             	_OCUART_RxStreamMngr:
+ 806                             	.LFB17:
+ 713:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 714:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 715:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 716:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 717:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** uint8_t OCUART_RxStreamMngr(IO_ChannelType ch)
+ 718:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 807                             		.loc 1 718 0
+ 808                             	.LVL42:
+ 809 0000 6E 7D                   		pushm	r7-r13
+ 810                             	.LCFI5:
+ 719:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** uint8_t data2read=0;
+ 720:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** uint8_t scan=1;
+ 721:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** (void) ch;
+ 722:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if defined(_HAL_DMA_CAPABILITY) && defined(UART_OCDMA_SUPPORT)
+ 723:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     
+ 724:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if (UART_AUTOMATIC_CIRCULAR_BUFFER == TRUE)
+ 725:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCUART.pHead = OCDMA_GetCurrentDestinationAddress(UART_RX_DMA_CH);
+ 726:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #else
+ 727:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     if (OCDMA_GetCurrentDestinationAddress(UART_RX_DMA_CH) < OCUART.CircBuffer + OCUART_BUFFER_SIZE
+ 728:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     {
+ 729:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****         OCUART.pHead = OCDMA_GetCurrentDestinationAddress(UART_RX_DMA_CH);
+ 730:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     }
+ 731:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif /* (UART_AUTOMATIC_CIRCULAR_BUFFER == TRUE)*/
+ 732:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     
+ 733:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     /*
+ 734:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCUART.InputLen=(uint8_t) (OCUART.pHead-OCUART.pTail);
+ 735:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     
+ 736:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     if(OCUART.pHead<OCUART.pTail)
+ 737:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     {
+ 738:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****         OCUART.InputLen+=OCUART_BUFFER_SIZE;
+ 739:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     }
+ 740:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     */  
+ 741:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     
+ 742:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if (UART_AUTOMATIC_CIRCULAR_BUFFER == TRUE)    
+ 743:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCDMA_UpdateBCR(UART_RX_DMA_CH, 1024);
+ 744:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif /* (UART_AUTOMATIC_CIRCULAR_BUFFER == TRUE) */
+ 745:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 746:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif
+ 747:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     
+ 748:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     while(scan)
+ 749:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     {	
+ 750:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     
+ 751:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     
+ 752:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if defined(_HAL_DMA_CAPABILITY) && defined(UART_OCDMA_SUPPORT)
+ 753:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     OCUART.InputLen=(uint8_t) (OCUART.pRead-OCUART.pHead);
+ 754:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     
+ 755:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     if(OCUART.pRead<OCUART.pHead)
+ 756:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     {
+ 757:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****         OCUART.InputLen+=OCUART_BUFFER_SIZE;
+ 758:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     }
+ 759:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif
+ 760:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 761:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 762:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 763:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 764:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	switch(OCUART.MngrState)
+ 811                             		.loc 1 764 0
+ 812 0002 FB 72 00 00 00 00       		mov.L	#_OCUART, r7
+ 718:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 813                             		.loc 1 718 0
+ 814 0008 60 40                   		sub	#4, r0
+ 815                             	.LCFI6:
+ 719:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** uint8_t data2read=0;
+ 816                             		.loc 1 719 0
+ 817 000a 66 0B                   		mov	#0, r11
+ 818 000c EF 7C                   		mov.L	r7, r12
+ 819                             	.LVL43:
+ 820                             		.balign 2,3,3
+ 821                             	.L82:
+ 822                             		.loc 1 764 0
+ 823 000e 59 7A 29                		movu.B	41[r7], r10
+ 824 0011 61 1A                   		cmp	#1, r10
+ 825 0013 20 32                   		beq	.L70
+ 826 0015 61 0A                   		cmp	#0, r10
+ 827 0017 20 0A                   		beq	.L69
+ 828 0019 61 2A                   		cmp	#2, r10
+ 829 001b 3B 02 01                		bne	.L105
+ 830 001e 38 E3 00                		bra	.L71
+ 831                             	.L69:
+ 765:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	{
+ 766:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     		case 0:
+ 767:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			/*idle*/
+ 768:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			OCUART.RxLen=0;
+ 769:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 770:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			if(OCUART_Data2Read())
+ 832                             		.loc 1 770 0
+ 833 0021 ED 7D 02                		mov.L	8[r7], r13
+ 768:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			OCUART.RxLen=0;
+ 834                             		.loc 1 768 0
+ 835 0024 D7 7A 0D                		mov.W	r10, 26[r7]
+ 836                             		.loc 1 770 0
+ 837 0027 06 84 7D                		cmp	[r7].L, r13
+ 838 002a 3A 08 01                		beq	.L72
+ 771:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			{
+ 772:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				OCUART.MngrState+=1;
+ 773:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				data2read=TRUE;
+ 774:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				
+ 775:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				/* Init data reception */
+ 776:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				if(OCUART.notifyCB)
+ 839                             		.loc 1 776 0
+ 840 002d ED 7B 09                		mov.L	36[r7], r11
+ 772:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				OCUART.MngrState+=1;
+ 841                             		.loc 1 772 0
+ 842 0030 F9 74 29 01             		mov.B	#1, 41[r7]
+ 843                             	.LVL44:
+ 844                             		.loc 1 776 0
+ 845 0034 61 0B                   		cmp	#0, r11
+ 846 0036 3A EF 00                		beq	.L85
+ 777:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				{
+ 778:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				  /* notify about Read data init */
+ 779:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     					(void)(OCUART.notifyCB)(IO_N_READ_DATA_INIT, OCUART.id, IO_E_OK);
+ 847                             		.loc 1 779 0
+ 848 0039 CD 72 21                		mov.B	33[r7], r2
+ 849 003c CF A3                   		mov.B	r10, r3
+ 850 003e 66 11                   		mov	#1, r1
+ 851 0040 7F 1B                   		jsr	r11
+ 852                             	.LVL45:
+ 853 0042 38 E3 00                		bra	.L85
+ 854                             	.LVL46:
+ 855                             	.L70:
+ 780:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				}
+ 781:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 782:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			}
+ 783:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			else
+ 784:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			{
+ 785:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				scan=0;
+ 786:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			}
+ 787:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			break;
+ 788:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 789:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     		case 1:
+ 790:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     		{
+ 791:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				/*macchina a stati di ricezione*/
+ 792:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     		    if(!OCUART.RxLen && OCUART.notifyCB)
+ 856                             		.loc 1 792 0
+ 857 0045 5D 7D 0D                		movu.W	26[r7], r13
+ 858 0048 61 0D                   		cmp	#0, r13
+ 859 004a 3B E8 00                		bne	.L72
+ 860                             		.loc 1 792 0 is_stmt 0 discriminator 1
+ 861 004d ED 7E 09                		mov.L	36[r7], r14
+ 862 0050 61 0E                   		cmp	#0, r14
+ 863 0052 3A E0 00                		beq	.L72
+ 864                             	.LBB15:
+ 793:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     		    {
+ 794:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				IO_ErrorType err=(OCUART.notifyCB)(IO_N_TRANSFER_DONE, OCUART.id, IO_E_OK);
+ 865                             		.loc 1 794 0 is_stmt 1
+ 866 0055 CD 72 21                		mov.B	33[r7], r2
+ 867 0058 66 31                   		mov	#3, r1
+ 868 005a CF D3                   		mov.B	r13, r3
+ 869 005c 7F 1E                   		jsr	r14
+ 870                             	.LVL47:
+ 795:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			      /* notifica */
+ 796:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     switch(err)
+ 871                             		.loc 1 796 0
+ 872 005e 5B 11                   		movu.B	r1, r1
+ 873 0060 75 51 13                		cmp	#19, r1
+ 874 0063 3A 88 00                		beq	.L75
+ 875 0066 75 51 1C                		cmp	#28, r1
+ 876 0069 20 07                   		beq	.L74
+ 877 006b 61 01                   		cmp	#0, r1
+ 878 006d 3B 89 00                		bne	.L106
+ 879                             		.balign 2,3,5
+ 880                             	.L74:
+ 797:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     {
+ 798:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     case IO_E_OK:
+ 799:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     case IO_E_CHECK_PP:						
+ 800:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     	OCUART.MngrState++;
+ 881                             		.loc 1 800 0
+ 882 0070 CD 7A 29                		mov.B	41[r7], r10
+ 883 0073 62 1A                   		add	#1, r10
+ 884 0075 C7 7A 29                		mov.B	r10, 41[r7]
+ 885                             	.LBB16:
+ 886                             	.LBB17:
+ 801:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     	RemoveTail();
+ 802:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     	scan=0;
+ 803:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     	break;
+ 804:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 805:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     case IO_E_INVALID_VALUE:					
+ 806:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     	{
+ 807:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     		/* leggi rimuovendo il dato dalla coda */
+ 808:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     		uint8_t pdata;
+ 809:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     		OCUART_ReadData(&pdata);
+ 810:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     		OCUART.MngrState=0;
+ 811:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     	}
+ 812:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                       	break;
+ 813:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     default: /*IO_E_WORKING*/
+ 814:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                      
+ 815:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     	if(!OCUART_Data2Read())
+ 816:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     	{
+ 817:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     		scan=0;
+ 818:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     	}
+ 819:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     	
+ 820:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     }
+ 821:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     		    }
+ 822:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     		 
+ 823:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     		}
+ 824:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			break;
+ 825:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     		case 2:
+ 826:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			scan=0;
+ 827:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			/* risposta */
+ 828:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			if(!OCUART.RxLen && OCUART.notifyCB)
+ 829:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			{
+ 830:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			  /* notify about Read data init */
+ 831:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			  (void)(OCUART.notifyCB)(IO_N_WRITE_DATA_INIT, OCUART.id, IO_E_OK);
+ 832:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				OCUART.MngrState=0;
+ 833:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			}
+ 834:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			break;
+ 835:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			
+ 836:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			
+ 837:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     		default:
+ 838:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			
+ 839:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			OCUART.MngrState=0;
+ 840:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			break;
+ 841:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	}
+ 842:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 843:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	if(OCUART.ErrorFound)
+ 844:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	{
+ 845:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     		(void)OCUART_InitSWSync();
+ 846:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	}
+ 847:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			
+ 848:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 849:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	if(OCUART_Data2Read())
+ 850:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	{
+ 851:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     		if(OCUART.RxLen)
+ 852:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     		{
+ 853:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				
+ 854:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				uint8_t data = OCUART_GetDataFromTail();
+ 855:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				
+ 856:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				*OCUART.RxBuffer++=data;
+ 857:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				data2read=TRUE;
+ 858:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				
+ 859:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			    OCUART.RxLen--;
+ 860:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****         			
+ 861:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if !defined(_HAL_DMA_CAPABILITY) || !defined(UART_OCDMA_SUPPORT)    				
+ 862:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if defined(UART_CHECK_RXBUFFER_OVERFLOWS)
+ 863:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				if(OCUART.pMaxRxBuffer && OCUART.RxBuffer>OCUART.pMaxRxBuffer)
+ 864:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				{
+ 865:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				    (void)OCUART_InitSWSync();
+ 866:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				} 
+ 867:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif    				
+ 868:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif    		
+ 869:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     		}
+ 870:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	}
+ 871:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	else
+ 872:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	{
+ 873:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	    scan=0;
+ 874:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	}
+ 875:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     }
+ 876:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	if(!OCUART.RxLen)
+ 877:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	{
+ 878:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		data2read=TRUE;
+ 879:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	}
+ 880:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		
+ 881:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	return data2read;
+ 882:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 883:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 884:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* ************** */
+ 885:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* Local Function */
+ 886:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /* ************** */
+ 887:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 888:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** tests if there are byte to read in the queue
+ 889:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \return		FALSE if there are no bytes
+ 890:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			TRUE if there is at least one byte to read
+ 891:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \attention \b
+ 892:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 893:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \author 	AA.VV.
+ 894:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \date		molto tempo fa
+ 895:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \version	1.0.0
+ 896:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \todo aggiornare il commento
+ 897:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \note
+ 898:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 899:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** static uint8_t OCUART_Data2Read(void)
+ 900:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 901:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if !defined(_HAL_DMA_CAPABILITY) || !defined(UART_OCDMA_SUPPORT)
+ 902:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	return (OCUART.pRead != OCUART.pHead);
+ 903:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #else	
+ 904:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	return (OCUART.InputLen);
+ 905:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif	
+ 906:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 907:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 908:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 909:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 910:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** reads the queue and updates the reading pointer
+ 911:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \return		\b uint8_t queue reading pointer before the update
+ 912:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \attention \b
+ 913:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 914:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \author 	AA.VV.
+ 915:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \date		molto tempo fa
+ 916:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \version	1.0.0
+ 917:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 918:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \todo aggiornare il commento
+ 919:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 920:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** static uint8_t OCUART_GetDataFromTail(void)
+ 921:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 922:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	uint8_t data;
+ 923:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 924:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	data=*OCUART.pRead;
+ 925:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 926:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	if( OCUART.pRead == OCUART.pHead )
+ 927:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	{
+ 928:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		return(data);
+ 929:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	}
+ 930:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.pRead++;
+ 931:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		
+ 932:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #if defined(_HAL_DMA_CAPABILITY) && defined(UART_OCDMA_SUPPORT)
+ 933:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 934:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	if (OCUART.pRead >= (OCUART.CircBuffer + OCUART_BUFFER_SIZE))
+ 935:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	{
+ 936:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	OCUART.pRead = OCUART.CircBuffer;
+ 937:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     }
+ 938:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #else    
+ 939:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	if (OCUART.pRead >= ((uint8_t*)OCUART_Buffer + OCUART_BUFFER_SIZE))
+ 940:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	{
+ 941:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	OCUART.pRead = (uint8_t*) OCUART_Buffer;
+ 942:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     }
+ 943:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** #endif	
+ 944:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	return(data);
+ 945:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 946:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 947:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** /**
+ 948:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** clears the queue.
+ 949:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 950:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \attention \b rx interrupts are disabled during the operation
+ 951:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 952:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \author 	AA.VV.
+ 953:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \date		molto tempo fa
+ 954:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \version	1.0.0
+ 955:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 956:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** \note		\par \b Nota 1:
+ 957:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			documented by Roberto Fioravanti
+ 958:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			\par \b Nota 2:
+ 959:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 			Target Dependent
+ 960:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** */
+ 961:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** static void RemoveTail(void)
+ 962:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** {
+ 963:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 964:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_RxIntDisable(UART_DEVICE)
+ 887                             		.loc 1 964 0
+ 888 0078 FB AE 00 70 08          		mov.L	#0x87000, r10
+ 889 007d CE AD 1D 02             		mov.B	541[r10], r13
+ 890 0081 75 2D 7F                		and	#0x7f, r13
+ 891 0084 CB AD 1D 02             		mov.B	r13, 541[r10]
+ 892 0088 F9 A4 EF 00             		mov.B	#0, 239[r10]
+ 893 008c FB AE 00 B3 08          		mov.L	#0x8b300, r10
+ 894 0091 CD AD 02                		mov.B	2[r10], r13
+ 895 0094 75 2D BF                		and	#0xffffffbf, r13
+ 896 0097 C7 AD 02                		mov.B	r13, 2[r10]
+ 965:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 966:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	if ( OCUART.pRead < OCUART.pTail )
+ 897                             		.loc 1 966 0
+ 898 009a ED 7A 02                		mov.L	8[r7], r10
+ 899 009d ED 7D 01                		mov.L	4[r7], r13
+ 900 00a0 47 DA                   		cmp	r13, r10
+ 901 00a2 22 0C                   		bgeu	.L76
+ 967:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	{
+ 968:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		OCUART.InputLen -= (uint8_t)OCUART_BUFFER_SIZE;
+ 902                             		.loc 1 968 0
+ 903 00a4 CD 7E 28                		mov.B	40[r7], r14
+ 904 00a7 71 EE C0                		add	#-64, r14
+ 905 00aa C7 7E 28                		mov.B	r14, 40[r7]
+ 906 00ad 03                      		.balign 2,3,5
+ 907                             	.L76:
+ 969:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	}
+ 970:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 971:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.InputLen -= (uint8_t)(OCUART.pRead-OCUART.pTail);
+ 908                             		.loc 1 971 0
+ 909 00ae CD CE 28                		mov.B	40[r12], r14
+ 910 00b1 FF 0D DA                		sub	r13, r10, r13
+ 911 00b4 FF 0D DE                		sub	r13, r14, r13
+ 972:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 973:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.pTail=OCUART.pRead;
+ 912                             		.loc 1 973 0
+ 913 00b7 E7 CA 01                		mov.L	r10, 4[r12]
+ 971:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.InputLen -= (uint8_t)(OCUART.pRead-OCUART.pTail);
+ 914                             		.loc 1 971 0
+ 915 00ba C7 CD 28                		mov.B	r13, 40[r12]
+ 974:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 
+ 975:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	UART_RxIntEnable(UART_DEVICE)
+ 916                             		.loc 1 975 0
+ 917 00bd FB AE 00 70 08          		mov.L	#0x87000, r10
+ 918 00c2 CE AD EE 03             		mov.B	1006[r10], r13
+ 919 00c6 65 1D                   		or	#1, r13
+ 920 00c8 CB AD EE 03             		mov.B	r13, 1006[r10]
+ 921 00cc CE AD 1D 02             		mov.B	541[r10], r13
+ 922 00d0 75 3D 80                		or	#0xffffff80, r13
+ 923 00d3 CB AD 1D 02             		mov.B	r13, 541[r10]
+ 924 00d7 F9 A4 EF 00             		mov.B	#0, 239[r10]
+ 925 00db FB AE 00 B3 08          		mov.L	#0x8b300, r10
+ 926 00e0 CD AD 02                		mov.B	2[r10], r13
+ 927 00e3 75 3D 40                		or	#64, r13
+ 928 00e6 C7 AD 02                		mov.B	r13, 2[r10]
+ 929 00e9 2E 42                   		bra	.L89
+ 930                             	.L75:
+ 931                             	.LBE17:
+ 932                             	.LBE16:
+ 933                             	.LBB18:
+ 809:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     		OCUART_ReadData(&pdata);
+ 934                             		.loc 1 809 0
+ 935 00eb EF 01                   		mov.L	r0, r1
+ 936                             	.LVL48:
+ 937 00ed 05 00 00 00             		bsr	_OCUART_ReadData
+ 938                             	.LVL49:
+ 810:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     		OCUART.MngrState=0;
+ 939                             		.loc 1 810 0
+ 940 00f1 C7 7D 29                		mov.B	r13, 41[r7]
+ 941                             	.LBE18:
+ 812:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                       	break;
+ 942                             		.loc 1 812 0
+ 943 00f4 2E 3E                   		bra	.L72
+ 944                             	.LVL50:
+ 945                             	.L106:
+ 815:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****                     	if(!OCUART_Data2Read())
+ 946                             		.loc 1 815 0
+ 947 00f6 ED 7A 02                		mov.L	8[r7], r10
+ 948 00f9 06 84 7A                		cmp	[r7].L, r10
+ 949 00fc FC DB A1                		scne.L	r10
+ 950 00ff 2E 33                   		bra	.L72
+ 951                             	.LVL51:
+ 952                             	.L71:
+ 953                             	.LBE15:
+ 828:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			if(!OCUART.RxLen && OCUART.notifyCB)
+ 954                             		.loc 1 828 0
+ 955 0101 5D 7D 0D                		movu.W	26[r7], r13
+ 956 0104 61 0D                   		cmp	#0, r13
+ 957 0106 21 25                   		bne	.L89
+ 828:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			if(!OCUART.RxLen && OCUART.notifyCB)
+ 958                             		.loc 1 828 0 is_stmt 0 discriminator 1
+ 959 0108 ED 7E 09                		mov.L	36[r7], r14
+ 960 010b 61 0E                   		cmp	#0, r14
+ 961 010d 20 22                   		beq	.L90
+ 831:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			  (void)(OCUART.notifyCB)(IO_N_WRITE_DATA_INIT, OCUART.id, IO_E_OK);
+ 962                             		.loc 1 831 0 is_stmt 1
+ 963 010f CD 72 21                		mov.B	33[r7], r2
+ 964 0112 CF A1                   		mov.B	r10, r1
+ 965 0114 CF D3                   		mov.B	r13, r3
+ 966 0116 7F 1E                   		jsr	r14
+ 967                             	.LVL52:
+ 832:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				OCUART.MngrState=0;
+ 968                             		.loc 1 832 0
+ 969 0118 C7 7D 29                		mov.B	r13, 41[r7]
+ 970 011b 2E 10                   		bra	.L89
+ 971                             	.LVL53:
+ 972                             	.L105:
+ 839:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			OCUART.MngrState=0;
+ 973                             		.loc 1 839 0
+ 974 011d F9 74 29 00             		mov.B	#0, 41[r7]
+ 840:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			break;
+ 975                             		.loc 1 840 0
+ 976 0121 66 1A                   		mov	#1, r10
+ 977 0123 2E 0F                   		bra	.L72
+ 978                             	.LVL54:
+ 979                             	.L85:
+ 776:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				if(OCUART.notifyCB)
+ 980                             		.loc 1 776 0
+ 981 0125 66 1B                   		mov	#1, r11
+ 773:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				data2read=TRUE;
+ 982                             		.loc 1 773 0
+ 983 0127 CF BA                   		mov.B	r11, r10
+ 984 0129 2E 09                   		bra	.L72
+ 985                             	.LVL55:
+ 986                             	.L89:
+ 826:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			scan=0;
+ 987                             		.loc 1 826 0
+ 988 012b 66 0A                   		mov	#0, r10
+ 989 012d 2E 05                   		bra	.L72
+ 990                             	.LVL56:
+ 991                             	.L90:
+ 992 012f CF EA                   		mov.B	r14, r10
+ 993                             	.LVL57:
+ 994 0131 03                      		.balign 2,3,3
+ 995                             	.L72:
+ 843:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	if(OCUART.ErrorFound)
+ 996                             		.loc 1 843 0
+ 997 0132 59 7D 2A                		movu.B	42[r7], r13
+ 998 0135 61 0D                   		cmp	#0, r13
+ 999 0137 20 07                   		beq	.L77
+ 845:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     		(void)OCUART_InitSWSync();
+ 1000                             		.loc 1 845 0
+ 1001 0139 05 00 00 00             		bsr	_OCUART_InitSWSync
+ 1002                             	.LVL58:
+ 1003 013d 03                      		.balign 2,3,1
+ 1004                             	.L77:
+ 1005                             	.LBB19:
+ 1006                             	.LBB20:
+ 902:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	return (OCUART.pRead != OCUART.pHead);
+ 1007                             		.loc 1 902 0
+ 1008 013e ED CD 02                		mov.L	8[r12], r13
+ 1009                             	.LBE20:
+ 1010                             	.LBE19:
+ 849:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	if(OCUART_Data2Read())
+ 1011                             		.loc 1 849 0
+ 1012 0141 06 84 CD                		cmp	[r12].L, r13
+ 1013 0144 20 3E                   		beq	.L78
+ 851:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     		if(OCUART.RxLen)
+ 1014                             		.loc 1 851 0
+ 1015 0146 5D 7E 0D                		movu.W	26[r7], r14
+ 1016 0149 61 0E                   		cmp	#0, r14
+ 1017 014b 20 2F                   		beq	.L79
+ 1018                             	.LBB21:
+ 1019                             	.LBB22:
+ 1020                             	.LBB23:
+ 924:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	data=*OCUART.pRead;
+ 1021                             		.loc 1 924 0
+ 1022 014d EF DB                   		mov.L	r13, r11
+ 1023                             	.LVL59:
+ 1024 014f FD 28 BD                		mov.B	[r11+], r13
+ 1025                             	.LVL60:
+ 939:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	if (OCUART.pRead >= ((uint8_t*)OCUART_Buffer + OCUART_BUFFER_SIZE))
+ 1026                             		.loc 1 939 0
+ 1027 0152 74 0B 00 00 00 00       		cmp	#_OCUART_Buffer+64, r11
+ 1028 0158 22 07                   		bgeu	.L80
+ 930:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	OCUART.pRead++;
+ 1029                             		.loc 1 930 0
+ 1030 015a E7 7B 02                		mov.L	r11, 8[r7]
+ 1031 015d 2E 09                   		bra	.L81
+ 1032                             	.L80:
+ 941:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     	OCUART.pRead = (uint8_t*) OCUART_Buffer;
+ 1033                             		.loc 1 941 0
+ 1034 015f F9 72 02 00 00 00 00    		mov.L	#_OCUART_Buffer, 8[r7]
+ 1035                             		.balign 2,3,1
+ 1036                             	.L81:
+ 1037                             	.LBE23:
+ 1038                             	.LBE22:
+ 856:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				*OCUART.RxBuffer++=data;
+ 1039                             		.loc 1 856 0
+ 1040 0166 ED 7B 05                		mov.L	20[r7], r11
+ 1041 0169 FD 20 BD                		mov.B	r13, [r11+]
+ 1042 016c E7 7B 05                		mov.L	r11, 20[r7]
+ 1043                             	.LVL61:
+ 859:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     			    OCUART.RxLen--;
+ 1044                             		.loc 1 859 0
+ 1045 016f DD 7B 0D                		mov.W	26[r7], r11
+ 1046 0172 60 1B                   		sub	#1, r11
+ 1047 0174 D7 7B 0D                		mov.W	r11, 26[r7]
+ 857:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     				data2read=TRUE;
+ 1048                             		.loc 1 857 0
+ 1049 0177 66 1B                   		mov	#1, r11
+ 1050                             	.LVL62:
+ 1051 0179 03                      		.balign 2,3,1
+ 1052                             	.L79:
+ 1053                             	.LBE21:
+ 748:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c ****     while(scan)
+ 1054                             		.loc 1 748 0 discriminator 1
+ 1055 017a 5B AA                   		movu.B	r10, r10
+ 1056 017c 61 0A                   		cmp	#0, r10
+ 1057 017e 3B 90 FE                		bne	.L82
+ 1058                             	.LVL63:
+ 1059 0181 03                      		.balign 2,3,5
+ 1060                             	.L78:
+ 876:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 	if(!OCUART.RxLen)
+ 1061                             		.loc 1 876 0
+ 1062 0182 FB 72 00 00 00 00       		mov.L	#_OCUART, r7
+ 1063 0188 BB 7F                   		movu.W	26[r7], r7
+ 1064 018a 61 07                   		cmp	#0, r7
+ 1065 018c 21 04                   		bne	.L83
+ 878:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** 		data2read=TRUE;
+ 1066                             		.loc 1 878 0
+ 1067 018e 66 1B                   		mov	#1, r11
+ 1068                             	.LVL64:
+ 1069                             		.balign 2,3,1
+ 1070                             	.L83:
+ 882:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCUART\OCUART_drv.c **** }
+ 1071                             		.loc 1 882 0
+ 1072 0190 EF B1                   		mov.L	r11, r1
+ 1073 0192 64 11                   		and	#1, r1
+ 1074 0194 3F 7D 08                		rtsd	#32, r7-r13
+ 1075                             	.LFE17:
+ 1077                             		.comm	_OCUART,44,4
+ 1078                             		.comm	_OCUART_Buffer,64,4
+ 1303                             	.Letext0:
+ 1304                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 1305                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_reg.h"
+ 1306                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_cfg.h"
+ 1307                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers/io_driver.h"
+ 1308                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\SWDMA/SWDMA_drv.h"
+ 1309                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_SecurityCheck/LIB_TaskMonitori

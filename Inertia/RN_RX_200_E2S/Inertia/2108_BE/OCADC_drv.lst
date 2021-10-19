@@ -1,0 +1,1686 @@
+   1                             		.file	"OCADC_drv.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.OCADC_InitSync,"ax",@progbits
+   5                             		.global	_OCADC_InitSync
+   7                             	_OCADC_InitSync:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC/OCADC_drv.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n
+   8:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \par		OCADC_drv.c
+   9:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n			Implementation of all functions necessary to achieve the aim.
+  10:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n
+  11:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \file		OCADC_drv.c
+  12:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \ingroup	OCADC
+  13:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \date		March 2, 2010
+  14:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \version	01.00.03
+  15:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \author		Jaroslav Musil
+  16:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n
+  17:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n
+  18:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \par	History:
+  19:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n
+  20:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      01.00.07
+  21:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      Feb 02,2011
+  22:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      Stefano Ughi
+  23:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      fixed bug on OCADC_StartMultiSampleMultiChannelSync()
+  24:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n
+  25:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      01.00.06
+  26:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      16/06/2010
+  27:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      Stefano Ughi
+  28:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      added function IO_ErrorType OCADC_GetADchannelSync(IO_ModuleIOMapType *pIOMap,uint8_t *pCha
+  29:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n
+  30:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n		01.00.05
+  31:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n		31/05/2010
+  32:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n		Stefano Ughi
+  33:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n		added channel parameter on ADC_pResultRegister for compatibility with others uc
+  34:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n
+  35:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n 		01.00.04
+  36:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n		16/04/2010
+  37:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n		Stefano Ughi
+  38:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      - In OCADC_StartMultiSampleMultiChannelSync()
+  39:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      (void)SWDMA_StartTransferSync(ADC_RESULTS_DMA_CHANNEL, ADC_Callback);
+  40:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      changed in
+  41:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      (void)SWDMA_StartTransferSync(ADC_RESULTS_DMA_CHANNEL, NULL);
+  42:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n
+  43:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      (void)SWDMA_StartTransferSync(ADC_CHANNELS_DMA_CHANNEL, NULL);
+  44:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      changed in
+  45:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      (void)SWDMA_StartTransferSync(ADC_CHANNELS_DMA_CHANNEL, ADC_Callback);
+  46:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      because of new DMA SW Implementation
+  47:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n
+  48:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n 		01.00.03
+  49:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n		02/03/2010
+  50:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n		Jaroslav Musil
+  51:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      - added ADC_ResultValueType that depends on the peripheral result register
+  52:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      - added the ADC_RESULT_REGISTER_SIZE define
+  53:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      - added pResults item into the OCADC_ResultType structure
+  54:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n
+  55:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n 		01.00.02
+  56:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n		18/02/2010
+  57:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n		Jaroslav Musil
+  58:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      - Commented
+  59:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      - dma channels set up by the defines; i.e. removed from the function interfaces
+  60:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      - dma structure setting checks the type of the results and sets the transfer either 8-bit o
+  61:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      - used defines ADC_USE_SW_DMA and ADC_USE_HW_DMA
+  62:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n
+  63:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n 		01.00.01
+  64:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n		18/02/2010
+  65:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n		Jaroslav Musil
+  66:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n      - added the DMA multi sample functions
+  67:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n
+  68:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n 		01.00.00
+  69:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n		16/02/2010
+  70:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n		Stefano Ughi
+  71:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n		- Creation
+  72:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n
+  73:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** */
+  74:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+  75:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* ******** */
+  76:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* Includes */
+  77:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* ******** */
+  78:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #include "OCADC_drv.h"
+  79:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #include "LIB_ClassBVar.h"
+  80:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #include "LIB_Trace.h"
+  81:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #include "LIB_TaskMonitoring.h"
+  82:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if defined (CHECK_POSSIBLE_RESET_CAUSES)
+  83:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #include "ResetModule.h"
+  84:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif
+  85:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* ****************** */
+  86:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* Defines and Macros */
+  87:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* ****************** */
+  88:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+  89:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+  90:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* *************************** */
+  91:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* Typedef, Structs and Unions */
+  92:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* *************************** */
+  93:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /**
+  94:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+  95:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** */
+  96:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** typedef struct OCADC_ResultType_tag
+  97:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** {
+  98:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	Comm_Notification callback;     /* callback function that will be called after the last sample is 
+  99:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_ValueType *pResult;         /* pointer to the result after resolution correction, i.e. data ty
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA | ADC_USE_HW_DMA)
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_ResultValueType *pResults;  /* pointer to the result correction where the data type is the sam
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	IO_ChannelType channel;			/*usato per l'acquisizione singola*/
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	IO_ChannelType *pChannel;       /* pointer to the channels */
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	uint16_t sampleCount;           /* defines the number of samples that should be taken. In single s
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	IO_ChannelType dmaChannel;      /* dma channel for the results */
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	IO_ChannelType dmaChannelCh;    /* dma channel for the adc channels */
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** } OCADC_ResultType;
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* ********* */
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* Variables */
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* ********* */
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* Global */
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* Static */
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /** If TRUE ADC is Busy */
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** static bool_t ADC_Resource;
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /** Here driver store convertion results
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c ****  * \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_3
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c ****  * */
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** static ADC_ValueType ADC_Convertions[ADC_NUM_CHANNELLS_USED];
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** static OCADC_ResultType ADC_DataResult;
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* ******************* */
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* Functions Prototype */
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* ******************* */
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* Local Function */
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA | ADC_USE_HW_DMA)
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** static IO_ErrorType ADC_Callback(IO_NotificationType notification, IO_ChannelType channel, IO_Error
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if defined( CONFIG_DEBUG_ADC_CHANNELS )
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #include "OCADC_trace.h"
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #else
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #define DEBUG_ADC_TRACE_MODULE(x)
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #define DEBUG_ADC_TRACE_INIT(x)
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #define DEBUG_ADC_TRACE_CH( i, value )
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** DEBUG_ADC_TRACE_MODULE( ADC_NUM_CHANNELLS_USED )
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* *************** */
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* Function Bodies */
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* *************** */
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /* Exported function */
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /**
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n This function initialises the ADC driver. It uses the configurations parameters defined in
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n AdcConfig.h file that must be included in Config.h file.
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \return 	IO_ErrorType
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_OK initialization done
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** */
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** IO_ErrorType OCADC_InitSync(void)
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** {
+  10                             		.loc 1 161 0
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	int i;
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_Init();
+  11                             		.loc 1 163 0
+  12 0000 05 00 00 00             		bsr	_ADC_Init
+  13                             	.LVL0:
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_Resource = FALSE;
+  14                             		.loc 1 164 0
+  15 0004 FB E2 00 00 00 00       		mov.L	#_ADC_Resource, r14
+  16 000a F8 E6 00                		mov.L	#0, [r14]
+  17                             	.LVL1:
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	DEBUG_ADC_TRACE_INIT(ADC_NUM_CHANNELLS_USED)
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	SAFETY_REGION_START();
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	for(i=0; i<ADC_NUM_CHANNELLS_USED ; i++){
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		SAFETY_DATA_ELEM_UPDATE( ADC_Convertions, i );
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	SAFETY_REGION_END();
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** }
+  18                             		.loc 1 174 0
+  19 000d 66 01                   		mov.L	#0, r1
+  20 000f 02                      		rts
+  21                             	.LFE0:
+  23                             		.section	.text.OCADC_DeInitSync,"ax",@progbits
+  24                             		.global	_OCADC_DeInitSync
+  26                             	_OCADC_DeInitSync:
+  27                             	.LFB1:
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /**
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n This function deinitialises the ADC driver and
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n sets all ADC-channels back to their controller default configuration.
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \return 	IO_ErrorType
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_OK deinitialization done
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** */
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** IO_ErrorType OCADC_DeInitSync(void)
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** {
+  28                             		.loc 1 184 0
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_DeInit();
+  29                             		.loc 1 185 0
+  30 0000 05 00 00 00             		bsr	_ADC_DeInit
+  31                             	.LVL2:
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_Resource = FALSE;
+  32                             		.loc 1 186 0
+  33 0004 FB E2 00 00 00 00       		mov.L	#_ADC_Resource, r14
+  34 000a F8 E6 00                		mov.L	#0, [r14]
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** }
+  35                             		.loc 1 188 0
+  36 000d 66 01                   		mov.L	#0, r1
+  37 000f 02                      		rts
+  38                             	.LFE1:
+  40                             		.section	.text.OCADC_GetADchannelSync,"ax",@progbits
+  41                             		.global	_OCADC_GetADchannelSync
+  43                             	_OCADC_GetADchannelSync:
+  44                             	.LFB2:
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /**
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n The function returns the analogue channel linked to a specified pin.
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \param  [in]	pIOMap fixed a pin index specifies the pointer to the Module IO Map.
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \param  [in]	pChannel pointer where is stored the ADC channel
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \return 	IO_ErrorType
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_OK
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval     IO_E_UNEXPECTED_CONDITION
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** */
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** IO_ErrorType OCADC_GetADchannelSync(const IO_ModuleIOMapType *const pIOMap,uint8_t *pChannel)
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** {
+  45                             		.loc 1 200 0
+  46                             	.LVL3:
+  47 0000 7E A7                   		push.l	r7
+  48                             	.LCFI0:
+  49 0002 60 40                   		sub	#4, r0
+  50                             	.LCFI1:
+  51 0004 EF 1E                   		mov.L	r1, r14
+  52 0006 EF 27                   		mov.L	r2, r7
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	uint8_t ch;
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if ( ADC_GetChannel(pIOMap->PortAddress,pIOMap->PinMask,&ch))
+  53                             		.loc 1 203 0
+  54 0008 EC 11                   		mov.L	[r1], r1
+  55                             	.LVL4:
+  56 000a CD E2 04                		mov.B	4[r14], r2
+  57                             	.LVL5:
+  58 000d EF 03                   		mov.L	r0, r3
+  59 000f 05 00 00 00             		bsr	_ADC_GetChannel
+  60                             	.LVL6:
+  61 0013 61 01                   		cmp	#0, r1
+  62 0015 16                      		beq	.L5
+  63                             	.LVL7:
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		*pChannel = ch;
+  64                             		.loc 1 205 0
+  65 0016 C0 07                   		mov.B	[r0], [r7]
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_OK;
+  66                             		.loc 1 206 0
+  67 0018 66 01                   		mov	#0, r1
+  68 001a 0C                      		bra	.L4
+  69                             	.LVL8:
+  70                             	.L5:
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+  71                             		.loc 1 208 0
+  72 001b 75 41 17                		mov	#23, r1
+  73                             	.LVL9:
+  74                             		.balign 2,3,2
+  75                             	.L4:
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** }
+  76                             		.loc 1 209 0
+  77 001e 75 21 17                		and #23, r1
+  78 0021 3F 77 02                		rtsd	#8, r7-r7
+  79                             	.LFE2:
+  81                             		.section	.text.OCADC_GetSync,"ax",@progbits
+  82                             		.global	_OCADC_GetSync
+  84                             	_OCADC_GetSync:
+  85                             	.LFB3:
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /**
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n The function returns the analogue value of the specified position in the configured resolution.
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n Cfr. ADC_RESOLUTION param in AdcConfig.h.\n
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n The user is responsible to call the OCADC_StartSampleSync or OCADC_SampleSync functions before.
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \param  [in]	position specifies a position inside ADC_Convertions[] buffer.
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \return 	ADC_ValueType
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		analogue value
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** */
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** ADC_ValueType OCADC_GetSync(IO_PositionType position)
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** {
+  86                             		.loc 1 221 0
+  87                             	.LVL10:
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	return (ADC_Convertions[position]);
+  88                             		.loc 1 222 0
+  89 0000 5B 11                   		movu.B	r1, r1
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** }
+  90                             		.loc 1 223 0
+  91 0002 FB E2 00 00 00 00       		mov.L	#_ADC_Convertions, r14
+  92 0008 FE D1 E1                		movu.W	[r1,r14], r1
+  93                             	.LVL11:
+  94 000b 02                      		rts
+  95                             	.LFE3:
+  97                             		.section	.text.OCADC_StartSampleSync,"ax",@progbits
+  98                             		.global	_OCADC_StartSampleSync
+ 100                             	_OCADC_StartSampleSync:
+ 101                             	.LFB4:
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /**
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n This function starts the measurement of analogue value of the specified ADC channel and
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n stores the values into ADC_Convertions[] buffer. The function OCADC_GetSync  returns the stored
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n values. A measurement can be stopped using the function OCADC_StopSampleSync.
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \param  [in]	The parameter channel specifies the ADC channel.
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \param  [in]	The parameter position specifies where conversion must be stored inside ADC_Convertion
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \param  [in]	callback  This parameter points to a callback function to inform the caller \n
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c ****  				about sample status of the specified channel: \n
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 				IO_E_OK: Measurement successfully finished. \n
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 				IO_E_FCN_SUSPENDED: Measurement was cancelled with function OCADC_StopSampleSync. \n
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 				This pointer can be set to NULL if not needed, in this case the caller is responsable to \n
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 				call OCADC_IsConvertionReadySync() in order to test if the resul is ready.\n
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 				The callback will be called when measurement is finished.\n
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 				Starting a new measurement from callback function is possible.
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \return 	IO_ErrorType
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_OK Measurement started successfully.
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_BUSY Function is blocked because a measurement is currently running.
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_INVALID_CHANNEL_ID The channel descriptor is invalid.
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_INVALID_POSITION The position descriptor is invalid.
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** */
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** IO_ErrorType OCADC_StartSampleSync (IO_ChannelType channel,IO_PositionType position, Comm_Notificat
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** {
+ 102                             		.loc 1 250 0
+ 103                             	.LVL12:
+ 104 0000 6E 7C                   		pushm	r7-r12
+ 105                             	.LCFI2:
+ 106 0002 CF 2C                   		mov.B	r2, r12
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if ( position >= ADC_NUM_CHANNELLS_USED )
+ 107                             		.loc 1 252 0
+ 108 0004 5B 2B                   		movu.B	r2, r11
+ 109 0006 61 7B                   		cmp	#7, r11
+ 110 0008 24 78                   		bgtu	.L13
+ 111 000a CF 17                   		mov.B	r1, r7
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_POSITION;
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_CheckChannel(channel))
+ 112                             		.loc 1 256 0
+ 113 000c 5B 1B                   		movu.B	r1, r11
+ 114 000e 75 5B 1E                		cmp	#30, r11
+ 115 0011 24 73                   		bgtu	.L14
+ 116 0013 EF 3A                   		mov.L	r3, r10
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	EnterCriticalSection();
+ 117                             		.loc 1 262 0
+ 118 0015 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 119                             	.LVL13:
+ 120 0019 FB B2 00 00 00 00       		mov.L	#_OS_Global, r11
+ 121 001f CD BE 01                		mov.B	1[r11], r14
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if ( ADC_Resource )
+ 122                             		.loc 1 263 0
+ 123 0022 FB 32 00 00 00 00       		mov.L	#_ADC_Resource, r3
+ 124 0028 EC 32                   		mov.L	[r3], r2
+ 125 002a 5B E4                   		movu.B	r14, r4
+ 126 002c 61 02                   		cmp	#0, r2
+ 127 002e 20 0F                   		beq	.L10
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		ExitCriticalSection();
+ 128                             		.loc 1 265 0
+ 129 0030 C7 BE 01                		mov.B	r14, 1[r11]
+ 130 0033 61 04                   		cmp	#0, r4
+ 131 0035 21 53                   		bne	.L15
+ 132                             		.loc 1 265 0 is_stmt 0 discriminator 1
+ 133 0037 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 134                             	.LVL14:
+ 135 003b 2E 4D                   		bra	.L15
+ 136                             	.L10:
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_BUSY;
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 268:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Get ADC Resource */
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_Resource = TRUE;
+ 137                             		.loc 1 269 0 is_stmt 1
+ 138 003d 3E 30 01                		mov.L	#1, [r3]
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ExitCriticalSection();
+ 139                             		.loc 1 270 0
+ 140 0040 C7 BE 01                		mov.B	r14, 1[r11]
+ 141 0043 61 04                   		cmp	#0, r4
+ 142 0045 1D                      		bne	.L11
+ 143                             		.loc 1 270 0 is_stmt 0 discriminator 1
+ 144 0046 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 145                             	.LVL15:
+ 146                             		.balign 2,3,5
+ 147                             	.L11:
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* The sampleCount is zero to determine that it is not multisample mode */
+ 273:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.sampleCount = 0;
+ 148                             		.loc 1 273 0 is_stmt 1
+ 149 004a FB B2 00 00 00 00       		mov.L	#_ADC_DataResult, r11
+ 150 0050 F9 B5 08 00             		mov.W	#0, 16[r11]
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Stores the pointer for the callback function */
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.callback = callback;
+ 151                             		.loc 1 275 0
+ 152 0054 E3 BA                   		mov.L	r10, [r11]
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Stores the pointer for the result */
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.pResult = &ADC_Convertions[position];
+ 153                             		.loc 1 278 0
+ 154 0056 5B CC                   		movu.B	r12, r12
+ 155 0058 4B CC                   		add	r12, r12
+ 156                             	.LVL16:
+ 157 005a 70 CC 00 00 00 00       		add	#_ADC_Convertions, r12
+ 158 0060 E7 BC 01                		mov.L	r12, 4[r11]
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Start Convertion */
+ 280:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_ConfigurePinAsChannel(channel);
+ 159                             		.loc 1 280 0
+ 160 0063 CF 71                   		mov.B	r7, r1
+ 161 0065 05 00 00 00             		bsr	_ADC_ConfigurePinAsChannel
+ 162                             	.LVL17:
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.channel = channel;
+ 163                             		.loc 1 281 0
+ 164 0069 C7 B7 08                		mov.B	r7, 8[r11]
+ 282:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/*lint -e506 */
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/*lint -e610 pointers have the same size */
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if ( NULL != callback )
+ 286:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		/*lint +e610 */
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		ADC_StartConvertionOnChannel(channel,ADC_INT_ENABLED);
+ 165                             		.loc 1 288 0
+ 166 006c CF 71                   		mov.B	r7, r1
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if ( NULL != callback )
+ 167                             		.loc 1 285 0
+ 168 006e 61 0A                   		cmp	#0, r10
+ 169 0070 20 0C                   		beq	.L12
+ 170                             	.LVL18:
+ 171                             		.loc 1 288 0
+ 172 0072 66 12                   		mov	#1, r2
+ 173                             		.balign 2,3,3
+ 174                             	.L17:
+ 175 0074 05 00 00 00             		bsr	_ADC_StartConvertionOnChannel
+ 176                             	.LVL19:
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	else
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		ADC_StartConvertionOnChannel(channel,ADC_INT_DISABLED);
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/*lint +e506 */
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 177                             		.loc 1 296 0
+ 178 0078 66 01                   		mov	#0, r1
+ 179 007a 2E 10                   		bra	.L9
+ 180                             	.LVL20:
+ 181                             	.L12:
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		ADC_StartConvertionOnChannel(channel,ADC_INT_DISABLED);
+ 182                             		.loc 1 292 0
+ 183 007c CF A2                   		mov.B	r10, r2
+ 184 007e 2E F6                   		bra	.L17
+ 185                             	.LVL21:
+ 186                             	.L13:
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_POSITION;
+ 187                             		.loc 1 254 0
+ 188 0080 75 41 15                		mov	#21, r1
+ 189                             	.LVL22:
+ 190 0083 0F                      		bra	.L9
+ 191                             	.LVL23:
+ 192                             	.L14:
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 193                             		.loc 1 258 0
+ 194 0084 75 41 12                		mov	#18, r1
+ 195                             	.LVL24:
+ 196 0087 0B                      		bra	.L9
+ 197                             	.LVL25:
+ 198                             	.L15:
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_BUSY;
+ 199                             		.loc 1 266 0
+ 200 0088 66 11                   		mov	#1, r1
+ 201                             	.LVL26:
+ 202                             		.balign 2,3,1
+ 203                             	.L9:
+ 297:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** }
+ 204                             		.loc 1 298 0
+ 205 008a 5B 11                   		movu.B	r1, r1
+ 206 008c 3F 7C 06                		rtsd	#24, r7-r12
+ 207                             	.LFE4:
+ 209 008f 03                      		.section	.text.OCADC_IsConvertionReadySync,"ax",@progbits
+ 210                             		.global	_OCADC_IsConvertionReadySync
+ 212                             	_OCADC_IsConvertionReadySync:
+ 213                             	.LFB5:
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /**
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n This function checks if the measurement of analogue value is finished. If it is finished, the va
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n stored on the position into ADC_Convertions[] buffer which was specified by the function OCADC_S
+ 302:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n The function OCADC_GetSync  returns the stored values.
+ 303:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n A measurement can be stopped using the function OCADC_StopSampleSync.
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 305:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \return 	IO_ErrorType
+ 306:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_OK Measurement finished successfully.
+ 307:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_BUSY Function is blocked because a measurement is currently running.
+ 308:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 309:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 310:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** */
+ 311:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** IO_ErrorType OCADC_IsConvertionReadySync(IO_ChannelType channel)
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** {
+ 214                             		.loc 1 312 0
+ 215                             	.LVL27:
+ 216 0000 7E A7                   		push.l	r7
+ 217                             	.LCFI3:
+ 313:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c ****     (void)channel;
+ 314:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_EndConvertion())
+ 218                             		.loc 1 314 0
+ 219 0002 FB 7E 00 90 08          		mov.L	#0x89000, r7
+ 220 0007 DC 77                   		mov.W	[r7], r7
+ 221 0009 61 07                   		cmp	#0, r7
+ 222 000b 28 1C                   		bge	.L20
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c ****         	*ADC_DataResult.pResult = (ADC_ValueType) ADC_GetConvertedValueOnChannel(channel);
+ 223                             		.loc 1 316 0
+ 224 000d FB 72 00 00 00 00       		mov.L	#_ADC_DataResult, r7
+ 225 0013 A8 7F                   		mov.L	4[r7], r7
+ 226 0015 05 00 00 00             		bsr	_ADC_GetConvertedValueOnChannel
+ 227                             	.LVL28:
+ 228 0019 D3 71                   		mov.W	r1, [r7]
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		/* Release ADC Resource */
+ 318:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		ADC_Resource = FALSE;
+ 229                             		.loc 1 318 0
+ 230 001b FB 72 00 00 00 00       		mov.L	#_ADC_Resource, r7
+ 231 0021 3E 70 00                		mov.L	#0, [r7]
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_OK;
+ 232                             		.loc 1 319 0
+ 233 0024 66 01                   		mov	#0, r1
+ 234 0026 0C                      		bra	.L19
+ 235                             	.LVL29:
+ 236                             	.L20:
+ 320:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 321:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	else
+ 322:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 323:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_BUSY;
+ 237                             		.loc 1 323 0
+ 238 0027 66 11                   		mov	#1, r1
+ 239                             	.LVL30:
+ 240 0029 03                      		.balign 2,3,1
+ 241                             	.L19:
+ 324:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 325:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** }
+ 242                             		.loc 1 325 0
+ 243 002a 64 11                   		and #1, r1
+ 244 002c 3F 77 01                		rtsd	#4, r7-r7
+ 245                             	.LFE5:
+ 247 002f 03                      		.section	.text.OCADC_SampleSync,"ax",@progbits
+ 248                             		.global	_OCADC_SampleSync
+ 250                             	_OCADC_SampleSync:
+ 251                             	.LFB6:
+ 326:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 327:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /**
+ 328:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n This function starts the measurement of analogue value of the specified ADC channel,
+ 329:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n wait for end convertion, and stores the values into ADC_Convertions[] buffer.
+ 330:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n The function OCADC_GetSync  returns the stored values.
+ 331:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n The function is always avaible also if is not defined ADC_HW_DMA nor ADC_SW_DMA.
+ 332:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 333:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \param  [in]	The parameter channel specifies the ADC channel.
+ 334:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \param  [in]	The parameter position specifies where conversion must be stored inside ADC_Convertion
+ 335:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 336:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \return 	IO_ErrorType
+ 337:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 338:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_OK Measurement finished successfully.
+ 339:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_BUSY Function is blocked because a measurement is currently running.
+ 340:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_INVALID_CHANNEL_ID The channel descriptor is invalid.
+ 341:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_INVALID_POSITION The position descriptor is invalid.
+ 342:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 343:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \note		\par \b Note 1:
+ 344:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			-if position = AD_DUMMY_POS will be performed a sample on channel but the read not stored.
+ 345:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			-added for debugging functions Reset_SetResetCode(RESET_CODE_ATD);
+ 346:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 347:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 348:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** */
+ 349:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** IO_ErrorType OCADC_SampleSync (IO_ChannelType channel,IO_PositionType position)
+ 350:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** {
+ 252                             		.loc 1 350 0
+ 253                             	.LVL31:
+ 254 0000 6E 7A                   		pushm	r7-r10
+ 255                             	.LCFI4:
+ 256 0002 CF 2A                   		mov.B	r2, r10
+ 351:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_ValueType adcValue;
+ 352:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 353:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if ( (position >= ADC_NUM_CHANNELLS_USED) && (position != AD_DUMMY_POS))
+ 257                             		.loc 1 353 0
+ 258 0004 71 AE F8                		add	#-8, r10, r14
+ 259 0007 5B EE                   		movu.B	r14, r14
+ 260 0009 75 5E F6                		cmp	#0xf6, r14
+ 261 000c 25 7D                   		bleu	.L28
+ 262 000e CF 17                   		mov.B	r1, r7
+ 354:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 355:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_POSITION;
+ 356:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 357:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_CheckChannel(channel))
+ 263                             		.loc 1 357 0
+ 264 0010 5B 1E                   		movu.B	r1, r14
+ 265 0012 75 5E 1E                		cmp	#30, r14
+ 266 0015 24 78                   		bgtu	.L29
+ 358:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 359:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 360:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 361:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 362:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	EnterCriticalSection();
+ 267                             		.loc 1 362 0
+ 268 0017 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 269                             	.LVL32:
+ 270 001b FB E2 00 00 00 00       		mov.L	#_OS_Global, r14
+ 271 0021 CD E4 01                		mov.B	1[r14], r4
+ 363:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if ( ADC_Resource )
+ 272                             		.loc 1 363 0
+ 273 0024 FB 22 00 00 00 00       		mov.L	#_ADC_Resource, r2
+ 274 002a EC 21                   		mov.L	[r2], r1
+ 275 002c 5B 43                   		movu.B	r4, r3
+ 276 002e 61 01                   		cmp	#0, r1
+ 277 0030 20 0F                   		beq	.L24
+ 364:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 365:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		ExitCriticalSection();
+ 278                             		.loc 1 365 0
+ 279 0032 C7 E4 01                		mov.B	r4, 1[r14]
+ 280 0035 61 03                   		cmp	#0, r3
+ 281 0037 21 5A                   		bne	.L30
+ 282                             		.loc 1 365 0 is_stmt 0 discriminator 1
+ 283 0039 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 284                             	.LVL33:
+ 285 003d 2E 54                   		bra	.L30
+ 286                             	.L24:
+ 366:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_BUSY;
+ 367:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 368:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Get ADC Resource */
+ 369:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_Resource = TRUE;
+ 287                             		.loc 1 369 0 is_stmt 1
+ 288 003f 3E 20 01                		mov.L	#1, [r2]
+ 370:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ExitCriticalSection();
+ 289                             		.loc 1 370 0
+ 290 0042 C7 E4 01                		mov.B	r4, 1[r14]
+ 291 0045 61 03                   		cmp	#0, r3
+ 292 0047 1D                      		bne	.L25
+ 293                             		.loc 1 370 0 is_stmt 0 discriminator 1
+ 294 0048 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 295                             	.LVL34:
+ 296                             		.balign 2,3,1
+ 297                             	.L25:
+ 371:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Start Convertion */
+ 372:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_ConfigurePinAsChannel(channel);
+ 298                             		.loc 1 372 0 is_stmt 1
+ 299 004c CF 71                   		mov.B	r7, r1
+ 300 004e 05 00 00 00             		bsr	_ADC_ConfigurePinAsChannel
+ 301                             	.LVL35:
+ 373:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/*lint -e506 */
+ 374:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_StartConvertionOnChannel(channel,ADC_INT_DISABLED);
+ 302                             		.loc 1 374 0
+ 303 0052 CF 71                   		mov.B	r7, r1
+ 304 0054 66 02                   		mov	#0, r2
+ 305 0056 05 00 00 00             		bsr	_ADC_StartConvertionOnChannel
+ 306                             	.LVL36:
+ 375:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/*lint +e506 */
+ 376:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if defined (CHECK_POSSIBLE_RESET_CAUSES)
+ 377:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	Reset_SetResetCode(RESET_CODE_ATD);
+ 378:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif /* #if defined (CHECK_POSSIBLE_RESET_CAUSES) */
+ 379:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_WaitForConvertionOnChannel(channel);
+ 307                             		.loc 1 379 0
+ 308 005a FB 4E 00 90 08          		mov.L	#0x89000, r4
+ 309 005f 03                      		.balign 2,3,5
+ 310                             	.L26:
+ 311                             		.loc 1 379 0 is_stmt 0 discriminator 1
+ 312 0060 DC 4E                   		mov.W	[r4], r14
+ 313 0062 61 0E                   		cmp	#0, r14
+ 314 0064 29 FC                   		blt	.L26
+ 380:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 381:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	adcValue = (ADC_ValueType) ADC_GetConvertedValueOnChannel(channel);
+ 315                             		.loc 1 381 0 is_stmt 1
+ 316 0066 CF 71                   		mov.B	r7, r1
+ 317 0068 05 00 00 00             		bsr	_ADC_GetConvertedValueOnChannel
+ 318                             	.LVL37:
+ 382:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if (position != AD_DUMMY_POS)
+ 319                             		.loc 1 382 0
+ 320 006c 5B AA                   		movu.B	r10, r10
+ 321 006e 75 5A FF                		cmp	#0xff, r10
+ 322 0071 20 0B                   		beq	.L27
+ 383:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 384:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		SAFETY_REGION_START();
+ 385:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		SAFETY_DATA_ELEM_CHECK( ADC_Convertions, position );
+ 386:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 387:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		ADC_Convertions[position] = adcValue;
+ 323                             		.loc 1 387 0
+ 324 0073 FB 72 00 00 00 00       		mov.L	#_ADC_Convertions, r7
+ 325                             	.LVL38:
+ 326 0079 FE 1A 71                		mov.W	r1, [r10,r7]
+ 327                             		.balign 2,3,5
+ 328                             	.L27:
+ 388:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 389:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		DEBUG_ADC_TRACE_CH(position, adcValue)
+ 390:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 391:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		SAFETY_DATA_ELEM_UPDATE( ADC_Convertions, position );
+ 392:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		SAFETY_REGION_END();
+ 393:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 394:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Release ADC Resource */
+ 395:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_Resource = FALSE;
+ 329                             		.loc 1 395 0
+ 330 007c FB 72 00 00 00 00       		mov.L	#_ADC_Resource, r7
+ 331 0082 3E 70 00                		mov.L	#0, [r7]
+ 396:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 332                             		.loc 1 396 0
+ 333 0085 66 01                   		mov	#0, r1
+ 334 0087 2E 0D                   		bra	.L23
+ 335                             	.LVL39:
+ 336                             	.L28:
+ 355:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_POSITION;
+ 337                             		.loc 1 355 0
+ 338 0089 75 41 15                		mov	#21, r1
+ 339                             	.LVL40:
+ 340 008c 08                      		bra	.L23
+ 341                             	.LVL41:
+ 342                             	.L29:
+ 359:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 343                             		.loc 1 359 0
+ 344 008d 75 41 12                		mov	#18, r1
+ 345                             	.LVL42:
+ 346 0090 0C                      		bra	.L23
+ 347                             	.LVL43:
+ 348                             	.L30:
+ 366:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_BUSY;
+ 349                             		.loc 1 366 0
+ 350 0091 66 11                   		mov	#1, r1
+ 351                             	.LVL44:
+ 352 0093 03                      		.balign 2,3,2
+ 353                             	.L23:
+ 397:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** }
+ 354                             		.loc 1 397 0
+ 355 0094 75 21 17                		and #23, r1
+ 356 0097 3F 7A 04                		rtsd	#16, r7-r10
+ 357                             	.LFE6:
+ 359                             		.section	.text.OCADC_StopSampleSync,"ax",@progbits
+ 360                             		.global	_OCADC_StopSampleSync
+ 362                             	_OCADC_StopSampleSync:
+ 363                             	.LFB7:
+ 398:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /**
+ 399:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n This function stop a measurement.
+ 400:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 401:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 402:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** */
+ 403:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** void OCADC_StopSampleSync(void)
+ 404:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** {
+ 364                             		.loc 1 404 0
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	EnterCriticalSection();
+ 365                             		.loc 1 405 0
+ 366 0000 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 367                             	.LVL45:
+ 368 0004 FB 32 00 00 00 00       		mov.L	#_OS_Global, r3
+ 369 000a CD 3E 01                		mov.B	1[r3], r14
+ 406:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 407:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_Resource)
+ 370                             		.loc 1 407 0
+ 371 000d FB 42 00 00 00 00       		mov.L	#_ADC_Resource, r4
+ 372 0013 EC 42                   		mov.L	[r4], r2
+ 373 0015 61 02                   		cmp	#0, r2
+ 374 0017 20 0D                   		beq	.L37
+ 408:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 409:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		/* Stops ADC conversion */
+ 410:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		ADC_StopConversion();
+ 375                             		.loc 1 410 0
+ 376 0019 FB 2E 00 90 08          		mov.L	#0x89000, r2
+ 377 001e 3D 22 00                		mov.W	#0, 4[r2]
+ 411:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 412:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		/* Release ADC Resource */
+ 413:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		ADC_Resource = FALSE;
+ 378                             		.loc 1 413 0
+ 379 0021 3E 40 00                		mov.L	#0, [r4]
+ 380                             		.balign 2,3,5
+ 381                             	.L37:
+ 414:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 415:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 416:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 417:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ExitCriticalSection();
+ 382                             		.loc 1 417 0
+ 383 0024 C7 3E 01                		mov.B	r14, 1[r3]
+ 384 0027 76 2E FF 00             		and #0xff, r14
+ 385 002b 1D                      		bne	.L36
+ 386                             		.loc 1 417 0 is_stmt 0 discriminator 1
+ 387 002c 04 00 00 00             		bra	_OS_EnableInterrupt
+ 388                             	.LVL46:
+ 389                             	.L36:
+ 390 0030 02                      		rts
+ 391                             	.LFE7:
+ 393 0031 03                      		.section	.text.OCADC_ISR,"ax",@progbits
+ 394                             		.global	_OCADC_ISR
+ 396                             	_OCADC_ISR:
+ 397                             	.LFB8:
+ 418:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** }
+ 419:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 420:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA | ADC_USE_HW_DMA)
+ 421:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /**
+ 422:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n This function starts the measurement of analogue value of the specified ADC channel.
+ 423:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n It uses DMA and converts from the same channel the defined number of results.
+ 424:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n At the end the function generates the callback.
+ 425:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 426:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \param  [in]	channel specifies the ADC channel.
+ 427:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \param  [in]	sampleCount specifies the number of samples to be taken.
+ 428:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \param  [in]	pResults specifies the position in memory where to store the first sample after conver
+ 429:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \param  [in]	callback  This parameter points to a callback function to inform the caller \n
+ 430:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c ****  				about the conversion complete: \n
+ 431:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 				if callback return IO_E_OK -> measurement successfully finished. \n
+ 432:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 433:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \return 	IO_ErrorType
+ 434:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 435:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_OK Measurement finished successfully.
+ 436:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_BUSY Function is blocked because a measurement is currently running.
+ 437:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_INVALID_CHANNEL_ID The channel descriptor is invalid.
+ 438:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 439:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 440:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** */
+ 441:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** IO_ErrorType OCADC_StartMultiSampleOneChannelSync(IO_ChannelType channel, uint16_t sampleCount, ADC
+ 442:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** {
+ 443:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA)
+ 444:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	SWDMA_TransferType  transfer = {0};
+ 445:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #else
+ 446:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	OCDMA_TransferType  transfer = {0};
+ 447:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif
+ 448:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 449:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Checks if all the channel is valid */
+ 450:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_CheckChannel(channel))
+ 451:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 452:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 453:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 454:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 455:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	EnterCriticalSection();
+ 456:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 457:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_Resource)
+ 458:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 459:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		ExitCriticalSection();
+ 460:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_BUSY;
+ 461:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 462:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 463:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Get ADC Resource */
+ 464:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_Resource = TRUE;
+ 465:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 466:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ExitCriticalSection();
+ 467:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 468:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Configures the DMA for the results transmission */
+ 469:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 470:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA)
+ 471:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 472:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if (ADC_RESULT_REGISTER_SIZE == 8)
+ 473:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 474:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.options.optionbyte |= (SWDMA_OPTION_SSIZE_BYTE|SWDMA_OPTION_DSIZE_BYTE);
+ 475:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.bcr = sampleCount;
+ 476:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 477:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif
+ 478:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 479:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if (ADC_RESULT_REGISTER_SIZE == 16)
+ 480:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 481:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.options.optionbyte |= (SWDMA_OPTION_SSIZE_WORD|SWDMA_OPTION_DSIZE_WORD);
+ 482:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.bcr = (sampleCount << 1);
+ 483:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 484:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif
+ 485:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 486:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.sar = (SWDMA_SarType)ADC_pResultRegister(channel);
+ 487:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.dar = (SWDMA_DarType)pResults;
+ 488:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.channel = ADC_RESULTS_DMA_CHANNEL;
+ 489:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 490:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.options.optionbyte |= (SWDMA_OPTION_DINC|SWDMA_OPTION_CS);
+ 491:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 492:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_ChannelEnableSync(ADC_RESULTS_DMA_CHANNEL);
+ 493:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_SetTransferSync(&transfer);
+ 494:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_StartTransferSync(ADC_RESULTS_DMA_CHANNEL, ADC_Callback);
+ 495:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #elif (ADC_USE_HW_DMA)
+ 496:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* in case of 8-bit ADC */
+ 497:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_RESULT_DMA_SIZE == OCDMA_SIZE_8BITs)
+ 498:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 499:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		transfer.addr = OCDMA_ADDR_DINC | OCDMA_ADDR_SSIZE_BYTE | OCDMA_ADDR_DSIZE_BYTE | OCDMA_ADDR_CS;
+ 500:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 501:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		transfer.bcr = sampleCount;
+ 502:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 503:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* in case of 16-bit ADC */
+ 504:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	else if (ADC_RESULT_DMA_SIZE == OCDMA_SIZE_16BITs)
+ 505:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 506:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		transfer.addr = OCDMA_ADDR_DINC | OCDMA_ADDR_SSIZE_WORD | OCDMA_ADDR_DSIZE_WORD | OCDMA_ADDR_CS;
+ 507:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 508:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		transfer.bcr = (sampleCount << 1);
+ 509:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 510:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 511:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.sar = (OCDMA_SarType)ADC_pResultRegister();
+ 512:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.dar = (OCDMA_DarType)pResults;
+ 513:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 514:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.channel = OCDMA_CHANNEL_ID(ADC_RESULTS_DMA_CHANNEL) | OCDMA_CHANNEL_DEVICE(ADC_RESULTS_DM
+ 515:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 516:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.perlink = OCDMA_PERLINK_ERQ | OCDMA_PERLINK_D_ERQ;
+ 517:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 518:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 519:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Enables the DMA on ADC */
+ 520:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_EnableDMA();
+ 521:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 522:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetChannelDeviceSync(&transfer);
+ 523:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetTransferParamSync(&transfer);
+ 524:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetTransferSync(&transfer);
+ 525:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_StartTransferSync(0, &transfer, ADC_Callback);
+ 526:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif /* #if (ADC_USE_SW_DMA) */
+ 527:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 528:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 529:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Stores sampleCount information */
+ 530:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.sampleCount = sampleCount;
+ 531:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 532:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Stores the pointer for the callback function */
+ 533:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.callback = callback;
+ 534:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 535:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Stores the pointer for the result */
+ 536:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.pResults = pResults;
+ 537:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 538:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* No source table with channels */
+ 539:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.pChannel = NULL;
+ 540:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 541:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Saves the dma channels */
+ 542:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.dmaChannel = ADC_RESULTS_DMA_CHANNEL;
+ 543:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 544:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Configures the pin as ADC */
+ 545:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_ConfigurePinAsChannel(channel);
+ 546:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 547:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Start Conversion */
+ 548:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_StartMultiSampleConvertionOnChannel(channel);
+ 549:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 550:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 551:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 552:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** }
+ 553:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif /* #if (ADC_USE_SW_DMA | ADC_USE_HW_DMA)*/
+ 554:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA | ADC_USE_HW_DMA)
+ 555:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /**
+ 556:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n This function, fixed a channels table pointed by pChannels, performs an A/D reading on each chan
+ 557:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \described inside the table.
+ 558:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n One sample for each channel.
+ 559:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n It uses DMA to transfer the channels to the ADC peripher and to transfer the converted results.
+ 560:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n At the end the function generates the callback.
+ 561:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n This function use two DMA Channels one for A/D channel table and one for results.
+ 562:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 563:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \param  [in]	pChannels points to the position in memory where the table of ADC Channels that must b
+ 564:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \param  [in]	sampleCount specifies the number of samples to be taken equal to the numbers of channe
+ 565:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \param  [in]    pResults points to the position in memory where the samples will be stored.
+ 566:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \param  [in]	callback  This parameter points to a callback function to inform the caller \n
+ 567:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c ****  				about the conversion complete: \n
+ 568:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 				IO_E_OK: Measurement successfully finished. \n
+ 569:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 570:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \return 	IO_ErrorType
+ 571:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 572:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_OK Measurement finished successfully.
+ 573:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_BUSY Function is blocked because a measurement is currently running.
+ 574:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_INVALID_CHANNEL_ID The channel descriptor is invalid.
+ 575:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 576:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 577:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \warning 	this function is not supported by H839079 because A/D result register depends from \n
+ 578:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			selected channel.
+ 579:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 580:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \note		\par \b Note 1:
+ 581:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			documentation by Jaroslav Musil
+ 582:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			\par \b Note 2:
+ 583:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			On MCF51AG128 the table of channels is modified by the funtion in the way that the channel is or
+ 584:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			because the channel register is shared with additional cofiguration like DMA and interrupt bit. 
+ 585:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			is set in each item of the channels' table and so the table must be R/W.
+ 586:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 587:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 588:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** */
+ 589:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** IO_ErrorType OCADC_StartMultiSampleMultiChannelSync(IO_ChannelType *pChannels, uint16_t sampleCount
+ 590:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** {
+ 591:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	IO_ChannelType *pChannel;
+ 592:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	uint32_t i;
+ 593:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 594:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA)
+ 595:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	SWDMA_TransferType  transfer = {0};
+ 596:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	SWDMA_TransferType  transferCh = {0};
+ 597:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #elif (ADC_USE_HW_DMA)
+ 598:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	OCDMA_TransferType  transfer = {0};
+ 599:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	OCDMA_TransferType  transferCh = {0};
+ 600:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif
+ 601:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 602:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* The working pointer to the channels' table */
+ 603:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	pChannel = pChannels;
+ 604:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 605:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Checks if all the channels are valid */
+ 606:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	for (i = 0; i < sampleCount; i++)
+ 607:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 608:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		/*lint -e666, -e960 side effects don't cause problem */
+ 609:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		if (ADC_CheckChannel(*pChannel))
+ 610:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			/*lint +e666, +e960 */
+ 611:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		{
+ 612:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 613:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		}
+ 614:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		pChannel++;
+ 615:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 616:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 617:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 618:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	EnterCriticalSection();
+ 619:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 620:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_Resource)
+ 621:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 622:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		ExitCriticalSection();
+ 623:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_BUSY;
+ 624:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 625:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 626:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Get ADC Resource */
+ 627:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_Resource = TRUE;
+ 628:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 629:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ExitCriticalSection();
+ 630:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 631:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Configures the DMA for the results transmission */
+ 632:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 633:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA)
+ 634:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 635:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if (ADC_RESULT_REGISTER_SIZE == 8)
+ 636:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 637:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.options.optionbyte |= (SWDMA_OPTION_SSIZE_BYTE|SWDMA_OPTION_DSIZE_BYTE);
+ 638:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.bcr = sampleCount;
+ 639:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 640:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif
+ 641:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 642:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if (ADC_RESULT_REGISTER_SIZE == 16)
+ 643:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 644:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.options.optionbyte |= (SWDMA_OPTION_SSIZE_WORD|SWDMA_OPTION_DSIZE_WORD);
+ 645:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.bcr = (sampleCount << 1);
+ 646:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 647:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif
+ 648:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Source register is the A/D result register */
+ 649:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.sar = (SWDMA_SarType)ADC_pResultRegister(*pChannels);
+ 650:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.dar = (SWDMA_DarType)pResults;
+ 651:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Select DMA Channel */
+ 652:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.channel = ADC_RESULTS_DMA_CHANNEL;
+ 653:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Increment destination pointer after a sample, no source pointer incrementation  */
+ 654:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.options.optionbyte |= (SWDMA_OPTION_DINC|SWDMA_OPTION_CS);
+ 655:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 656:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 657:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_ChannelEnableSync(ADC_RESULTS_DMA_CHANNEL);
+ 658:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_SetTransferSync(&transfer);
+ 659:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_StartTransferSync(ADC_RESULTS_DMA_CHANNEL, NULL);
+ 660:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #elif (ADC_USE_HW_DMA)
+ 661:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 662:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* in case of 8-bit ADC */
+ 663:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_RESULT_DMA_SIZE == OCDMA_SIZE_8BITs)
+ 664:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 665:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		transfer.addr = OCDMA_ADDR_DINC | OCDMA_ADDR_SSIZE_BYTE | OCDMA_ADDR_DSIZE_BYTE | OCDMA_ADDR_CS;
+ 666:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 667:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		transfer.bcr = sampleCount;
+ 668:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 669:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* in case of 16-bit ADC */
+ 670:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	else if (ADC_RESULT_DMA_SIZE == OCDMA_SIZE_16BITs)
+ 671:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 672:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		transfer.addr = OCDMA_ADDR_DINC | OCDMA_ADDR_SSIZE_WORD | OCDMA_ADDR_DSIZE_WORD | OCDMA_ADDR_CS;
+ 673:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 674:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		transfer.bcr = (sampleCount << 1);
+ 675:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 676:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 677:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.sar = (OCDMA_SarType)ADC_pResultRegister();
+ 678:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.dar = (OCDMA_DarType)pResults;
+ 679:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.channel = OCDMA_CHANNEL_ID(ADC_RESULTS_DMA_CHANNEL) | OCDMA_CHANNEL_DEVICE(ADC_RESULTS_DM
+ 680:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 681:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transfer.perlink = OCDMA_PERLINK_ERQ | OCDMA_PERLINK_D_ERQ | OCDMA_PERLINK_LINKCC_LCH1CS | OCDMA_P
+ 682:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 683:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Enables the DMA on ADC */
+ 684:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_EnableDMA();
+ 685:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 686:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetChannelDeviceSync(&transfer);
+ 687:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetTransferParamSync(&transfer);
+ 688:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetTransferSync(&transfer);
+ 689:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_StartTransferSync(0, &transfer, ADC_Callback);
+ 690:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif
+ 691:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 692:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 693:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Stores sampleCount information */
+ 694:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.sampleCount = sampleCount;
+ 695:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 696:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Stores the pointer for the callback function */
+ 697:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.callback = callback;
+ 698:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 699:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Stores the pointer for the result */
+ 700:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.pResults = pResults;
+ 701:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 702:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* No source table with channels */
+ 703:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.pChannel = pChannels;
+ 704:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 705:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Saves the dma channels */
+ 706:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.dmaChannel = ADC_RESULTS_DMA_CHANNEL;
+ 707:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.dmaChannelCh = ADC_CHANNELS_DMA_CHANNEL;
+ 708:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 709:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 710:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* The working pointer to the channels' table */
+ 711:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	pChannel = pChannels;
+ 712:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 713:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 714:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 715:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Configures all the channels as ADC and sets the IE flag of the channel (important for the DMA) 
+ 716:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	for (i = 0; i < sampleCount; i++)
+ 717:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 718:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		ADC_ConfigurePinAsChannel(*pChannel);
+ 719:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 720:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		*pChannel = ADC_CorrectChannel(*pChannel);
+ 721:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 722:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		pChannel++;
+ 723:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 724:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 725:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Configures the ADC for the conversion */
+ 726:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	ADC_StartMultiSampleConvertionMultiChannel();
+ 727:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 728:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* Configures the DMA for channels; the ADC starts with the first channel transmission */
+ 729:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 730:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA)
+ 731:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 732:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transferCh.bcr = sampleCount;
+ 733:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transferCh.sar = (SWDMA_SarType)pChannels;
+ 734:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transferCh.dar = (SWDMA_DarType)ADC_pChannelRegister(*pChannels);
+ 735:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transferCh.channel = ADC_CHANNELS_DMA_CHANNEL;
+ 736:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 737:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transferCh.options.optionbyte |= (SWDMA_OPTION_CS|SWDMA_OPTION_START|SWDMA_OPTION_SINC|SWDMA_OPTIO
+ 738:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 739:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_ChannelEnableSync(ADC_CHANNELS_DMA_CHANNEL);
+ 740:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_SetTransferSync(&transferCh);
+ 741:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/*lint -e619 pointers have the same size */
+ 742:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_StartTransferSync(ADC_CHANNELS_DMA_CHANNEL, ADC_Callback);
+ 743:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/*lint +e619 */
+ 744:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #elif (ADC_USE_HW_DMA)
+ 745:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 746:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* bcr = sampleCounte * 2 because it is 16-bit */
+ 747:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transferCh.bcr = sampleCount;
+ 748:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transferCh.sar = (OCDMA_SarType)pChannels;
+ 749:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transferCh.dar = (OCDMA_DarType)ADC_pChannelRegister();
+ 750:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 751:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transferCh.channel = OCDMA_CHANNEL_ID(ADC_CHANNELS_DMA_CHANNEL) | OCDMA_CHANNEL_DEVICE(ADC_CHANNEL
+ 752:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 753:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transferCh.addr = OCDMA_ADDR_SINC | OCDMA_ADDR_SSIZE_BYTE | OCDMA_ADDR_DSIZE_BYTE | OCDMA_ADDR_CS;
+ 754:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 755:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	transferCh.perlink = OCDMA_PERLINK_ERQ | OCDMA_PERLINK_D_ERQ;
+ 756:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 757:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetChannelDeviceSync(&transferCh);
+ 758:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetTransferParamSync(&transferCh);
+ 759:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetTransferSync(&transferCh);
+ 760:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_StartTransferSync(1, &transferCh, NULL);
+ 761:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 762:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif
+ 763:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 764:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 765:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 766:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** }
+ 767:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif /* #if (ADC_USE_SW_DMA | ADC_USE_HW_DMA) */
+ 768:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** /**
+ 769:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n ADC Driver event.
+ 770:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \n Call this method inside the ADC interrupt.
+ 771:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 772:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 773:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** */
+ 774:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** void OCADC_ISR(void)
+ 775:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** {
+ 398                             		.loc 1 775 0 is_stmt 1
+ 399 0000 6E 7B                   		pushm	r7-r11
+ 400                             	.LCFI5:
+ 776:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	IRQ_MONITOR_ENTER();
+ 401                             		.loc 1 776 0
+ 402 0002 05 00 00 00             		bsr	_LIB_IRQMonitor_Enter
+ 403                             	.LVL47:
+ 777:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 778:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	/* if sampleCount is 0, it means the single shot mode is used */
+ 779:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_DataResult.sampleCount == 0)
+ 404                             		.loc 1 779 0
+ 405 0006 FB 72 00 00 00 00       		mov.L	#_ADC_DataResult, r7
+ 406 000c 5D 7A 08                		movu.W	16[r7], r10
+ 407 000f 61 0A                   		cmp	#0, r10
+ 408 0011 21 25                   		bne	.L43
+ 409                             	.LVL48:
+ 410                             	.LBB2:
+ 780:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 781:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		IO_ChannelType channel;
+ 782:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		channel = ADC_DataResult.channel;
+ 783:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		/* Saves the result into the table */
+ 784:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		*ADC_DataResult.pResult
+ 411                             		.loc 1 784 0
+ 412 0013 ED 7B 01                		mov.L	4[r7], r11
+ 785:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 				= (ADC_ValueType) ADC_GetConvertedValueOnChannel(channel);
+ 413                             		.loc 1 785 0
+ 414 0016 8A 71                   		mov.B	8[r7], r1
+ 415 0018 05 00 00 00             		bsr	_ADC_GetConvertedValueOnChannel
+ 416                             	.LVL49:
+ 417 001c D3 B1                   		mov.W	r1, [r11]
+ 786:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		/* Release ADC Resource */
+ 787:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		ADC_Resource = FALSE;
+ 418                             		.loc 1 787 0
+ 419 001e FB B2 00 00 00 00       		mov.L	#_ADC_Resource, r11
+ 420 0024 E3 BA                   		mov.L	r10, [r11]
+ 788:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 789:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		/* Conversion complete callback */
+ 790:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		(void) (ADC_DataResult.callback)((IO_NotificationType) IO_N_COMPLETED,
+ 791:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 				(IO_ChannelType) ADC_GetActiveChannel(), (IO_ErrorType) IO_E_OK);
+ 421                             		.loc 1 791 0
+ 422 0026 FB BE 00 90 08          		mov.L	#0x89000, r11
+ 423 002b DD B2 02                		mov.W	4[r11], r2
+ 790:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		(void) (ADC_DataResult.callback)((IO_NotificationType) IO_N_COMPLETED,
+ 424                             		.loc 1 790 0
+ 425 002e EC 77                   		mov.L	[r7], r7
+ 426 0030 66 61                   		mov	#6, r1
+ 427 0032 CF A3                   		mov.B	r10, r3
+ 428 0034 7F 17                   		jsr	r7
+ 429                             	.LVL50:
+ 430                             		.balign 2,3,1
+ 431                             	.L43:
+ 432                             	.LBE2:
+ 792:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 793:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 794:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	IRQ_MONITOR_EXIT();
+ 795:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 796:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA | ADC_USE_HW_DMA)
+ 797:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	else
+ 798:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	{
+ 799:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA)
+ 800:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		/* executes the result DMA transfer */
+ 801:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		if (SWDMA_CheckChannelEnableSync(ADC_DataResult.dmaChannel) == (IO_ErrorType)IO_STATE_ACTIVE)
+ 802:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		{
+ 803:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			(void)SWDMA_ExeTransferMngrSync(ADC_DataResult.dmaChannel);
+ 804:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #if defined(ADC_NO_CONTINUOS_MODE_SUPPORTED)
+ 805:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			/* if in single channel mode */
+ 806:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			if (ADC_DataResult.pChannel == NULL)
+ 807:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			{
+ 808:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 				ADC_EmulateContinuousConversion();
+ 809:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			}
+ 810:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif /* #if defined(ADC_NO_CONTINUOS_MODE_SUPPORTED) */
+ 811:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		}
+ 812:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 813:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		/* if in multi channel mode */
+ 814:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		if (ADC_DataResult.pChannel != NULL)
+ 815:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		{
+ 816:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			/* executes the channelt DMA transfer */
+ 817:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			if (SWDMA_CheckChannelEnableSync(ADC_DataResult.dmaChannelCh) == (IO_ErrorType)IO_STATE_ACTIVE)
+ 818:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			{
+ 819:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 				(void)SWDMA_ExeTransferMngrSync(ADC_DataResult.dmaChannelCh);
+ 820:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 			}
+ 821:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 		}
+ 822:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 
+ 823:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif /* (ADC_USE_SW_DMA) */
+ 824:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	}
+ 825:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** #endif /* #if (ADC_USE_SW_DMA | ADC_USE_HW_DMA) */
+ 826:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** }
+ 433                             		.loc 1 826 0
+ 434 0036 6F 7B                   		popm	r7-r11
+ 794:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC\OCADC_drv.c **** 	IRQ_MONITOR_EXIT();
+ 435                             		.loc 1 794 0
+ 436 0038 04 00 00 00             		bra	_LIB_IRQMonitor_Exit
+ 437                             	.LVL51:
+ 438                             	.LFE8:
+ 440                             		.section	.bss.ADC_Resource,"aw",@nobits
+ 441                             		.balign 4
+ 444                             	_ADC_Resource:
+ 445 0000 00 00 00 00             		.zero	4
+ 446                             		.section	.bss.ADC_Convertions,"aw",@nobits
+ 447                             		.balign 2
+ 450                             	_ADC_Convertions:
+ 451 0000 00 00 00 00 00 00 00 00 		.zero	16
+ 451      00 00 00 00 00 00 00 00 
+ 452                             		.section	.bss.ADC_DataResult,"aw",@nobits
+ 453                             		.balign 4
+ 456                             	_ADC_DataResult:
+ 457 0000 00 00 00 00 00 00 00 00 		.zero	20
+ 457      00 00 00 00 00 00 00 00 
+ 457      00 00 00 00 
+ 606                             	.Letext0:
+ 607                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 608                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 609                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\RN_RX200/RN_RX200_reg.h"
+ 610                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\RN_RX200/RN_RX200_cfg.h"
+ 611                             		.file 6 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Drivers/IO_driver.h"
+ 612                             		.file 7 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCADC/OCADC_drv.h"
+ 613                             		.file 8 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\RN_RX200/RN_RX200_hal.h"
+ 614                             		.file 9 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_SecurityCheck/LIB_TaskMon
+DEFINED SYMBOLS
+                            *ABS*:00000000 OCADC_drv.c
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:7      .text.OCADC_InitSync:00000000 _OCADC_InitSync
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:12     .text.OCADC_InitSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:444    .bss.ADC_Resource:00000000 _ADC_Resource
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:26     .text.OCADC_DeInitSync:00000000 _OCADC_DeInitSync
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:30     .text.OCADC_DeInitSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:43     .text.OCADC_GetADchannelSync:00000000 _OCADC_GetADchannelSync
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:47     .text.OCADC_GetADchannelSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:84     .text.OCADC_GetSync:00000000 _OCADC_GetSync
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:89     .text.OCADC_GetSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:450    .bss.ADC_Convertions:00000000 _ADC_Convertions
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:100    .text.OCADC_StartSampleSync:00000000 _OCADC_StartSampleSync
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:104    .text.OCADC_StartSampleSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:456    .bss.ADC_DataResult:00000000 _ADC_DataResult
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:212    .text.OCADC_IsConvertionReadySync:00000000 _OCADC_IsConvertionReadySync
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:216    .text.OCADC_IsConvertionReadySync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:250    .text.OCADC_SampleSync:00000000 _OCADC_SampleSync
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:254    .text.OCADC_SampleSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:362    .text.OCADC_StopSampleSync:00000000 _OCADC_StopSampleSync
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:366    .text.OCADC_StopSampleSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:396    .text.OCADC_ISR:00000000 _OCADC_ISR
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:399    .text.OCADC_ISR:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:459    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:8      .text.OCADC_InitSync:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:27     .text.OCADC_DeInitSync:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:44     .text.OCADC_GetADchannelSync:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:85     .text.OCADC_GetSync:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:101    .text.OCADC_StartSampleSync:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:213    .text.OCADC_IsConvertionReadySync:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:251    .text.OCADC_SampleSync:00000000 .LFB6
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:363    .text.OCADC_StopSampleSync:00000000 .LFB7
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:397    .text.OCADC_ISR:00000000 .LFB8
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:3739   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5000   .debug_str:000002a3 .LASF267
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5362   .debug_str:000009c5 .LASF268
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4874   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4896   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5290   .debug_str:00000846 .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5252   .debug_str:0000079b .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5400   .debug_str:00000ad2 .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4998   .debug_str:0000029a .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5346   .debug_str:00000961 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5294   .debug_str:00000858 .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5030   .debug_str:00000361 .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5110   .debug_str:000004fa .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5116   .debug_str:00000515 .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5360   .debug_str:000009b7 .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5396   .debug_str:00000abd .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5076   .debug_str:0000045f .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4938   .debug_str:00000101 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5344   .debug_str:00000958 .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4936   .debug_str:000000f8 .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5358   .debug_str:000009aa .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5118   .debug_str:0000051d .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5338   .debug_str:00000921 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4942   .debug_str:00000115 .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5108   .debug_str:000004f2 .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5334   .debug_str:0000090a .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5026   .debug_str:00000351 .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5090   .debug_str:000004a6 .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4962   .debug_str:00000189 .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5206   .debug_str:000006ed .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5418   .debug_str:00000b18 .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4956   .debug_str:00000161 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5322   .debug_str:000008cd .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5228   .debug_str:00000738 .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5058   .debug_str:00000401 .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5088   .debug_str:0000049c .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5180   .debug_str:0000068a .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5146   .debug_str:000005bf .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5130   .debug_str:0000056a .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4924   .debug_str:00000098 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4906   .debug_str:00000027 .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5166   .debug_str:00000657 .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5144   .debug_str:000005b9 .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5102   .debug_str:000004d2 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5164   .debug_str:00000644 .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4988   .debug_str:00000249 .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5132   .debug_str:00000577 .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5282   .debug_str:00000817 .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5430   .debug_str:00000b5e .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5330   .debug_str:000008f7 .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4984   .debug_str:0000023b .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5022   .debug_str:0000033e .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5302   .debug_str:0000088b .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5226   .debug_str:00000731 .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4990   .debug_str:00000255 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5142   .debug_str:000005ac .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5098   .debug_str:000004c8 .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5392   .debug_str:00000aa2 .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5268   .debug_str:000007d6 .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5204   .debug_str:000006cf .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5426   .debug_str:00000b51 .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5126   .debug_str:0000054d .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5120   .debug_str:00000529 .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5100   .debug_str:000004cd .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5402   .debug_str:00000ae5 .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4930   .debug_str:000000e5 .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5168   .debug_str:00000660 .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4940   .debug_str:0000010e .LASF62
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5348   .debug_str:00000973 .LASF63
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5084   .debug_str:0000048d .LASF64
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5040   .debug_str:000003a2 .LASF65
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4946   .debug_str:00000125 .LASF66
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5326   .debug_str:000008e4 .LASF67
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5106   .debug_str:000004e7 .LASF68
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5366   .debug_str:00000a0d .LASF69
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5036   .debug_str:00000394 .LASF70
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4982   .debug_str:00000230 .LASF71
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5208   .debug_str:000006f5 .LASF72
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5158   .debug_str:00000627 .LASF73
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5390   .debug_str:00000a9d .LASF74
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5050   .debug_str:000003db .LASF75
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5112   .debug_str:00000508 .LASF76
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4902   .debug_str:0000001b .LASF77
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5364   .debug_str:00000a06 .LASF78
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5172   .debug_str:0000066a .LASF79
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5194   .debug_str:000006b2 .LASF80
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5264   .debug_str:000007c7 .LASF81
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5262   .debug_str:000007c0 .LASF82
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5260   .debug_str:000007b9 .LASF83
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5258   .debug_str:000007b2 .LASF84
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5256   .debug_str:000007ab .LASF85
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5254   .debug_str:000007a4 .LASF86
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5222   .debug_str:00000726 .LASF87
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5220   .debug_str:00000720 .LASF88
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5200   .debug_str:000006c3 .LASF89
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5198   .debug_str:000006bd .LASF90
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5196   .debug_str:000006b7 .LASF91
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5218   .debug_str:0000071a .LASF92
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5216   .debug_str:00000714 .LASF93
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5214   .debug_str:0000070e .LASF94
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5234   .debug_str:00000754 .LASF95
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5210   .debug_str:000006fa .LASF96
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5320   .debug_str:000008c7 .LASF97
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5318   .debug_str:000008c1 .LASF98
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5316   .debug_str:000008bb .LASF99
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5314   .debug_str:000008b5 .LASF100
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5312   .debug_str:000008af .LASF101
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5310   .debug_str:000008a9 .LASF102
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5070   .debug_str:00000445 .LASF103
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5192   .debug_str:000006ad .LASF104
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5190   .debug_str:000006a8 .LASF105
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5188   .debug_str:000006a3 .LASF106
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5186   .debug_str:0000069e .LASF107
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5184   .debug_str:00000699 .LASF108
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5182   .debug_str:00000694 .LASF109
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5066   .debug_str:0000042a .LASF110
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5178   .debug_str:00000685 .LASF111
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5176   .debug_str:00000680 .LASF112
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5170   .debug_str:00000665 .LASF113
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5096   .debug_str:000004c1 .LASF114
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5388   .debug_str:00000a97 .LASF115
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4986   .debug_str:00000242 .LASF116
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5086   .debug_str:00000494 .LASF117
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4932   .debug_str:000000ee .LASF118
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4934   .debug_str:000000f3 .LASF119
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5074   .debug_str:00000459 .LASF120
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4914   .debug_str:00000042 .LASF121
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4912   .debug_str:0000003b .LASF122
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4910   .debug_str:00000034 .LASF123
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4908   .debug_str:0000002d .LASF124
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5162   .debug_str:0000063d .LASF125
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4904   .debug_str:00000020 .LASF126
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5248   .debug_str:0000077e .LASF127
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5246   .debug_str:00000778 .LASF128
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5244   .debug_str:00000772 .LASF129
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5242   .debug_str:0000076c .LASF130
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5240   .debug_str:00000766 .LASF131
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5238   .debug_str:00000760 .LASF132
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5236   .debug_str:0000075a .LASF133
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5306   .debug_str:0000089d .LASF134
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5304   .debug_str:00000897 .LASF135
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5232   .debug_str:0000074e .LASF136
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5114   .debug_str:0000050e .LASF137
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5224   .debug_str:0000072c .LASF138
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5122   .debug_str:00000540 .LASF139
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5202   .debug_str:000006c9 .LASF140
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5332   .debug_str:00000904 .LASF141
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5052   .debug_str:000003e0 .LASF142
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5398   .debug_str:00000ac9 .LASF143
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5138   .debug_str:00000595 .LASF144
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4970   .debug_str:000001d9 .LASF145
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5048   .debug_str:000003d5 .LASF146
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5368   .debug_str:00000a18 .LASF147
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5308   .debug_str:000008a3 .LASF148
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5328   .debug_str:000008ef .LASF149
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4944   .debug_str:0000011d .LASF150
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4972   .debug_str:000001e0 .LASF151
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4898   .debug_str:00000000 .LASF152
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4954   .debug_str:0000015a .LASF153
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5384   .debug_str:00000a76 .LASF154
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5136   .debug_str:00000590 .LASF155
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5428   .debug_str:00000b58 .LASF156
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5404   .debug_str:00000aee .LASF157
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5406   .debug_str:00000af4 .LASF158
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5408   .debug_str:00000afa .LASF159
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5410   .debug_str:00000b00 .LASF160
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5412   .debug_str:00000b06 .LASF161
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5414   .debug_str:00000b0c .LASF162
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5416   .debug_str:00000b12 .LASF163
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5436   .debug_str:00000b76 .LASF164
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5420   .debug_str:00000b1d .LASF165
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5004   .debug_str:000002d5 .LASF166
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5006   .debug_str:000002dc .LASF167
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5008   .debug_str:000002e3 .LASF168
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5432   .debug_str:00000b66 .LASF169
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5012   .debug_str:000002ff .LASF170
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5014   .debug_str:00000306 .LASF171
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5266   .debug_str:000007ce .LASF172
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5284   .debug_str:00000828 .LASF173
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4952   .debug_str:00000153 .LASF174
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5292   .debug_str:00000850 .LASF175
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5286   .debug_str:00000830 .LASF176
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5064   .debug_str:00000422 .LASF177
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5270   .debug_str:000007e7 .LASF178
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5272   .debug_str:000007ef .LASF179
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5274   .debug_str:000007f7 .LASF180
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5276   .debug_str:000007ff .LASF181
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5278   .debug_str:00000807 .LASF182
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5280   .debug_str:0000080f .LASF183
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5336   .debug_str:00000919 .LASF184
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5422   .debug_str:00000b23 .LASF185
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5156   .debug_str:00000611 .LASF186
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5082   .debug_str:00000487 .LASF187
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5340   .debug_str:00000926 .LASF188
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5154   .debug_str:00000605 .LASF189
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5374   .debug_str:00000a38 .LASF190
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5018   .debug_str:00000320 .LASF191
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4978   .debug_str:00000219 .LASF218
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5296   .debug_str:00000861 .LASF192
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5298   .debug_str:00000869 .LASF193
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4980   .debug_str:00000223 .LASF194
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5370   .debug_str:00000a1e .LASF195
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5016   .debug_str:0000030d .LASF196
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5128   .debug_str:00000557 .LASF197
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4976   .debug_str:00000201 .LASF198
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5032   .debug_str:00000378 .LASF199
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4948   .debug_str:00000131 .LASF200
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4920   .debug_str:0000006d .LASF201
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5300   .debug_str:00000873 .LASF202
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4974   .debug_str:000001e7 .LASF203
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5376   .debug_str:00000a40 .LASF204
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4950   .debug_str:00000143 .LASF205
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5094   .debug_str:000004b7 .LASF206
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4918   .debug_str:00000058 .LASF207
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5288   .debug_str:00000838 .LASF208
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5230   .debug_str:00000742 .LASF209
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5380   .debug_str:00000a5e .LASF210
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5382   .debug_str:00000a6b .LASF211
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5394   .debug_str:00000aaa .LASF212
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4900   .debug_str:00000008 .LASF213
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5072   .debug_str:0000044a .LASF214
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5046   .debug_str:000003c4 .LASF215
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5024   .debug_str:00000345 .LASF216
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5424   .debug_str:00000b3c .LASF217
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5160   .debug_str:0000062c .LASF219
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5350   .debug_str:0000097a .LASF220
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4968   .debug_str:000001c5 .LASF221
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5342   .debug_str:00000943 .LASF222
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4996   .debug_str:00000287 .LASF223
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5054   .debug_str:000003e7 .LASF224
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5042   .debug_str:000003a8 .LASF225
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5438   .debug_str:00000b7c .LASF226
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5354   .debug_str:00000990 .LASF227
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4916   .debug_str:00000049 .LASF228
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5056   .debug_str:000003f4 .LASF229
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5078   .debug_str:00000466 .LASF230
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5324   .debug_str:000008d4 .LASF231
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5150   .debug_str:000005e2 .LASF232
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5212   .debug_str:00000700 .LASF233
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5010   .debug_str:000002ea .LASF234
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5378   .debug_str:00000a55 .LASF235
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5060   .debug_str:00000406 .LASF236
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5372   .debug_str:00000a30 .LASF237
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5104   .debug_str:000004de .LASF238
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5002   .debug_str:000002c9 .LASF239
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5352   .debug_str:00000985 .LASF240
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5080   .debug_str:0000047a .LASF241
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5140   .debug_str:0000059b .LASF242
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5174   .debug_str:00000671 .LASF243
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:21     .text.OCADC_InitSync:00000010 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:13     .text.OCADC_InitSync:00000004 .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5152   .debug_str:000005f4 .LASF244
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:38     .text.OCADC_DeInitSync:00000010 .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:31     .text.OCADC_DeInitSync:00000004 .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5250   .debug_str:00000784 .LASF245
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:79     .text.OCADC_GetADchannelSync:00000024 .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4512   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5124   .debug_str:00000546 .LASF246
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4530   .debug_loc:0000002c .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4548   .debug_loc:00000058 .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4559   .debug_loc:00000076 .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:60     .text.OCADC_GetADchannelSync:00000013 .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4958   .debug_str:0000016a .LASF247
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:95     .text.OCADC_GetSync:0000000c .LFE3
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5434   .debug_str:00000b6d .LASF248
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4572   .debug_loc:00000096 .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5068   .debug_str:0000042f .LASF249
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:207    .text.OCADC_StartSampleSync:0000008f .LFE4
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4586   .debug_loc:000000b7 .LLST5
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4599   .debug_loc:000000d7 .LLST6
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4644   .debug_loc:00000148 .LLST7
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4677   .debug_loc:00000198 .LLST8
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:119    .text.OCADC_StartSampleSync:00000019 .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:134    .text.OCADC_StartSampleSync:0000003b .LVL14
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:145    .text.OCADC_StartSampleSync:0000004a .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:162    .text.OCADC_StartSampleSync:00000069 .LVL17
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:176    .text.OCADC_StartSampleSync:00000078 .LVL19
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4926   .debug_str:000000ac .LASF250
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:245    .text.OCADC_IsConvertionReadySync:0000002f .LFE5
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4703   .debug_loc:000001da .LLST9
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4716   .debug_loc:000001fa .LLST10
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:227    .text.OCADC_IsConvertionReadySync:00000019 .LVL28
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4960   .debug_str:00000178 .LASF251
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:357    .text.OCADC_SampleSync:0000009a .LFE6
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4741   .debug_loc:00000234 .LLST11
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4754   .debug_loc:00000254 .LLST12
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4798   .debug_loc:000002bd .LLST13
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5034   .debug_str:0000038b .LASF269
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:269    .text.OCADC_SampleSync:0000001b .LVL32
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:284    .text.OCADC_SampleSync:0000003d .LVL33
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:295    .text.OCADC_SampleSync:0000004c .LVL34
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:301    .text.OCADC_SampleSync:00000052 .LVL35
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:306    .text.OCADC_SampleSync:0000005a .LVL36
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:318    .text.OCADC_SampleSync:0000006c .LVL37
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4994   .debug_str:00000272 .LASF252
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:391    .text.OCADC_StopSampleSync:00000031 .LFE7
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:367    .text.OCADC_StopSampleSync:00000004 .LVL45
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:388    .text.OCADC_StopSampleSync:00000030 .LVL46
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5092   .debug_str:000004ad .LASF253
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:438    .text.OCADC_ISR:0000003c .LFE8
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4824   .debug_loc:000002ff .LLST14
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:410    .text.OCADC_ISR:00000013 .LBB2
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:432    .text.OCADC_ISR:00000036 .LBE2
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4837   .debug_loc:0000031f .LLST15
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:416    .text.OCADC_ISR:0000001c .LVL49
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:429    .text.OCADC_ISR:00000036 .LVL50
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:403    .text.OCADC_ISR:00000006 .LVL47
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:437    .text.OCADC_ISR:0000003c .LVL51
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5356   .debug_str:0000099d .LASF254
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5044   .debug_str:000003b4 .LASF255
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5134   .debug_str:00000581 .LASF256
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5028   .debug_str:00000357 .LASF270
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5038   .debug_str:00000399 .LASF257
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5020   .debug_str:00000333 .LASF258
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4992   .debug_str:00000263 .LASF263
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5062   .debug_str:0000040e .LASF259
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4966   .debug_str:000001b2 .LASF260
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5386   .debug_str:00000a7d .LASF261
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4928   .debug_str:000000c8 .LASF262
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4964   .debug_str:00000193 .LASF264
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:4922   .debug_str:00000083 .LASF265
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:5148   .debug_str:000005ce .LASF266
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:48     .text.OCADC_GetADchannelSync:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:50     .text.OCADC_GetADchannelSync:00000004 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:46     .text.OCADC_GetADchannelSync:00000000 .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:55     .text.OCADC_GetADchannelSync:0000000a .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:57     .text.OCADC_GetADchannelSync:0000000d .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:63     .text.OCADC_GetADchannelSync:00000016 .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:69     .text.OCADC_GetADchannelSync:0000001b .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:73     .text.OCADC_GetADchannelSync:0000001e .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:87     .text.OCADC_GetSync:00000000 .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:93     .text.OCADC_GetSync:0000000b .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:105    .text.OCADC_StartSampleSync:00000002 .LCFI2
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:103    .text.OCADC_StartSampleSync:00000000 .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:170    .text.OCADC_StartSampleSync:00000072 .LVL18
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:180    .text.OCADC_StartSampleSync:0000007c .LVL20
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:189    .text.OCADC_StartSampleSync:00000083 .LVL22
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:191    .text.OCADC_StartSampleSync:00000084 .LVL23
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:195    .text.OCADC_StartSampleSync:00000087 .LVL24
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:201    .text.OCADC_StartSampleSync:0000008a .LVL26
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:156    .text.OCADC_StartSampleSync:0000005a .LVL16
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:185    .text.OCADC_StartSampleSync:00000080 .LVL21
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:197    .text.OCADC_StartSampleSync:00000088 .LVL25
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:217    .text.OCADC_IsConvertionReadySync:00000002 .LCFI3
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:215    .text.OCADC_IsConvertionReadySync:00000000 .LVL27
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:235    .text.OCADC_IsConvertionReadySync:00000027 .LVL29
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:239    .text.OCADC_IsConvertionReadySync:00000029 .LVL30
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:255    .text.OCADC_SampleSync:00000002 .LCFI4
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:253    .text.OCADC_SampleSync:00000000 .LVL31
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:325    .text.OCADC_SampleSync:00000079 .LVL38
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:335    .text.OCADC_SampleSync:00000089 .LVL39
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:339    .text.OCADC_SampleSync:0000008c .LVL40
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:341    .text.OCADC_SampleSync:0000008d .LVL41
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:345    .text.OCADC_SampleSync:00000090 .LVL42
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:351    .text.OCADC_SampleSync:00000093 .LVL44
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:347    .text.OCADC_SampleSync:00000091 .LVL43
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:400    .text.OCADC_ISR:00000002 .LCFI5
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:409    .text.OCADC_ISR:00000013 .LVL48
+C:\Users\Andrea\AppData\Local\Temp\ccWLPZ7b.s:616    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_ADC_Init
+_ADC_DeInit
+_ADC_GetChannel
+_OS_DisableInterrupt
+_OS_Global
+_OS_EnableInterrupt
+_ADC_ConfigurePinAsChannel
+_ADC_StartConvertionOnChannel
+_ADC_GetConvertedValueOnChannel
+_LIB_IRQMonitor_Enter
+_LIB_IRQMonitor_Exit

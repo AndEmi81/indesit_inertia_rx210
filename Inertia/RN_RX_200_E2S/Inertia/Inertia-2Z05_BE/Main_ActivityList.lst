@@ -1,0 +1,301 @@
+   1                             		.file	"Main_ActivityList.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.Main_ActivityList_Init,"ax",@progbits
+   5                             		.global	_Main_ActivityList_Init
+   7                             	_Main_ActivityList_Init:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList/Main_ActivityList.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /**
+   6:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+   7:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \defgroup	MainSyncOutputs  Synhronized Loads
+   8:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** @{
+   9:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \par		Desciptions
+  10:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \n			This module implements the service for loads synchronized with ZC:
+  11:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \li         ZCLoads
+  12:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \li         Profiler
+  13:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  14:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  15:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \par        Properties
+  16:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** The module can be configured in mainconfig.h file by defining the following properties:
+  17:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \li         \ref MAIN_SEQUENCER_TASK__MONITOR_IN(), \ref MAIN_SEQUENCER_TASK__MONITOR_OUT(), not ma
+  18:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \li         \ref MAIN_SEQUENCER_TASK__BODY(), mandatory
+  19:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \li         \ref SEQUENCER_DELAY_ACTIVATION_TUNING_VAL, \ref SEQUENCER_PERIOD_ACTIVATION_TUNING_VAL
+  20:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \li         \ref MAIN_SEQUENCER_TASK_STACK_SIZE
+  21:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \li         \ref MAIN_SEQUENCER_COUNT
+  22:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  23:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \par        APIs
+  24:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \li         Main_ActivateOutputs()
+  25:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  26:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \par        Debug support
+  27:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****             This module offer several debug features (\ref OUTPUTS_TASK_DEBUG):
+  28:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \li         task duration measurement based on high resolution timer (\ref SEQUENCER_TASK_DURATION)
+  29:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \li         fine-tuning task activation: the initial delay and the period of the task can be dinami
+  30:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** in order to otpimize the final application behavior (\ref SEQUENCER_TASK_TUNING).
+  31:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** @}
+  32:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \ingroup   	Main
+  33:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** */
+  34:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /**
+  35:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \n
+  36:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \par		Description
+  37:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \n			This module implements the service for loads synchronized with ZC .
+  38:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****             It makes use of a task which is resumed more times at the beginning of each sub-interva
+  39:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****             in which the halfwave is divided.
+  40:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \n
+  41:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \file		Main_Outputs.c
+  42:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \ingroup	Main
+  43:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \date		12/01/2011
+  44:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \version	01.00.00
+  45:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \author		Roberto Fioravanti
+  46:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \n
+  47:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \n
+  48:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \par\b	History:
+  49:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \n
+  50:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \n 		00.00.00
+  51:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \n		12/01/2011
+  52:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \n		Roberto Fioravanti
+  53:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \n		changes
+  54:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \n 		- Creation
+  55:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \n
+  56:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \n
+  57:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** */
+  58:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* ******** */
+  59:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* Includes */
+  60:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* ******** */
+  61:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** #include "Config.h"
+  62:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** #include <string.h>
+  63:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** #include "Main_ActivityList.h"
+  64:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  65:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** #if defined(CONFIG_MAIN_SEQUENCER_TASK_TRACE_PIN_ENABLE)
+  66:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** #include "LIB_Trace.h"
+  67:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** #endif
+  68:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  69:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* ****************** */
+  70:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* Defines and Macros */
+  71:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* ****************** */
+  72:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  73:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  74:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  75:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  76:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  77:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  78:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  79:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  80:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  81:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  82:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  83:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* *************************** */
+  84:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* Typedef, Structs and Unions */
+  85:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* *************************** */
+  86:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  87:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  88:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* **************************** */
+  89:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* Prototype of local functions */
+  90:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* **************************** */
+  91:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  92:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* ********* */
+  93:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* Variables */
+  94:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* ********* */
+  95:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  96:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* Global */
+  97:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+  98:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* Static */
+  99:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 100:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 101:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 102:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 103:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* ******************* */
+ 104:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* Functions Prototype */
+ 105:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* ******************* */
+ 106:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 107:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* Exported function */
+ 108:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* Local Function */
+ 109:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 110:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 111:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 112:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* *************** */
+ 113:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* Function Bodies */
+ 114:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* *************** */
+ 115:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 116:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /* Exported function */
+ 117:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 118:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** /**
+ 119:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** Sequencer service initialization.
+ 120:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** It creates task \ref Main_SequencerTask and \ref Main_AlmSequencer alarm.
+ 121:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** If debug option OUTPUTS_TASK_DEBUG and
+ 122:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \li \ref OUTPUTS_TASK_TUNING or
+ 123:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \li \ref OUTPUTS_TASK_DURATION
+ 124:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** \n are enabled it initializes tools for timing measurement.
+ 125:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** */
+ 126:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 127:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** void Main_ActivityList_Init ( Main_ActivityList_Type* pActivityCB )
+ 128:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** {
+  10                             		.loc 1 128 0
+  11                             	.LVL0:
+ 129:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     pActivityCB -> pActivityList = NULL;
+  12                             		.loc 1 129 0
+  13 0000 3E 10 00                		mov.L	#0, [r1]
+ 130:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     pActivityCB -> pCurrentActivity = NULL;
+  14                             		.loc 1 130 0
+  15 0003 3E 11 00                		mov.L	#0, 4[r1]
+  16 0006 02                      		rts
+  17                             	.LFE0:
+  19                             		.section	.text.Main_CreateActivity,"ax",@progbits
+  20                             		.global	_Main_CreateActivity
+  22                             	_Main_CreateActivity:
+  23                             	.LFB1:
+ 131:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** #if defined(CONFIG_MAIN_ACTIVITY_LIST_EXECUTE_COUNT)
+ 132:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     pActivityCB -> count=0;
+ 133:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** #endif
+ 134:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** }
+ 135:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 136:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 137:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 138:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** void Main_CreateActivity ( Main_ActivityList_Type* pActivityCB, 
+ 139:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****                           Main_ActivityType* pActivity, 
+ 140:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****                           Main_ActivityCallbackType*  pCallback,
+ 141:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****                           Main_ActivityCallbackType*  pInit)
+ 142:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** {
+  24                             		.loc 1 142 0
+  25                             	.LVL1:
+ 143:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     Main_ActivityType ** pp;
+ 144:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 145:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 	for ( pp = &(pActivityCB->pActivityList); ( *pp ) != NULL; pp = & ( ( *pp )->pNext ) )
+  26                             		.loc 1 145 0
+  27 0000 2E 08                   		bra	.L3
+  28                             	.LVL2:
+  29                             	.L6:
+ 146:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 	{
+ 147:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 		if ( *pp == pActivity )
+  30                             		.loc 1 147 0
+  31 0002 47 2E                   		cmp	r2, r14
+  32 0004 20 16                   		beq	.L2
+ 145:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 	for ( pp = &(pActivityCB->pActivityList); ( *pp ) != NULL; pp = & ( ( *pp )->pNext ) )
+  33                             		.loc 1 145 0
+  34 0006 EF E1                   		mov.L	r14, r1
+  35                             	.LVL3:
+  36                             		.balign 2,3,1
+  37                             	.L3:
+ 145:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 	for ( pp = &(pActivityCB->pActivityList); ( *pp ) != NULL; pp = & ( ( *pp )->pNext ) )
+  38                             		.loc 1 145 0 is_stmt 0 discriminator 1
+  39 0008 EC 1E                   		mov.L	[r1], r14
+  40 000a 61 0E                   		cmp	#0, r14
+  41 000c 21 F6                   		bne	.L6
+ 148:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 		{
+ 149:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****             /* Activity already present in the list: don't add it!!*/
+ 150:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 			return;
+ 151:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 		}
+ 152:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 	}
+ 153:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     
+ 154:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     /* force new Activity to point to NULL */
+ 155:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     pActivity->pCallback = pCallback;
+  42                             		.loc 1 155 0 is_stmt 1
+  43 000e A0 2B                   		mov.L	r3, 4[r2]
+ 156:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     pActivity->pNext=NULL;
+  44                             		.loc 1 156 0
+  45 0010 E3 2E                   		mov.L	r14, [r2]
+ 157:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** #if defined(CONFIG_MAIN_ACTIVITY_EXECUTE_COUNT)
+ 158:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     pActivity->count=0;
+ 159:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** #endif    
+ 160:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     /* force last Activity to point to the new */
+ 161:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     *pp = pActivity;
+  46                             		.loc 1 161 0
+  47 0012 E3 12                   		mov.L	r2, [r1]
+ 162:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     
+ 163:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     /* execute init */
+ 164:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     if(pInit)
+  48                             		.loc 1 164 0
+  49 0014 61 04                   		cmp	#0, r4
+  50 0016 20 04                   		beq	.L2
+ 165:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     {
+ 166:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****       pInit();
+  51                             		.loc 1 166 0
+  52 0018 7F 14                   		jsr	r4
+  53                             	.LVL4:
+  54                             	.L2:
+  55 001a 02                      		rts
+  56                             	.LFE1:
+  58 001b 03                      		.section	.text.Main_ActivityProcess,"ax",@progbits
+  59                             		.global	_Main_ActivityProcess
+  61                             	_Main_ActivityProcess:
+  62                             	.LFB2:
+ 167:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     }
+ 168:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** }
+ 169:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 170:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 171:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** void Main_ActivityProcess(Main_ActivityList_Type* pActivityCB)
+ 172:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** {
+  63                             		.loc 1 172 0
+  64                             	.LVL5:
+  65 0000 6E 7A                   		pushm	r7-r10
+  66                             	.LCFI0:
+ 173:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     Main_ActivityType ** pp;
+ 174:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     
+ 175:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     if(!pActivityCB)
+  67                             		.loc 1 175 0
+  68 0002 71 17 00                		add	#0, r1, r7
+ 172:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** {
+  69                             		.loc 1 172 0
+  70 0005 EF 1A                   		mov.L	r1, r10
+  71                             		.loc 1 175 0
+  72 0007 21 17                   		bne	.L19
+  73 0009 2E 1B                   		bra	.L11
+  74                             	.LVL6:
+  75                             	.L15:
+ 176:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     {
+ 177:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****         return;
+ 178:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     }
+ 179:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     
+ 180:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** #if defined(CONFIG_MAIN_ACTIVITY_LIST_EXECUTE_COUNT)
+ 181:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     pActivityCB -> count ++;
+ 182:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** #endif
+ 183:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     
+ 184:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     for ( pp = &(pActivityCB->pActivityList); ( *pp ) != NULL; pp = & ( ( *pp )->pNext ) )
+ 185:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 	{
+ 186:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****         if((*pp)->pCallback)
+  76                             		.loc 1 186 0
+  77 000b ED E4 01                		mov.L	4[r14], r4
+  78 000e 61 04                   		cmp	#0, r4
+  79 0010 20 0C                   		beq	.L14
+ 187:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****         {
+ 188:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** #if defined(CONFIG_MAIN_ACTIVITY_EXECUTE_COUNT)
+ 189:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****             (*pp) -> count=0;
+ 190:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** #endif
+ 191:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****             pActivityCB->pCurrentActivity=(*pp);
+  80                             		.loc 1 191 0
+  81 0012 E7 AE 01                		mov.L	r14, 4[r10]
+ 192:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****             ((*pp) -> pCallback)();
+  82                             		.loc 1 192 0
+  83 0015 EC 7E                   		mov.L	[r7], r14
+  84 0017 ED EE 01                		mov.L	4[r14], r14
+  85 001a 7F 1E                   		jsr	r14
+  86                             	.LVL7:
+  87                             		.balign 2,3,1
+  88                             	.L14:
+ 184:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     for ( pp = &(pActivityCB->pActivityList); ( *pp ) != NULL; pp = & ( ( *pp )->pNext ) )
+  89                             		.loc 1 184 0
+  90 001c EC 77                   		mov.L	[r7], r7
+  91                             	.LVL8:
+  92                             		.balign 2,3,1
+  93                             	.L19:
+ 184:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****     for ( pp = &(pActivityCB->pActivityList); ( *pp ) != NULL; pp = & ( ( *pp )->pNext ) )
+  94                             		.loc 1 184 0 is_stmt 0 discriminator 1
+  95 001e EC 7E                   		mov.L	[r7], r14
+  96 0020 61 0E                   		cmp	#0, r14
+  97 0022 21 E9                   		bne	.L15
+  98                             	.LVL9:
+  99                             		.balign 2,3,2
+ 100                             	.L11:
+ 193:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 
+ 194:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c ****         }
+ 195:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** 	}
+ 196:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList\Main_ActivityList.c **** }
+ 101                             		.loc 1 196 0 is_stmt 1
+ 102 0024 3F 7A 04                		rtsd	#16, r7-r10
+ 103                             	.LFE2:
+ 159                             	.Letext0:
+ 160                             		.file 2 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Services/ActivityList/Main_ActivityList.h"

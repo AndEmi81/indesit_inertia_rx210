@@ -1,0 +1,618 @@
+   1                             		.file	"Main_Application.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.Main_ApplicationPeriodicAsynTask,"ax",@progbits
+   6                             	_Main_ApplicationPeriodicAsynTask:
+   7                             	.LFB1:
+   8                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS/Main_Application.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \n
+   8:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \ar		Description
+   9:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \n			This file contains the EmbOS-based service for the final application.
+  10:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \n
+  11:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \file		Main_Application.c
+  12:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \ingroup	Main
+  13:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \date		Feb 7, 2011
+  14:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \version	01.00.00
+  15:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \author		Roberto Fioravanti
+  16:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \n
+  17:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \n
+  18:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \par\b	History:
+  19:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \n
+  20:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \n 		00.00.00
+  21:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \n		Feb 7, 2011
+  22:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \n		Roberto Fioravanti
+  23:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \n		changes
+  24:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \n 		- file created
+  25:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \n
+  26:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \n
+  27:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \n etc.
+  28:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** */
+  29:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /*lint -idlen(60)*/
+  30:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+  31:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* ******** */
+  32:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* Includes */
+  33:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* ******** */
+  34:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #include "callback.h"
+  35:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #include "Main.h"
+  36:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #include "LIB_BackupExp.h"
+  37:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #include "LIB_ResetExp.h"
+  38:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #include "LIB_Trace.h"
+  39:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+  40:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* Product modules*/
+  41:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+  42:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* ****************** */
+  43:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* Defines and Macros */
+  44:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* ****************** */
+  45:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+  46:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #if defined(CONFIG_MAIN_APPLICATION_TASK_TRACE_PIN_ENABLE) && defined(CONFIG_LIB_TRACE_SUPPORT)
+  47:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #define MAIN_APPLICATION_TASK_TRACE_BEGIN()        TRACE_TO_PIN(ON , (CONFIG_MAIN_APPLICATION_TASK_
+  48:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #define MAIN_APPLICATION_TASK_TRACE_END()          TRACE_TO_PIN(OFF , (CONFIG_MAIN_APPLICATION_TASK
+  49:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #else
+  50:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #define MAIN_APPLICATION_TASK_TRACE_BEGIN()			{}
+  51:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #define MAIN_APPLICATION_TASK_TRACE_END()			{}
+  52:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #endif
+  53:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+  54:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+  55:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+  56:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+  57:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #if defined(OS_TICK_ms_PERIOD)
+  58:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+  59:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #if (MAIN_APPLICATION_TASK_PERIOD < OS_TICK_ms_PERIOD)
+  60:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /*
+  61:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** Lowest period is defined by OS tick defined by OS_TICK_FREQ
+  62:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** */
+  63:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #error "OS tick (defined by OS_TICK_FREQ) cannot generate the period set in MAIN_APPLICATION_TASK_P
+  64:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #error "Change OS_TICK_FREQ or MAIN_APPLICATION_TASK_PERIOD"
+  65:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #endif
+  66:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+  67:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #if (MAIN_APPLICATION_TASK_PERIOD % OS_TICK_ms_PERIOD) != 0
+  68:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /*
+  69:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** Period must be a multiple of OS tick defined by OS_TICK_FREQ
+  70:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** */
+  71:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #error "MAIN_APPLICATION_TASK_PERIOD must be multiple of OS tick (defined by OS_TICK_FREQ). "
+  72:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #error "Change OS_TICK_ms_PERIOD or MAIN_APPLICATION_TASK_PERIOD."
+  73:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #else
+  74:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /*
+  75:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** Defines the Supervisor task period as expected by OS.
+  76:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** */
+  77:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #define MAIN_APPLICATION_TASK__OSTICK_PERIOD             (MAIN_APPLICATION_TASK_PERIOD / OS_TICK_RE
+  78:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #endif
+  79:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+  80:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #endif
+  81:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+  82:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+  83:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+  84:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+  85:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #if !defined(MAIN_APP_PERIODICASYN_TASK__MONITOR_IN) && !defined(MAIN_APP_PERIODICASYN_TASK__MONITO
+  86:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /** @name Analog task safety
+  87:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+  88:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \par Properties
+  89:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** Not mandatory. If they remain undefined assume by default an empty value.
+  90:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+  91:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \par Examples
+  92:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \code
+  93:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__MONITOR_IN()     helloTaskMonitor( APPLICATION_TASK_ID );
+  94:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__MONITOR_OUT()
+  95:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \endcode
+  96:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** @{
+  97:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** */
+  98:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /** safety config */
+  99:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__MONITORING()
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /** safety entry */
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__MONITOR_IN()
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /** safety exit */
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__MONITOR_OUT()
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /*@}*/
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #else
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* MAIN_APP_PERIODICASYN_TASK__MONITOR_IN or MAIN_APP_PERIODICASYN_TASK__MONITOR_OUT defined */
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #if !defined(MAIN_APP_PERIODICASYN_TASK__MONITOR_IN)
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #error "MAIN_APP_PERIODICASYN_TASK__MONITOR_IN() missing definition."
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #error "Both MAIN_APP_PERIODICASYN_TASK__MONITOR_IN() and MAIN_APP_PERIODICASYN_TASK__MONITOR_OUT()
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #endif
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #if !defined(MAIN_APP_PERIODICASYN_TASK__MONITOR_OUT)
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #error "MAIN_APP_PERIODICASYN_TASK__MONITOR_OUT() missing definition."
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #error "Both MAIN_APP_PERIODICASYN_TASK__MONITOR_IN() and MAIN_APP_PERIODICASYN_TASK__MONITOR_OUT()
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #endif
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #if !defined(MAIN_APP_PERIODICASYN_TASK__MONITORING)
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #error "MAIN_APP_PERIODICASYN_TASK__MONITORING() missing definition - must be defined."
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #endif
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #endif /* !defined(MAIN_APP_PERIODICASYN_TASK__MONITOR_IN) && !defined(MAIN_APP_PERIODICASYN_TASK__
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #ifndef MAIN_APP_PERIODICASYN_TASK__IS_READY
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /**
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** Defines the condition to allow the execution of application task.
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \par Properties
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** Not mandatory. If they remain undefined assume by default 1.
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \par Example #1: only if Res is good.
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \code
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__IS_READY()       Main_Analog_IsRefOk()
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \endcode
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \par Example #2: always
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \code
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__IS_READY()       (1)
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \endcode
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** */
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__IS_READY()       (1)
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #endif /* MAIN_APP_PERIODICASYN_TASK__IS_READY */
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /**
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** Defines the startup behavior of the application task.
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \par Properties
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** Not mandatory. If they remain undefined assume by default an empy value.
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** */
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #ifndef MAIN_APP_PERIODICASYN_TASK__STARTUP
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__STARTUP()
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #endif
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #ifndef MAIN_APP_PERIODICASYN_TASK__BODY
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /**
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** Defines the application task body.
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \par Properties
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** Not mandatory. If they remain undefined assume by default an empty value.
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \par Example: with Remote Loads management
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \code
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__BODY()\
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** if ( CALLBACK_Main_ApplicationTask_Ctrl() )\
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** {\
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****   void * pRemoteLoadsControlData = 0;\
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****   int len=0;\
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****   \
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****   Main_RemoteLoadsControl_GetCommand(&pRemoteLoadsControlData, &len);\
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****   if(pRemoteLoadsControlData && len)\
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****   {\
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****     CALLBACK_RemoteLoadsControl_BeforeProcess(pRemoteLoadsControlData, &len);\
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****     Main_RemoteLoadsControl_ProcessCommand((uint8_t*)pRemoteLoadsControlData);\
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****     CALLBACK_RemoteLoadsControl_AfterProcess(pRemoteLoadsControlData, &len);\
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****     Main_RemoteLoadsControl_PurgeCommand();\
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****   }\
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****   CALLBACK_Main_ApplicationTask_Body();\
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** }
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \endcode
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** */
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__BODY()       {}
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #endif
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* *************************** */
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* Typedef, Structs and Unions */
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* *************************** */
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* **************************** */
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* Prototype of local functions */
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* **************************** */
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* ********* */
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* Variables */
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* ********* */
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* Global */
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* Static */
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /**
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** @name Service variables
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** @{
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** */
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /** Task Stack */
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** static STACK_SEC OS_STACKPTR int Main_ApplicationPeriodicAsynTaskStack[MAIN_APP_PERIODICASYN_TASK_S
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /** Task Control Block*/
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** static OS_TASK Main_ApplicationPeriodicAsynTaskTCB;
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /*@}*/
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #if defined(CONFIG_MAIN_APPLICATION_STACK_MONITOR)
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** static 	TOOLS_STACKUSAGE_MONITOR	Main_ApplicationStackMonitor;
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #endif
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* ******************* */
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* Functions Prototype */
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* ******************* */
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* Exported function */
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* Local Function */
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** static void Main_ApplicationPeriodicAsynTask ( void );
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* *************** */
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* Function Bodies */
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* *************** */
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* Exported function */
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /**
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** Application service initialization.
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** It creates the task \ref Main_ApplicationPeriodicAsynTask.
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** */
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** void Main_ApplicationInit ( void )
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** {
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 	OS_CREATETASK ( &Main_ApplicationPeriodicAsynTaskTCB,
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 					"ApplicationPeriodicAsynTask",
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 					Main_ApplicationPeriodicAsynTask,
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 					MAIN_APPLICATION_TASK_PRIORITY,
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 					Main_ApplicationPeriodicAsynTaskStack );
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #if defined(CONFIG_MAIN_APPLICATION_STACK_MONITOR)
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 	Tools_CreateTaskStackMonitor(&Main_ApplicationPeriodicAsynTaskTCB, &Main_ApplicationStackMonitor);
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #endif
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** }
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /* Local Functions */
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** /**
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** preemptable task for Feedback
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \warning	none
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \author 	Roberto Fioravanti
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \date		  gg/mm/aaaa
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \version	1.0.0
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** \note		\par \b Note 1:
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 			documentation by Roberto Fioravanti
+ 268:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** */
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** static void Main_ApplicationPeriodicAsynTask ( void )
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** {
+   9                             		.loc 1 271 0
+  10 0000 6E 7A                   		pushm	r7-r10
+  11                             	.LCFI0:
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 	int t0 = OS_GetTime();
+  12                             		.loc 1 272 0
+  13 0002 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+  14 0008 AA F7                   		mov.L	40[r7], r7
+  15                             	.LVL0:
+ 273:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****     static bool_t Main_ApplicationPeriodicAsynRunning = FALSE;
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 	MAIN_APP_PERIODICASYN_TASK__MONITORING();
+  16                             		.loc 1 276 0
+  17 000a 66 01                   		mov	#0, r1
+  18 000c 66 F2                   		mov	#15, r2
+  19 000e 66 13                   		mov.L	#1, r3
+  20 0010 05 00 00 00             		bsr	_LIB_TaskMonitoringConfig
+  21                             	.LVL1:
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****     CONFIG_LIB_LOADSREQUEST_MONITORING();
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****     CONFIG_LIB_PRODUCTSAFETY_TASK_MONITORING();
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 280:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****     if (LIB_Reset_GetIsColdReset())
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****     {
+ 282:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****     	LIB_SFT_SafetySupervisorInit();
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****     }
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** #endif
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c ****     MAIN_APP_PERIODICASYN_TASK__STARTUP();
+  22                             		.loc 1 285 0
+  23 0014 05 00 00 00             		bsr	_Main_RemoteLoadsControl_Init
+  24                             	.LVL2:
+  25 0018 05 00 00 00             		bsr	_CALLBACK_Main_StartUp
+  26                             	.LVL3:
+ 286:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 	while ( 1 )
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 	{
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 		TRACE_CPU_IDLE_END();
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 	    MAIN_APP_PERIODICASYN_TASK__MONITOR_IN();
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 	    MAIN_APPLICATION_TASK_TRACE_BEGIN();
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 	    t0 += MAIN_APPLICATION_TASK__OSTICK_PERIOD;
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 297:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 	    /* waiting for condition in MAIN_APP_PERIODICASYN_TASK__IS_READY() is satisfied */
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 	    Main_ApplicationPeriodicAsynRunning = MAIN_APP_PERIODICASYN_TASK__IS_READY();
+  27                             		.loc 1 298 0
+  28 001c FB A2 00 00 00 00       		mov.L	#_Main_ApplicationPeriodicAsynRunning.10843, r10
+  29                             		.balign 2,3,1
+  30                             	.L4:
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 	    MAIN_APP_PERIODICASYN_TASK__MONITOR_IN();
+  31                             		.loc 1 291 0
+  32 0022 66 01                   		mov	#0, r1
+  33 0024 05 00 00 00             		bsr	_LIB_TaskStartActivity
+  34                             	.LVL4:
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 	    t0 += MAIN_APPLICATION_TASK__OSTICK_PERIOD;
+  35                             		.loc 1 294 0
+  36 0028 71 77 64                		add	#0x64, r7
+  37                             	.LVL5:
+  38                             		.loc 1 298 0
+  39 002b 05 00 00 00             		bsr	_Main_Analog_IsRefOk
+  40                             	.LVL6:
+  41 002f 5B 11                   		movu.B	r1, r1
+  42 0031 E3 A1                   		mov.L	r1, [r10]
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 		
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 		if(Main_ApplicationPeriodicAsynRunning)
+  43                             		.loc 1 300 0
+  44 0033 61 01                   		cmp	#0, r1
+  45 0035 20 27                   		beq	.L2
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 		{
+ 302:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 			if ( ! ( Main_IsRestoreCompleted() ) )
+  46                             		.loc 1 302 0
+  47 0037 05 00 00 00             		bsr	_Main_IsRestoreCompleted
+  48                             	.LVL7:
+  49 003b 76 21 FF 00             		and #0xff, r1
+  50 003f 21 19                   		bne	.L3
+ 303:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 			{
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 			    OS_EnterRegion();
+  51                             		.loc 1 304 0
+  52 0041 05 00 00 00             		bsr	_OS_EnterRegionFunc
+  53                             	.LVL8:
+ 305:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 				Main_Backup_DoRestore();
+  54                             		.loc 1 305 0
+  55 0045 05 00 00 00             		bsr	_Main_Backup_DoRestore
+  56                             	.LVL9:
+ 306:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 				Main_CompleteRestore();
+  57                             		.loc 1 306 0
+  58 0049 05 00 00 00             		bsr	_Main_CompleteRestore
+  59                             	.LVL10:
+ 307:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 308:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 				OS_LeaveRegion();
+  60                             		.loc 1 308 0
+  61 004d 05 00 00 00             		bsr	_OS_LeaveRegion
+  62                             	.LVL11:
+ 309:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 				LIB_Backup_SetBackupControlMonitor(BACKUP_ON_RTN);
+  63                             		.loc 1 309 0
+  64 0051 66 11                   		mov	#1, r1
+  65 0053 05 00 00 00             		bsr	_LIB_Backup_SetBackupControlMonitor
+  66                             	.LVL12:
+  67 0057 03                      		.balign 2,3,3
+  68                             	.L3:
+ 310:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 				START_LIB_LOADSREQUEST_MONITORING();
+ 311:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 			}
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 313:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 			MAIN_APP_PERIODICASYN_TASK__BODY();
+  69                             		.loc 1 313 0
+  70 0058 05 00 00 00             		bsr	_Main_ApplicationTask_Body
+  71                             	.LVL13:
+  72                             		.balign 2,3,1
+  73                             	.L2:
+ 314:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 		}
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 		MAIN_APPLICATION_TASK_TRACE_END();
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 		MAIN_APP_PERIODICASYN_TASK__MONITOR_OUT();
+  74                             		.loc 1 317 0
+  75 005c 66 01                   		mov	#0, r1
+  76 005e 05 00 00 00             		bsr	_LIB_TaskEndActivity
+  77                             	.LVL14:
+ 318:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 		OS_DelayUntil ( t0 );
+  78                             		.loc 1 318 0
+  79 0062 EF 71                   		mov.L	r7, r1
+  80 0064 05 00 00 00             		bsr	_OS_DelayUntil
+  81                             	.LVL15:
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 	}
+  82                             		.loc 1 319 0
+  83 0068 2E BA                   		bra	.L4
+  84                             	.LFE1:
+  86                             		.section	.rodata.str1.1,"aMS",@progbits,1
+  87                             	.LC0:
+  88 0000 41 70 70 6C 69 63 61 74 		.string	"ApplicationPeriodicAsynTask"
+  88      69 6F 6E 50 65 72 69 6F 
+  88      64 69 63 41 73 79 6E 54 
+  88      61 73 6B 00 
+  89                             		.section	.text.Main_ApplicationInit,"ax",@progbits
+  90                             		.global	_Main_ApplicationInit
+  92                             	_Main_ApplicationInit:
+  93                             	.LFB0:
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** {
+  94                             		.loc 1 244 0
+  95 0000 60 80                   		sub	#8, r0
+  96                             	.LCFI1:
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** 	OS_CREATETASK ( &Main_ApplicationPeriodicAsynTaskTCB,
+  97                             		.loc 1 245 0
+  98 0002 F8 02 00 00 00 00       		mov.L	#_Main_ApplicationPeriodicAsynTaskStack, [r0]
+  99 0008 F9 0A 01 00 02          		mov.L	#0x200, 4[r0]
+ 100 000d FB 12 00 00 00 00       		mov.L	#_Main_ApplicationPeriodicAsynTaskTCB, r1
+ 101 0013 FB 22 00 00 00 00       		mov.L	#.LC0, r2
+ 102 0019 75 43 3C                		mov	#60, r3
+ 103 001c FB 42 00 00 00 00       		mov.L	#_Main_ApplicationPeriodicAsynTask, r4
+ 104 0022 05 00 00 00             		bsr	_OS_CreateTask_S
+ 105                             	.LVL16:
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Application.c **** }
+ 106                             		.loc 1 253 0
+ 107 0026 67 02                   		rtsd	#8
+ 108                             	.LFE0:
+ 110                             		.section	.bss.Main_ApplicationPeriodicAsynTaskTCB,"aw",@nobits
+ 111                             		.balign 4
+ 114                             	_Main_ApplicationPeriodicAsynTaskTCB:
+ 115 0000 00 00 00 00 00 00 00 00 		.zero	44
+ 115      00 00 00 00 00 00 00 00 
+ 115      00 00 00 00 00 00 00 00 
+ 115      00 00 00 00 00 00 00 00 
+ 115      00 00 00 00 00 00 00 00 
+ 116                             		.section	.osstack,"aw",@progbits
+ 117                             		.balign 4
+ 120                             	_Main_ApplicationPeriodicAsynTaskStack:
+ 121 0000 00 00 00 00 00 00 00 00 		.zero	512
+ 121      00 00 00 00 00 00 00 00 
+ 121      00 00 00 00 00 00 00 00 
+ 121      00 00 00 00 00 00 00 00 
+ 121      00 00 00 00 00 00 00 00 
+ 122                             		.section	.bss.Main_ApplicationPeriodicAsynRunning.10843,"aw",@nobits
+ 123                             		.balign 4
+ 126                             	_Main_ApplicationPeriodicAsynRunning.10843:
+ 127 0000 00 00 00 00             		.zero	4
+ 178                             	.Letext0:
+ 179                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 180                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 181                             		.file 4 "C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS/Main.h"
+ 182                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary/callback.h"
+ 183                             		.file 6 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_SecurityCheck/LIB_TaskMon
+ 184                             		.file 7 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_BackUp/LIB_BackupExp.h"
+ 185                             		.file 8 "C:\\Workspace\\FW_Inertia\\branch_indesit\\CFG_DishWasher\\CFG_Inertia/Config.h"
+ 186                             		.file 9 "C:\\Workspace\\FW_Inertia\\branch_indesit\\CFG_DishWasher\\CFG_Inertia/TaskMonitor_Cfg.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 Main_Application.c
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:6      .text.Main_ApplicationPeriodicAsynTask:00000000 _Main_ApplicationPeriodicAsynTask
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:10     .text.Main_ApplicationPeriodicAsynTask:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:126    .bss.Main_ApplicationPeriodicAsynRunning.10843:00000000 _Main_ApplicationPeriodicAsynRunning.10843
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:92     .text.Main_ApplicationInit:00000000 _Main_ApplicationInit
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:95     .text.Main_ApplicationInit:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:120    .osstack:00000000 _Main_ApplicationPeriodicAsynTaskStack
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:114    .bss.Main_ApplicationPeriodicAsynTaskTCB:00000000 _Main_ApplicationPeriodicAsynTaskTCB
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:87     .rodata.str1.1:00000000 .LC0
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:129    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:7      .text.Main_ApplicationPeriodicAsynTask:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:93     .text.Main_ApplicationInit:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:1380   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:1985   .debug_str:0000001a .LASF95
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2033   .debug_str:00000151 .LASF96
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:1971   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:1979   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2001   .debug_str:000000a2 .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2103   .debug_str:00000377 .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2109   .debug_str:00000397 .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2139   .debug_str:00000475 .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2063   .debug_str:0000024f .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2097   .debug_str:0000034e .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2013   .debug_str:000000e0 .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2031   .debug_str:00000149 .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2087   .debug_str:00000305 .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2095   .debug_str:00000342 .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2123   .debug_str:000003e5 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2101   .debug_str:0000036a .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2165   .debug_str:0000055d .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2181   .debug_str:000005bf .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:1995   .debug_str:0000007b .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2081   .debug_str:000002e0 .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2119   .debug_str:000003d5 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2133   .debug_str:00000442 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2051   .debug_str:0000020b .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:1983   .debug_str:0000000b .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2057   .debug_str:00000225 .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2049   .debug_str:00000204 .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2157   .debug_str:0000051a .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2065   .debug_str:00000258 .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2007   .debug_str:000000c1 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2069   .debug_str:00000275 .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2003   .debug_str:000000ac .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2029   .debug_str:0000013f .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2015   .debug_str:000000ee .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2143   .debug_str:0000049d .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2053   .debug_str:00000213 .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2175   .debug_str:0000059b .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2021   .debug_str:00000103 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2173   .debug_str:00000587 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2043   .debug_str:000001de .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:1989   .debug_str:00000047 .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2167   .debug_str:00000566 .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2145   .debug_str:000004a7 .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2045   .debug_str:000001e4 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2023   .debug_str:00000110 .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2017   .debug_str:000000f3 .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2135   .debug_str:0000044a .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2159   .debug_str:00000524 .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2047   .debug_str:000001f7 .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:1991   .debug_str:00000050 .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2011   .debug_str:000000d9 .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2111   .debug_str:000003aa .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:1987   .debug_str:00000040 .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2083   .debug_str:000002ec .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2105   .debug_str:00000380 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2079   .debug_str:000002db .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2055   .debug_str:0000021d .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2171   .debug_str:00000576 .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2147   .debug_str:000004b3 .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2091   .debug_str:0000032c .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2169   .debug_str:0000056c .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2059   .debug_str:0000022b .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2115   .debug_str:000003bb .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2177   .debug_str:000005aa .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2129   .debug_str:00000424 .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2099   .debug_str:00000365 .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2039   .debug_str:000001d0 .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2071   .debug_str:0000027e .LASF62
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2041   .debug_str:000001d7 .LASF63
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2019   .debug_str:000000fd .LASF64
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2179   .debug_str:000005b3 .LASF65
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:1981   .debug_str:00000000 .LASF66
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2155   .debug_str:0000050f .LASF67
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2085   .debug_str:000002fa .LASF68
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2113   .debug_str:000003b6 .LASF69
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2121   .debug_str:000003da .LASF70
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:1999   .debug_str:00000097 .LASF97
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2061   .debug_str:00000242 .LASF71
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2027   .debug_str:00000130 .LASF72
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:1997   .debug_str:00000088 .LASF73
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2075   .debug_str:000002a6 .LASF74
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2127   .debug_str:00000412 .LASF75
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2131   .debug_str:0000042d .LASF76
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2073   .debug_str:00000285 .LASF98
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:84     .text.Main_ApplicationPeriodicAsynTask:0000006a .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:1930   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2037   .debug_str:000001ac .LASF77
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:21     .text.Main_ApplicationPeriodicAsynTask:00000014 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:24     .text.Main_ApplicationPeriodicAsynTask:00000018 .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:26     .text.Main_ApplicationPeriodicAsynTask:0000001c .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:34     .text.Main_ApplicationPeriodicAsynTask:00000028 .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:40     .text.Main_ApplicationPeriodicAsynTask:0000002f .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:48     .text.Main_ApplicationPeriodicAsynTask:0000003b .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:53     .text.Main_ApplicationPeriodicAsynTask:00000045 .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:56     .text.Main_ApplicationPeriodicAsynTask:00000049 .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:59     .text.Main_ApplicationPeriodicAsynTask:0000004d .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:62     .text.Main_ApplicationPeriodicAsynTask:00000051 .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:66     .text.Main_ApplicationPeriodicAsynTask:00000057 .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:71     .text.Main_ApplicationPeriodicAsynTask:0000005c .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:77     .text.Main_ApplicationPeriodicAsynTask:00000062 .LVL14
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:81     .text.Main_ApplicationPeriodicAsynTask:00000068 .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2117   .debug_str:000003c0 .LASF99
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:108    .text.Main_ApplicationInit:00000028 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:1943   .debug_loc:00000020 .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:105    .text.Main_ApplicationInit:00000026 .LVL16
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2125   .debug_str:000003ec .LASF78
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:1993   .debug_str:00000057 .LASF79
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2107   .debug_str:0000038d .LASF100
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2089   .debug_str:00000313 .LASF82
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2161   .debug_str:0000052c .LASF80
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2151   .debug_str:000004e1 .LASF81
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2141   .debug_str:00000487 .LASF83
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2163   .debug_str:00000549 .LASF84
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2153   .debug_str:000004f7 .LASF85
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2009   .debug_str:000000c6 .LASF86
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2035   .debug_str:00000196 .LASF87
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2067   .debug_str:00000260 .LASF88
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2093   .debug_str:00000333 .LASF89
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2077   .debug_str:000002b8 .LASF90
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2137   .debug_str:0000045b .LASF91
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2025   .debug_str:0000011c .LASF92
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2005   .debug_str:000000b3 .LASF93
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:2149   .debug_str:000004d1 .LASF94
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:11     .text.Main_ApplicationPeriodicAsynTask:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:96     .text.Main_ApplicationInit:00000002 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\ccWZ0FkZ.s:188    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_OS_Global
+_LIB_TaskMonitoringConfig
+_Main_RemoteLoadsControl_Init
+_CALLBACK_Main_StartUp
+_LIB_TaskStartActivity
+_Main_Analog_IsRefOk
+_Main_IsRestoreCompleted
+_OS_EnterRegionFunc
+_Main_Backup_DoRestore
+_Main_CompleteRestore
+_OS_LeaveRegion
+_LIB_Backup_SetBackupControlMonitor
+_Main_ApplicationTask_Body
+_LIB_TaskEndActivity
+_OS_DelayUntil
+_OS_CreateTask_S

@@ -1,0 +1,428 @@
+// OIL-Definition-File
+OIL_VERSION = "2.3";
+
+#include <H8_300H_3687GROUP.I23>
+
+CPU H83607x {
+   #include <H8_300H_3687GROUP.s23>
+
+   OS StdOS {
+      CC = AUTO;
+      STATUS = EXTENDED;
+      SCHEDULE = AUTO;
+      STARTUPHOOK = FALSE;
+      ERRORHOOK = TRUE;
+      SHUTDOWNHOOK = FALSE;
+      PRETASKHOOK = FALSE;
+      POSTTASKHOOK = FALSE;
+      USEGETSERVICEID = TRUE;
+      USEPARAMETERACCESS = FALSE;
+      SystemStackSize = 280;
+      StartupStackSize = 280;
+      WithStackCheck = TRUE;
+      CpuFrequency = 16.000000;
+      HighResolutionTimer = TRUE
+      {
+         MinimalTimerInterval = 0;
+         MinimalTimerIntervalUnit = Ticks;
+         TimerHook = TRUE;
+      };
+      TimerZPrescaler = 8;
+      TickTime = 0;
+      SystemTimer = TimerZ_0;
+      UseGeneratedFastAlarm = FALSE;
+      ErrorInfoLevel = STANDARD;
+      OSInternalChecks = STANDARD;
+      EnGlbFlgInSysTimer = TRUE;
+      Compiler = Hitachi
+      {
+         AddressMode = advanced: "Addressing Mode oltre 64 Kbytes";
+      };
+      E7EmulatorSupport = FALSE: "E7 and E8 sovrascrivono comunque tali vettori quindi la funzionalità è del tutto inutile";
+      ORTIDebugSupport = FALSE;
+      ORTIDebugLevel = ORTI_21_Standard;
+   }: "Standard object for operating system configuration";
+
+   TASK NormalMode_InitTask {
+      TYPE = AUTO;
+      SCHEDULE = NON;
+      PRIORITY = 50;
+      ACTIVATION = 1;
+      AUTOSTART = TRUE
+      {
+         APPMODE = NormalMode;
+      };
+      StackSize = 200;
+      NotUsingSchedule = TRUE;
+   }: "Inizializzazione sistema";
+
+   TASK Task_10_ms {
+      TYPE = AUTO;
+      SCHEDULE = FULL;
+      PRIORITY = 10: "era 12 modificato per test ZC dopo crash scheda";
+      ACTIVATION = 1;
+      AUTOSTART = FALSE;
+      StackSize = 170;
+      NotUsingSchedule = FALSE;
+   }: "Tempistica dei 10 ms";
+
+   TASK Task_Partialization {
+      TYPE = AUTO;
+      SCHEDULE = NON;
+      PRIORITY = 20;
+      ACTIVATION = 1;
+      AUTOSTART = FALSE;
+      StackSize = 200;
+      NotUsingSchedule = TRUE: "Please don't use reschedule";
+   };
+
+   TASK Task_UartParser {
+      TYPE = AUTO;
+      SCHEDULE = FULL;
+      PRIORITY = 3;
+      ACTIVATION = 1;
+      AUTOSTART = FALSE;
+      StackSize = 150;
+      NotUsingSchedule = FALSE;
+   };
+
+   TASK Task_SendBytes {
+      TYPE = AUTO;
+      SCHEDULE = FULL;
+      PRIORITY = 2;
+      ACTIVATION = 1;
+      AUTOSTART = FALSE;
+      StackSize = 100;
+      NotUsingSchedule = FALSE;
+   };
+
+   TASK Task_MeasureLive {
+      TYPE = AUTO;
+      SCHEDULE = NON;
+      PRIORITY = 40;
+      ACTIVATION = 1;
+      AUTOSTART = FALSE;
+      StackSize = 200: "This task is not used in this application but shared with others";
+      NotUsingSchedule = TRUE: "Please don't use reschedule";
+   };
+
+   TASK Task_Feedback {
+      TYPE = AUTO;
+      SCHEDULE = FULL;
+      PRIORITY = 9;
+      ACTIVATION = 1;
+      AUTOSTART = FALSE;
+      StackSize = 170;
+      NotUsingSchedule = FALSE;
+   }: "Feedbacks's reading";
+
+   TASK Task_AnalogChannels {
+      TYPE = AUTO;
+      SCHEDULE = NON;
+      PRIORITY = 7;
+      ACTIVATION = 1;
+      AUTOSTART = FALSE;
+      StackSize = 200;
+      NotUsingSchedule = TRUE;
+   }: "Lettura canali analogici";
+
+   TASK Task_Backup {
+      TYPE = AUTO;
+      SCHEDULE = FULL;
+      PRIORITY = 55;
+      ACTIVATION = 1;
+      AUTOSTART = FALSE;
+      RESOURCE = Engine_Res;
+      StackSize = 200;
+      NotUsingSchedule = FALSE;
+   }: "Gestione Backup";
+
+   TASK Task_Main {
+      TYPE = AUTO;
+      SCHEDULE = FULL;
+      PRIORITY = 6;
+      ACTIVATION = 1;
+      AUTOSTART = FALSE;
+      RESOURCE = UserInterface_Res;
+      RESOURCE = Engine_Res;
+      RESOURCE = ExtBoardInfo_Res;
+      ACCESSOR = RECEIVED
+      {
+         MESSAGE = RemoteLoadsControl;
+         WITHOUTCOPY = TRUE;
+         ACCESSNAME = "RemoteLoadsControl_RxBuffer";
+         DoNotGenerateBuffer = FALSE;
+      };
+      StackSize = 330;
+      NotUsingSchedule = FALSE;
+   }: "Main Task";
+
+   TASK Task_Protocol {
+      TYPE = AUTO;
+      SCHEDULE = FULL;
+      PRIORITY = 5;
+      ACTIVATION = 1;
+      AUTOSTART = FALSE;
+      EVENT = EVENT_I2C_PROTOCOL;
+      EVENT = EVENT_UART_PROTOCOL;
+      RESOURCE = UserInterface_Res;
+      RESOURCE = Engine_Res;
+      RESOURCE = ExtBoardInfo_Res;
+      ACCESSOR = SENT
+      {
+         MESSAGE = RemoteLoadsControl;
+         WITHOUTCOPY = TRUE;
+         ACCESSNAME = "RemoteLoadsControl_TxBuffer";
+         DoNotGenerateBuffer = FALSE;
+      };
+      StackSize = 190;
+      NotUsingSchedule = FALSE;
+   };
+
+   TASK Task_Flash {
+      TYPE = AUTO;
+      SCHEDULE = NON;
+      PRIORITY = 45;
+      ACTIVATION = 1;
+      AUTOSTART = FALSE;
+      StackSize = 200;
+      NotUsingSchedule = TRUE;
+   };
+
+   TASK Task_Feedback_P {
+      TYPE = AUTO;
+      SCHEDULE = FULL;
+      PRIORITY = 8;
+      ACTIVATION = 1;
+      AUTOSTART = FALSE;
+      StackSize = 170: "This task is used by this application because of ENABLE_ZC_LOADS_MODULE is equal 1";
+      NotUsingSchedule = FALSE;
+   };
+
+   TASK ProgrammingMode_InitTask {
+      TYPE = AUTO;
+      SCHEDULE = NON;
+      PRIORITY = 100;
+      ACTIVATION = 1;
+      AUTOSTART = TRUE
+      {
+         APPMODE = ProgrammingMode;
+      };
+      StackSize = 200;
+      NotUsingSchedule = TRUE;
+   }: "Inizializzazione sistema";
+
+   ALARM ALARM_10_ms {
+      COUNTER = SystemTimer;
+      ACTION = ACTIVATETASK
+      {
+         TASK = Task_10_ms;
+      };
+      AUTOSTART = FALSE
+      {
+         StaticAlarm = FALSE;
+      };
+   };
+
+   ALARM ALARM_Partialization {
+      COUNTER = SystemTimer;
+      ACTION = ACTIVATETASK
+      {
+         TASK = Task_Partialization;
+      };
+      AUTOSTART = FALSE
+      {
+         StaticAlarm = FALSE;
+      };
+   };
+
+   ALARM ALARM_SendBytes {
+      COUNTER = SystemTimer;
+      ACTION = ACTIVATETASK
+      {
+         TASK = Task_SendBytes;
+      };
+      AUTOSTART = FALSE
+      {
+         StaticAlarm = FALSE;
+      };
+   };
+
+   ALARM ALARM_MeasureLive {
+      COUNTER = SystemTimer;
+      ACTION = ACTIVATETASK
+      {
+         TASK = Task_MeasureLive;
+      };
+      AUTOSTART = FALSE
+      {
+         StaticAlarm = FALSE;
+      };
+   };
+
+   ALARM ALARM_AnalogChannels {
+      COUNTER = SystemTimer;
+      ACTION = ACTIVATETASK
+      {
+         TASK = Task_AnalogChannels;
+      };
+      AUTOSTART = FALSE
+      {
+         StaticAlarm = FALSE;
+      };
+   };
+
+   ALARM ALARM_BackupInit {
+      COUNTER = SystemTimer;
+      ACTION = ACTIVATETASK
+      {
+         TASK = Task_Backup;
+      };
+      AUTOSTART = FALSE
+      {
+         StaticAlarm = FALSE;
+      };
+   };
+
+   ALARM ALARM_ConfirmBackup {
+      COUNTER = SystemTimer;
+      ACTION = ALARMCALLBACK
+      {
+         ALARMCALLBACKNAME = "CALLBACK_Backup";
+      };
+      AUTOSTART = FALSE
+      {
+         StaticAlarm = FALSE;
+      };
+   };
+
+   ALARM ALARM_Main {
+      COUNTER = SystemTimer;
+      ACTION = ACTIVATETASK
+      {
+         TASK = Task_Main;
+      };
+      AUTOSTART = FALSE
+      {
+         StaticAlarm = FALSE;
+      };
+   };
+
+   ALARM ALARM_Uart_Parser {
+      COUNTER = SystemTimer;
+      ACTION = ACTIVATETASK
+      {
+         TASK = Task_UartParser;
+      };
+      AUTOSTART = FALSE
+      {
+         StaticAlarm = FALSE;
+      };
+   };
+
+   ALARM ALARM_HalfWave {
+      COUNTER = SystemTimer;
+      ACTION = ACTIVATETASK
+      {
+         TASK = Task_Feedback;
+      };
+      AUTOSTART = FALSE
+      {
+         StaticAlarm = FALSE;
+      };
+   };
+
+   ALARM ALARM_Confirm_VLINE_Backup {
+      COUNTER = SystemTimer;
+      ACTION = ALARMCALLBACK
+      {
+         ALARMCALLBACKNAME = "CALLBACK_VLINE_Backup";
+      };
+      AUTOSTART = FALSE
+      {
+         StaticAlarm = FALSE;
+      };
+   };
+
+   ALARM ALARM_Cancel_VLINE_Backup {
+      COUNTER = SystemTimer;
+      ACTION = ALARMCALLBACK
+      {
+         ALARMCALLBACKNAME = "CALLBACK_BackupCancelVLINE";
+      };
+      AUTOSTART = FALSE
+      {
+         StaticAlarm = FALSE;
+      };
+   };
+
+   RESOURCE UserInterface_Res {
+      RESOURCEPROPERTY = STANDARD;
+   };
+
+   RESOURCE Engine_Res {
+      RESOURCEPROPERTY = STANDARD;
+   };
+
+   RESOURCE ExtBoardInfo_Res {
+      RESOURCEPROPERTY = STANDARD;
+   };
+
+   EVENT EVENT_I2C_PROTOCOL {
+      MASK = AUTO;
+   };
+
+   EVENT EVENT_UART_PROTOCOL {
+      MASK = AUTO;
+   };
+
+   ISR ZC_Interrupt {
+      CATEGORY = 2;
+      InterruptSource = INT14_Ext_IRQ0;
+   };
+
+   ISR Isr_I2C {
+      CATEGORY = 2;
+      InterruptSource = INT24_IIC2;
+   };
+
+   ISR StartupCode {
+      CATEGORY = 1;
+      InterruptSource = INT0_RESET: "RESET VECTOR ISR";
+   };
+
+   ISR UartRx_Interrupt {
+      CATEGORY = 2: "NO OSEK API CALLED, BUT Stack used with ISR1 is not large enough";
+      InterruptSource = INT23_SCI3;
+   };
+
+   ISR Isr_Tpm2Overflow {
+      CATEGORY = 2;
+      InterruptSource = INT27_TimerZ1;
+   };
+
+   ISR Isr_NMI {
+      CATEGORY = 1;
+      InterruptSource = INT7_External_NMI: "!!! Beware of the stack !!!";
+   };
+
+   MESSAGE RemoteLoadsControl {
+      TYPE = UNQUEUED;
+      CDATATYPE = "PC_CONTROL_PARAM";
+      ACTION = FLAG
+      {
+         FLAGNAME = "REMOTE_LOADS_CONTROL";
+      };
+   };
+
+   COM StdCOM {
+      USEMESSAGERESOURCE = TRUE;
+      USEMESSAGESTATUS = TRUE;
+   }: "Standard object for communication configuration";
+
+   APPMODE NormalMode;
+
+   APPMODE ProgrammingMode;
+
+}: "@T0x70@";
+

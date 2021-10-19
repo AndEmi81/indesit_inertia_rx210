@@ -1,0 +1,366 @@
+#############################################################################
+#
+#	Platform 2 library configuration
+#
+#############################################################################
+
+
+menu "Class B Check IEC60335 Configuration"
+  depends on PL_CLASS_B_CHECK
+
+config LIB_CLASS_B_CPU
+    depends on PL_CLASS_B_CHECK
+	bool "Check sulla CPU"
+	help
+	  Check POST e BIST sulla cpu
+
+config LIB_CLASS_B_RAM
+    depends on PL_CLASS_B_CHECK
+	bool "[PLT] Check sulla RAM"
+	help
+	  Check POST e BIST sulla RAM
+
+config LIB_CLASS_B_RAM_CHUNKSIZE
+	depends on LIB_CLASS_B_RAM
+	int "RAM check chunk size"
+	default 8
+	help
+	  Bytes checked every RAM Check iteration
+
+config LIB_CLASS_B_RAM_REFRESH_BYTES
+	depends on LIB_CLASS_B_RAM
+	int "RAM check WDT refresh every N bytes (during initialization)"
+	default 2048
+	help
+	  Bytes counted for WDT refresh during RAM Check performed at initialization
+
+config LIB_CLASS_B_FLASH
+    depends on PL_CLASS_B_CHECK
+	bool "Check sulla FLASH"
+	help
+	  Check POST e BIST sulla FLASH
+
+config LIB_CLASS_B_FLASH_CHUNKSIZE
+	depends on LIB_CLASS_B_FLASH
+	int "Flash check chunk size"
+	default 32
+	help
+	  Bytes checked every Flash Check iteration
+
+config LIB_CLASS_B_FLASH_REFRESH_BYTES
+	depends on LIB_CLASS_B_FLASH
+	int "Flash check WDT refresh every N bytes (during initialization)"
+	default 32768
+	help
+	  Bytes counted for WDT refresh during Flash check performed at initialization
+
+config LIB_CLASS_B_USE_OCCRC
+	depends on PL_DRV_OCCRC
+	bool "Use OCCRC driver for Class B Check CRC computation"
+	default 32
+	help
+	  This option allows use of OCCRC driver instead of SWCRC.
+
+config LIB_CLASS_B_CLOCK
+	bool "Check sul Clock Frequency"
+	help
+	  Check sullo scostamento della frequenza tra clock della cpu
+          e quello dell' RTC, o altra sorgente esterna.
+
+choice
+  depends on LIB_CLASS_B_CLOCK
+  prompt "Scelta Implementazione"
+
+config LIB_CLASS_B_CLOCK_HW
+	bool "HW Check"
+	help
+	  Implementazione HW dell controllo dell'accuratezza del clock.
+
+config LIB_CLASS_B_CLOCK_MS
+	depends on PL_DRV_OCRTC
+	bool "INDESIT"
+	help
+	  Implementazione confronta il sysTyme con il tempo dell'RTC
+	  che ha una sorgente di clock diversa da quella di sistema.
+
+config LIB_CLASS_B_CLOCK_NPX
+	depends on PL_DRV_OCRTC
+	bool "NPX"
+	help
+	  Impementazione NPX, usa RTC come riferimento di clock.
+
+endchoice
+
+config LIB_CLASS_B_WDTEST
+    depends on PL_CLASS_B_CHECK && WDT_ENABLED
+	bool "Check del WatchDog"
+	help
+	  Check del WatchDod allo startup.
+
+config LIB_CLASS_B_ADC
+    depends on PL_CLASS_B_CHECK
+	bool "Check of ADC Device"
+	help
+	  Check ADC Converter and Multiplex.
+
+menu "ADC check Configuration"
+	depends on LIB_CLASS_B_ADC
+	  
+ config LIB_CLASS_B_ADC_FLTR_INCR
+	int "ADC failure check filter Increment coefficient"
+	range 0 65535
+	default 1000
+	help
+		Increment value set here when a low-range case occurred; when in range decrement always by 1 if > 0
+		
+config LIB_CLASS_B_ADC_FLTR_MAXTH
+	int "ADC failure check filter Maximum threshold value"
+	range 0 65535
+	default 5000
+	help
+		Maximum filter value to filter low-range cases occurred; if filter go higher than this value, go to an error condition => reset.
+
+endmenu
+
+
+config LIB_CLASS_B_PERIODIC_CHECK
+    depends on PL_CLASS_B_CHECK
+	bool "Periodic Check"
+	default y
+	help
+	  Verifica che l'esecuzione di funzioni inerenti alla sicurezza
+	  vengano effettuate entro i tempi prestabiliti.
+	  Usa il modulo TaskMonitor.
+
+
+menu "Configurazione TaskMonitoring"
+  depends on LIB_CLASS_B_PERIODIC_CHECK
+
+config LIB_CLASS_B_PERIODIC_CHECK_STATIC_CONF
+    depends on LIB_CLASS_B_PERIODIC_CHECK
+	bool "Static timeout"
+	default y
+	help
+		Disable Runtime configuration	  
+
+config LIB_TM_ANALOG
+    depends on LIB_CLASS_B_PERIODIC_CHECK
+	bool "Analog Input Task"
+	default y
+	help
+	  Enable Analog Input Task monitoring
+
+config LIB_TM_ANALOG_TIMEOUT
+    depends on LIB_TM_ANALOG
+	int "Analog Input Task Timeout (tick TaskSupervisor)"
+	default 30
+	range 1 255
+	help
+	  Analog Input Task monitoring Timeout in tick TaskSupervisor
+
+
+config LIB_TM_OUTPUT
+    depends on LIB_CLASS_B_PERIODIC_CHECK  && !MAIN_LIVE_MEASURE_AS_ACTIVITY
+	bool "Output Task"
+	default y
+	help
+	  Enable Output Task monitoring
+
+config LIB_TM_OUTPUT_TIMEOUT
+    depends on LIB_TM_OUTPUT
+	int "Output Task Timeout (tick TaskSupervisor)"
+	default 30
+	range 1 255
+	default y
+	help
+	  Output Task monitoring Timeout in tick TaskSupervisor
+
+
+config LIB_TM_LIVE
+    depends on LIB_CLASS_B_PERIODIC_CHECK && !MAIN_LIVE_MEASURE_AS_ACTIVITY
+	bool "Live Measure Task"
+	default y
+	help
+	  Enable Live Measure Task monitoring
+
+config LIB_TM_LIVE_TIMEOUT
+    depends on LIB_TM_LIVE
+	int "Live Task Timeout (tick TaskSupervisor)"
+	default 30
+	range 1 255
+	help
+	  Live Task monitoring Timeout in tick TaskSupervisor
+
+config LIB_TM_BACKUP
+    depends on LIB_CLASS_B_PERIODIC_CHECK
+	bool "Backup Task"
+	default y
+	help
+	  Enable Backup Task monitoring
+
+config LIB_TM_BACKUP_TIMEOUT
+    depends on LIB_TM_BACKUP
+	int "Backup Task Timeout (tick TaskSupervisor)"
+	default 50
+	range 1 255
+	help
+	  Backup Task monitoring Timeout in tick TaskSupervisor
+
+config LIB_TM_MAIN
+    depends on LIB_CLASS_B_PERIODIC_CHECK
+	bool "Main Task"
+	default y
+	help
+	  Enable Application Main Task monitoring
+
+config LIB_TM_MAIN_TIMEOUT
+    depends on LIB_TM_MAIN
+	int "Main Application Task Timeout (tick TaskSupervisor)"
+	default 15
+	range 1 255
+	help
+		Main Application Task monitoring Timeout in tick TaskSupervisor
+
+config LIB_TM_SEQUENCER
+    depends on LIB_CLASS_B_PERIODIC_CHECK && MAIN_SEQUENCER_TASK_SUPPORT
+	bool "Sequencer Task"
+	default y
+	help
+	  Enable Sequencer Task monitoring
+
+config LIB_TM_SEQUENCER_TIMEOUT
+    depends on LIB_TM_SEQUENCER
+	int "Sequencer Task Timeout (tick TaskSupervisor)"
+	default 30
+	range 1 255
+	help
+	  Sequencer Task monitoring Timeout in tick TaskSupervisor
+
+config LIB_TM_FEEDBACKS
+    depends on LIB_CLASS_B_PERIODIC_CHECK
+	bool "Feedbacks Task"
+	default y
+	help
+	  Enable Feedbacks Task monitoring
+
+config LIB_TM_FEEDBACKS_TIMEOUT
+    depends on LIB_TM_FEEDBACKS
+	int "Feedbacks Task Timeout (tick TaskSupervisor)"
+	default 30
+	range 1 255
+	help
+	  Feedbacks Task monitoring Timeout in tick TaskSupervisor
+
+config LIB_TM_PRODUCTSAFETY
+    depends on LIB_CLASS_B_PERIODIC_CHECK && LIB_PRODUCTSAFETY_SUPPORT
+	bool "Product Safety Library module"
+	help
+	  Enable Product Safety monitoring
+
+config LIB_TM_PRODUCT_SAFETY_TIMEOUT
+    depends on LIB_TM_PRODUCTSAFETY
+	int "Product Safety Timeout (tick TaskSupervisor)"
+	default 15
+	range 1 255
+	help
+	  Product Safety monitoring Timeout in tick TaskSupervisor
+
+config LIB_TM_LOADSREQUEST
+    depends on LIB_CLASS_B_PERIODIC_CHECK && LIB_LOADSREQUEST_SUPPORT
+	bool "Loads Request Library module"
+	help
+	  Enable Loads Request monitoring
+
+config LIB_TM_LOADSREQUEST_TIMEOUT
+    depends on LIB_TM_LOADSREQUEST
+	int "Loads Request Timeout (tick TaskSupervisor)"
+	default 15
+	range 1 255
+	help
+	  Loads Request monitoring Timeout in tick TaskSupervisor
+
+endmenu
+
+config LIB_CLASS_B_IRQ_CHECK
+    depends on PL_CLASS_B_CHECK
+	bool "Interrupt Execution flow check"
+	help
+	  Verifica che l'esecuzione degli interrupt avvengano con
+	  una frequenza entro i limiti prestabiliti.
+	  Usa il modulo TaskMonitor.
+
+menu "Interrupt check Configuration"
+	depends on LIB_CLASS_B_IRQ_CHECK
+	
+config LIB_CLASS_B_IRQ_CHECK_DEBUG
+	bool "Interrupt Check Debug Counters"
+	default n
+	help
+		Updates counters (enter-exit mismatch, max occurrencies, no interrupts, min occurrencies) instead of real monitoring
+
+config LIB_CLASS_B_IRQ_CHECK_MAXVALUE
+	int "Maximum number of Interrupts"
+	range 0 65535
+	default 150
+	help
+		Maximum number of interrupts that can occur during monitoring (period is usually Task Supervisor one, e.g. 10ms)
+		BEWARE!! Default value means no limit!
+
+config LIB_CLASS_B_IRQ_CHECK_MINVALUE
+	int "Minimum number of Interrupts"
+	range 0 65535
+	default 1
+	help
+		Minimum number of interrupts that can occur during monitoring (period is usually Task Supervisor one, e.g. 10ms)
+
+config LIB_CLASS_B_IRQ_FLTR_INCR
+	int "Low range filter Increment coefficient"
+	range 0 65535
+	default 100
+	help
+		Increment value set here when a low-range case occurred; when in range decrement always by 1 if > 0
+		
+config LIB_CLASS_B_IRQ_FLTR_MAXTH
+	int "Low range filter Maximum threshold value"
+	range 0 65535
+	default 500
+	help
+		Maximum filter value to filter low-range cases occurred; if filter go higher than this value, go to an error condition => reset.
+
+endmenu
+
+config CLASS_B_DATA_INTEGRITY
+	bool "Enable DataIntegrity (DataCare check)"
+	default n
+	help
+	  Enable the Data Integrity on Platform
+
+config CLASS_B_DATA_BACKUP
+	depends on CLASS_B_DATA_INTEGRITY
+	bool "Enable DataIntegrity Backup "
+	default n
+	help
+	  Enable the Data Integrity BackUp as configured 
+	  in the file DataSafety_cfg.h
+	  
+config CLASS_B_DATA_INTEGRITY_SAFETYREGION_LEVEL
+	depends on CLASS_B_DATA_INTEGRITY
+	int "Configure Safety Region protection level"
+	default 1
+	range 0 2
+	help
+	  0 Disailita tutti gli interrupt
+	  1 Diasbilita solo lo scheduling dell'OS
+	  2 NOT IMPLEMENTED: Diasbilita lo scheduling ed alcuni interrupt non critici 
+
+endmenu
+
+config LIB_PRODUCTSAFETY_SUPPORT
+	depends on LIB_LOADSREQUEST_SUPPORT
+bool "Enable Product Safety module support"
+    default n
+    help 
+        Product Safety Management is a new layer for certified Appliance Safety checks and action.  
+
+
+#############################################################################

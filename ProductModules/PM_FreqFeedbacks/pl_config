@@ -1,0 +1,92 @@
+#############################################################################
+#
+#	Platform 2 library configuration
+#
+#############################################################################
+
+menu "Frequency Feedbacks"
+  depends on PM_FREQUENCY_FEEDBACKS_SUPPORT
+  
+config FREQUENCY_FEEDBACKS_DISABLE_MODULE
+  bool "Disable module"
+  default n
+  help
+    Disable Frequency Feedbacks module. 
+    All functions and variables are still present, but nothing 
+    will happen when functions are called - no initialization and no updates.
+    
+    It's useful if you want save flash without excluding from build. 
+
+
+config FREQUENCY_FEEDBACKS_MAX_ITEMS_NUMBER
+	depends on !FREQUENCY_FEEDBACKS_DISABLE_MODULE
+    int "Max number of inputs "
+    range 1 8
+    default 2
+	help
+		Maximum number of inputs that can be managed 
+		
+config FREQUENCY_FEEDBACKS_TON_TH
+	depends on !FREQUENCY_FEEDBACKS_DISABLE_MODULE
+    int "Ton threshold [% of minimum halfwawe]"
+    range 1 100
+    default 100
+	help
+		Minimum TOn to consider signal as low frequency (es. DM)
+
+
+config FREQUENCY_FEEDBACKS_MAX_DELAY_TO_RESTART_SAMPLING
+	depends on !FREQUENCY_FEEDBACKS_DISABLE_MODULE
+    int "Max time to restart [10ms] "
+    range 1 30
+    default 30
+	help
+		Maximum time to restart sampling
+		
+config FREQUENCY_FEEDBACKS_USE_PWD_FILTER
+	bool "Enable PWD Timer filter"
+	default n
+	help
+		Enable PWD Timer filter
+		This option allows to define a minimum time of each edge (rising/falling) to filter
+		noise.
+
+config FREQUENCY_FEEDBACKS_PWD_FILTER_TIME
+	depends on FREQUENCY_FEEDBACKS_USE_PWD_FILTER
+	int "PWD filter time (in ns)"
+	range 1 50000000
+	default 1000000
+	help
+		Set PWD filter time
+		This is minimum time (in ns) accepted for edge validation.
+
+config FREQUENCY_FEEDBACKS_USE_DIGITAL_FILTER
+    bool "Enable Digital pin filter (if available in micro used) on tacho"
+    default n
+    help
+        Enable Digital Pin filter
+        This option allows to define maximum acceptance frequency for Tacho
+        input; real filter applied depends on features availalbe on 
+        micro used for this application. 
+
+config FREQUENCY_FEEDBACKS_DIGITAL_FILTER_FREQ
+    depends on FREQUENCY_FEEDBACKS_USE_DIGITAL_FILTER
+    int "Digital filter frequency (in kHz)"
+    range 1 50000
+    default 2000
+    help
+        Set Digital filter time
+        This is maximum frequency (in kHz) accepted for edge validation.            
+
+config FREQUENCY_FEEDBACKS_NOFREQ_MONITOR
+    bool "Enable No-frequency monitor"
+    default n
+    help
+        Enable no frequency monitor
+        This option enables a counter to monitor if there were level transition
+		(0->1 and vice versa) without any frequency event notified - this may due
+		to a missing interrupt enabled.
+
+endmenu
+
+#############################################################################

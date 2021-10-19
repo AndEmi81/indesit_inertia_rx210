@@ -1,0 +1,111 @@
+/**
+\defgroup	SWDMA SWDMA (Software DMA)
+@{
+\n		SWDMA emulates DMA.
+The SWDMA module can move data within system memory (including memory and peripheral devices),
+but with processor intervention.
+
+The SWDMA module consists of programmable SWDMA_CH_NUM number independent, functionally equivalent channels
+
+\par Transfer Requests
+
+SWDMA supports software-initiated or peripheral-initiated requests.
+Peripheral-initiated requests requires the use of the interrupt of the peripheral.
+
+\li Cycle-steal mode (SWDMA_TransferType.options.cs =1 ): Only one complete transfer from source
+to destination occurs for each request. The request can be peripheral initiated (SWDMA_TransferType.options.start=0) or
+software-initiated (SWDMA_TransferType.options.start=1)
+
+\li Continuous mode (SWDMA_TransferType.options.cs = 0) Typically is a software-initiated request, the SWDMA
+continuously transfers data until BCRn reaches zero. The SWDMA performs the specified number of
+transfers, then retires the channel. (Used for memory to memory transfer)
+
+Any operation involving a SWDMA channel follows the same three steps:
+1. Channel initialization: The transfer control descriptor, contained in the channel registers, is
+loaded with address pointers, a byte-transfer count, and control information.
+
+2. Data transfer: The SWDMA accepts requests for data transfers. If Cycle-steal mode is set to one complete transfer,
+upon receipt of a request, SWDMA manages the transfers via peripheral interrupts
+
+3. Channel termination
+Occurs after the operation is finished successfully or due to an error calling a callback function.
+
+\par Channel Initialization
+Before a data transfer starts, the channel�s transfer control descriptor must be initialized with information
+describing configuration, request-generation method, and pointers to the data to be moved
+
+
+\par Termination
+Unsuccessfully and successfully transfers terminate via callback.
+
+\par Channel Prioritization
+The SWDMA channels are prioritized based on the same rules of the rest of the code: channel
+using peripheral interrupt has the same priority of the interrupt. Channels not using interrupt have the priority
+of the task.
+
+\par Data alignment
+SWDMA module manage transfer only with dsize = ssize.
+
+\par Properties
+
+\section 	SWDMA_Properties_NumOfChannel	Number of channes
+
+\code
+#define UART_SWDMA_CH_NUM       			(1) //channels for UART
+#define I2C_SWDMA_CH_NUM                    (1) //channels dor I2C
+
+#define SWDMA_CH_NUM 	                    (I2C_SWDMA_CH_NUM+UART_SWDMA_CH_NUM) //total fo SWDMA channels
+\endcode
+
+
+\section 	SWDMA_Properties_TransferModes	Transfer modes
+
+\b SWDMA_CONTINUOUS_MODE_TRANSFER_SUPPORT
+If defined as TRUE allows continuous software initiated transfer  from source to destination address until BCR reaches zero.
+
+Config.h
+\code
+#define SWDMA_CONTINUOUS_MODE_TRANSFER_SUPPORT TRUE
+\endcode
+
+YourSourceFile.c
+set transfer.options.optionbyte to a value != SWDMA_OPTION_CS
+
+
+This code is unuseful under one of the following conditions:
+\li	SWDMA_CONTINUOUS_MODE_TRANSFER_SUPPORT is not defined
+\li	SWDMA_CONTINUOUS_MODE_TRANSFER_SUPPORT is defined as FALSE
+
+\section SWDMA_Properties_TransferSize	TRansfer size
+\b SWDMA_FIXED_SIZE
+If defined as TRUE allows 8 bit transfer only with code optimization. You must use this define is you are
+sure that your application will not use any other transfer size.
+
+\b SWDMA_SIZE_8BITs_TRANSFER
+\b SWDMA_SIZE_16BITs_TRANSFER
+\b SWDMA_SIZE_32BITs_TRANSFER
+
+Use these defines only if SWDMA_FIXED_SIZE is FALSE.
+
+These defines allows optimization of SWDMA implementation. You can enable only transfer size needed by your application.
+
+To enable 8-bit and 16-bit transfer only, use the following setting in Config.h
+\code
+#define SWDMA_SIZE_8BITs_TRANSFER	TRUE
+#define SWDMA_SIZE_16BITs_TRANSFER	TRUE
+\endcode
+
+
+
+\warning
+Using transfer size not enabled may lead SWDMA to an unpredictable behaviour.
+\n
+\par Configuration:
+\todo
+\n
+\par Exported Functions:
+\todo
+\n
+@}
+\ingroup   	Drivers
+*/

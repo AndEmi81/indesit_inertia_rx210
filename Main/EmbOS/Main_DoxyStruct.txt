@@ -1,0 +1,209 @@
+/**
+\defgroup	Application Application
+@{
+\par		Description
+\n			Application service
+\par        Properties
+The module can be configured in mainconfig.h file by defining the following properties:
+\li         \ref MAIN_APPLICATIONPERIODICASYN_TASK__MONITOR_IN(), \ref MAIN_APPLICATIONPERIODICASYN_TASK__MONITOR_OUT()
+\li         \ref MAIN_APPLICATIONPERIODICASYN_TASK__STARTUP()
+\li         \ref MAIN_APPLICATIONPERIODICASYN_TASK__IS_READY()
+\li         \ref MAIN_APP_PERIODICASYN_TASK__BODY()
+\li         \ref MAIN_APPLICATIONPERIODICASYN_TASK_STACK_SIZE
+
+@}
+\ingroup   	Main
+*/
+
+/**
+\defgroup	AnalogInputs Analog Inputs
+@{
+\par		Description
+\n			Framework for periodical/event-synchronized readings of analog inputs (ADC).
+            AD Conversions are managed by LIB_Analog module. LIB_ADC_Manager();
+            It manages readings concerning Analog feedbacks PM_AnalogFeedbackManager too.
+            
+            Its task is the conversion and monitoring of RTN signal.
+            
+            It consists of a preemptable task which scheduling is synchronized to an external event (like ZC).
+            
+            
+\par        Properties
+\n Monitoring
+Task monitoring can be enabled by Platform Configuration tool by the option CONFIG_MAIN_ANALOG_TASK_TASKMONITOR_ENABLE. 
+Two kind of monitoring is available :
+\li ClassB: CONFIG_LIB_CLASS_B_PERIODIC_CHECK 
+\li PM task monitor: CONFIG_PM_TASK_MONITOR_SUPPORT
+
+\n Trace to pin
+\n CONFIG_LIB_TRACE_SUPPORT makes available the option CONFIG_MAIN_ANALOG_TASK_TRACE_PIN_ENABLE property to allow 
+trace to pin. In this way task execution can be monitored.
+
+
+\par        APIs
+\link APIs apis \endlink
+\li         Main_AnalogInit()
+\li         Main_ScheduleAnalogMeasure()
+\li         Main_Analog_IsRefOk()
+\li         Main_AnalogRefMonitor()
+
+\par        Debug support
+            This module offers several debug features:
+    \li task duration measurement based on high resolution timer (\ref ANALOG_INPUTS_TASK_DURATION). This 
+    property is available if \ref ANALOG_INPUTS_TASK_DEBUG is defined.
+    \li measurement, based on high resolution timer, of the delay respect to the 'event' of synchronization
+(\ref ANALOG_INPUTS_TASK_DELAY_ON_ZC). This property is available if \ref ANALOG_INPUTS_TASK_DEBUG is defined.
+    \li Tuning
+        - Dynamic tuning (\ref ANALOG_INPUTS_TASK_TUNING). This property allows changing dinamically the delay 
+    of task activation. Requires additional ram. This property is available if \ref ANALOG_INPUTS_TASK_DEBUG 
+    is defined.
+        - MAIN_ANALOG_INPUTS_ACTIVATION_TUNING_VAL static correction of the delay of the task activation 
+    respect to the event. This property is available if \ref ANALOG_INPUTS_TASK_DEBUG is not defined.
+
+@}
+\ingroup   	Main
+*/
+
+/**
+\defgroup	MainBackup Backup
+@{
+\par		Description
+\n			Backup and restore service
+\par        Properties
+The module can be configured in mainconfig.h file by defining the following properties:
+\li         \ref MAIN_BACKUP_TASK__MONITOR_IN(), \ref BACKUP_TASK__MONITOR_OUT()
+\li         \ref MAIN_BACKUP_TASK_STACK_SIZE
+@}
+\ingroup   	Main
+*/
+
+/**
+\defgroup	MainFeedbacks  Feedbacks
+@{
+\par		Description
+\n			This service implements normal and delayed ('P' version) feedback acquisition.
+\par        Properties
+The module can be configured in mainconfig.h file by defining the following properties:
+\li         \ref MAIN_FEEDBACKS_TASK__MONITOR_IN(), \ref MAIN_FEEDBACKS_TASK__MONITOR_OUT()
+\li         \ref MAIN_FEEDBACKS_TASK_STACK_SIZE and MAIN_FEEDBACKS_P_TASK_STACK_SIZE
+
+\par        APIs
+\li         Main_ActivateFeedbacks_WithOffset()
+\li         Main_ActivateFeedbacksP_WithOffset()
+\li         Main_ActivateFeedbacks_AsyncRead()
+\li         Main_ActivateFeedbacksP_AsyncRead()
+
+
+\par        Debug support
+            This module offer several debug features (\ref MAIN_FEEDBACKS__TASK_DEBUG):
+\li         task duration measurement based on high resolution timer (\ref MAIN_FEEDBACKS_TASK_DURATION).
+\li         measurement, based on high resolution timer, of the delay respect the ZC of task activation
+(\ref MAIN_FEEDBACKS_TASK_DELAY_ON_ZC).
+@}
+\ingroup   	Main
+*/
+
+/**
+\defgroup	Supervisor Supervisor
+@{
+\par		Description
+\n			Supervisor is an EmbOS-based service for Main board application.
+\n          It consists of a task which inizializes all the other services based on current system mode and
+after the initialization runs as supervisor.
+\n
+\par        Properties
+The module can be configured in mainconfig.h file by defining the following properties:
+\li         \ref MAIN_SUPERVISOR_TASK__MONITOR_IN(), \ref MAIN_SUPERVISOR_TASK__MONITOR_OUT()
+\li         \ref MAIN_SUPERVISOR_TASK_SET_PERIOD()
+\li         \ref MAIN_SUPERVISOR_TASK__BODY()
+\li         \ref MAIN_SUPERVISOR_TASK__SYSTEM_MONITOR()
+\li         \ref MAIN_SUPERVISOR_TASK_STACK_SIZE
+\li         \ref MAIN_SUPERVISOR_TASK_PRIORITY
+
+\par        Required functions
+\li         SetupHw, it's a function called at startup in normal mode that initilizes drivers fro application
+@}
+\ingroup   	Main
+*/
+
+/**
+\defgroup	LiveMeasurement Live measurement
+@{
+\par		Description
+\n			Live measurement service
+\par        Properties
+The module can be configured in mainconfig.h file by defining the following properties:
+\li         \ref MAIN_LIVE_TASK__MONITOR_IN(), \ref MAIN_LIVE_TASK__MONITOR_OUT()
+\li         \ref LIVE_OFFSET_ACTIVATION
+
+\par        APIs
+\li         Main_ActivateMeasureLiveWithOffset()
+
+\par        Debug support
+            This module offer several debug features (\ref MAIN_LIVE_TASK_DEBUG):
+\li         task duration measurement based on high resolution timer (\ref MAIN_LIVE_TASK_DURATION).
+\li         measurement, based on high resolution timer, of the delay respect the ZC of task activation
+(\ref MAIN_LIVE_TASK_DELAY_ON_ZC).
+\li         tuning (\ref LIVE_OFFSET_ACTIVATION)
+@}
+\ingroup   	Main
+*/
+
+/**
+
+\defgroup	MainSyncOutputs  Synhronized Loads
+@{
+\par		Desciptions
+\n			This module implements the service for loads synchronized with ZC:
+\li         ZCLoads
+\li         Profiler
+
+
+\par        Properties
+The module can be configured in mainconfig.h file by defining the following properties:
+\li         \ref MAIN_OUTPUT_TASK__MONITOR_IN(), \ref MAIN_OUTPUT_TASK__MONITOR_OUT(), not mandatory
+\li         \ref MAIN_OUTPUTS_TASK__BODY(), mandatory
+\li         \ref OUTPUTS_DELAY_ACTIVATION_TUNING_VAL, \ref OUTPUTS_PERIOD_ACTIVATION_TUNING_VAL
+\li         \ref MAIN_OUTPUTS_TASK_STACK_SIZE
+
+\par        APIs
+\li         Main_ActivateOutputs()
+
+\par        Debug support
+            This module offer several debug features (\ref OUTPUTS_TASK_DEBUG):
+\li         task duration measurement based on high resolution timer (\ref OUTPUTS_TASK_DURATION).
+\li         fine-tuning task activation: the initial delay and the period of the task can be dinamically tuned
+in order to otpimize the final application behavior (\ref OUTPUTS_TASK_TUNING).
+@}
+\ingroup   	Main
+*/
+
+/**
+
+\defgroup	MainSyncOutputs  Synhronized Loads
+@{
+\par		Desciptions
+\n			This module implements the service for loads synchronized with ZC:
+\li         ZCLoads
+\li         Profiler
+
+
+\par        Properties
+The module can be configured in mainconfig.h file by defining the following properties:
+\li         \ref MAIN_SEQUENCER_TASK__MONITOR_IN(), \ref MAIN_SEQUENCER_TASK__MONITOR_OUT(), not mandatory
+\li         \ref MAIN_SEQUENCER_TASK__BODY(), mandatory
+\li         \ref SEQUENCER_DELAY_ACTIVATION_TUNING_VAL, \ref SEQUENCER_PERIOD_ACTIVATION_TUNING_VAL
+\li         \ref MAIN_SEQUENCER_TASK_STACK_SIZE
+\li         \ref MAIN_SEQUENCER_COUNT
+
+\par        APIs
+\li         Main_ActivateOutputs()
+
+\par        Debug support
+            This module offer several debug features (\ref OUTPUTS_TASK_DEBUG):
+\li         task duration measurement based on high resolution timer (\ref SEQUENCER_TASK_DURATION).
+\li         fine-tuning task activation: the initial delay and the period of the task can be dinamically tuned
+in order to otpimize the final application behavior (\ref SEQUENCER_TASK_TUNING).
+@}
+\ingroup   	Main
+*/

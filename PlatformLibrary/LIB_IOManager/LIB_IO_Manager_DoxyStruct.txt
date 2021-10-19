@@ -1,0 +1,240 @@
+/**
+\defgroup LIB_IOManager Input/Output Manager
+@{
+This module implements all functions nedeed to manage input and output signals
+\n
+\version 01.01
+\n
+\par Architecture Requirements ID:
+\li SARS_WMMT_MN_OMAN_1
+\li SARS_WMMT_MN_OMAN_2
+\li SARS_WMMT_MN_IMAN_1
+\li SARS_WMMT_MN_IMAN_2
+
+@}
+\ingroup PlatformLibrary
+*/
+
+/**
+\defgroup	InputsManager Inputs Manager
+@{
+\n		This module starting from the setting file performs all inputs's initializations
+\n
+\version 01.00
+\n
+\par    Configuration:
+\n
+\n      none
+\n
+\par    Exported Functions (Platform Level):
+\li   LIB_IOM_InputInitialization()
+
+\par Architecture Requirements ID:
+\li SARS_WMMT_MN_IMAN_1
+\li SARS_WMMT_MN_IMAN_2
+
+\n
+@}
+\ingroup   	LIB_IOManager
+*/
+
+/**
+\defgroup	ExtOutputsManager External Outputs Manager
+@{
+\n			This module implements all the functions for multiple outputs management on multiple external board.
+            The purpose of this module is the management of the exchange of the data between the external boards
+            and the main board.
+            Once defined how many external boards and how many loads the main board has to manage, the module is able to drive
+            all information coming from and towards the external board.
+All variables contains 'x' (=0,1) to distiguish between external boards.
+\n
+\version 01.00
+\n
+\par        Prerequisites
+For multiple external boad to be managed, multi-peripheral uart driver is needed.
+
+Communication Platform must be configured to manage the following packets:
+\li PP_EE_TYPE_DSP_READ_EXT_RAM
+\li PP_EE_TYPE_DSP_WRITE_EXT_RAM
+\li PP_EE_TYPE_DSP_EXTRA_REQ_RAM
+\li PP_EE_TYPE_DSP_INFO_WRITE
+\li PP_EE_TYPE_DSP_CMD_READ
+
+UART peripharal(s) properly configured. 
+
+
+
+\par		Exported variables
+Following variable are exported to be linked in LUT
+\li         IOM_CommandBufferExternal_x[]
+\li         IOM_ReadRamExternal_x[]
+
+\par        Application resources
+Application level must provide separate info buffer for each load.
+If \n \b IOM_EXTERNAL_WP_INFOBUFFER_SIZE defines external board loads's info buffer size in bytes, 
+application must define a variable like in the following example.
+\code
+_DW_GLOBAL_ uint8_t Wash_Pump_InfoBuffer[IOM_EXTERNAL_WP_INFOBUFFER_SIZE];
+\endcode
+
+\par        Properties
+\li     \b EXTERNAL_MOTOR_CONTROL  enables External Output module
+\li     \b IOM_NUM_OF_EXTERNAL_LOADS  defines the number of external loads board
+\li     \b IOM_EXTERNAL_x_ENABLED	    enables external board x
+\li     \b IOM_EXTERNAL_x_COMMANDBUFFER_SIZE  defines external board x whole command buffer size in bytes. It is needed
+by this module to allocate internal variables IOM_CommandBufferExternal_x[] and IOM_CommandBufferExternal_x_Tx[].
+\li     \b IOM_EXTERNAL_x_RAMBUFFER_SIZE  defines external board x ram buffer size in bytes. It is needed
+by this module to allocate internal variable IOM_ReadRamExternal_x[]
+
+
+\par        Configuration:
+In config.h file:
+
+\li \b EXTERNAL_MOTOR_CONTROL
+\n enable the module
+\code
+#define EXTERNAL_MOTOR_CONTROL
+\endcode
+\li \b IOM_NUM_OF_EXTERNAL_LOADS
+\code
+#define IOM_NUM_OF_EXTERNAL_LOADS      (2)
+\endcode
+\li \b IOM_EXTERNAL_x_ENABLED
+\code
+#define IOM_EXTERNAL_0_ENABLED      //enable external board 0
+\endcode
+
+\li \b IOM_EXTERNAL_x_COMMANDBUFFER_SIZE
+\n \b IOM_EXT_AW_CDM_DATA_SZ is defined in <e> Exp.h <\e> file
+\n In the following example size definition of command for two loads.
+\code
+#define IOM_EXTERNAL_0_COMMANDBUFFER_SIZE      (BLDC_DRAIN_L_CMD_DATA_SZ + \
+                                                BLDC_WASH_L_CMD_DATA_SZ + \
+                                                IOM_EXT_AW_CDM_DATA_SZ)
+\endcode
+
+\li     \b  IOM_EXTERNAL_x_RAMBUFFER_SIZE
+\li     \b  IOM_EXTERNAL_x_INFOBUFFER_SIZE
+
+
+\par		Exported Functions (Application Level):
+\li         LIB_IOM_External_Init()
+\li         LIB_IOM_External_GetExternalOutMngError()
+\li         LIB_IOM_External_New()
+\li		 	LIB_IOM_External_GetInfoBuffer()
+\li 		LIB_IOM_External_ProcessInfoPacketData()
+\li			LIB_IOM_External_GetCommandBuffer()
+\li 		LIB_IOM_External_SetReadRamRequest()
+\li			LIB_IOM_External_SetWriteRamRequest()
+\li			LIB_IOM_External_SetExtraRequest()
+
+\par		Exported Functions (Platform Level):
+\li         LIB_IOM_External_SetCommand()
+\li			LIB_IOM_External_GetLoadStatus()
+
+@}
+\ingroup   	LIB_IOManager
+*/
+
+/**
+\defgroup	OutputsManager Outputs Manager
+@{
+\n		This module implements all the necessary functions for loads management.
+\n      Starting from setting file all loads are configured, see LIB_IOM_OutputInitialization() documentation.
+\n
+\version 01.00
+\n
+\par    Configuration:
+\n
+\n      none
+\n
+\par  Exported Functions (Application Level):
+\li   LIB_IOM_SetLoad()
+\li   LIB_IOM_GIOM_SetLoad()
+\li   LIB_IOM_GetLoadStatus()
+\li   LIB_IOM_GetAllLoadsStatus()
+\li   LIB_IOM_NumberOfLoads()
+\li   LIB_IOM_GetLoadMaxRegValue()
+\li   LIB_IOM_GetLoadPilotType()
+\li   LIB_IOM_GetLoadPinTabTable()
+\li   LIB_IOM_GetLoadPilotParamTable()
+\li	  LIB_IOM_GetLoadPriorityBitmap()
+\n
+\par Exported Functions (Platform Level):
+\li   LIB_IOM_GetPilotType()
+\li   LIB_IOM_OutputInitialization()
+\li   LIB_IOM_FindLoad()
+\li	  LIB_IOM_FindLoadByID()
+\li   LIB_IOM_SetAllLoadsOff() 
+\n
+\par Exported Variables:
+\li #LoadsStatus[N_MAXLOADS]
+\li #ExtdLoadsStatus[CONFIG_EXT_LOAD_PARAMDATA_SZ]
+\n
+\par Architecture Requirements ID:
+\li SARS_WMMT_MN_OMAN_1
+\li SARS_WMMT_MN_OMAN_2
+
+
+@}
+\ingroup   	LIB_IOManager
+*/
+
+/**
+\defgroup	InputOutputShare Shared IO Libraries 
+@{
+\n			The module implements the functions necessary to manage the PinIOActvSense[] Vector
+\n          that is shared between Inputs and Outputs
+\n
+\par    Configuration:
+\n
+\n      none
+\n
+\par    Exported Functions (Platform Level):
+\li   LIB_IOM_IO_Manager_Init()
+\li   LIB_IOM_Set_IODir_ActiveSense()
+\li   LIB_IOM_Get_IODir_ActiveSense()
+\n
+@}
+\ingroup   	LIB_IOManager
+*/
+
+/**
+\defgroup   LoadsRequest Loads Request Manager
+@{
+\n          The module implements an High Level Output Manager interface
+\n          to handle Product specific LoadID and Product Safety modules.
+\n
+\version 01.01
+\n
+\par    Configuration:
+\n
+\n
+
+\par Exported Functions (Application Level):
+\li	LIB_IOM_GetLoadPos()
+\li LIB_IOM_GetLoadPosByExtdLoadItem()
+\li LIB_IOM_UpdateLoadRequestByItem()
+\li LIB_IOM_GetExtdLoadPosByLoadPos()
+\li LIB_IOM_FindLoadOnSwitchRelay()
+\li LIB_IOM_FindLoadOnMasterRelay()
+\li LIB_IOM_ExtdLoadIsExternal()
+\li LIB_IOM_ProcessAllLoadsRequests()
+
+\par Exported Functions (Platform Level):
+\li LIB_IOM_GetSRDelayTime()
+\li LIB_IOM_InitLoadsPos()
+\n\n\b Safety \b Functions:
+\li LIB_IOM_LoadsRequestManager() 
+\li LIB_IOM_ProcessSingleLoadRequest()
+\li LIB_IOM_ResetAllLoadRequest()
+\n
+\par Exported Variables:
+\li #IOM_LoadsReq[N_MAXLOADS]
+\n
+\par Architecture Requirements ID:
+\li SARS_WMMT_MN_LRM_1
+
+@}
+\ingroup    LIB_IOManager
+*/

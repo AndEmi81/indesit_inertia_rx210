@@ -1,0 +1,82 @@
+Release Note
+
+Renesas
+RX200 Series
+IEC60730 Self Test code for use in Eclipse + GNU Environment.
+
+28th May 2012
+Version 1.0
+
+This is a port of the IEC60730 Self Test code to E2Studio(Eclipse) + GNU Rx environment from the original HEW + Renesas toolchain environment.
+
+Contents of Delivery
+1. This Release Note.txt
+2. Application Note
+3. E2Studio_Project folder. This contains an archive (zip) of an E2Studio project which contains the test files.
+E2Studio can import this archive directly: File->Import->Existing project into Workspace->Archive "RX210_Selftests.zip". 
+
+
+Environment:
+Renesas E2Studio Version 1.0.0.38
+GNU Rx Version 12.01
+Big Endian
+
+The project consists of two parts:
+1. The test files: /src/tests
+2. Example usage of test files: E2Studio project.
+
+Differences from HEW + Renesas project:
+1. Test Files
+
+1.a.
+The Renesas toolchain provided a mechanism for automatically adding an interrupt handler to the vector table, GCC does not.
+Hence, in the following files an interrupt handler has been replaced with a function that a user must ensure is called from the
+corresponding interrupt handler:
+POE.c : Interrupt_POE2_OEI1.
+Clock_monitor.c: Interrupt_CAC_FERRF and Interrupt_CAC_OVFF
+
+1.b.
+C files that contain assembly had to be altered because of the different ways the compilers facilitate the inclusion of assembly within a C file.
+However, the underlying functionality of the tests have not been changed.
+
+
+2. Example usage
+
+2.a. Cyclic Redundancy Check (CRC)
+The Renesas toolchain provided a mechanism for automatically adding a reference CRC to the mot file.
+This facility is not available in GCC.
+Consequentially the part of the sample code that checks the calculated CRC against a reference
+CRC has been removed. A user must use their own method for adding a reference CRC.
+
+2.b. Section Addresses
+The Renesas toolchain provides section address operators 'sectop' and 'secend'.
+These were used to calculate the address ranges for RAM and ROM tests.
+In some cases these have been replaced with #defines of a hard coded address, taken from the linker map, but there is also an example
+of how GCC allows section labels to be accessed. See the initialisation of the CRC_ranges structure in file RX210_SelfTests.c.
+
+
+Application Note:
+The Application Note has been written for the HEW and Renesas toolchain.
+Therefore, please be aware of the differences specified in this release note when reading the Application Note.
+The Benchmarking section of the Application Note contains data produced using the Renesas toolchain.
+Benchmarking has not been done using GCC.
+
+E2Studio Debugging:
+If using an E1 debugger ensure the E1 is configured correctly:
+See Run->Debug Configurations->Renesas GDB Hardware->RX210_SelfTests HardwareDebug->Debugger->Debug Tool Settings
+Ensure the Target Device is correct for the RX200 device you are debugging and that Big Endian Mode is set.
+
+Issues
+1. If using the auto generated file vectors_table.c.
+The vector for POE2_OEI1 is missing from the file.
+Please add the following:
+//;0x02A8  POE2_OEI1
+(fp)INT_Excep_POE2_OEI1,
+
+2. The auto generated iodefine.h file has an error in the little endian configuration.
+Therefore, currently this software must only be used in big endian mode.
+This issue will be fixed in a later release of GNU Rx.
+
+
+
+End.

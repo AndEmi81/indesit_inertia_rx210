@@ -1,0 +1,128 @@
+#############################################################################
+#
+#	Platform 2 library configuration
+#
+#############################################################################
+
+menu "Configurazione Modulo MotorGate"
+  depends on PM_MOTORGATE  
+
+  config PM_UM_TASK_STACK_SIZE
+  int "MotorGate Task Stack size [int]"
+  default 256
+  help
+		Stack size allocated for Motor Gate driver Task.
+
+config PM_UM_WIDEPULSE
+	bool "PM_UM_WIDEPULSE"
+	help
+	  Pilota il motore con un impulso che termina sempre nella seconda meta' della fase,
+	  estendendo quindi la lunghezza dell'impulso a velocita' elevate.
+
+
+config PARAM_FROM_FIRMWARE
+	bool "Firmware Parameter"
+	help
+	  Configura il modulo con parametri determinati dal firmware e on dal settings
+
+config PM_UM_MOTOR_MEASURE
+	bool "MOTOR_MEASURE"
+	default y
+	help
+	  Configura il modulo per effettuare le misure sul motore, fase e antischiuma.
+
+config PM_UM_MOTORGATE_PID_CONTROL
+	bool "PM_MOTORGATE_PID_CONTROL"
+	help
+	  Usa un controllo PID piuttosto che quello standard.
+
+config TACHO_ONE_SHOT_LIMIT
+	int "TACHO_ONE_SHOT_LIMIT"
+	default 1000
+	help
+	  Limite sotto il quale la lettura della tachimetrica viene fatta non in contimuo.
+
+config PM_UM_UNBALANCE_DELTA_ALPHA
+	int "UNBALANCE_DELTA_ALPHA"
+	default 240
+	help
+	  value in us to add to phase to rebalance 
+
+config PM_UM_UNBALANCE_DELTA_SPEED
+	int "UNBALANCE_DELTA_SPEED"
+	default 2
+	help
+	  Parametro per gestire lo sbilanciamento, .
+            
+config PM_UM_TACHO_USE_PWD_FILTER
+	bool "Enable PWD Timer filter on tacho"
+	default n
+	help
+		Enable PWD Timer filter
+		This option allows to define a minimum time of each edge (rising/falling) to filter
+		noise.
+
+config PM_UM_TACHO_PWD_FILTER_TIME
+	depends on PM_UM_TACHO_USE_PWD_FILTER
+	int "PWD filter time (in ns)"
+	range 1 50000000
+	default 200000
+	help
+		Set PWD filter time
+		This is minimum time (in ns) accepted for edge validation.            
+
+config PM_UM_TACHO_USE_DIGITAL_FILTER
+    bool "Enable Digital pin filter (if available in micro used) on tacho"
+    default n
+    help
+        Enable Digital Pin filter
+        This option allows to define maximum acceptance frequency for Tacho
+        input; real filter applied depends on features availalbe on 
+        micro used for this application. 
+
+config PM_UM_TACHO_DIGITAL_FILTER_FREQ
+    depends on PM_UM_TACHO_USE_DIGITAL_FILTER
+    int "Digital filter frequency (in kHz)"
+    range 1 50000
+    default 2000
+    help
+        Set Digital filter time
+        This is maximum frequency (in kHz) accepted for edge validation.            
+
+config PM_UM_NO_TACH_TIMEOUT
+  int  "PM_UM_NO_TACH_TIMEOUT"
+  default 2
+  help
+    Contatore (ogni 10ms) per gestire la mancanza temporanea di segnale della tacho
+
+config PM_UM_NO_TACH_TIMEOUT_ENGINE_ON
+	int "PM_UM_NO_TACH_TIMEOUT_ENGINE_ON"
+	default 10
+	help
+	  Contatore (ogni 10ms) per timeout per gestire segnalazione mancanza tacho troppo a lungo 
+	  durante fase On Motore 
+	  
+
+config PM_UM_SUSPEND_TRIAC_AT_SOFT_START
+    bool "Enable support for suspending triac activation before soft start "
+    default n
+    help
+        After Relay switch triac activation can be suspended  	  
+
+comment "Debug functions"
+config PM_UM_TRACE_ENABLE
+    bool "TRACE_ENABLE"
+    default n
+	help
+	  Enable tracing of alpha , tacho, error  into TraceCollData variable
+	  
+config PM_UM_TRACE_DEPTH
+	depends on PM_UM_TRACE_ENABLE
+	int "PM_UM_TRACE_DEPTH"
+	default 40
+	help
+	  depth
+endmenu
+
+#############################################################################
+          	   

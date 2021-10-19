@@ -1,0 +1,1362 @@
+   1                             		.file	"SWDMA_drv.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.SWDMA_InitSync,"ax",@progbits
+   5                             		.global	_SWDMA_InitSync
+   7                             	_SWDMA_InitSync:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA/SWDMA_drv.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** Copyright (c) 2009-2010, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \file		SWDMA_drv.c
+   8:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \ingroup	SWDMA
+   9:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \date		05/2009
+  10:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \version	00.00.01
+  11:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \author		Roberto Fioravanti
+  12:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  13:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n
+  14:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n
+  15:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \par		History
+  16:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n 		00.00.30
+  17:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n		20/02/2010
+  18:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n		developper Roberto Fioravanti
+  19:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n		changes
+  20:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n 		- addiction of word and long transfer capability (SWDMA_SIZE_8BITs_TRANSFER, SWDMA_SIZE_16BITs
+  21:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n    - cycle steal functionality addiction (SWDMA_CONTINUOUS_MODE_TRANSFER_SUPPORT)
+  22:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n    - peripheral initiated transfer support
+  23:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n
+  24:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n
+  25:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n 		00.00.12
+  26:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n		08/10/2009
+  27:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n		developer Roberto Fioravanti
+  28:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n		changes
+  29:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n 		- structures updating to standard types
+  30:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n
+  31:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n 		00.00.01
+  32:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n		30/09/2009
+  33:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n		developer Roberto Fioravanti
+  34:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n		changes
+  35:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \n 		- creation
+  36:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** */
+  37:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  38:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* ******** */
+  39:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* Includes */
+  40:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* ******** */
+  41:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #include "string.h"
+  42:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  43:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #include  "SWDMA_drv.h"
+  44:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  45:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* ****************** */
+  46:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* Defines and Macros */
+  47:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* ****************** */
+  48:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #define SWDMA_OPTION_SSIZE	(3<<3)
+  49:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #define SWDMA_OPTION_DSIZE	(3<<6)
+  50:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  51:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* *************************** */
+  52:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* Typedef, Structs and Unions */
+  53:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* *************************** */
+  54:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  55:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /** struttura DMA */
+  56:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** typedef struct TD_tag{
+  57:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   Comm_Notification callback;
+  58:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  59:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   uint8_t *          SAR;     /* registro indirizzo di sorgente */
+  60:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   uint8_t *          DAR;     /* registro indirizzo di destinazione */
+  61:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   SWDMA_BcrType      BCR;     /* registro conteggio byte */
+  62:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     struct status_tag{
+  63:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     uint8_t done:1;                /* 1: operazione completata, non completata altrimenti */
+  64:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     }status;
+  65:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  66:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   SWDMA_AddressesOptsTypeU options;
+  67:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   struct ctl_tag{
+  68:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   uint16_t dev   :3;           /* device (hw only) */
+  69:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   uint16_t en    :1;           /* 1: DMA abilitato, non abilitato altrimenti */
+  70:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }ctl;
+  71:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }SWDMA_TransferDescriptorType;
+  72:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  73:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  74:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  75:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  76:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  77:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* **************************** */
+  78:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* Prototype of local functions */
+  79:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* **************************** */
+  80:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** IO_ErrorType SWDMA_SetChannelDeviceSync(IO_ChannelType channel);
+  81:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** IO_ErrorType SWDMA_SingleTransfer(IO_ChannelType channel);
+  82:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** void SWDMA_StatusManager(IO_ChannelType channel);
+  83:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  84:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  85:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  86:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* ****************** */
+  87:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* Exported variables */
+  88:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* ****************** */
+  89:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  90:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* **************** */
+  91:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* Global variables */
+  92:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* **************** */
+  93:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** SWDMA_TransferDescriptorType  SWDMA_Data[SWDMA_CH_NUM];
+  94:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  95:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* ***************** */
+  96:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* Exported function */
+  97:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* ***************** */
+  98:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+  99:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /**
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** Initialization.
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \param [in] 	void* address (ignored)
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \return 		  IO_ErrorType
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_OK
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \notes:
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \version		1.0.0
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \date 			13/03/2009
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \author			Roberto Fioravanti
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** */
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** IO_ErrorType SWDMA_InitSync(void* address)
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** {
+  10                             		.loc 1 114 0
+  11                             	.LVL0:
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     (void) address;
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_OK;
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }
+  12                             		.loc 1 117 0
+  13 0000 66 01                   		mov.L	#0, r1
+  14                             	.LVL1:
+  15 0002 02                      		rts
+  16                             	.LFE0:
+  18                             		.section	.text.SWDMA_DeInitSync,"ax",@progbits
+  19                             		.global	_SWDMA_DeInitSync
+  21                             	_SWDMA_DeInitSync:
+  22                             	.LFB1:
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /**
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** de-inizializzazione.
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \param [in] 	void* address (ignored)
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \return 		  IO_ErrorType
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_OK
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \notes:
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \version		1.0.0
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \date 			13/03/2009
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \author			Roberto Fioravanti
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** */
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** IO_ErrorType SWDMA_DeInitSync(void* address)
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** {
+  23                             		.loc 1 134 0
+  24                             	.LVL2:
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   (void) address;
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   (void)memset(SWDMA_Data,0,sizeof(SWDMA_Data));
+  25                             		.loc 1 136 0
+  26 0000 FB 12 00 00 00 00       		mov.L	#_SWDMA_Data, r1
+  27                             	.LVL3:
+  28 0006 75 43 28                		mov.L	#40, r3
+  29 0009 66 02                   		mov	#0, r2
+  30 000b 7F 88                   		sstr.b
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   return (IO_ErrorType)IO_E_OK;
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }
+  31                             		.loc 1 139 0
+  32 000d 66 01                   		mov.L	#0, r1
+  33 000f 02                      		rts
+  34                             	.LFE1:
+  36                             		.section	.text.SWDMA_GetChannelNumSync,"ax",@progbits
+  37                             		.global	_SWDMA_GetChannelNumSync
+  39                             	_SWDMA_GetChannelNumSync:
+  40                             	.LFB2:
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /**
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** Ritorna il numero di canali.
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \return 		  IO_ChannelType
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       number of channels.
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \notes:       index range [0..[number of channels-1)]
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \version		1.0.0
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \date 			13/03/2009
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \author			Roberto Fioravanti
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** */
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** IO_ChannelType SWDMA_GetChannelNumSync(void)
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** {
+  41                             		.loc 1 156 0
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   return (IO_ChannelType)(SWDMA_CH_NUM);
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }
+  42                             		.loc 1 158 0
+  43 0000 66 21                   		mov.L	#2, r1
+  44 0002 02                      		rts
+  45                             	.LFE2:
+  47                             		.section	.text.SWDMA_CheckChannelAvailabilitySync,"ax",@progbits
+  48                             		.global	_SWDMA_CheckChannelAvailabilitySync
+  50                             	_SWDMA_CheckChannelAvailabilitySync:
+  51                             	.LFB3:
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /**
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** Verifica la disponibilità del canale.
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \param [in] 	IO_ChannelType channel
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** canale
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \return 		  IO_ErrorType
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_BUSY     (Not available)
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_OK       (Available)
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_INVALID_CHANNEL_ID
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \notes:
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \version		1.0.0
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \date 			13/03/2009
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \author			Roberto Fioravanti
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** */
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** IO_ErrorType SWDMA_CheckChannelAvailabilitySync(IO_ChannelType channel)
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** {
+  52                             		.loc 1 178 0
+  53                             	.LVL4:
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(channel>SWDMA_CH_NUM)
+  54                             		.loc 1 179 0
+  55 0000 5B 11                   		movu.B	r1, r1
+  56 0002 61 21                   		cmp	#2, r1
+  57 0004 24 13                   		bgtu	.L6
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(SWDMA_Data[channel].ctl.dev)
+  58                             		.loc 1 184 0
+  59 0006 75 11 14                		mul	#20, r1
+  60                             	.LVL5:
+  61 0009 70 11 00 00 00 00       		add	#_SWDMA_Data, r1
+  62 000f A9 11                   		mov.L	16[r1], r1
+  63 0011 69 D1                   		shlr	#29, r1
+  64 0013 FC DB 11                		scne.L	r1
+  65 0016 0C                      		bra	.L5
+  66                             	.L6:
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+  67                             		.loc 1 181 0
+  68 0017 75 41 12                		mov	#18, r1
+  69                             		.balign 2,3,2
+  70                             	.L5:
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_BUSY;
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   return (IO_ErrorType)IO_E_OK;
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }
+  71                             		.loc 1 190 0
+  72 001a 75 21 13                		and #19, r1
+  73 001d 02                      		rts
+  74                             	.LFE3:
+  76                             		.section	.text.SWDMA_ChannelEnableSync,"ax",@progbits
+  77                             		.global	_SWDMA_ChannelEnableSync
+  79                             	_SWDMA_ChannelEnableSync:
+  80                             	.LFB4:
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /**
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** Enables the channel
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \param [in]   channel, channel to be enabled
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \return 		  IO_ErrorType
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_OK       (Available)
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_INVALID_CHANNEL_ID: channel value beyond SWDMA_CH_NUM
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \notes:
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \version		1.0.0
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \date 			13/03/2009
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \author			Roberto Fioravanti
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** */
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** IO_ErrorType SWDMA_ChannelEnableSync(IO_ChannelType channel)
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** {
+  81                             		.loc 1 207 0
+  82                             	.LVL6:
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(channel>SWDMA_CH_NUM)
+  83                             		.loc 1 208 0
+  84 0000 5B 11                   		movu.B	r1, r1
+  85 0002 61 21                   		cmp	#2, r1
+  86 0004 24 18                   		bgtu	.L9
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   SWDMA_Data[channel].ctl.en=1;
+  87                             		.loc 1 213 0
+  88 0006 EF 1E                   		mov.L	r1, r14
+  89 0008 75 1E 14                		mul	#20, r14
+  90 000b 70 EE 00 00 00 00       		add	#_SWDMA_Data, r14
+  91 0011 CD E4 10                		mov.B	16[r14], r4
+  92 0014 78 44                   		bset	#4, r4
+  93 0016 C7 E4 10                		mov.B	r4, 16[r14]
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   return (IO_ErrorType)IO_E_OK;
+  94                             		.loc 1 215 0
+  95 0019 66 01                   		mov	#0, r1
+  96                             	.LVL7:
+  97 001b 0D                      		bra	.L8
+  98                             	.L9:
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+  99                             		.loc 1 210 0
+ 100 001c 75 41 12                		mov	#18, r1
+ 101 001f 03                      		.balign 2,3,2
+ 102                             	.L8:
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }
+ 103                             		.loc 1 216 0
+ 104 0020 75 21 12                		and #18, r1
+ 105 0023 02                      		rts
+ 106                             	.LFE4:
+ 108                             		.section	.text.SWDMA_ChannelDisableSync,"ax",@progbits
+ 109                             		.global	_SWDMA_ChannelDisableSync
+ 111                             	_SWDMA_ChannelDisableSync:
+ 112                             	.LFB5:
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /**
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** Disable the channel
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \param [in]   channel to be enabled
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \return 		  IO_ErrorType
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_INVALID_CHANNEL_ID: channel value beyond SWDMA_CH_NUM
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \notes:
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \version		1.0.0
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \date 			13/03/2009
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \author			Roberto Fioravanti
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** */
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** IO_ErrorType SWDMA_ChannelDisableSync(IO_ChannelType channel)
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** {
+ 113                             		.loc 1 232 0
+ 114                             	.LVL8:
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(channel>SWDMA_CH_NUM)
+ 115                             		.loc 1 233 0
+ 116 0000 5B 11                   		movu.B	r1, r1
+ 117 0002 61 21                   		cmp	#2, r1
+ 118 0004 24 18                   		bgtu	.L12
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   SWDMA_Data[channel].ctl.en=0;
+ 119                             		.loc 1 238 0
+ 120 0006 EF 1E                   		mov.L	r1, r14
+ 121 0008 75 1E 14                		mul	#20, r14
+ 122 000b 70 EE 00 00 00 00       		add	#_SWDMA_Data, r14
+ 123 0011 CD E4 10                		mov.B	16[r14], r4
+ 124 0014 7A 44                   		bclr	#4, r4
+ 125 0016 C7 E4 10                		mov.B	r4, 16[r14]
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   return (IO_ErrorType)IO_E_OK;
+ 126                             		.loc 1 240 0
+ 127 0019 66 01                   		mov	#0, r1
+ 128                             	.LVL9:
+ 129 001b 0D                      		bra	.L11
+ 130                             	.L12:
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 131                             		.loc 1 235 0
+ 132 001c 75 41 12                		mov	#18, r1
+ 133 001f 03                      		.balign 2,3,2
+ 134                             	.L11:
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }
+ 135                             		.loc 1 241 0
+ 136 0020 75 21 12                		and #18, r1
+ 137 0023 02                      		rts
+ 138                             	.LFE5:
+ 140                             		.section	.text.SWDMA_CheckChannelEnableSync,"ax",@progbits
+ 141                             		.global	_SWDMA_CheckChannelEnableSync
+ 143                             	_SWDMA_CheckChannelEnableSync:
+ 144                             	.LFB6:
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /**
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** Checks if the channel is enabled
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \param [in]   IO_ChannelType channel.
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** canale per cui chiedere la verifica.
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \return 		  IO_DeviceStateType
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_STATE_IDLE
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_STATE_ACTIVE
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_INVALID_CHANNEL_ID: channel value beyond SWDMA_CH_NUM
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \notes:
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \version		1.0.0
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \date 			13/03/2009
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \author			Roberto Fioravanti
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** */
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** IO_DeviceStateType SWDMA_CheckChannelEnableSync(IO_ChannelType channel)
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** {
+ 145                             		.loc 1 261 0
+ 146                             	.LVL10:
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(channel>SWDMA_CH_NUM)
+ 147                             		.loc 1 262 0
+ 148 0000 5B 11                   		movu.B	r1, r1
+ 149 0002 61 21                   		cmp	#2, r1
+ 150 0004 24 12                   		bgtu	.L15
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(SWDMA_Data[channel].ctl.en)
+ 151                             		.loc 1 267 0
+ 152 0006 75 11 14                		mul	#20, r1
+ 153                             	.LVL11:
+ 154 0009 70 11 00 00 00 00       		add	#_SWDMA_Data, r1
+ 155 000f A9 11                   		mov.L	16[r1], r1
+ 156 0011 69 C1                   		shlr	#28, r1
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 157                             		.loc 1 264 0
+ 158 0013 64 11                   		and #1, r1
+ 159 0015 0D                      		bra	.L14
+ 160                             	.L15:
+ 161 0016 75 41 12                		mov	#18, r1
+ 162 0019 03                      		.balign 2,3,2
+ 163                             	.L14:
+ 268:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_STATE_ACTIVE;
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   return (IO_ErrorType)IO_STATE_IDLE;
+ 273:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }
+ 164                             		.loc 1 273 0
+ 165 001a 75 21 13                		and #19, r1
+ 166 001d 02                      		rts
+ 167                             	.LFE6:
+ 169                             		.section	.text.SWDMA_CheckChannelDoneSync,"ax",@progbits
+ 170                             		.global	_SWDMA_CheckChannelDoneSync
+ 172                             	_SWDMA_CheckChannelDoneSync:
+ 173                             	.LFB7:
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /**
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** Checks if done
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \param [in]   IO_ChannelType channel.
+ 280:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** canale per cui chiedere la verifica.
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \return 		  IO_DeviceStateType
+ 282:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_OK: done
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_BUSY: still working
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_INVALID_CHANNEL_ID: channel value beyond SWDMA_CH_NUM
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 286:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \notes:
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \version		1.0.0
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \date 			13/03/2009
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \author			Roberto Fioravanti
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** */
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** IO_ErrorType SWDMA_CheckChannelDoneSync(IO_ChannelType channel)
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** {
+ 174                             		.loc 1 293 0
+ 175                             	.LVL12:
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(channel > SWDMA_CH_NUM)
+ 176                             		.loc 1 294 0
+ 177 0000 5B 11                   		movu.B	r1, r1
+ 178 0002 61 21                   		cmp	#2, r1
+ 179 0004 24 16                   		bgtu	.L18
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 297:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(SWDMA_Data[channel].status.done)
+ 180                             		.loc 1 299 0
+ 181 0006 75 11 14                		mul	#20, r1
+ 182                             	.LVL13:
+ 183 0009 70 11 00 00 00 00       		add	#_SWDMA_Data, r1
+ 184 000f A8 99                   		mov.L	12[r1], r1
+ 185 0011 68 F1                   		shlr	#15, r1
+ 186 0013 64 11                   		and #1, r1
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 187                             		.loc 1 296 0
+ 188 0015 FD 74 D1 01             		xor	#1, r1
+ 189 0019 0D                      		bra	.L17
+ 190                             	.L18:
+ 191 001a 75 41 12                		mov	#18, r1
+ 192 001d 03                      		.balign 2,3,2
+ 193                             	.L17:
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_OK;
+ 302:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 303:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   return (IO_ErrorType)IO_E_BUSY;
+ 305:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }
+ 194                             		.loc 1 305 0
+ 195 001e 75 21 13                		and #19, r1
+ 196 0021 02                      		rts
+ 197                             	.LFE7:
+ 199                             		.section	.text.SWDMA_SetChannelDeviceSync,"ax",@progbits
+ 200                             		.global	_SWDMA_SetChannelDeviceSync
+ 202                             	_SWDMA_SetChannelDeviceSync:
+ 203                             	.LFB8:
+ 306:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 307:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 308:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /**
+ 309:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** Set the device .
+ 310:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 311:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \param [in]   channel
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 313:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \return       IO_ErrorType
+ 314:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_OK
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_BUSY
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_INVALID_CHANNEL_ID: channel value beyond SWDMA_CH_NUM
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 318:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \notes:
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 320:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \version		1.0.0
+ 321:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \date 			13/03/2009
+ 322:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \author			Roberto Fioravanti
+ 323:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** */
+ 324:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** IO_ErrorType SWDMA_SetChannelDeviceSync(IO_ChannelType channel)
+ 325:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** {
+ 204                             		.loc 1 325 0
+ 205                             	.LVL14:
+ 326:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(channel>SWDMA_CH_NUM)
+ 206                             		.loc 1 326 0
+ 207 0000 5B 11                   		movu.B	r1, r1
+ 208 0002 61 21                   		cmp	#2, r1
+ 209 0004 24 20                   		bgtu	.L21
+ 327:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 328:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 329:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 330:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 331:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(SWDMA_Data[channel].ctl.dev)
+ 210                             		.loc 1 331 0
+ 211 0006 EF 1E                   		mov.L	r1, r14
+ 212 0008 75 1E 14                		mul	#20, r14
+ 213 000b 70 EE 00 00 00 00       		add	#_SWDMA_Data, r14
+ 214 0011 ED E1 04                		mov.L	16[r14], r1
+ 215                             	.LVL15:
+ 216 0014 69 D1                   		shlr	#29, r1
+ 217 0016 21 12                   		bne	.L22
+ 332:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 333:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_BUSY;
+ 334:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 335:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 336:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   SWDMA_Data[channel].ctl.dev=1;
+ 218                             		.loc 1 336 0
+ 219 0018 CD E4 10                		mov.B	16[r14], r4
+ 220 001b 75 24 1F                		and #31, r4
+ 221 001e 78 54                   		bset #5, r4
+ 222 0020 C7 E4 10                		mov.B	r4, 16[r14]
+ 337:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 338:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   return (IO_ErrorType)IO_E_OK;
+ 223                             		.loc 1 338 0
+ 224 0023 0F                      		bra	.L20
+ 225                             	.L21:
+ 328:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 226                             		.loc 1 328 0
+ 227 0024 75 41 12                		mov	#18, r1
+ 228 0027 0B                      		bra	.L20
+ 229                             	.L22:
+ 333:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_BUSY;
+ 230                             		.loc 1 333 0
+ 231 0028 66 11                   		mov	#1, r1
+ 232                             		.balign 2,3,2
+ 233                             	.L20:
+ 339:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }
+ 234                             		.loc 1 339 0
+ 235 002a 75 21 17                		and #23, r1
+ 236 002d 02                      		rts
+ 237                             	.LFE8:
+ 239                             		.section	.text.SWDMA_SetTransferSync,"ax",@progbits
+ 240                             		.global	_SWDMA_SetTransferSync
+ 242                             	_SWDMA_SetTransferSync:
+ 243                             	.LFB9:
+ 340:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 341:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /**
+ 342:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** Set Transfer parameters.
+ 343:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 344:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \param [in]   SWDMA_SetDarSync
+ 345:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 346:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \return       IO_ErrorType
+ 347:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_OK: params accepted
+ 348:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_INVALID_CHANNEL_ID: channel value beyond SWDMA_CH_NUM
+ 349:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_INVALID_VALUE:  dar and/or sar in transfer are null.
+ 350:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 351:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \notes:
+ 352:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 353:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \version		1.0.0
+ 354:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \date 			13/03/2009
+ 355:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \author			Roberto Fioravanti
+ 356:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** */
+ 357:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** IO_ErrorType SWDMA_SetTransferSync(SWDMA_TransferType* transfer)
+ 358:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** {
+ 244                             		.loc 1 358 0
+ 245                             	.LVL16:
+ 359:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(transfer->channel>SWDMA_CH_NUM)
+ 246                             		.loc 1 359 0
+ 247 0000 CC 1E                   		mov.B	[r1], r14
+ 248 0002 5B E4                   		movu.B	r14, r4
+ 249 0004 61 24                   		cmp	#2, r4
+ 250 0006 24 2A                   		bgtu	.L26
+ 360:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 361:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 362:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 363:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 364:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if((!transfer->dar) && (!transfer->sar))
+ 251                             		.loc 1 364 0
+ 252 0008 A8 93                   		mov.L	8[r1], r3
+ 253 000a A8 1C                   		mov.L	4[r1], r4
+ 254 000c 61 03                   		cmp	#0, r3
+ 255 000e 1E                      		bne	.L25
+ 256                             		.loc 1 364 0 is_stmt 0 discriminator 1
+ 257 000f 61 04                   		cmp	#0, r4
+ 258 0011 20 23                   		beq	.L27
+ 259 0013 03                      		.balign 2,3,1
+ 260                             	.L25:
+ 365:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 366:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 367:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 368:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 369:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   SWDMA_Data[transfer->channel].DAR=transfer->dar;
+ 261                             		.loc 1 369 0 is_stmt 1
+ 262 0014 5B EE                   		movu.B	r14, r14
+ 263 0016 75 1E 14                		mul	#20, r14
+ 264 0019 70 EE 00 00 00 00       		add	#_SWDMA_Data, r14
+ 265 001f E7 E3 02                		mov.L	r3, 8[r14]
+ 370:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   SWDMA_Data[transfer->channel].SAR=transfer->sar;
+ 266                             		.loc 1 370 0
+ 267 0022 E7 E4 01                		mov.L	r4, 4[r14]
+ 371:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   SWDMA_Data[transfer->channel].BCR=transfer->bcr;
+ 268                             		.loc 1 371 0
+ 269 0025 D5 1E 06 06             		mov.W	12[r1], 12[r14]
+ 372:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   SWDMA_Data[transfer->channel].options.optionbyte = transfer->options.optionbyte;
+ 270                             		.loc 1 372 0
+ 271 0029 C5 1E 0E 0F             		mov.B	14[r1], 15[r14]
+ 373:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 374:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   return (IO_ErrorType)IO_E_OK;
+ 272                             		.loc 1 374 0
+ 273 002d 66 01                   		mov	#0, r1
+ 274                             	.LVL17:
+ 275 002f 09                      		bra	.L24
+ 276                             	.LVL18:
+ 277                             	.L26:
+ 361:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 278                             		.loc 1 361 0
+ 279 0030 75 41 12                		mov	#18, r1
+ 280                             	.LVL19:
+ 281 0033 0D                      		bra	.L24
+ 282                             	.LVL20:
+ 283                             	.L27:
+ 366:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 284                             		.loc 1 366 0
+ 285 0034 75 41 13                		mov	#19, r1
+ 286                             	.LVL21:
+ 287 0037 03                      		.balign 2,3,2
+ 288                             	.L24:
+ 375:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }
+ 289                             		.loc 1 375 0
+ 290 0038 75 21 13                		and #19, r1
+ 291 003b 02                      		rts
+ 292                             	.LFE9:
+ 294                             		.section	.text.SWDMA_SingleTransfer,"ax",@progbits
+ 295                             		.global	_SWDMA_SingleTransfer
+ 297                             	_SWDMA_SingleTransfer:
+ 298                             	.LFB12:
+ 376:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 377:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /**
+ 378:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** Starts the trasfer
+ 379:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 380:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \param [in]   SWDMA_StartTransferType
+ 381:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 382:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \return       IO_ErrorType
+ 383:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_OK
+ 384:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_INVALID_CHANNEL_ID: channel value beyond SWDMA_CH_NUM
+ 385:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_INVALID_VALUE: BCR is zero;
+ 386:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 387:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \par Example: software initiated trasfer with I2C
+ 388:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \code
+ 389:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     SWDMA_TransferType  transfer = {0};
+ 390:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 391:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     ...
+ 392:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 393:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     transfer.bcr = OCI2C.TxLen;
+ 394:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     transfer.sar = OCI2C.TxBuffer;
+ 395:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     transfer.dar = I2C_pTransmitDataRegister();
+ 396:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     transfer.channel = OCI2C.DmaCh;
+ 397:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 398:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     transfer.options.optionbyte =	SWDMA_OPTION_SSIZE_BYTE|
+ 399:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 									SWDMA_OPTION_DSIZE_BYTE|
+ 400:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 									SWDMA_OPTION_SINC|
+ 401:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 									SWDMA_OPTION_CS|
+ 402:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 									SWDMA_OPTION_START;
+ 403:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 404:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     (void)SWDMA_ChannelEnableSync(OCI2C.DmaCh);
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     (void)SWDMA_SetTransferSync(&transfer);
+ 406:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 407:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \endcode
+ 408:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 409:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \par Example: peripheral initiated with I2C
+ 410:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \code
+ 411:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 412:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     SWDMA_TransferType  transfer = {0};
+ 413:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 414:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     ...
+ 415:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 416:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     transfer.bcr = OCI2C.TxLen;
+ 417:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     transfer.sar = OCI2C.TxBuffer;
+ 418:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     transfer.dar = I2C_pTransmitDataRegister();
+ 419:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     transfer.channel = OCI2C.DmaCh;
+ 420:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 421:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     transfer.options.optionbyte =	SWDMA_OPTION_SSIZE_BYTE|
+ 422:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 									SWDMA_OPTION_DSIZE_BYTE|
+ 423:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 									SWDMA_OPTION_DINC|
+ 424:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 									SWDMA_OPTION_CS;
+ 425:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 426:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     (void)SWDMA_ChannelEnableSync(OCI2C.DmaCh);
+ 427:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     (void)SWDMA_SetTransferSync(&transfer);
+ 428:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 429:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \endcode
+ 430:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 431:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \version		1.0.0
+ 432:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \date 			13/03/2009
+ 433:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \author			Roberto Fioravanti
+ 434:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** */
+ 435:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** IO_ErrorType SWDMA_StartTransferSync(IO_ChannelType channel, Comm_Notification callback)
+ 436:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** {
+ 437:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(channel>SWDMA_CH_NUM)
+ 438:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 439:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 440:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 441:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 442:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(SWDMA_Data[channel].BCR == 0)
+ 443:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 444:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 445:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 446:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 447:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   SWDMA_Data[channel].status.done=0;
+ 448:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 449:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   SWDMA_Data[channel].callback=callback;
+ 450:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 451:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 452:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 453:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(SWDMA_Data[channel].options.optionbyte & SWDMA_OPTION_START)
+ 454:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 455:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 		SWDMA_StatusManager(channel);
+ 456:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #if defined(SWDMA_CONTINUOUS_MODE_TRANSFER_SUPPORT) && (SWDMA_CONTINUOUS_MODE_TRANSFER_SUPPORT==TRU
+ 457:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 	if(	! (SWDMA_Data[channel].options.optionbyte & SWDMA_OPTION_CS) )
+ 458:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     {
+ 459:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****       SWDMA_ExeTransferMngrSync(channel);
+ 460:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     }
+ 461:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #endif /*	(SWDMA_CONTINUOUS_MODE_TRANSFER_SUPPORT)  */
+ 462:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 463:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return SWDMA_SingleTransfer(channel);
+ 464:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 465:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   return IO_E_OK;
+ 466:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }
+ 467:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 468:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /**
+ 469:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** Executes the transfer.
+ 470:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 471:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \param [in]   SWDMA_StartTransferType
+ 472:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 473:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \return       IO_ErrorType
+ 474:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_OK        ()
+ 475:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_INVALID_CHANNEL_ID
+ 476:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_INVALID_VALUE
+ 477:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 478:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \par Example: Interrupt management of SWDMA
+ 479:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \code
+ 480:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 481:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #if !defined(_HAL_DMA_CAPABILITY)
+ 482:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(SWDMA_CheckChannelEnableSync(\c channel) == (IO_ErrorType)IO_STATE_ACTIVE)
+ 483:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 484:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     (void)SWDMA_ExeTransferMngrSync(\c channel);
+ 485:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   } else
+ 486:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #endif // !defined(_HAL_DMA_CAPABILITY)
+ 487:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 488:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 489:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     ...
+ 490:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 491:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \endcode
+ 492:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \version		1.0.0
+ 493:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \date 			13/03/2009
+ 494:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \author			Roberto Fioravanti
+ 495:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** */
+ 496:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** IO_ErrorType SWDMA_ExeTransferMngrSync(IO_ChannelType channel)
+ 497:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** {
+ 498:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(channel>SWDMA_CH_NUM)
+ 499:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 500:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 501:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 502:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 503:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #if defined(SWDMA_CONTINUOUS_MODE_TRANSFER_SUPPORT) && (SWDMA_CONTINUOUS_MODE_TRANSFER_SUPPORT==TRU
+ 504:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 	  if(	! (SWDMA_Data[channel].options.optionbyte & SWDMA_OPTION_CS) )
+ 505:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 506:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     memcpy(SWDMA_Data[channel].DAR, SWDMA_Data[channel].SAR, SWDMA_Data[channel].BCR);
+ 507:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     SWDMA_Data[channel].BCR = 0;
+ 508:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     SWDMA_Data[channel].status.done=1;
+ 509:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 510:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #endif /*	(SWDMA_CONTINUOUS_MODE_TRANSFER_SUPPORT)  */
+ 511:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 512:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     if(SWDMA_Data[channel].status.done == 1)
+ 513:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 514:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     SWDMA_Data[channel].ctl.en=0;
+ 515:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 516:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     if(SWDMA_Data[channel].callback)
+ 517:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     {
+ 518:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     	(void)(SWDMA_Data[channel].callback)((IO_NotificationType)IO_N_TRANSFER_DONE, channel, (IO_Err
+ 519:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     }
+ 520:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 521:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_OK;
+ 522:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 523:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 524:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   SWDMA_StatusManager(channel);
+ 525:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 526:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   return SWDMA_SingleTransfer(channel);
+ 527:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }
+ 528:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 529:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* ************** */
+ 530:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* Local Function */
+ 531:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /* ************** */
+ 532:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 533:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /**
+ 534:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** SWDMA_SingleTransfer.
+ 535:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 536:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \param [in] 	IO_ChannelType channel
+ 537:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 538:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \return 		  IO_ErrorType
+ 539:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \retval       IO_E_OK
+ 540:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 541:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \notes:
+ 542:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 543:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \version		1.0.0
+ 544:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \date 			09/07/2008
+ 545:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \author			Roberto Fioravanti
+ 546:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** */
+ 547:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** IO_ErrorType SWDMA_SingleTransfer(IO_ChannelType channel)
+ 548:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** {
+ 299                             		.loc 1 548 0
+ 300                             	.LVL22:
+ 549:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   SWDMA_SarType sar=SWDMA_Data[channel].SAR;
+ 301                             		.loc 1 549 0
+ 302 0000 5B 11                   		movu.B	r1, r1
+ 303 0002 75 11 14                		mul	#20, r1
+ 304                             	.LVL23:
+ 305 0005 70 1E 00 00 00 00       		add	#_SWDMA_Data, r1, r14
+ 306 000b ED E4 01                		mov.L	4[r14], r4
+ 307                             	.LVL24:
+ 550:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   SWDMA_DarType dar=SWDMA_Data[channel].DAR;
+ 308                             		.loc 1 550 0
+ 309 000e ED E3 02                		mov.L	8[r14], r3
+ 310                             	.LVL25:
+ 551:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 552:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(SWDMA_Data[channel].options.optionbyte & SWDMA_OPTION_SINC)
+ 311                             		.loc 1 552 0
+ 312 0011 CD E2 0F                		mov.B 15[r14], r2
+ 313 0014 64 42                   		and #4, r2
+ 314 0016 10                      		beq	.L29
+ 553:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 554:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #if		(SWDMA_FIXED_SIZE == TRUE)
+ 555:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 		SWDMA_Data[channel].SAR++;
+ 315                             		.loc 1 555 0
+ 316 0017 71 42 01                		add	#1, r4, r2
+ 317 001a E7 E2 01                		mov.L	r2, 4[r14]
+ 318 001d 03                      		.balign 2,3,5
+ 319                             	.L29:
+ 556:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #else
+ 557:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     switch(SWDMA_Data[channel].options.optionbyte & SWDMA_OPTION_SSIZE)
+ 558:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     {
+ 559:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #if	(SWDMA_SIZE_8BITs_TRANSFER)
+ 560:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****       case SWDMA_OPTION_SSIZE_BYTE:
+ 561:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****         SWDMA_Data[channel].SAR++;
+ 562:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****       break;
+ 563:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #endif	/*	(SWDMA_SIZE_8BITs_TRANSFER) */
+ 564:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 565:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #if		(SWDMA_SIZE_16BITs_TRANSFER)
+ 566:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****       case SWDMA_OPTION_SSIZE_WORD:
+ 567:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****         SWDMA_Data[channel].SAR+=2;
+ 568:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****       break;
+ 569:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #endif	/*	(SWDMA_SIZE_16BITs_TRANSFER)			*/
+ 570:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 571:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #if		(SWDMA_SIZE_32BITs_TRANSFER)
+ 572:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****       case SWDMA_OPTION_SSIZE_LONG:
+ 573:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****         SWDMA_Data[channel].SAR+=4;
+ 574:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****       break;
+ 575:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #endif	/*	(SWDMA_SIZE_16BITs_TRANSFER)			*/
+ 576:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     }
+ 577:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #endif		/*(SWDMA_FIXED_SIZE == TRUE)*/
+ 578:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 579:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 580:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(SWDMA_Data[channel].options.optionbyte & SWDMA_OPTION_DINC)
+ 320                             		.loc 1 580 0
+ 321 001e 70 11 00 00 00 00       		add	#_SWDMA_Data, r1
+ 322 0024 CD 1E 0F                		mov.B 15[r1], r14
+ 323 0027 75 2E 20                		and #32, r14
+ 324 002a 12                      		beq	.L30
+ 581:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 582:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #if	(SWDMA_FIXED_SIZE)
+ 583:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 		SWDMA_Data[channel].DAR++;
+ 325                             		.loc 1 583 0
+ 326 002b ED 1E 02                		mov.L	8[r1], r14
+ 327 002e 62 1E                   		add	#1, r14
+ 328 0030 E7 1E 02                		mov.L	r14, 8[r1]
+ 329 0033 03                      		.balign 2,3,1
+ 330                             	.L30:
+ 584:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #else
+ 585:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     switch(SWDMA_Data[channel].options.optionbyte & SWDMA_OPTION_DSIZE)
+ 586:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     {
+ 587:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #if	(SWDMA_SIZE_8BITs_TRANSFER)
+ 588:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****       case SWDMA_OPTION_DSIZE_BYTE:
+ 589:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****         SWDMA_Data[channel].DAR++;
+ 590:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****       break;
+ 591:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #endif	/*	(SWDMA_SIZE_8BITs_TRANSFER) */
+ 592:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #if	(SWDMA_SIZE_16BITs_TRANSFER)
+ 593:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****       case SWDMA_OPTION_DSIZE_WORD:
+ 594:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****         SWDMA_Data[channel].DAR+=2;
+ 595:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****       break;
+ 596:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #endif	/*	(SWDMA_SIZE_16BITs_TRANSFER)*/
+ 597:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #if	(SWDMA_SIZE_32BITs_TRANSFER)
+ 598:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****       case SWDMA_OPTION_DSIZE_LONG:
+ 599:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****         SWDMA_Data[channel].DAR+=4;
+ 600:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****       break;
+ 601:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #endif	/*	(SWDMA_SIZE_32BITs_TRANSFER) */
+ 602:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 603:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 		}
+ 604:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #endif /*(SWDMA_FIXED_SIZE == TRUE)*/
+ 605:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 606:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 607:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #if (SWDMA_FIXED_SIZE)
+ 608:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 	*dar=*sar;
+ 331                             		.loc 1 608 0
+ 332 0034 C0 43                   		mov.B	[r4], [r3]
+ 609:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #else
+ 610:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   switch(SWDMA_Data[channel].options.optionbyte & SWDMA_OPTION_SSIZE)
+ 611:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 612:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #if	(SWDMA_SIZE_8BITs_TRANSFER)
+ 613:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     case SWDMA_OPTION_SSIZE_BYTE:
+ 614:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     *dar=*sar;
+ 615:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     break;
+ 616:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #endif	/*	(SWDMA_SIZE_8BITs_TRANSFER)*/
+ 617:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #if		(SWDMA_SIZE_16BITs_TRANSFER)
+ 618:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     case SWDMA_OPTION_SSIZE_WORD:
+ 619:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     *((uint16_t*)dar)=*((uint16_t*)sar);
+ 620:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     break;
+ 621:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #endif	/*	(SWDMA_SIZE_16BITs_TRANSFER)*/
+ 622:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #if		(SWDMA_SIZE_32BITs_TRANSFER)
+ 623:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     case SWDMA_OPTION_SSIZE_LONG:
+ 624:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     *((uint32_t*)dar)=*((uint32_t*)sar);
+ 625:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     break;
+ 626:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #endif	/*	(SWDMA_SIZE_32BITs_TRANSFER)	*/
+ 627:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 628:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #endif /*(SWDMA_FIXED_SIZE == TRUE)*/
+ 629:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   return (IO_ErrorType)IO_E_OK;
+ 630:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }
+ 333                             		.loc 1 630 0
+ 334 0036 66 01                   		mov.L	#0, r1
+ 335 0038 02                      		rts
+ 336                             	.LFE12:
+ 338 0039 03                      		.section	.text.SWDMA_StatusManager,"ax",@progbits
+ 339                             		.global	_SWDMA_StatusManager
+ 341                             	_SWDMA_StatusManager:
+ 342                             	.LFB13:
+ 631:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 632:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** /**
+ 633:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** SWDMA_StatusManager.
+ 634:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 635:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \param [in] 	IO_ChannelType channel
+ 636:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 637:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \notes:
+ 638:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 639:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \version		1.0.0
+ 640:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \date 			09/07/2008
+ 641:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** \author			Roberto Fioravanti
+ 642:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** */
+ 643:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** void SWDMA_StatusManager(IO_ChannelType channel)
+ 644:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** {
+ 343                             		.loc 1 644 0
+ 344                             	.LVL26:
+ 645:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #if		defined(SWDMA_SIZE_32BITs_TRANSFER)
+ 646:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(SWDMA_Data[channel].BCR <= ((SWDMA_Data[channel].options.optionbyte & SWDMA_OPTION_SSIZE) == 0
+ 647:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 								  0x04:
+ 648:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 								  (SWDMA_Data[channel].options.optionbyte & SWDMA_OPTION_SSIZE)>>3))
+ 649:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #else
+ 650:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 	if(SWDMA_Data[channel].BCR <= ((SWDMA_Data[channel].options.optionbyte & SWDMA_OPTION_SSIZE)>>3))
+ 345                             		.loc 1 650 0
+ 346 0000 5B 11                   		movu.B	r1, r1
+ 347 0002 75 11 14                		mul	#20, r1
+ 348                             	.LVL27:
+ 349 0005 70 14 00 00 00 00       		add	#_SWDMA_Data, r1, r4
+ 350 000b 70 1E 00 00 00 00       		add	#_SWDMA_Data+12, r1, r14
+ 351 0011 B9 C3                   		movu.W	12[r4], r3
+ 352 0013 8B CC                   		mov.B	15[r4], r4
+ 353 0015 75 24 18                		and #24, r4
+ 354 0018 6A 34                   		shar	#3, r4
+ 355 001a 47 43                   		cmp	r4, r3
+ 356 001c 2A 0A                   		bgt	.L38
+ 651:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #endif	/*		(SWDMA_SIZE_32BITs_TRANSFER)	*/
+ 652:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 653:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     SWDMA_Data[channel].status.done=1;
+ 357                             		.loc 1 653 0
+ 358 001e CD E4 02                		mov.B	2[r14], r4
+ 359 0021 78 74                   		bset	#7, r4
+ 360 0023 C7 E4 02                		mov.B	r4, 2[r14]
+ 361                             		.balign 2,3,5
+ 362                             	.L38:
+ 654:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   }
+ 655:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 
+ 656:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if (SWDMA_Data[channel].status.done == 0)
+ 363                             		.loc 1 656 0
+ 364 0026 70 11 00 00 00 00       		add	#_SWDMA_Data, r1
+ 365 002c ED 1E 03                		mov.L	12[r1], r14
+ 366 002f 7C FE                   		btst #15, r14
+ 367 0031 19                      		bne	.L37
+ 657:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   {
+ 658:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** #if (SWDMA_FIXED_SIZE)
+ 659:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 	SWDMA_Data[channel].BCR--;
+ 368                             		.loc 1 659 0
+ 369 0032 DD 1E 06                		mov.W	12[r1], r14
+ 370 0035 60 1E                   		sub	#1, r14
+ 371 0037 D7 1E 06                		mov.W	r14, 12[r1]
+ 372                             	.L37:
+ 373 003a 02                      		rts
+ 374                             	.LFE13:
+ 376 003b 03                      		.section	.text.SWDMA_ExeTransferMngrSync,"ax",@progbits
+ 377                             		.global	_SWDMA_ExeTransferMngrSync
+ 379                             	_SWDMA_ExeTransferMngrSync:
+ 380                             	.LFB11:
+ 497:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** {
+ 381                             		.loc 1 497 0
+ 382 0000 7E A7                   		push.l	r7
+ 383                             	.LCFI0:
+ 384 0002 CF 17                   		mov.B	r1, r7
+ 498:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(channel>SWDMA_CH_NUM)
+ 385                             		.loc 1 498 0
+ 386 0004 5B 1E                   		movu.B	r1, r14
+ 387 0006 61 2E                   		cmp	#2, r14
+ 388 0008 24 38                   		bgtu	.L43
+ 512:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     if(SWDMA_Data[channel].status.done == 1)
+ 389                             		.loc 1 512 0
+ 390 000a 75 1E 14                		mul	#20, r14
+ 391 000d 70 EE 00 00 00 00       		add	#_SWDMA_Data, r14
+ 392 0013 ED E4 03                		mov.L	12[r14], r4
+ 393 0016 7C F4                   		btst #15, r4
+ 394 0018 20 1C                   		beq	.L42
+ 514:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     SWDMA_Data[channel].ctl.en=0;
+ 395                             		.loc 1 514 0
+ 396 001a CD E4 10                		mov.B	16[r14], r4
+ 397 001d 7A 44                   		bclr	#4, r4
+ 398 001f C7 E4 10                		mov.B	r4, 16[r14]
+ 516:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     if(SWDMA_Data[channel].callback)
+ 399                             		.loc 1 516 0
+ 400 0022 EC EE                   		mov.L	[r14], r14
+ 401 0024 61 0E                   		cmp	#0, r14
+ 402 0026 20 1E                   		beq	.L44
+ 518:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     	(void)(SWDMA_Data[channel].callback)((IO_NotificationType)IO_N_TRANSFER_DONE, channel, (IO_Err
+ 403                             		.loc 1 518 0
+ 404 0028 66 31                   		mov	#3, r1
+ 405 002a CF 72                   		mov.B	r7, r2
+ 406 002c 66 03                   		mov	#0, r3
+ 407 002e 7F 1E                   		jsr	r14
+ 521:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_OK;
+ 408                             		.loc 1 521 0
+ 409 0030 66 01                   		mov	#0, r1
+ 410 0032 2E 14                   		bra	.L41
+ 411                             	.L42:
+ 524:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   SWDMA_StatusManager(channel);
+ 412                             		.loc 1 524 0
+ 413 0034 05 00 00 00             		bsr	_SWDMA_StatusManager
+ 526:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   return SWDMA_SingleTransfer(channel);
+ 414                             		.loc 1 526 0
+ 415 0038 CF 71                   		mov.B	r7, r1
+ 527:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }
+ 416                             		.loc 1 527 0
+ 417 003a 7E B7                   		pop	r7
+ 526:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   return SWDMA_SingleTransfer(channel);
+ 418                             		.loc 1 526 0
+ 419 003c 04 00 00 00             		bra	_SWDMA_SingleTransfer
+ 420                             	.L43:
+ 500:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 421                             		.loc 1 500 0
+ 422 0040 75 41 12                		mov	#18, r1
+ 423 0043 0B                      		bra	.L41
+ 424                             	.L44:
+ 521:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_OK;
+ 425                             		.loc 1 521 0
+ 426 0044 CF E1                   		mov.B	r14, r1
+ 427                             		.balign 2,3,1
+ 428                             	.L41:
+ 527:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }
+ 429                             		.loc 1 527 0
+ 430 0046 5B 11                   		movu.B	r1, r1
+ 431 0048 3F 77 01                		rtsd	#4, r7-r7
+ 432                             	.LFE11:
+ 434 004b 03                      		.section	.text.SWDMA_StartTransferSync,"ax",@progbits
+ 435                             		.global	_SWDMA_StartTransferSync
+ 437                             	_SWDMA_StartTransferSync:
+ 438                             	.LFB10:
+ 436:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** {
+ 439                             		.loc 1 436 0
+ 440 0000 7E A7                   		push.l	r7
+ 441                             	.LCFI1:
+ 442 0002 CF 17                   		mov.B	r1, r7
+ 437:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(channel>SWDMA_CH_NUM)
+ 443                             		.loc 1 437 0
+ 444 0004 5B 14                   		movu.B	r1, r4
+ 445 0006 61 24                   		cmp	#2, r4
+ 446 0008 24 2C                   		bgtu	.L48
+ 442:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(SWDMA_Data[channel].BCR == 0)
+ 447                             		.loc 1 442 0
+ 448 000a 75 14 14                		mul	#20, r4
+ 449 000d 70 44 00 00 00 00       		add	#_SWDMA_Data, r4
+ 450 0013 B9 C3                   		movu.W	12[r4], r3
+ 451 0015 61 03                   		cmp	#0, r3
+ 452 0017 20 21                   		beq	.L49
+ 447:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   SWDMA_Data[channel].status.done=0;
+ 453                             		.loc 1 447 0
+ 454 0019 8B C3                   		mov.B	14[r4], r3
+ 455 001b 7A 73                   		bclr	#7, r3
+ 456 001d 83 C3                   		mov.B	r3, 14[r4]
+ 449:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   SWDMA_Data[channel].callback=callback;
+ 457                             		.loc 1 449 0
+ 458 001f E3 42                   		mov.L	r2, [r4]
+ 453:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   if(SWDMA_Data[channel].options.optionbyte & SWDMA_OPTION_START)
+ 459                             		.loc 1 453 0
+ 460 0021 CD 4E 0F                		mov.B	15[r4], r14
+ 461 0024 64 1E                   		and	#1, r14
+ 462 0026 20 16                   		beq	.L50
+ 455:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** 		SWDMA_StatusManager(channel);
+ 463                             		.loc 1 455 0
+ 464 0028 05 00 00 00             		bsr	_SWDMA_StatusManager
+ 463:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return SWDMA_SingleTransfer(channel);
+ 465                             		.loc 1 463 0
+ 466 002c CF 71                   		mov.B	r7, r1
+ 466:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }
+ 467                             		.loc 1 466 0
+ 468 002e 7E B7                   		pop	r7
+ 463:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return SWDMA_SingleTransfer(channel);
+ 469                             		.loc 1 463 0
+ 470 0030 04 00 00 00             		bra	_SWDMA_SingleTransfer
+ 471                             	.L48:
+ 439:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 472                             		.loc 1 439 0
+ 473 0034 75 41 12                		mov	#18, r1
+ 474 0037 0F                      		bra	.L47
+ 475                             	.L49:
+ 444:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****     return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 476                             		.loc 1 444 0
+ 477 0038 75 41 13                		mov	#19, r1
+ 478 003b 0B                      		bra	.L47
+ 479                             	.L50:
+ 465:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c ****   return IO_E_OK;
+ 480                             		.loc 1 465 0
+ 481 003c CF E1                   		mov.B	r14, r1
+ 482                             		.balign 2,3,2
+ 483                             	.L47:
+ 466:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA\SWDMA_drv.c **** }
+ 484                             		.loc 1 466 0
+ 485 003e 75 21 13                		and #19, r1
+ 486 0041 3F 77 01                		rtsd	#4, r7-r7
+ 487                             	.LFE10:
+ 489                             		.comm	_SWDMA_Data,40,4
+ 632                             	.Letext0:
+ 633                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 634                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Drivers/IO_driver.h"
+ 635                             		.file 4 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWDMA/SWDMA_drv.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 SWDMA_drv.c
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:7      .text.SWDMA_InitSync:00000000 _SWDMA_InitSync
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:13     .text.SWDMA_InitSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:21     .text.SWDMA_DeInitSync:00000000 _SWDMA_DeInitSync
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:26     .text.SWDMA_DeInitSync:00000000 L0
+                            *COM*:00000028 _SWDMA_Data
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:39     .text.SWDMA_GetChannelNumSync:00000000 _SWDMA_GetChannelNumSync
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:43     .text.SWDMA_GetChannelNumSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:50     .text.SWDMA_CheckChannelAvailabilitySync:00000000 _SWDMA_CheckChannelAvailabilitySync
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:55     .text.SWDMA_CheckChannelAvailabilitySync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:79     .text.SWDMA_ChannelEnableSync:00000000 _SWDMA_ChannelEnableSync
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:84     .text.SWDMA_ChannelEnableSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:111    .text.SWDMA_ChannelDisableSync:00000000 _SWDMA_ChannelDisableSync
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:116    .text.SWDMA_ChannelDisableSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:143    .text.SWDMA_CheckChannelEnableSync:00000000 _SWDMA_CheckChannelEnableSync
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:148    .text.SWDMA_CheckChannelEnableSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:172    .text.SWDMA_CheckChannelDoneSync:00000000 _SWDMA_CheckChannelDoneSync
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:177    .text.SWDMA_CheckChannelDoneSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:202    .text.SWDMA_SetChannelDeviceSync:00000000 _SWDMA_SetChannelDeviceSync
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:207    .text.SWDMA_SetChannelDeviceSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:242    .text.SWDMA_SetTransferSync:00000000 _SWDMA_SetTransferSync
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:247    .text.SWDMA_SetTransferSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:297    .text.SWDMA_SingleTransfer:00000000 _SWDMA_SingleTransfer
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:302    .text.SWDMA_SingleTransfer:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:341    .text.SWDMA_StatusManager:00000000 _SWDMA_StatusManager
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:346    .text.SWDMA_StatusManager:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:379    .text.SWDMA_ExeTransferMngrSync:00000000 _SWDMA_ExeTransferMngrSync
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:382    .text.SWDMA_ExeTransferMngrSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:437    .text.SWDMA_StartTransferSync:00000000 _SWDMA_StartTransferSync
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:440    .text.SWDMA_StartTransferSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:491    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:8      .text.SWDMA_InitSync:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:22     .text.SWDMA_DeInitSync:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:40     .text.SWDMA_GetChannelNumSync:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:51     .text.SWDMA_CheckChannelAvailabilitySync:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:80     .text.SWDMA_ChannelEnableSync:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:112    .text.SWDMA_ChannelDisableSync:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:144    .text.SWDMA_CheckChannelEnableSync:00000000 .LFB6
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:173    .text.SWDMA_CheckChannelDoneSync:00000000 .LFB7
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:203    .text.SWDMA_SetChannelDeviceSync:00000000 .LFB8
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:243    .text.SWDMA_SetTransferSync:00000000 .LFB9
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:298    .text.SWDMA_SingleTransfer:00000000 .LFB12
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:342    .text.SWDMA_StatusManager:00000000 .LFB13
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:380    .text.SWDMA_ExeTransferMngrSync:00000000 .LFB11
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:438    .text.SWDMA_StartTransferSync:00000000 .LFB10
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:1408   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2165   .debug_str:00000087 .LASF88
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2249   .debug_str:0000034b .LASF89
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2117   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2149   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2323   .debug_str:000005be .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2179   .debug_str:00000109 .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2251   .debug_str:0000038c .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2267   .debug_str:00000409 .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2255   .debug_str:000003a8 .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2215   .debug_str:0000024f .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2207   .debug_str:0000020d .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2205   .debug_str:000001ff .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2305   .debug_str:0000054d .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2233   .debug_str:000002db .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2241   .debug_str:00000315 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2167   .debug_str:000000ad .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2213   .debug_str:0000024a .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2319   .debug_str:000005a4 .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2279   .debug_str:00000476 .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2169   .debug_str:000000b6 .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2227   .debug_str:000002a6 .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2173   .debug_str:000000d3 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2331   .debug_str:0000060c .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2199   .debug_str:000001cb .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2329   .debug_str:000005f4 .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2171   .debug_str:000000c0 .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2291   .debug_str:000004c0 .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2151   .debug_str:00000000 .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2177   .debug_str:000000f1 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2275   .debug_str:0000044f .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2157   .debug_str:0000003f .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2337   .debug_str:00000634 .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2335   .debug_str:0000062a .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2293   .debug_str:000004d2 .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2153   .debug_str:00000016 .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2175   .debug_str:000000e5 .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2277   .debug_str:00000469 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2333   .debug_str:0000061f .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2271   .debug_str:00000429 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2273   .debug_str:0000043c .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2161   .debug_str:00000065 .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2193   .debug_str:00000197 .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2225   .debug_str:0000029a .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2235   .debug_str:000002e9 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2309   .debug_str:0000055d .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2221   .debug_str:00000277 .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2259   .debug_str:000003d3 .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2301   .debug_str:00000529 .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2203   .debug_str:000001ec .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2297   .debug_str:00000504 .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2211   .debug_str:0000023e .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2285   .debug_str:0000048e .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2321   .debug_str:000005ae .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2217   .debug_str:00000258 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2325   .debug_str:000005cb .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2159   .debug_str:00000054 .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2269   .debug_str:0000041c .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2303   .debug_str:0000053e .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2253   .debug_str:00000395 .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2245   .debug_str:00000329 .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2263   .debug_str:000003ee .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2237   .debug_str:000002fe .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2317   .debug_str:00000596 .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2185   .debug_str:00000151 .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2201   .debug_str:000001de .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2209   .debug_str:00000224 .LASF90
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2195   .debug_str:000001a8 .LASF91
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2327   .debug_str:000005db .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2191   .debug_str:00000184 .LASF65
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2283   .debug_str:00000486 .LASF62
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2281   .debug_str:0000047e .LASF63
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2163   .debug_str:00000074 .LASF64
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2315   .debug_str:0000058b .LASF66
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2239   .debug_str:00000310 .LASF68
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2307   .debug_str:00000555 .LASF67
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2261   .debug_str:000003e7 .LASF69
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2313   .debug_str:00000582 .LASF70
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2265   .debug_str:00000402 .LASF71
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2295   .debug_str:000004e7 .LASF72
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2189   .debug_str:00000175 .LASF73
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:16     .text.SWDMA_InitSync:00000003 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2243   .debug_str:00000321 .LASF75
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:1876   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2219   .debug_str:00000266 .LASF74
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:34     .text.SWDMA_DeInitSync:00000010 .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:1890   .debug_loc:00000021 .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2299   .debug_str:00000511 .LASF92
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:45     .text.SWDMA_GetChannelNumSync:00000003 .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2183   .debug_str:0000012e .LASF76
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:74     .text.SWDMA_CheckChannelAvailabilitySync:0000001e .LFE3
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:1904   .debug_loc:00000042 .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2223   .debug_str:00000282 .LASF77
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:106    .text.SWDMA_ChannelEnableSync:00000024 .LFE4
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:1918   .debug_loc:00000063 .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2257   .debug_str:000003ba .LASF78
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:138    .text.SWDMA_ChannelDisableSync:00000024 .LFE5
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:1932   .debug_loc:00000084 .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2231   .debug_str:000002be .LASF79
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:167    .text.SWDMA_CheckChannelEnableSync:0000001e .LFE6
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:1946   .debug_loc:000000a5 .LLST5
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2155   .debug_str:00000024 .LASF80
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:197    .text.SWDMA_CheckChannelDoneSync:00000022 .LFE7
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:1960   .debug_loc:000000c6 .LLST6
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2181   .debug_str:00000113 .LASF81
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:237    .text.SWDMA_SetChannelDeviceSync:0000002e .LFE8
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:1974   .debug_loc:000000e7 .LLST7
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2187   .debug_str:0000015f .LASF82
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:292    .text.SWDMA_SetTransferSync:0000003c .LFE9
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2287   .debug_str:0000049d .LASF83
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:1988   .debug_loc:00000108 .LLST8
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2247   .debug_str:00000336 .LASF84
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:336    .text.SWDMA_SingleTransfer:00000039 .LFE12
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2024   .debug_loc:0000015b .LLST9
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2311   .debug_str:0000056e .LASF85
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:374    .text.SWDMA_StatusManager:0000003b .LFE13
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2038   .debug_loc:0000017c .LLST10
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2289   .debug_str:000004a6 .LASF86
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:432    .text.SWDMA_ExeTransferMngrSync:0000004b .LFE11
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2052   .debug_loc:0000019d .LLST11
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2197   .debug_str:000001b3 .LASF87
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:487    .text.SWDMA_StartTransferSync:00000044 .LFE10
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2065   .debug_loc:000001bd .LLST12
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:2229   .debug_str:000002b3 .LASF93
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:11     .text.SWDMA_InitSync:00000000 .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:14     .text.SWDMA_InitSync:00000002 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:24     .text.SWDMA_DeInitSync:00000000 .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:27     .text.SWDMA_DeInitSync:00000006 .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:53     .text.SWDMA_CheckChannelAvailabilitySync:00000000 .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:60     .text.SWDMA_CheckChannelAvailabilitySync:00000009 .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:82     .text.SWDMA_ChannelEnableSync:00000000 .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:96     .text.SWDMA_ChannelEnableSync:0000001b .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:114    .text.SWDMA_ChannelDisableSync:00000000 .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:128    .text.SWDMA_ChannelDisableSync:0000001b .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:146    .text.SWDMA_CheckChannelEnableSync:00000000 .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:153    .text.SWDMA_CheckChannelEnableSync:00000009 .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:175    .text.SWDMA_CheckChannelDoneSync:00000000 .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:182    .text.SWDMA_CheckChannelDoneSync:00000009 .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:205    .text.SWDMA_SetChannelDeviceSync:00000000 .LVL14
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:215    .text.SWDMA_SetChannelDeviceSync:00000014 .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:245    .text.SWDMA_SetTransferSync:00000000 .LVL16
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:274    .text.SWDMA_SetTransferSync:0000002f .LVL17
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:276    .text.SWDMA_SetTransferSync:00000030 .LVL18
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:280    .text.SWDMA_SetTransferSync:00000033 .LVL19
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:282    .text.SWDMA_SetTransferSync:00000034 .LVL20
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:286    .text.SWDMA_SetTransferSync:00000037 .LVL21
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:300    .text.SWDMA_SingleTransfer:00000000 .LVL22
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:304    .text.SWDMA_SingleTransfer:00000005 .LVL23
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:344    .text.SWDMA_StatusManager:00000000 .LVL26
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:348    .text.SWDMA_StatusManager:00000005 .LVL27
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:383    .text.SWDMA_ExeTransferMngrSync:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:441    .text.SWDMA_StartTransferSync:00000002 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\ccLJfXgd.s:637    .debug_info:00000000 .Ldebug_info0
+
+NO UNDEFINED SYMBOLS

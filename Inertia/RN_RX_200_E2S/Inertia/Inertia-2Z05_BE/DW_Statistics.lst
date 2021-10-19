@@ -1,0 +1,1361 @@
+   1                             		.file	"DW_Statistics.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.STC_saveBlackBoxData,"ax",@progbits
+   5                             		.global	_STC_saveBlackBoxData
+   7                             	_STC_saveBlackBoxData:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Inertia/Control/DW_Statistics.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** Copyright (c) 2004-2005, Indesit Company, EDT.
+   3:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /**
+   7:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \Par	Gestisce le statistiche.
+   8:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \Header file.
+   9:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****  
+  10:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \file    DW_Statistics.c
+  11:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \ingroup DW_Statistics
+  12:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \date    11/09/2008
+  13:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \author  Valeria Catani
+  14:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \version 1.0.0
+  15:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  16:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  17:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \Par		History (titolo)
+  18:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****  	
+  19:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \n		
+  20:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** */
+  21:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  22:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* ******** */
+  23:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* Includes */
+  24:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* ******** */
+  25:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  26:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #include "CstmHeaders.h"
+  27:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #include "DigitalInputsExp.h"
+  28:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #include "PM_AnalogFeedbackExp.h"
+  29:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #include "AnalogExp.h"
+  30:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #if defined(PLATFORM2_SUPPORT)
+  31:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #ifdef _ENABLE_NEW_STATS_COMM_ERR_
+  32:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #include "BCP_BusCommMng.h"
+  33:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #endif /* _ENABLE_NEW_STATS_COMM_ERR_ */
+  34:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #endif /* defined(PLATFORM2_SUPPORT) */
+  35:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  36:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #ifdef _STATISTICS_ON_			
+  37:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  38:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* ****************** */
+  39:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* Defines and Macros */
+  40:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* ****************** */
+  41:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  42:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* *************************** */
+  43:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* Typedef, Structs and Unions */
+  44:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* *************************** */
+  45:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  46:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* **************************** */
+  47:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* Prototype of local functions */
+  48:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* **************************** */
+  49:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** void STC_OnTimeUpdate(void);
+  50:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  51:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* ****************** */
+  52:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* Exported variables */
+  53:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* ****************** */
+  54:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  55:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* **************** */
+  56:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* Global variables */
+  57:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* **************** */
+  58:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  59:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  60:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* ***************** */
+  61:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* Exported function */
+  62:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* ***************** */
+  63:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  64:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  65:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /**
+  66:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** Salva i dati nella 'Scatola nera' in caso di prefault 
+  67:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** In caso di fault viene semplicemente aggiornato il tipo di evento, ma non i dati
+  68:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** precedentemente salvati nel prefault.
+  69:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  70:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \param [in] 	
+  71:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \param [out]	
+  72:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	 
+  73:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \return     	none
+  74:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  75:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \notes:			
+  76:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  77:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \author			Marco Quintini
+  78:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \date   		18/05/2007
+  79:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \version    	1.0.0
+  80:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  81:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** */
+  82:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  83:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  84:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** void STC_saveBlackBoxData(sft_fault_codes_t faultToBeSaved)
+  85:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** {
+  10                             		.loc 1 85 0
+  11                             	.LVL0:
+  12 0000 6E 7D                   		pushm	r7-r13
+  13                             	.LCFI0:
+  86:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** uint8_t i, analogFb_bitmap;
+  87:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+  88:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/* Il salvataggio avviene in corrispondenza di un prefault */
+  89:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].event = BB_EVENT_PREFAULT;
+  90:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+  91:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/* Codici di guasto nel momento del salvataggio */
+  92:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/*
+  93:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].faultCodes = CurrentFault.prefaultCodes;
+  94:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	*/ /*AE FIXME FAULT*/
+  95:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/* Ciclo, fase, passo */
+  96:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].cycle = Interpreter_Data[0].cycle;
+  14                             		.loc 1 96 0
+  15 0002 FB A2 00 00 00 00       		mov.L	#_Interpreter_Data, r10
+  16 0008 CD AB 01                		mov.B	1[r10], r11
+  89:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].event = BB_EVENT_PREFAULT;
+  17                             		.loc 1 89 0
+  18 000b FB 72 00 00 00 00       		mov.L	#_MachineStatistics, r7
+  19                             		.loc 1 96 0
+  20 0011 CB 7B 39 01             		mov.B	r11, 313[r7]
+  97:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].phase = Interpreter_Data[0].phase;
+  21                             		.loc 1 97 0
+  22 0015 CD AB 02                		mov.B	2[r10], r11
+  98:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].first_statement = Interpreter_Data[0].first_statement;
+  23                             		.loc 1 98 0
+  24 0018 CD AA 03                		mov.B	3[r10], r10
+  97:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].phase = Interpreter_Data[0].phase;
+  25                             		.loc 1 97 0
+  26 001b CB 7B 3A 01             		mov.B	r11, 314[r7]
+  27                             		.loc 1 98 0
+  28 001f CB 7A 3B 01             		mov.B	r10, 315[r7]
+  29                             	.LVL1:
+  89:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].event = BB_EVENT_PREFAULT;
+  30                             		.loc 1 89 0
+  31 0023 FA 74 36 01 00          		mov.B	#0, 310[r7]
+  85:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** {
+  32                             		.loc 1 85 0
+  33 0028 60 40                   		sub	#4, r0
+  34                             	.LCFI1:
+  35                             		.loc 1 98 0
+  36 002a 66 F7                   		mov.L	#15, r7
+  37 002c 66 0A                   		mov	#0, r10
+  99:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 100:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/* Carichi attivi */
+ 101:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].activeLoadsBmp = 0;
+ 102:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	for(i=BB_VALID_LOADS_NUM;i>0;i--)
+ 103:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	{
+ 104:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		if(LoadsStatus[i-1] != 0)
+  38                             		.loc 1 104 0
+  39 002e FB B2 00 00 00 00       		mov.L	#_LoadsStatus, r11
+  40                             	.LVL2:
+  41                             		.balign 2,3,3
+  42                             	.L3:
+  43 0034 FE C7 BC                		movu.B	[r7,r11], r12
+  44 0037 61 0C                   		cmp	#0, r12
+  45 0039 20 05                   		beq	.L2
+ 105:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		{
+ 106:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 			/*lint -e712  1 <= i <= 16 */
+ 107:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 			SETBIT(MachineStatistics.blackBox_Data[0].activeLoadsBmp, (i-1));
+  46                             		.loc 1 107 0
+  47 003b FC 63 A7                		bset	r7, r10
+  48                             		.balign 2,3,1
+  49                             	.L2:
+  50 003e 60 17                   		sub	#1, r7
+ 102:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	for(i=BB_VALID_LOADS_NUM;i>0;i--)
+  51                             		.loc 1 102 0
+  52 0040 75 07 FF                		cmp	#-1, r7
+  53 0043 21 F1                   		bne	.L3
+  54 0045 FB 72 00 00 00 00       		mov.L	#_MachineStatistics, r7
+  55 004b D7 7A 9E                		mov.W	r10, 316[r7]
+ 108:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 			/*lint +e712 */
+ 109:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		}
+ 110:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	}
+ 111:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 112:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #ifdef CONFIG_LIB_EXTERNAL_BOARD_SUPPORT
+ 113:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 114:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/* velocit� pompa lavaggio */
+ 115:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	if( ( HWC_Flags.bit.bldc ) || ( HWC_Flags.bit.bldc1 ) )
+  56                             		.loc 1 115 0
+  57 004e FB A2 00 00 00 00       		mov.L	#_HWC_Flags, r10
+  58 0054 DC AA                   		mov.W	[r10], r10
+  59 0056 64 6A                   		and	#6, r10
+  60 0058 20 15                   		beq	.L4
+ 116:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	{
+ 117:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		MachineStatistics.blackBox_Data[0].pumpSpeed = ((int16_t)(BLDC_Pump_InfoBuffer[WASH_BLDC_PUMP][BL
+  61                             		.loc 1 117 0
+  62 005a FB A2 00 00 00 00       		mov.L	#_BLDC_Pump_InfoBuffer, r10
+  63 0060 59 AC 02                		movu.B	2[r10], r12
+  64 0063 59 AB 03                		movu.B	3[r10], r11
+  65 0066 6C 8C                   		shll	#8, r12
+  66 0068 FF 2A BC                		add	r11, r12, r10
+  67 006b 2E 0B                   		bra	.L21
+  68                             	.L4:
+ 118:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	}
+ 119:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	else 
+ 120:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	{
+ 121:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		MachineStatistics.blackBox_Data[0].pumpSpeed = LoadsStatus[LD_WASH_PUMP_IND];
+  69                             		.loc 1 121 0
+  70 006d FB A2 00 00 00 00       		mov.L	#_LoadsStatus, r10
+  71 0073 58 AA                   		movu.B	[r10], r10
+  72 0075 03                      		.balign 2,3,5
+  73                             	.L21:
+  74 0076 D7 7A 9F                		mov.W	r10, 318[r7]
+ 122:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	}
+ 123:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   
+ 124:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #endif	
+ 125:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	 
+ 126:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/* Stato input analogici + feedback analogici */
+ 127:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 128:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	analogFb_bitmap = AnalogFeedbackGetMaskAnalogF_Enabled();	
+  75                             		.loc 1 128 0
+  76 0079 05 00 00 00             		bsr	_AnalogFeedbackGetMaskAnalogF_Enabled
+  77                             	.LVL3:
+  78 007d FB A2 00 00 00 00       		mov.L	#_MachineStatistics+321, r10
+  79 0083 66 07                   		mov.L	#0, r7
+ 129:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   	 
+ 130:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	for(i=0; i<8; i++)
+ 131:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	{
+ 132:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	  
+ 133:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	  if ( TESTBIT(analogFb_bitmap,i) )
+  80                             		.loc 1 133 0
+  81 0085 5B 1B                   		movu.B	r1, r11
+ 134:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	  {
+ 135:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	    MachineStatistics.blackBox_Data[0].analogfeedbackVal = PM_AnalogFeedbackGetValue (i);
+  82                             		.loc 1 135 0
+  83 0087 FB C2 00 00 00 00       		mov.L	#_MachineStatistics, r12
+ 136:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	  }
+ 137:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 138:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	  MachineStatistics.blackBox_Data[0].analogInputs[i] = 0xFFFF;
+ 139:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	  
+ 140:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	  if (0 != (LIB_ADC_IsApplAnalogReady(1<<i) ))
+  84                             		.loc 1 140 0
+  85 008d 66 1D                   		mov.L	#1, r13
+  86                             	.LVL4:
+  87 008f 03                      		.balign 2,3,1
+  88                             	.L8:
+ 133:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	  if ( TESTBIT(analogFb_bitmap,i) )
+  89                             		.loc 1 133 0
+  90 0090 EF BE                   		mov.L	r11, r14
+  91 0092 FD 60 7E                		shlr	r7, r14
+  92 0095 FD 74 CE 01             		tst	#1, r14
+  93 0099 CF 79                   		mov.B	r7, r9
+  94 009b 20 0D                   		beq	.L6
+ 135:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	    MachineStatistics.blackBox_Data[0].analogfeedbackVal = PM_AnalogFeedbackGetValue (i);
+  95                             		.loc 1 135 0
+  96 009d CF 71                   		mov.B	r7, r1
+  97 009f 05 00 00 00             		bsr	_PM_AnalogFeedbackGetValue
+  98                             	.LVL5:
+  99 00a3 CB C1 40 01             		mov.B	r1, 320[r12]
+ 100 00a7 03                      		.balign 2,3,1
+ 101                             	.L6:
+ 102                             		.loc 1 140 0
+ 103 00a8 EF D1                   		mov.L	r13, r1
+ 104 00aa FD 62 71                		shll	r7, r1
+ 138:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	  MachineStatistics.blackBox_Data[0].analogInputs[i] = 0xFFFF;
+ 105                             		.loc 1 138 0
+ 106 00ad F8 A5 FF                		mov.W	#-1, [r10]
+ 107                             		.loc 1 140 0
+ 108 00b0 05 00 00 00             		bsr	_LIB_ADC_IsApplAnalogReady
+ 109                             	.LVL6:
+ 110 00b4 61 01                   		cmp	#0, r1
+ 111 00b6 20 0A                   		beq	.L7
+ 141:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	  {
+ 142:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	    MachineStatistics.blackBox_Data[0].analogInputs[i] = LIB_ADC_GetAnalogValue (i);
+ 112                             		.loc 1 142 0
+ 113 00b8 CF 91                   		mov.B	r9, r1
+ 114 00ba 05 00 00 00             		bsr	_LIB_ADC_GetAnalogValue
+ 115                             	.LVL7:
+ 116 00be D3 A1                   		mov.W	r1, [r10]
+ 117                             		.balign 2,3,1
+ 118                             	.L7:
+ 119 00c0 62 17                   		add	#1, r7
+ 120 00c2 62 2A                   		add	#2, r10
+ 130:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	for(i=0; i<8; i++)
+ 121                             		.loc 1 130 0
+ 122 00c4 61 87                   		cmp	#8, r7
+ 123 00c6 21 CA                   		bne	.L8
+ 143:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	  }
+ 144:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	}
+ 145:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 146:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/* Stato input digitali */
+ 147:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 148:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   MachineStatistics.blackBox_Data[0].digInputs = DigInputs;
+ 124                             		.loc 1 148 0
+ 125 00c8 FB 72 00 00 00 00       		mov.L	#_DigInputs, r7
+ 126 00ce CC 77                   		mov.B	[r7], r7
+ 127 00d0 FB E2 00 00 00 00       		mov.L	#_MachineStatistics, r14
+ 128 00d6 CB E7 51 01             		mov.B	r7, 337[r14]
+ 149:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		
+ 150:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/* Generic Input */
+ 151:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].washTemperature = GITemp;
+ 129                             		.loc 1 151 0
+ 130 00da FB 72 00 00 00 00       		mov.L	#_GITemp, r7
+ 131 00e0 CC 77                   		mov.B	[r7], r7
+ 152:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 153:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].waterLoaded = GIWaterLoaded;
+ 132                             		.loc 1 153 0
+ 133 00e2 FB A2 00 00 00 00       		mov.L	#_GIWaterLoaded, r10
+ 134 00e8 DC AA                   		mov.W	[r10], r10
+ 151:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].washTemperature = GITemp;
+ 135                             		.loc 1 151 0
+ 136 00ea CB E7 52 01             		mov.B	r7, 338[r14]
+ 137                             		.loc 1 153 0
+ 138 00ee FB 72 00 00 00 00       		mov.L	#_MachineStatistics+339, r7
+ 139 00f4 D3 7A                   		mov.W	r10, [r7]
+ 154:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 155:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   MachineStatistics.blackBox_Data[0].turbidity = TurbidityReads.perc;		 /* GITurbidity; */
+ 140                             		.loc 1 155 0
+ 141 00f6 FB 72 00 00 00 00       		mov.L	#_TurbidityReads, r7
+ 142 00fc 8A 7F                   		mov.B	9[r7], r7
+ 156:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   	
+ 157:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].criteria = GICriteria;
+ 158:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 159:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].giValid = GIValid;
+ 143                             		.loc 1 159 0
+ 144 00fe FB A2 00 00 00 00       		mov.L	#_GIValid, r10
+ 155:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   MachineStatistics.blackBox_Data[0].turbidity = TurbidityReads.perc;		 /* GITurbidity; */
+ 145                             		.loc 1 155 0
+ 146 0104 CB E7 55 01             		mov.B	r7, 341[r14]
+ 157:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].criteria = GICriteria;
+ 147                             		.loc 1 157 0
+ 148 0108 FB 72 00 00 00 00       		mov.L	#_GICriteria, r7
+ 149 010e CC 77                   		mov.B	[r7], r7
+ 150                             		.loc 1 159 0
+ 151 0110 DC AA                   		mov.W	[r10], r10
+ 157:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].criteria = GICriteria;
+ 152                             		.loc 1 157 0
+ 153 0112 CB E7 56 01             		mov.B	r7, 342[r14]
+ 154                             		.loc 1 159 0
+ 155 0116 FB 72 00 00 00 00       		mov.L	#_MachineStatistics+343, r7
+ 156 011c D3 7A                   		mov.W	r10, [r7]
+ 160:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 161:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 162:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/* Reset ed errori I2C */
+ 163:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].coldResetNum = MachineStatistics.lastCyclesStats[MOST_RECENT_ST
+ 157                             		.loc 1 163 0
+ 158 011e CD E7 70                		mov.B	112[r14], r7
+ 164:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].warmResetNum = MachineStatistics.lastCyclesStats[MOST_RECENT_ST
+ 159                             		.loc 1 164 0
+ 160 0121 CD EA 71                		mov.B	113[r14], r10
+ 163:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].coldResetNum = MachineStatistics.lastCyclesStats[MOST_RECENT_ST
+ 161                             		.loc 1 163 0
+ 162 0124 CB E7 59 01             		mov.B	r7, 345[r14]
+ 165:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 166:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #ifdef _ENABLE_NEW_STATS_COMM_ERR_
+ 167:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /*
+ 168:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	_memcpy_8bitCount(&MachineStatistics.blackBox_Data.commErr[0][0], &MachineStatistics.lastCycle.com
+ 169:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** */ /*AE FIXME*/
+ 170:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/*memcpy(&MachineStatistics.blackBox_Data.commErr[0][0], &MachineStatistics.lastCyclesStats.commEr
+ 171:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #else /* _ENABLE_NEW_STATS_COMM_ERR_ */
+ 172:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 173:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	for (i=0;i<4;i++)
+ 174:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	{
+ 175:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		MachineStatistics.blackBox_Data.I2CUnblockCounters[i] = MachineStatistics.lastCycle.I2CUnblockCou
+ 176:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	}
+ 177:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 178:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #endif /* _ENABLE_NEW_STATS_COMM_ERR_ */
+ 179:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 180:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].flags_2copy = Flags_2;
+ 163                             		.loc 1 180 0
+ 164 0128 FB 72 00 00 00 00       		mov.L	#_Flags_2, r7
+ 165 012e CC 77                   		mov.B	[r7], r7
+ 164:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].warmResetNum = MachineStatistics.lastCyclesStats[MOST_RECENT_ST
+ 166                             		.loc 1 164 0
+ 167 0130 CB EA 5A 01             		mov.B	r10, 346[r14]
+ 168                             		.loc 1 180 0
+ 169 0134 CB E7 5F 01             		mov.B	r7, 351[r14]
+ 181:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].virtual_Sensor[GI_VIRTUAL_SENSOR_WASH] = Virtual_Sensor_Value[G
+ 170                             		.loc 1 181 0
+ 171 0138 FB 72 00 00 00 00       		mov.L	#_Virtual_Sensor_Value, r7
+ 172 013e CC 7B                   		mov.B	[r7], r11
+ 173                             	.LVL8:
+ 182:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].virtual_Sensor[GI_VIRTUAL_SENSOR_DRAIN] = Virtual_Sensor_Value[
+ 183:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].State5_algo = State5.max_speed_value;
+ 174                             		.loc 1 183 0
+ 175 0140 FB A2 00 00 00 00       		mov.L	#_State5, r10
+ 182:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].virtual_Sensor[GI_VIRTUAL_SENSOR_DRAIN] = Virtual_Sensor_Value[
+ 176                             		.loc 1 182 0
+ 177 0146 88 7F                   		mov.B	1[r7], r7
+ 178                             		.loc 1 183 0
+ 179 0148 DC AA                   		mov.W	[r10], r10
+ 182:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].virtual_Sensor[GI_VIRTUAL_SENSOR_DRAIN] = Virtual_Sensor_Value[
+ 180                             		.loc 1 182 0
+ 181 014a CB E7 5E 01             		mov.B	r7, 350[r14]
+ 182                             		.loc 1 183 0
+ 183 014e FB 72 00 00 00 00       		mov.L	#_MachineStatistics+347, r7
+ 184 0154 D3 7A                   		mov.W	r10, [r7]
+ 181:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].virtual_Sensor[GI_VIRTUAL_SENSOR_WASH] = Virtual_Sensor_Value[G
+ 185                             		.loc 1 181 0
+ 186 0156 CB EB 5D 01             		mov.B	r11, 349[r14]
+ 184:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].failnumVs.VScheckinconsistency=FltFlagsVS.VScheckinconsistency;
+ 187                             		.loc 1 184 0
+ 188 015a FB A2 00 00 00 00       		mov.L	#_FltFlagsVS, r10
+ 189 0160 58 A7                   		movu.B	[r10], r7
+ 185:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].failnumVs.warninglostwater =FltFlagsVS.warninglostwater;
+ 190                             		.loc 1 185 0
+ 191 0162 CC AA                   		mov.B	[r10], r10
+ 192 0164 76 27 F0 00             		and	#0xf0, r7
+ 193 0168 64 FA                   		and	#15, r10
+ 194 016a 57 A7                   		or	r10, r7
+ 195 016c CB E7 60 01             		mov.B	r7, 352[r14]
+ 186:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].dirty_foam_state=  *((uint8_t *)(&dirty_foam_Data +1));
+ 196                             		.loc 1 186 0
+ 197 0170 FB 72 00 00 00 00       		mov.L	#_dirty_foam_Data, r7
+ 198 0176 8B F7                   		mov.B	14[r7], r7
+ 199 0178 CB E7 61 01             		mov.B	r7, 353[r14]
+ 187:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 188:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 189:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 190:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** }
+ 200                             		.loc 1 190 0
+ 201 017c 3F 7D 08                		rtsd	#32, r7-r13
+ 202                             	.LFE0:
+ 204 017f 03                      		.section	.text.STC_manageStatResetRequest,"ax",@progbits
+ 205                             		.global	_STC_manageStatResetRequest
+ 207                             	_STC_manageStatResetRequest:
+ 208                             	.LFB1:
+ 191:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 192:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 193:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 194:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 195:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /**
+ 196:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** Processa la variabile ExternalRequest e a seconda del suo valore effettua delle operazioni
+ 197:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** di reset sulle statistiche.
+ 198:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 199:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \param [in/out] ExternalRequest (global)	
+ 200:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \param [out]	MachineStatistics (global)
+ 201:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	 
+ 202:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \return     	none
+ 203:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 204:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \notes:			
+ 205:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 206:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \author			Marco Quintini
+ 207:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \date   		02/07/2007
+ 208:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \version    	1.0.0
+ 209:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 210:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** */
+ 211:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** void STC_manageStatResetRequest(void)
+ 212:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** {
+ 209                             		.loc 1 212 0
+ 213:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	if(ExternalRequest == SYSTEM_NORMAL_RESET_LAST_FAULT)
+ 210                             		.loc 1 213 0
+ 211 0000 FB E2 00 00 00 00       		mov.L	#_ExternalRequest, r14
+ 212 0006 58 EE                   		movu.B	[r14], r14
+ 213 0008 61 4E                   		cmp	#4, r14
+ 214 000a 20 14                   		beq	.L23
+ 214:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	{
+ 215:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		/* Fa scorrere il buffer dei Last Fault, eliminando il pi� vecchio
+ 216:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		   e resettando la locazione del pi� recente */
+ 217:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		/*
+ 218:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		FLT_lastFaultUpdate(No_Fault, &MachineStatistics.lastFault[0]);
+ 219:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		*/ /*AE FIXME */
+ 220:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	}
+ 221:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	else if	(ExternalRequest == SYSTEM_NORMAL_RESET_TO_DEFAULT)
+ 215                             		.loc 1 221 0
+ 216 000c 61 5E                   		cmp	#5, r14
+ 217 000e 21 19                   		bne	.L22
+ 222:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	{
+ 223:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		/* Azzera tutte le statistiche permanenti */
+ 224:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		memset(&MachineStatistics, 0, sizeof(MachineStatistics));
+ 218                             		.loc 1 224 0
+ 219 0010 FB 12 00 00 00 00       		mov.L	#_MachineStatistics, r1
+ 220 0016 FB 3A 62 01             		mov.L	#0x162, r3
+ 221 001a 66 02                   		mov	#0, r2
+ 222 001c 7F 88                   		sstr.b
+ 223                             		.balign 2,3,5
+ 224                             	.L23:
+ 225:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	}
+ 226:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	else
+ 227:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	{
+ 228:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		return;
+ 229:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	}
+ 230:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 231:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	ExternalRequest = 0;
+ 225                             		.loc 1 231 0
+ 226 001e FB E2 00 00 00 00       		mov.L	#_ExternalRequest, r14
+ 227 0024 F8 E4 00                		mov.B	#0, [r14]
+ 228                             	.L22:
+ 229 0027 02                      		rts
+ 230                             	.LFE1:
+ 232                             		.section	.text.STC_LastCycleStat_Init,"ax",@progbits
+ 233                             		.global	_STC_LastCycleStat_Init
+ 235                             	_STC_LastCycleStat_Init:
+ 236                             	.LFB3:
+ 232:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** }
+ 233:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 234:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /**
+ 235:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** Aggiorna tutte le statistiche che vengono registrate a fine ciclo, 
+ 236:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** -statistiche generiche globali
+ 237:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** -statistiche specifiche relative agli ultimi n cicli eseguiti 
+ 238:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** (eliminando quelle del pi� vecchio e introducendo in testa quelle del pi� recente).
+ 239:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 240:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \param [out]	MachineStatistics (global)
+ 241:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	 
+ 242:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \return     	none
+ 243:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 244:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \notes:			
+ 245:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 246:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \author			Roberto Fioravanti
+ 247:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \date   		24/09/2008
+ 248:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \version    	1.0.0
+ 249:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 250:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** */
+ 251:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #if defined (BUILD_FREESCALE_GB60)
+ 252:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #pragma INLINE
+ 253:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #elif defined (BUILD_RENESAS_36079)
+ 254:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #pragma inline(STC_updateLastCycleStat_END)
+ 255:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #endif
+ 256:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** void STC_updateLastCycleStat_END(uint8_t mode)
+ 257:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** {
+ 258:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #ifdef _CORRECT_STATS_CYCLE_DURATION_TIMER_
+ 259:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** SWTC_TimeType cycleDuration;
+ 260:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #endif /* _CORRECT_STATS_CYCLE_DURATION_TIMER_ */
+ 261:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 262:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/**
+ 263:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	Aggiornamento statistiche ultimi cicli
+ 264:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	*/	
+ 265:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     /* ciclo */
+ 266:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/*MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].cycle = StartedCycle;*/
+ 267:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 268:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #ifdef _CORRECT_STATS_CYCLE_DURATION_TIMER_
+ 269:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 270:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	cycleDuration = SWTC_GetElapsedTime((SWTC_CountersType) STC_TEMP_CYCLE_STATISTIC_M_COUNTER);
+ 271:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 272:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	if( cycleDuration > UINT8_T_MAX )
+ 273:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	{
+ 274:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		/* La massima durata memorizzabile � 255 minuti */
+ 275:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		cycleDuration = UINT8_T_MAX;
+ 276:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	}
+ 277:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 278:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/*lint -e734 cycleDuration � limitato a 255 */
+ 279:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].duration= cycleDuration;
+ 280:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/*lint +e734 */
+ 281:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 282:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #else /* _CORRECT_STATS_CYCLE_DURATION_TIMER_ */
+ 283:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 284:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].duration= SWTC_GetElapsedTime((SWTC_
+ 285:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 286:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #endif /* !_CORRECT_STATS_CYCLE_DURATION_TIMER_ */
+ 287:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 288:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   	/**
+ 289:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	Aggiornamento statistiche globali 
+ 290:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	(dopo quelle degli ultimi cicli, utilizzano alcune informazioni
+ 291:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	che vengono aggiornate nell'array degli ultimi cicli */  
+ 292:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 293:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 294:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/* Cicli eseguiti */
+ 295:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	if(0 == mode)
+ 296:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	{
+ 297:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		if( StartedCycle < SIZE(MachineStatistics.globalStats.executedCycles_Num) )
+ 298:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		{
+ 299:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 			/* Si potrebbe anche memorizzare il ciclo Interpreter_Data.cycle anzich� StartedCycle */
+ 300:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 			IncWordWithCheck(&MachineStatistics.globalStats.executedCycles_Num[StartedCycle]);
+ 301:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		}
+ 302:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	}
+ 303:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 304:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/* Numero cicli in cui � avvenuta almeno una condizione di KO Restore */
+ 305:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 306:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   if ( MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].restore_koRestore.b.koRestore 
+ 307:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   {
+ 308:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	  MachineStatistics.globalStats.KORestoreCycles_Num++;
+ 309:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   }
+ 310:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   
+ 311:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   
+ 312:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   
+ 313:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   /* ON Time : tempo di Run */ 
+ 314:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 315:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   STC_OnTimeUpdate();
+ 316:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   
+ 317:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** }
+ 318:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /**
+ 319:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** Inizializza tutte le variabili temporanee per le statistiche relative all'ultimo ciclo eseguito.
+ 320:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 321:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \param [out]	TempCycle_Stats (global)
+ 322:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	 
+ 323:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \return     	none
+ 324:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 325:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \notes:			
+ 326:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 327:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \author			Roberto Fioravanti
+ 328:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \date   		24/09/2008
+ 329:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \version    	1.0.0
+ 330:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 331:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** */
+ 332:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** void STC_LastCycleStat_Init(void)
+ 333:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** {    
+ 237                             		.loc 1 333 0
+ 334:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****  
+ 335:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     /* reset var temporanea per statistiche */
+ 336:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     TempCycle_Stats.turbindex=0;
+ 238                             		.loc 1 336 0
+ 239 0000 FB E2 00 00 00 00       		mov.L	#_TempCycle_Stats, r14
+ 240 0006 F8 E4 00                		mov.B	#0, [r14]
+ 337:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     TempCycle_Stats.flags.flags=0;
+ 241                             		.loc 1 337 0
+ 242 0009 F9 E4 02 00             		mov.B	#0, 2[r14]
+ 338:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     /* reset statistiche last cycle */
+ 339:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     memset(&MachineStatistics.lastCyclesStats, 0, sizeof(MachineStatistics.lastCyclesStats));
+ 243                             		.loc 1 339 0
+ 244 000d FB 12 00 00 00 00       		mov.L	#_MachineStatistics+98, r1
+ 245 0013 75 43 A8                		mov.L	#0xa8, r3
+ 246 0016 66 02                   		mov	#0, r2
+ 247 0018 7F 88                   		sstr.b
+ 340:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     /* imposta propriet� timer */
+ 341:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #ifdef _CORRECT_STATS_CYCLE_DURATION_TIMER_
+ 342:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	(void)Set_MediumCounter((SWTC_CountersType)STC_TEMP_CYCLE_STATISTIC_M_COUNTER, (SWTC_PrescalerType
+ 248                             		.loc 1 342 0
+ 249 001a 75 41 1E                		mov	#30, r1
+ 250 001d 66 62                   		mov	#6, r2
+ 251 001f FB 3A FF 7F             		mov	#0x7fff, r3
+ 252 0023 04 00 00 00             		bra	_Set_MediumCounter
+ 253                             	.LVL9:
+ 254                             	.LFE3:
+ 256                             		.section	.text.STC_LastCyclesArray_Init,"ax",@progbits
+ 257                             		.global	_STC_LastCyclesArray_Init
+ 259                             	_STC_LastCyclesArray_Init:
+ 260                             	.LFB4:
+ 343:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #else
+ 344:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	(void)Set_SmallCounter((SWTC_CountersType)STC_TEMP_CYCLE_STATISTIC_M_COUNTER, (SWTC_PrescalerType)
+ 345:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #endif /* !_CORRECT_STATS_CYCLE_DURATION_TIMER_ */
+ 346:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 347:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** }
+ 348:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 349:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 350:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /**
+ 351:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** Fa scorrere la lista fifo degli ultimi cicli (viene chiamata ad inizio ciclo)
+ 352:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 353:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \param [out]	
+ 354:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	 
+ 355:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \return     	none
+ 356:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 357:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \notes:			
+ 358:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 359:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \author		Valeria Catani
+ 360:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \date   		17/10/2008
+ 361:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \version    	1.0.0
+ 362:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 363:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** */
+ 364:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** void STC_LastCyclesArray_Init(void)
+ 365:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** {
+ 261                             		.loc 1 365 0
+ 262                             	.LVL10:
+ 263                             		.loc 1 365 0
+ 264 0000 66 0E                   		mov.L	#0, r14
+ 265                             	.LVL11:
+ 266                             		.balign 2,3,5
+ 267                             	.L30:
+ 366:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** uint8_t i;
+ 367:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 368:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   /** 
+ 369:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	Aggiorna lista delle statistiche degli ultimi cicli. Fa scorrere la lista fifo.
+ 370:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	*/
+ 371:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	for(i=(SIZE(MachineStatistics.lastCyclesStats) - 1);i>0;i--)
+ 372:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	{
+ 373:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		MachineStatistics.lastCyclesStats[i] = MachineStatistics.lastCyclesStats[i - 1];
+ 268                             		.loc 1 373 0 discriminator 2
+ 269 0002 70 E1 00 00 00 00       		add	#_MachineStatistics+245, r14, r1
+ 270 0008 70 E2 00 00 00 00       		add	#_MachineStatistics+224, r14, r2
+ 271 000e 75 43 15                		mov.L	#21, r3
+ 272 0011 7F 8F                   		smovf
+ 273 0013 71 EE EB                		add	#-21, r14
+ 371:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	for(i=(SIZE(MachineStatistics.lastCyclesStats) - 1);i>0;i--)
+ 274                             		.loc 1 371 0 discriminator 2
+ 275 0016 76 0E 6D FF             		cmp	#0xffffff6d, r14
+ 276 001a 21 E8                   		bne	.L30
+ 374:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		
+ 375:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	}  
+ 376:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 377:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   /*_memset_clear_8bitCount( &MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS], sizeof
+ 378:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	memset(&MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS], 0, sizeof(MachineStatistics
+ 277                             		.loc 1 378 0
+ 278 001c FB 12 00 00 00 00       		mov.L	#_MachineStatistics+98, r1
+ 279 0022 75 43 15                		mov.L	#21, r3
+ 280 0025 66 02                   		mov	#0, r2
+ 281 0027 7F 88                   		sstr.b
+ 379:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 380:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/* ciclo */
+ 381:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].cycle = StartedCycle;
+ 282                             		.loc 1 381 0
+ 283 0029 FB 42 00 00 00 00       		mov.L	#_StartedCycle, r4
+ 284 002f CC 44                   		mov.B	[r4], r4
+ 285 0031 FB E2 00 00 00 00       		mov.L	#_MachineStatistics, r14
+ 286 0037 C7 E4 62                		mov.B	r4, 98[r14]
+ 287 003a 02                      		rts
+ 288                             	.LFE4:
+ 290 003b 03                      		.section	.text.STC_superVisorUpdateStatistics,"ax",@progbits
+ 291                             		.global	_STC_superVisorUpdateStatistics
+ 293                             	_STC_superVisorUpdateStatistics:
+ 294                             	.LFB5:
+ 382:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 383:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** }
+ 384:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 385:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /**/
+ 386:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 387:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /**
+ 388:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** Aggiornamento statistiche nel Supervisor
+ 389:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** -Abilitazione del contatore della durata di un ciclo e
+ 390:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 391:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \param [in]     Interpreter_Data[0].completeLabel
+ 392:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \param [out] 	TempCycle_Stats.duration_timer (global)
+ 393:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	 
+ 394:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \return     	none
+ 395:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 396:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \notes:			
+ 397:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 398:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \author			Roberto Fioravanti
+ 399:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \date   		24/09/2008
+ 400:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \version    	1.1.0
+ 401:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 402:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** */
+ 403:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #ifdef _ENABLE_NEW_STATS_COMM_ERR_
+ 404:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** CM_Err_ClassType PrevCommErrCounters[sizeof(CommErr)/sizeof(CommErr[0])][sizeof(CommErr[0])/sizeof(
+ 405:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #else
+ 406:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** uint8_t PrevUnblockCounter[sizeof(I2c_UnblockCnt)/sizeof(I2c_UnblockCnt[0])];
+ 407:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #endif /* !_ENABLE_NEW_STATS_COMM_ERR_ */
+ 408:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 409:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** void STC_superVisorUpdateStatistics(void)
+ 410:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** {
+ 295                             		.loc 1 410 0
+ 296 0000 6E 7D                   		pushm	r7-r13
+ 297                             	.LCFI2:
+ 411:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #ifdef _ENABLE_NEW_STATS_COMM_ERR_
+ 412:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** uint8_t channelCnt, errTypeCnt;
+ 413:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** CM_Err_ClassType newCommErrCounters;
+ 414:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** CM_Err_ClassType deltaCommErr;
+ 415:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #else
+ 416:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** uint8_t i;
+ 417:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** uint8_t newUnblockCounters;
+ 418:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** uint8_t deltaUnblock;
+ 419:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** uint8_t localUnblockStatistic;
+ 420:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #endif /* !_ENABLE_NEW_STATS_COMM_ERR_ */
+ 421:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 422:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/* Contatore durata ciclo */
+ 423:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	if(Interpreter_Data[0].completeLabel.s.label == LBL_RUN)
+ 298                             		.loc 1 423 0
+ 299 0002 FB 72 00 00 00 00       		mov.L	#_Interpreter_Data, r7
+ 300 0008 CC 77                   		mov.B	[r7], r7
+ 424:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	{
+ 425:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		/* Abilita contatore (solo in RUN) */
+ 426:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		(void)SWTC_Run((SWTC_CountersType)STC_TEMP_CYCLE_STATISTIC_M_COUNTER);
+ 301                             		.loc 1 426 0
+ 302 000a 75 41 1E                		mov	#30, r1
+ 423:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	if(Interpreter_Data[0].completeLabel.s.label == LBL_RUN)
+ 303                             		.loc 1 423 0
+ 304 000d 64 F7                   		and	#15, r7
+ 305 000f 61 17                   		cmp	#1, r7
+ 306 0011 21 08                   		bne	.L33
+ 307                             		.loc 1 426 0
+ 308 0013 05 00 00 00             		bsr	_SWTC_Run
+ 309                             	.LVL12:
+ 310 0017 2E 07                   		bra	.L34
+ 311                             	.L33:
+ 427:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	}
+ 428:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	else
+ 429:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	{
+ 430:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		/* Disabilita contatore nei cicli diversi da RUN */
+ 431:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		(void)SWTC_Stop((SWTC_CountersType)STC_TEMP_CYCLE_STATISTIC_M_COUNTER);
+ 312                             		.loc 1 431 0
+ 313 0019 05 00 00 00             		bsr	_SWTC_Stop
+ 314                             	.LVL13:
+ 315 001d 03                      		.balign 2,3,1
+ 316                             	.L34:
+ 410:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** {
+ 317                             		.loc 1 410 0 discriminator 1
+ 318 001e 66 07                   		mov.L	#0, r7
+ 319 0020 2E 20                   		bra	.L35
+ 320                             	.LVL14:
+ 321                             	.L36:
+ 409:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** void STC_superVisorUpdateStatistics(void)
+ 322                             		.loc 1 409 0
+ 323 0022 FF 2D AC                		add	r10, r12, r13
+ 432:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	}
+ 433:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 434:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #ifdef _ENABLE_NEW_STATS_COMM_ERR_
+ 435:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 436:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	for(channelCnt = 0; channelCnt < (sizeof(CommErr)/sizeof(CommErr[0])) ; channelCnt++) 
+ 437:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	{
+ 438:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		for(errTypeCnt = 0; errTypeCnt < (sizeof(CommErr[0])/sizeof(CommErr[0][0])); errTypeCnt++)
+ 439:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		{
+ 440:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 			/* Statistica errori di comunicazione */
+ 441:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 			newCommErrCounters = CommErr[channelCnt][errTypeCnt];
+ 324                             		.loc 1 441 0
+ 325 0025 DC DD                   		mov.W	[r13], r13
+ 326                             	.LVL15:
+ 442:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 443:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 			if( SPV_isCycleRunning() == TRUE )
+ 327                             		.loc 1 443 0
+ 328 0027 05 00 00 00             		bsr	_SPV_isCycleRunning
+ 329                             	.LVL16:
+ 409:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** void STC_superVisorUpdateStatistics(void)
+ 330                             		.loc 1 409 0
+ 331 002b FF 2E AB                		add	r10, r11, r14
+ 332 002e 62 2A                   		add	#2, r10
+ 444:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 			{
+ 445:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 				/* Statistica aggiornata in RUN, DELAY e PAUSE */		
+ 446:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 				deltaCommErr = newCommErrCounters - PrevCommErrCounters[channelCnt][errTypeCnt];
+ 447:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /*
+ 448:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 				if( (UINT16_T_MAX - MachineStatistics.lastCycle.commErr[channelCnt][errTypeCnt]) >= deltaCommEr
+ 449:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 				{
+ 450:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 					 C'� ancora posto
+ 451:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 					MachineStatistics.lastCycle.commErr[channelCnt][errTypeCnt] += deltaCommErr;
+ 452:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 				}
+ 453:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 				else
+ 454:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 				{
+ 455:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 					 Non c'� abbastanza posto, la statistica viene limitata a 65535
+ 456:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 					MachineStatistics.lastCycle.commErr[channelCnt][errTypeCnt] = UINT16_T_MAX;
+ 457:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 				}*/ /*AE FIXME */
+ 458:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	    	}
+ 459:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 460:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		    PrevCommErrCounters[channelCnt][errTypeCnt] = newCommErrCounters;
+ 333                             		.loc 1 460 0
+ 334 0030 D3 ED                   		mov.W	r13, [r14]
+ 335                             	.LVL17:
+ 438:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		for(errTypeCnt = 0; errTypeCnt < (sizeof(CommErr[0])/sizeof(CommErr[0][0])); errTypeCnt++)
+ 336                             		.loc 1 438 0
+ 337 0032 75 5A 12                		cmp	#18, r10
+ 338 0035 21 ED                   		bne	.L36
+ 339 0037 71 77 12                		add	#18, r7
+ 436:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	for(channelCnt = 0; channelCnt < (sizeof(CommErr)/sizeof(CommErr[0])) ; channelCnt++) 
+ 340                             		.loc 1 436 0
+ 341 003a 75 57 24                		cmp	#36, r7
+ 342 003d 20 13                   		beq	.L32
+ 343                             	.LVL18:
+ 344 003f 03                      		.balign 2,3,1
+ 345                             	.L35:
+ 410:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** {
+ 346                             		.loc 1 410 0 discriminator 1
+ 347 0040 66 0A                   		mov.L	#0, r10
+ 409:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** void STC_superVisorUpdateStatistics(void)
+ 348                             		.loc 1 409 0 discriminator 1
+ 349 0042 70 7C 00 00 00 00       		add	#_CommErr, r7, r12
+ 350 0048 70 7B 00 00 00 00       		add	#_PrevCommErrCounters, r7, r11
+ 351 004e 2E D4                   		bra	.L36
+ 352                             	.LVL19:
+ 353                             	.L32:
+ 461:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		}
+ 462:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	}
+ 463:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 464:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #else /* _ENABLE_NEW_STATS_COMM_ERR_ */
+ 465:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 466:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	for(i=0; i<sizeof(I2c_UnblockCnt)/sizeof(I2c_UnblockCnt[0]); i++) 
+ 467:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	{
+ 468:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	    /* Statistica intervento routine di sblocco I2C */
+ 469:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	    newUnblockCounters =I2c_UnblockCnt[i];
+ 470:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	    if( SPV_isCycleRunning() == TRUE )
+ 471:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     	{
+ 472:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	    	/* Statistica aggiornata in RUN, DELAY e PAUSE */		
+ 473:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	        deltaUnblock = newUnblockCounters - PrevUnblockCounter[i];
+ 474:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	        
+ 475:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	        localUnblockStatistic = MachineStatistics.lastCycle.I2CUnblockCounters[i] + deltaUnblock;
+ 476:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	        
+ 477:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	        if(localUnblockStatistic >= MachineStatistics.lastCycle.I2CUnblockCounters[i])
+ 478:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     		{
+ 479:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     			MachineStatistics.lastCycle.I2CUnblockCounters[i] = localUnblockStatistic;
+ 480:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     		}
+ 481:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     		else
+ 482:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     		{
+ 483:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     			/*
+ 484:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     			Se la somma � minore di un addendo c'� stato overflow: in tal caso la statistica
+ 485:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     			viene autolimitata a 255.
+ 486:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     			*/
+ 487:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     			MachineStatistics.lastCycle.I2CUnblockCounters[i] = 0xFF;
+ 488:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     		}
+ 489:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	        
+ 490:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		        
+ 491:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     	}
+ 492:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	    PrevUnblockCounter[i]=newUnblockCounters;
+ 493:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	}
+ 494:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 495:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** #endif /* !_ENABLE_NEW_STATS_COMM_ERR_ */
+ 496:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 497:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** }
+ 354                             		.loc 1 497 0
+ 355 0050 3F 7D 07                		rtsd	#28, r7-r13
+ 356                             	.LFE5:
+ 358 0053 03                      		.section	.text.STC_functionValueUpdateStatistics,"ax",@progbits
+ 359                             		.global	_STC_functionValueUpdateStatistics
+ 361                             	_STC_functionValueUpdateStatistics:
+ 362                             	.LFB6:
+ 498:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 499:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 500:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 501:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** void STC_functionValueUpdateStatistics(void) 
+ 502:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** {
+ 363                             		.loc 1 502 0
+ 364 0000 6E 7D                   		pushm	r7-r13
+ 365                             	.LCFI3:
+ 503:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     uint8_t i;
+ 504:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     const uint8_t *ptrUIFunctionsTab;
+ 505:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     uint16_t bufferStartIndex;
+ 506:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     uint16_t tempWordVar;
+ 507:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     uint8_t funcRegNum;
+ 508:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     uint8_t funcIndex;
+ 509:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 510:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     /* Valori funzioni */
+ 511:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 512:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/* Bitmap delle funzioni On-Off attive nell'ultimo ciclo */	
+ 513:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].on_off_functions = 0;
+ 366                             		.loc 1 513 0
+ 367 0002 FB 72 00 00 00 00       		mov.L	#_MachineStatistics, r7
+ 368 0008 F9 74 65 00             		mov.B	#0, 101[r7]
+ 514:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 515:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	ptrUIFunctionsTab = Tab_FunctionsStatistics.Data;
+ 369                             		.loc 1 515 0
+ 370 000c FB D2 00 00 00 00       		mov.L	#_Tab_FunctionsStatistics, r13
+ 516:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	bufferStartIndex = 0;
+ 371                             		.loc 1 516 0
+ 372 0012 66 07                   		mov	#0, r7
+ 515:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	ptrUIFunctionsTab = Tab_FunctionsStatistics.Data;
+ 373                             		.loc 1 515 0
+ 374 0014 EC DA                   		mov.L	[r13], r10
+ 375                             	.LVL20:
+ 517:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	
+ 518:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	for(i=0; i<Tab_FunctionsStatistics.DataLenght;i++)
+ 376                             		.loc 1 518 0
+ 377 0016 CF 7C                   		mov.B	r7, r12
+ 519:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	/* NOTA: se nel setting non � stata inserita la tabella necessaria, 
+ 520:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	   Tab_FunctionsStatistics.DataLenght viene inizializzata a 0 in HND_wmConfigInit(), per cui
+ 521:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	   il ciclo for non viene eseguito affatto e Tab_FunctionsStatistics.Data non � utilizzato */
+ 522:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	{
+ 523:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		funcRegNum = OFFS_B(ptrUIFunctionsTab, 1);
+ 524:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		/* Controllo se la posizione della funzione � coerente con la dimensione di BufNewReg[] */
+ 525:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		if( (*ptrUIFunctionsTab) < SIZE(BufNewReg) )
+ 526:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		{
+ 527:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 			funcIndex = BufNewReg[*ptrUIFunctionsTab] - 1;
+ 378                             		.loc 1 527 0
+ 379 0018 FB 92 00 00 00 00       		mov.L	#_BufNewReg, r9
+ 518:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	for(i=0; i<Tab_FunctionsStatistics.DataLenght;i++)
+ 380                             		.loc 1 518 0
+ 381 001e 2E 64                   		bra	.L41
+ 382                             	.LVL21:
+ 383                             	.L45:
+ 525:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		if( (*ptrUIFunctionsTab) < SIZE(BufNewReg) )
+ 384                             		.loc 1 525 0
+ 385 0020 58 AE                   		movu.B	[r10], r14
+ 523:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		funcRegNum = OFFS_B(ptrUIFunctionsTab, 1);
+ 386                             		.loc 1 523 0
+ 387 0022 CD AB 01                		mov.B	1[r10], r11
+ 388                             	.LVL22:
+ 525:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		if( (*ptrUIFunctionsTab) < SIZE(BufNewReg) )
+ 389                             		.loc 1 525 0
+ 390 0025 75 5E 27                		cmp	#39, r14
+ 391 0028 24 52                   		bgtu	.L42
+ 392                             		.loc 1 527 0
+ 393 002a FE 4E 9E                		mov.B	[r14,r9], r14
+ 528:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 			if(funcIndex < funcRegNum)	/* Rende superfluo il controllo funcIndex != 0xFF */
+ 394                             		.loc 1 528 0
+ 395 002d 5B B3                   		movu.B	r11, r3
+ 527:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 			funcIndex = BufNewReg[*ptrUIFunctionsTab] - 1;
+ 396                             		.loc 1 527 0
+ 397 002f 60 1E                   		sub	#1, r14
+ 398                             	.LVL23:
+ 399                             		.loc 1 528 0
+ 400 0031 5B EE                   		movu.B	r14, r14
+ 401 0033 47 3E                   		cmp	r3, r14
+ 402 0035 22 45                   		bgeu	.L42
+ 529:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 			{
+ 530:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		        if(funcRegNum == ON_OFF_FUNC_REG_NUM) 
+ 403                             		.loc 1 530 0
+ 404 0037 61 23                   		cmp	#2, r3
+ 405 0039 21 29                   		bne	.L43
+ 531:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		        {/* E ' una funzione On - Off */                    
+ 532:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		    		  
+ 533:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 					if ( funcIndex == (INDEX_ON_VALUE-1)  )
+ 406                             		.loc 1 533 0
+ 407 003b 61 1E                   		cmp	#1, r14
+ 408 003d 21 3A                   		bne	.L46
+ 534:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 					{/* E' una funzione ON - Off attiva */
+ 535:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 536:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 						if( i< BYTE_SIZE )
+ 409                             		.loc 1 536 0
+ 410 003f 61 74                   		cmp	#7, r4
+ 411 0041 24 13                   		bgtu	.L44
+ 537:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 						{/* C'� ancora spazio nella bitmap -> aggiorno stat ultimo ciclo */
+ 538:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 539:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 							SETBIT(MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].on_off_functions, i);
+ 412                             		.loc 1 539 0
+ 413 0043 FB B2 00 00 00 00       		mov.L	#_MachineStatistics, r11
+ 414                             	.LVL24:
+ 415 0049 FD 62 4E                		shll	r4, r14
+ 416                             	.LVL25:
+ 417 004c 06 15 BE 65             		or	101[r11].B, r14
+ 418 0050 C7 BE 65                		mov.B	r14, 101[r11]
+ 419 0053 03                      		.balign 2,3,1
+ 420                             	.L44:
+ 540:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 						}
+ 541:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 542:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 						/* Aggiornamento stat globali funzione on off*/
+ 543:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 						IncByteWithCheck(&MachineStatistics.globalStats.functionsValues_Buffer[bufferStartIndex]);
+ 421                             		.loc 1 543 0
+ 422 0054 5F 71                   		movu.W	r7, r1
+ 423 0056 70 11 00 00 00 00       		add	#_MachineStatistics+70, r1
+ 424 005c 05 00 00 00             		bsr	_IncByteWithCheck
+ 425                             	.LVL26:
+ 426 0060 2E 17                   		bra	.L46
+ 427                             	.LVL27:
+ 428                             	.L43:
+ 544:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 545:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 					}
+ 546:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 547:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 					funcRegNum=1;   /* si incrementa l'indice di una sola unit� per le stat globali */
+ 548:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		        } 
+ 549:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		        else 
+ 550:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		        {
+ 551:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		          tempWordVar = funcIndex + bufferStartIndex;
+ 429                             		.loc 1 551 0
+ 430 0062 4B 7E                   		add	r7, r14
+ 431                             	.LVL28:
+ 552:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		                  
+ 553:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		          if( tempWordVar < SIZE(MachineStatistics.globalStats.functionsValues_Buffer) )
+ 432                             		.loc 1 553 0
+ 433 0064 5F E1                   		movu.W	r14, r1
+ 434 0066 75 51 13                		cmp	#19, r1
+ 435 0069 24 11                   		bgtu	.L42
+ 554:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		  				{
+ 555:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		  				    /* statistiche globali funzione multi-regolazione*/
+ 556:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		  					/* Numero di volte che una funzione ha assunto un dato valore */
+ 557:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		  					IncByteWithCheck(&MachineStatistics.globalStats.functionsValues_Buffer[tempWordVar]);
+ 436                             		.loc 1 557 0
+ 437 006b 70 11 00 00 00 00       		add	#_MachineStatistics+70, r1
+ 438 0071 05 00 00 00             		bsr	_IncByteWithCheck
+ 439                             	.LVL29:
+ 440 0075 2E 05                   		bra	.L42
+ 441                             	.LVL30:
+ 442                             	.L46:
+ 547:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 					funcRegNum=1;   /* si incrementa l'indice di una sola unit� per le stat globali */
+ 443                             		.loc 1 547 0
+ 444 0077 66 1B                   		mov	#1, r11
+ 445 0079 03                      		.balign 2,3,1
+ 446                             	.L42:
+ 447                             	.LVL31:
+ 558:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		  				}
+ 559:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		        }
+ 560:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 			}
+ 561:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		}
+ 562:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 563:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		bufferStartIndex += funcRegNum;
+ 448                             		.loc 1 563 0
+ 449 007a 5B BB                   		movu.B	r11, r11
+ 450 007c 4B B7                   		add	r11, r7
+ 451                             	.LVL32:
+ 564:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		ptrUIFunctionsTab += 2;	
+ 452                             		.loc 1 564 0
+ 453 007e 62 2A                   		add	#2, r10
+ 454                             	.LVL33:
+ 518:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	for(i=0; i<Tab_FunctionsStatistics.DataLenght;i++)
+ 455                             		.loc 1 518 0
+ 456 0080 62 1C                   		add	#1, r12
+ 457                             	.LVL34:
+ 458                             		.balign 2,3,1
+ 459                             	.L41:
+ 518:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	for(i=0; i<Tab_FunctionsStatistics.DataLenght;i++)
+ 460                             		.loc 1 518 0 is_stmt 0 discriminator 1
+ 461 0082 5B C4                   		movu.B	r12, r4
+ 462 0084 45 D4 04                		cmp	4[r13].UB, r4
+ 463 0087 23 99                   		bltu	.L45
+ 565:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	}
+ 566:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** }
+ 464                             		.loc 1 566 0 is_stmt 1
+ 465 0089 3F 7D 07                		rtsd	#28, r7-r13
+ 466                             	.LFE6:
+ 468                             		.section	.text.STC_userDishRack_H2oHardness_Update,"ax",@progbits
+ 469                             		.global	_STC_userDishRack_H2oHardness_Update
+ 471                             	_STC_userDishRack_H2oHardness_Update:
+ 472                             	.LFB7:
+ 567:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 568:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** void STC_userDishRack_H2oHardness_Update(void)
+ 569:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** {
+ 473                             		.loc 1 569 0
+ 570:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].userH2oHardness=WaterForRegenerat
+ 474                             		.loc 1 570 0
+ 475 0000 FB 42 00 00 00 00       		mov.L	#_WaterForRegenerate, r4
+ 476 0006 CC 44                   		mov.B	[r4], r4
+ 477 0008 FB E2 00 00 00 00       		mov.L	#_MachineStatistics, r14
+ 478 000e C7 E4 63                		mov.B	r4, 99[r14]
+ 571:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 572:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].dishRack_regenerate_spaklingAid.b
+ 479                             		.loc 1 572 0
+ 480 0011 FB 42 00 00 00 00       		mov.L	#_DishRackFunctionValue, r4
+ 481 0017 CC 44                   		mov.B	[r4], r4
+ 482 0019 CD E3 64                		mov.B	100[r14], r3
+ 483 001c 64 34                   		and	#3, r4
+ 484 001e 75 23 F9                		and	#-7, r3
+ 485 0021 4B 44                   		add	r4, r4
+ 486 0023 57 34                   		or	r3, r4
+ 487 0025 C7 E4 64                		mov.B	r4, 100[r14]
+ 573:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].washzone_reg=ZoneWashFunctionValue;
+ 488                             		.loc 1 573 0
+ 489 0028 FB 42 00 00 00 00       		mov.L	#_ZoneWashFunctionValue, r4
+ 490 002e CC 43                   		mov.B	[r4], r3
+ 491 0030 CD E4 73                		mov.B	115[r14], r4
+ 492 0033 64 F3                   		and	#15, r3
+ 493 0035 75 24 F0                		and	#-16, r4
+ 494 0038 57 34                   		or	r3, r4
+ 495 003a C7 E4 73                		mov.B	r4, 115[r14]
+ 496 003d 02                      		rts
+ 497                             	.LFE7:
+ 499                             		.section	.text.STC_regenerate_spaklingAid_Update,"ax",@progbits
+ 500                             		.global	_STC_regenerate_spaklingAid_Update
+ 502                             	_STC_regenerate_spaklingAid_Update:
+ 503                             	.LFB8:
+ 574:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** }
+ 575:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 576:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** void STC_regenerate_spaklingAid_Update(void)
+ 577:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** {
+ 504                             		.loc 1 577 0
+ 578:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     if(TESTBIT(ApplicationFlags, AF_NO_SALT_BIT)==0) 
+ 505                             		.loc 1 578 0
+ 506 0000 FB E2 00 00 00 00       		mov.L	#_ApplicationFlags, r14
+ 507 0006 CC E4                   		mov.B	[r14], r4
+ 508 0008 FB E2 00 00 00 00       		mov.L	#_MachineStatistics, r14
+ 509 000e FD 74 C4 01             		tst	#1, r4
+ 510 0012 21 0C                   		bne	.L50
+ 579:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     {
+ 580:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****         /* Sale presente */
+ 581:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****         MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].dishRack_regenerate_spaklingA
+ 511                             		.loc 1 581 0
+ 512 0014 CD E4 64                		mov.B	100[r14], r4
+ 513 0017 64 74                   		and	#7, r4
+ 514 0019 C7 E4 64                		mov.B	r4, 100[r14]
+ 515 001c 2E 24                   		bra	.L51
+ 516                             	.L50:
+ 582:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     } 
+ 583:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     else 
+ 584:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     {        
+ 585:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****         /* Sale assente */
+ 586:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****         MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].dishRack_regenerate_spaklingA
+ 517                             		.loc 1 586 0
+ 518 001e EF E4                   		mov.L	r14, r4
+ 519 0020 FB E2 00 00 00 00       		mov.L	#_uP_Regenerate_Data, r14
+ 520 0026 CD EE 07                		mov.B	7[r14], r14
+ 521 0029 5B E3                   		movu.B	r14, r3
+ 522 002b 75 53 1F                		cmp	#31, r3
+ 523 002e 25 06                   		bleu	.L52
+ 524 0030 75 4E 1F                		mov	#31, r14
+ 525 0033 03                      		.balign 2,3,5
+ 526                             	.L52:
+ 527 0034 CD 43 64                		mov.B	100[r4], r3
+ 528 0037 6C 3E                   		shll	#3, r14
+ 529 0039 64 73                   		and	#7, r3
+ 530 003b 57 3E                   		or	r3, r14
+ 531 003d C7 4E 64                		mov.B	r14, 100[r4]
+ 532                             		.balign 2,3,5
+ 533                             	.L51:
+ 587:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     }
+ 588:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].dishRack_regenerate_spaklingAid.b
+ 534                             		.loc 1 588 0
+ 535 0040 FB 42 00 00 00 00       		mov.L	#_Flags_2, r4
+ 536 0046 FB E2 00 00 00 00       		mov.L	#_MachineStatistics, r14
+ 537 004c CC 43                   		mov.B	[r4], r3
+ 538 004e CD E4 64                		mov.B	100[r14], r4
+ 539 0051 64 33                   		and	#3, r3
+ 540 0053 FD E0 14                		bmne	#0, r4
+ 541 0056 C7 E4 64                		mov.B	r4, 100[r14]
+ 589:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].rinse_aid=RinseAidFunctionValue;
+ 542                             		.loc 1 589 0
+ 543 0059 FB 42 00 00 00 00       		mov.L	#_RinseAidFunctionValue, r4
+ 544 005f CC 43                   		mov.B	[r4], r3
+ 545 0061 CD E4 73                		mov.B	115[r14], r4
+ 546 0064 6C 43                   		shll	#4, r3
+ 547 0066 64 F4                   		and	#15, r4
+ 548 0068 57 34                   		or	r3, r4
+ 549 006a C7 E4 73                		mov.B	r4, 115[r14]
+ 550 006d 02                      		rts
+ 551                             	.LFE8:
+ 553                             		.section	.text.STC_Add_LastCycle_turbPerc_turbCalType,"ax",@progbits
+ 554                             		.global	_STC_Add_LastCycle_turbPerc_turbCalType
+ 556                             	_STC_Add_LastCycle_turbPerc_turbCalType:
+ 557                             	.LFB9:
+ 590:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** }
+ 591:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 592:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** void STC_Add_LastCycle_turbPerc_turbCalType(void)
+ 593:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** {
+ 558                             		.loc 1 593 0
+ 594:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     if(TempCycle_Stats.turbindex<STAT_SAVED_CYCLES_TURB_READS_NUM) 
+ 559                             		.loc 1 594 0
+ 560 0000 FB 42 00 00 00 00       		mov.L	#_TempCycle_Stats, r4
+ 561 0006 CC 43                   		mov.B	[r4], r3
+ 562 0008 5B 3E                   		movu.B	r3, r14
+ 563 000a 61 3E                   		cmp	#3, r14
+ 564 000c 24 3A                   		bgtu	.L53
+ 595:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     {        
+ 596:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****         MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].turbPerc_turbCalType.b[TempCy
+ 565                             		.loc 1 596 0
+ 566 000e 70 EE 00 00 00 00       		add	#_MachineStatistics+100, r14
+ 567 0014 FB 22 00 00 00 00       		mov.L	#_TurbidityReads, r2
+ 568 001a CD E1 02                		mov.B	2[r14], r1
+ 569 001d 8A 2A                   		mov.B	9[r2], r2
+ 570 001f 64 11                   		and	#1, r1
+ 571 0021 4B 22                   		add	r2, r2
+ 572 0023 57 12                   		or	r1, r2
+ 573 0025 C7 E2 02                		mov.B	r2, 2[r14]
+ 597:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****         MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].turbPerc_turbCalType.b[TempCy
+ 574                             		.loc 1 597 0
+ 575 0028 FB 12 00 00 00 00       		mov.L	#_Tab_HWCTurbidity, r1
+ 576 002e FB 52 00 00 00 00       		mov.L	#_TurbiditySensorCal, r5
+ 577 0034 EC 11                   		mov.L	[r1], r1
+ 578 0036 5C 55                   		movu.W	[r5], r5
+ 579 0038 06 C5 15 05             		cmp	10[r1].UW, r5
+ 580 003c FD E0 02                		bmeq	#0, r2
+ 581 003f C7 E2 02                		mov.B	r2, 2[r14]
+ 598:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****         TempCycle_Stats.turbindex++;
+ 582                             		.loc 1 598 0
+ 583 0042 62 13                   		add	#1, r3
+ 584 0044 C3 43                   		mov.B	r3, [r4]
+ 585                             	.L53:
+ 586 0046 02                      		rts
+ 587                             	.LFE9:
+ 589                             		.section	.text.STC_OnTimeUpdate,"ax",@progbits
+ 590                             		.global	_STC_OnTimeUpdate
+ 592                             	_STC_OnTimeUpdate:
+ 593                             	.LFB10:
+ 599:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****     }
+ 600:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** }
+ 601:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 602:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 603:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* ************** */
+ 604:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* Local Function */
+ 605:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /* ************** */
+ 606:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 607:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 608:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** /**
+ 609:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 610:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** Calcola il tempo di ON (Statistiche globali) inteso come tempo di RUN espresso in ore
+ 611:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 612:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \param [out]	MachineStatistics.globalStats.OnTime (global)
+ 613:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	 
+ 614:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \return     	none
+ 615:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 616:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \notes:			
+ 617:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 618:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \author			Valeria Catani
+ 619:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \date   		15/10/2008
+ 620:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** \version    1.0.0
+ 621:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 622:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** */
+ 623:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** void STC_OnTimeUpdate(void)
+ 624:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** {
+ 594                             		.loc 1 624 0
+ 625:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** uint32_t time_tmp;
+ 626:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 627:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 
+ 628:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   time_tmp = (uint32_t)( ((uint32_t)(MachineStatistics.globalStats.OnTime * 60)) + 
+ 629:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****                 (MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].duration) +
+ 595                             		.loc 1 629 0
+ 596 0000 FB E2 00 00 00 00       		mov.L	#_MachineStatistics, r14
+ 630:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****                 (TempCycle_Stats.ONTime_Minutes) );
+ 597                             		.loc 1 630 0
+ 598 0006 FB 32 00 00 00 00       		mov.L	#_TempCycle_Stats, r3
+ 628:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   time_tmp = (uint32_t)( ((uint32_t)(MachineStatistics.globalStats.OnTime * 60)) + 
+ 599                             		.loc 1 628 0
+ 600 000c B0 3A                   		movu.B	1[r3], r2
+ 601 000e 5D E4 22                		movu.W	68[r14], r4
+ 602 0011 49 E2 6B                		add	107[r14].UB, r2
+ 603 0014 75 14 3C                		mul	#60, r4
+ 604 0017 4B 24                   		add	r2, r4
+ 605                             	.LVL35:
+ 631:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   
+ 632:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   MachineStatistics.globalStats.OnTime = (time_tmp / 60);
+ 606                             		.loc 1 632 0
+ 607 0019 EF 42                   		mov.L	r4, r2
+ 608 001b FD 74 92 3C             		divu	#60, r2
+ 609 001f D7 E2 22                		mov.W	r2, 68[r14]
+ 633:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   
+ 634:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   TempCycle_Stats.ONTime_Minutes = ( time_tmp - (MachineStatistics.globalStats.OnTime * 60) );
+ 610                             		.loc 1 634 0
+ 611 0022 75 12 C4                		mul	#-60, r2
+ 612 0025 4B 24                   		add	r2, r4
+ 613                             	.LVL36:
+ 614 0027 80 3C                   		mov.B	r4, 1[r3]
+ 615 0029 02                      		rts
+ 616                             	.LFE10:
+ 618                             		.section	.text.STC_updateLastCycleStat_END,"ax",@progbits
+ 619                             		.global	_STC_updateLastCycleStat_END
+ 621                             	_STC_updateLastCycleStat_END:
+ 622                             	.LFB2:
+ 257:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** {
+ 623                             		.loc 1 257 0
+ 624                             	.LVL37:
+ 625 0000 7E A7                   		push.l	r7
+ 626                             	.LCFI4:
+ 257:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** {
+ 627                             		.loc 1 257 0
+ 628 0002 CF 17                   		mov.B	r1, r7
+ 270:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	cycleDuration = SWTC_GetElapsedTime((SWTC_CountersType) STC_TEMP_CYCLE_STATISTIC_M_COUNTER);
+ 629                             		.loc 1 270 0
+ 630 0004 75 41 1E                		mov	#30, r1
+ 631                             	.LVL38:
+ 632 0007 05 00 00 00             		bsr	_SWTC_GetElapsedTime
+ 633                             	.LVL39:
+ 279:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].duration= cycleDuration;
+ 634                             		.loc 1 279 0
+ 635 000b FD 78 51 FF 00          		min	#0xff, r1
+ 636                             	.LVL40:
+ 637 0010 FB E2 00 00 00 00       		mov.L	#_MachineStatistics, r14
+ 295:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	if(0 == mode)
+ 638                             		.loc 1 295 0
+ 639 0016 5B 77                   		movu.B	r7, r7
+ 640                             	.LVL41:
+ 279:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].duration= cycleDuration;
+ 641                             		.loc 1 279 0
+ 642 0018 C7 E1 6B                		mov.B	r1, 107[r14]
+ 295:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	if(0 == mode)
+ 643                             		.loc 1 295 0
+ 644 001b 61 07                   		cmp	#0, r7
+ 645 001d 21 17                   		bne	.L57
+ 297:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 		if( StartedCycle < SIZE(MachineStatistics.globalStats.executedCycles_Num) )
+ 646                             		.loc 1 297 0
+ 647 001f FB 72 00 00 00 00       		mov.L	#_StartedCycle, r7
+ 648                             	.LVL42:
+ 649 0025 58 71                   		movu.B	[r7], r1
+ 650                             	.LVL43:
+ 651 0027 75 51 1F                		cmp	#31, r1
+ 652 002a 24 0A                   		bgtu	.L57
+ 300:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 			IncWordWithCheck(&MachineStatistics.globalStats.executedCycles_Num[StartedCycle]);
+ 653                             		.loc 1 300 0
+ 654 002c 4B 11                   		add	r1, r1
+ 655 002e 4B E1                   		add	r14, r1
+ 656 0030 05 00 00 00             		bsr	_IncWordWithCheck
+ 657                             	.LVL44:
+ 658                             		.balign 2,3,5
+ 659                             	.L57:
+ 306:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   if ( MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS].restore_koRestore.b.koRestore 
+ 660                             		.loc 1 306 0
+ 661 0034 FB E2 00 00 00 00       		mov.L	#_MachineStatistics, r14
+ 662 003a DD E7 35                		mov.W	106[r14], r7
+ 663 003d 76 27 00 0F             		and	#0xf00, r7
+ 664 0041 20 0B                   		beq	.L58
+ 308:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** 	  MachineStatistics.globalStats.KORestoreCycles_Num++;
+ 665                             		.loc 1 308 0
+ 666 0043 DD E7 20                		mov.W	64[r14], r7
+ 667 0046 62 17                   		add	#1, r7
+ 668 0048 D7 E7 20                		mov.W	r7, 64[r14]
+ 669 004b 03                      		.balign 2,3,1
+ 670                             	.L58:
+ 317:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c **** }
+ 671                             		.loc 1 317 0
+ 672 004c 7E B7                   		pop	r7
+ 315:C:/Workspace/FW_Platform2_5/trunk/Inertia/Control\DW_Statistics.c ****   STC_OnTimeUpdate();
+ 673                             		.loc 1 315 0
+ 674 004e 04 00 00 00             		bra	_STC_OnTimeUpdate
+ 675                             	.LVL45:
+ 676                             	.LFE2:
+ 678                             		.comm	_PrevCommErrCounters,36,2
+ 849                             	.Letext0:
+ 850                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 851                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\CFG_DishWasher\\CFG_Inertia/DIO_cfg.h"
+ 852                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_SwTimersCounters/SwTimersCounter
+ 853                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\CFG_DishWasher\\CFG_Inertia/ProductSafety_cfg.h"
+ 854                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmDefines.h"
+ 855                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_Types.h"
+ 856                             		.file 8 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmTypes.h"
+ 857                             		.file 9 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmGlobal.h"
+ 858                             		.file 10 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_AnalogFeedbacks/PM_AnalogFeedba
+ 859                             		.file 11 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCADC/OCADC_drv.h"
+ 860                             		.file 12 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_BusCOMM/BCP_General.h"
+ 861                             		.file 13 "C:\\Workspace\\FW_Platform2_5\\trunk\\CFG_DishWasher\\CFG_Inertia/BusCommPltf_cfg.h"
+ 862                             		.file 14 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_Global.h"
+ 863                             		.file 15 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_IOManager/OutputManagerExp.h"
+ 864                             		.file 16 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_DigitalIO/DigitalInputsExp.h"
+ 865                             		.file 17 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_BusCOMM/BCP_BusCommMng.h"
+ 866                             		.file 18 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Analog/AnalogExp.h"
+ 867                             		.file 19 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_FuncLib.h"
+ 868                             		.file 20 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\Control/DW_Supervisor.h"
+ 869                             		.file 21 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmFuncLib.h"

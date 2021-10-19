@@ -1,0 +1,136 @@
+#include "Config.h"
+#include "OCCLK_drv.h"
+#include "OCTPM_drv.h"
+#include "OCDIO_drv.h"
+#include "OCIRQ_drv.h"
+#include <hidef.h>
+
+#define COLD_RESET  1
+#define REL_ZC_POS      10
+#define TRIAC_PART_POS  11
+
+
+IO_OCU_CfgType OcuCh_cfg = {
+TMR_CH_ID_6,
+TMR_CH_NO_INV        
+};
+
+/* Hw Counter id 1 Configuration Period 10 msec c.a. */
+const IO_HwCntrCfgType HwCntr_cfg = {
+1,
+TMR_CLEAR_SOURCE_IS_INTERNAL,
+7,
+TMR_CLK_SOURCE_IS_BUS_CLOCK,
+TMR_COUNT_UP,
+5120,                      /* tick's resolution [nSec] */
+1953                       /* hardware's counter period in [tick] */
+};	
+
+IO_TimingValueType Tmr1Ch6OCUThreshold = (IO_TimingValueType)5120*200;
+
+IO_ErrorType ErrClockSetup;
+
+bool_t InitIRQ = FALSE;
+bool_t IRQglitch = FALSE;
+bool_t DeinitIRQ = FALSE;
+uint16_t TimeGlitch,K;
+
+
+static void SetupTimer(void);
+static IO_ErrorType callbackTmrChOutputCapture (IO_NotificationType notifVal, IO_ChannelType chid, IO_ErrorType error);
+static IO_ErrorType callbackIRQ_Event (IO_NotificationType notifVal, IO_ChannelType chid, IO_ErrorType error);
+
+void main(void)
+{
+
+	/* Bus Clock 25MHz */
+    ErrClockSetup = OCCLK_SetFLLInternalClockSync(50000000);
+    /* Just to verify busclock frequency */
+    SetupTimer();
+    (void)OCDIO_SetPinDirValueSync(6, 1);
+    OCDIO_SetPinValueSync(6, 1);        
+    (void)OCDIO_SetPinDirValueSync(11, 1);
+    OCDIO_SetPinValueSync(11, 1);
+    (void)OCDIO_SetPinDirValueSync(9, 1);
+    OCDIO_SetPinValueSync(9, 1);        
+        
+
+    EnableInterrupts;    
+
+       
+    for(;;)
+    {
+        if ( FALSE == InitIRQ )
+        {
+            OCIRQ_InitSync(callbackIRQ_Event);
+
+            InitIRQ = TRUE;
+        }
+        for(;;)
+        {
+            if (TRUE == IRQglitch)
+            {
+                OCDIO_SetPinValueSync(9, 0);
+                for (K=0;K<TimeGlitch;K++)
+                {
+                    
+                }
+                OCDIO_SetPinValueSync(9, 1);        
+                IRQglitch = FALSE;
+            }
+            if (TRUE == DeinitIRQ)
+            {
+                (void)OCIRQ_DeInitSync();
+                DeinitIRQ = FALSE;    
+            }
+        }
+    }    
+}
+/* IRQ Event */
+static IO_ErrorType callbackIRQ_Event (IO_NotificationType notifVal, IO_ChannelType chid, IO_ErrorType error)
+{
+    if(IRQ_ON_POSITIVE_EDGE == notifVal)
+    {
+        OCDIO_SetPinValueSync(6, 1); /* LED 3 Off */
+        OCDIO_SetPinValueSync(11, 0);/* LED 6 On */
+        (void)OCIRQ_SetEdgeSync(IRQ_ON_NEGATIVE_EDGE);        
+    }
+    else
+    {
+        OCDIO_SetPinValueSync(6, 0);  /* LED 3 On */
+        OCDIO_SetPinValueSync(11, 1); /* LED 6 Off */
+        (void)OCIRQ_SetEdgeSync(IRQ_ON_POSITIVE_EDGE);                
+    }
+}
+
+static void SetupTimer(void)
+{
+IO_ErrorType ErrTimer;
+
+    /* Init Hw Counter id 1 */
+    ErrTimer = OCHWCNTR_InitSync(&HwCntr_cfg);
+    /* Start Counting */
+    ErrTimer = OCHWCNTR_Enable(HwCntr_cfg.hwCntrlId, TMR_CNT_ENABLE);               
+        
+    /* Output Compare Init.  */
+    ErrTimer = OCOCU_InitSync(&OcuCh_cfg);
+    /* Set Threshold 1  */
+    OCOCU_SetThreshold1Sync(OcuCh_cfg.OCU_Id, Tmr1Ch6OCUThreshold);
+    /* Toggle Pin On Compare */
+    ErrTimer = OCU_SetModeSync(OcuCh_cfg.OCU_Id, TMR_CH_OC_TOGGLE_T1);
+    /* Enable Interrupt on Compare */
+    ErrTimer = OCOCU_EnableISR(OcuCh_cfg.OCU_Id, TMR_CH_ISR_ENABLE, &callbackTmrChOutputCapture);
+    
+}
+static IO_ErrorType callbackTmrChOutputCapture (IO_NotificationType notifVal, IO_ChannelType chid, IO_ErrorType error)
+{
+static bool_t ZcEdge = 1;
+
+    if (chid == OcuCh_cfg.OCU_Id)
+    {
+        /* Zero Crossing Edge */
+
+        ZcEdge ^= 1;
+    }
+}
+

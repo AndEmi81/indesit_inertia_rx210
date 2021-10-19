@@ -1,0 +1,214 @@
+/**
+\defgroup	PM_SwTimersCounters Timers and Counters
+@{
+	Software timercounter is an object which can be used as timer or counter.
+\n	When working as timer, after a specified delay (that is the timer is expired), 
+the user can do an action. When timer expires doesn't call any callback, so the user must poll it's status.
+Timers works in one-shot mode: they expires only once. It can be restarted. 
+\n	As counter, timercounter can be used for low-precision time measurement (higher resolution than 
+resolution reachable by hardware timers).
+
+\version 01.00
+
+\par Management
+\n	Timercounter management is based on a manager that is a function to be called periodically.
+The priority of the timercounters manager is the same of the task where it's called.  
+The period is the time base.
+
+\n	Timercounters are created at compile-time and they can be stopped, started, and re-started.
+
+\par Prescaler
+\n	Timercounter must be associated to a prescaler which defines timercounter resolution. 
+It can be changed at run-time, while prescalers are defined at compile-time.
+
+\par Ranges of timeout and measurement
+Three type of counters can be defined:
+- small
+- medium
+- large
+  
+Maximum timeout (timer) or measurement (counter) depends on the type of the timercounter that is defined at compile-time. 
+
+\n Small timercounters has a 7-bit counter. 
+\n Medium timercounters has a 15-bit counter.
+\n Large timercounters has a 31-bit counter.
+        
+In general, the range of value is:
+ 1<= value <= 2^(n)-1, where n is the number of the bit of the counter.
+
+\par timercounter value
+This value of a timercounter is expressed in units of the prescaler used.
+
+\par Configuration:
+For the module configuration see \subpage SwTimersCounter_Cgf "Configuration of timers/counters"
+\n
+\par Exported Functions (Platform Level):
+\li SWTC_Run()
+\li SWTC_Stop()
+\li SWTC_SetPrescaler()
+\li SWTC_IsExpired()
+\li SWTC_IsStopped()
+\li SWTC_Retrigger()
+\li SWTC_SetSValue()
+\li SWTC_SetMValue()
+\li SWTC_SetSValueAndRun()
+\li SWTC_SetMValueAndRun()
+\li SWTC_GetRemainingTime()
+\li SWTC_GetElapsedTime()
+
+
+
+\n
+@}
+\ingroup   	PM_Generic
+*/
+
+/**
+   	\page SwTimersCounter_Cgf The configuration
+
+	\n The goal of this section is to explain the configuration of this module.
+	
+	\section SwTimersCounter_Cgf_files 
+	This module needs two files:
+	-	SWTCcfg.h - header file containing general properties of the modules, see \ref SwTimersCounter_Cgf_filesh
+	-	*.c, \see \ref SwTimersCounter_Cgf_filesc
+	
+	\section SwTimersCounter_Cgf_filesh Properties configuration in SWTCcfg.h
+	This section explains the configuration of the header file SWTCcfg.h.
+	
+	\par Mandatory properties
+	-	SWTC_PRESCALERS_NUM	number of prescalers. Maximum value is 256.
+	-	SWTC_COUNTERS_NUM	number of counters. Maximum value is 256.
+	
+	\par other properties
+	-	SWTC_L_ENABLED 'large' timercounters support is not available for default. 
+	If defined support fro 'large' timercounters is available. 
+	
+	\par Examples
+	
+	\code
+	#define SWTC_PRESCALERS_NUM	4
+	#define SWTC_COUNTERS_NUM	3
+	\endcode
+	
+	or, if your application uses pre-defined counters
+	
+	\code
+	#define SWTC_PRESCALERS_NUM	4
+	#define SWTC_COUNTERS_NUM	COUNTERS_NUM_GROUP1 + COUNTERS_NUM_GROUP2 + .... + COUNTERS_NUM_GROUPn
+	\endcode 
+	
+	'Large' timercounter support enabled
+	\code
+	#define SWTC_L_ENABLED
+	\endcode
+	
+	\section SwTimersCounter_Cgf_filesc Timercounters configuration
+	This section explains the contiguration of:
+	-	timercounters object, see \ref SwTimersCounter_Cgf_filesc_var
+	-	timercounters tables, see \ref SwTimersCounter_Cgf_filesc_tctb
+	-	prescalers table, see \ref SwTimersCounter_Cgf_filesc_pstb
+	
+	
+	\section SwTimersCounter_Cgf_filesc_var Timercounters variables
+	A timercounter is an object that needs two variables:
+	-	timercounter variable
+	-	timercounter control and configuration variables.
+	
+	\n There are three types of timercounter variables:
+	-	Small
+	-	Medium
+	-	Large
+	
+	\par Small timer counter
+	It is defined by  \ref SWTC_SCounterValue	
+	
+	\par Medium timer counter
+	It is defined by  \ref SWTC_MCounterValue
+	
+	\par Large timer counter
+	It is defined by  \ref SWTC_LCounterValue. This type is available only if SWTC_L_ENABLED is defined. \see \ref SwTimersCounter_Cgf_filesh.
+	
+	\par Initialization of timercounter
+	\n The initialization of the timer counter is like one of an ordinary variable
+	\code
+	SWTC_SCounterVariableType MySmallCounter = {5};
+	\endcode 
+	
+	\n The configuration of the timer counter it is mandatory to define the size of the counter. 
+	
+	\code
+	SWTC_CounterConfigurationType MySmallCounterCfg = {SWTC_CFG_INIT(TRUE,1,SWTC_CFG_SIZE_S)};
+	\endcode
+	
+	For further details, see \ref SWTC_CFG_INIT
+	
+	
+	
+	\section SwTimersCounter_Cgf_filesc_pstb Prescalers table
+	Prescaler table allows user-defined prescalers definition.
+  
+	In addition to the fundamental time base determined by the period of the calling to SWTC_Manager() method,
+	user can define further prescalers to be used in his application. Each prescaler defines a basetime multiple of the previous one, and the first item in the table 
+	is multiple of the fundamental time base. 
+	In the following example 
+	\code 
+	BEGIN__SWTC_PRESCALERS_TABLE(SWTC_PRESCALERS_NUM)
+		100,
+		60,
+		60
+	END__SWTC_PRESCALERS_TABLE();
+	\endcode
+	
+	are defined three prescalers, where  
+	-	the first is 100 times the fundamental time base
+	-	the second is 60x100 times the fundamental time base 
+	-	the third 60x60x100 times the fundamental time base
+	
+	
+	So if the fundamental base time is 10 ms, the above example defines the following prescalers:
+	-	1s
+	-	60s (1min)
+	-	60min (1h)
+	
+	\section SwTimersCounter_Cgf_filesc_tctb Timercounters tables
+	
+	Once defined timercounters
+	\code
+	SWTC_SCounterVariableType MySmallCounter1 = {12};
+	SWTC_SCounterVariableType MySmallCounter2 = {123};
+	...
+	SWTC_SCounterVariableType MyMediumCounter1 = {1234};
+	\endcode
+	
+	and the related configuration variables:
+	
+	\code
+	SWTC_CounterConfigurationType MySmallCounter1Cfg = {SWTC_CFG_INIT(TRUE,1,SWTC_CFG_SIZE_S)};
+	SWTC_CounterConfigurationType MySmallCounter2Cfg = {SWTC_CFG_INIT(TRUE,1,SWTC_CFG_SIZE_S)};
+	...
+	SWTC_CounterConfigurationType MyMediumCounter1Cfg = {SWTC_CFG_INIT(TRUE,1,SWTC_CFG_SIZE_M)};
+	\endcode
+	
+	user must define the following tables. 
+	
+	\code 
+	BEGIN__SWTC_COUNTERS_TABLE(SWTC_COUNTERS_NUM)
+		&MySmallCounter1,
+		&MySmallCounter2,
+		...
+		&MyMediumCounter1,
+	END__SWTC_COUNTERS_TABLE()
+	\endcode	
+	
+	\code 
+	BEGIN__SWTC_CONFIG_TABLE(SWTC_COUNTERS_NUM)
+		&MySmallCounter1Cfg,
+		&MySmallCounter2Cfg,
+		...
+		&MyMediumCounter1Cfg
+	END__SWTC_CONFIG_TABLE()
+	\endcode
+	
+	Order of items in the tables must be the same.	
+*/

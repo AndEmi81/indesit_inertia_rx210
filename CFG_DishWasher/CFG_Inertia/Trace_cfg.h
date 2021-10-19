@@ -1,0 +1,131 @@
+#ifndef  _TRACE_CFG_H_
+
+
+#if defined( CONFIG_PL_FOR_ATTILIO )
+	#if defined(EDGE_MODULE_LP1_0258_01) || defined(EDGE_MODULE_LP1_0258_02) || defined(EDGE_MODULE_LP1_0258_04)
+
+		#define LED_YELLOW  5
+		#define LED_RED     14
+		#define LED_GREEN   17 /* NON MAPPATO qiondi rimappato sul GPIO17, pin 18 */
+
+		#define SW1         10
+		#define SW2         9
+		#define SW3         8
+
+	#elif defined(CASTELLATED_MODULE_LP1_0241_01)
+		#define LED_YELLOW  50
+		#define LED_RED     51
+		#define LED_GREEN   52
+
+		#define SW1         10
+		#define SW2         9
+		#define SW3         8
+	#endif
+#elif defined(RSKRX210)
+	//Development Kit RX210
+	#if defined(EDGE_MODULE_LP1_0258_01) || defined(EDGE_MODULE_LP1_0258_02) || defined(EDGE_MODULE_LP1_0258_04)
+
+	#elif defined(CASTELLATED_MODULE_LP1_0241_01)
+		#define LED_RED     4
+		#define LED_0       4
+		#define LED_1       49
+		#define LED_2       57
+		#define LED_3       56
+
+	#endif
+
+#endif 
+
+#if defined(CONFIG_TRACE_ZC_IRQ)
+#define TRACE_ZC_IRQ_START()			TRACE_TO_PIN(1,CONFIG_TRACE_PIN_ZC_IRQ)
+#define TRACE_ZC_IRQ_END()				TRACE_TO_PIN(0,CONFIG_TRACE_PIN_ZC_IRQ)
+#else
+#define TRACE_ZC_IRQ_START()			{}
+#define TRACE_ZC_IRQ_END()				{}
+#endif
+
+#if defined(CONFIG_TRACE_CPU_CHECK)
+#define TRACE_CPU_CHECK_START()			TRACE_TO_PIN(1,CONFIG_TRACE_PIN_CLASS_B)
+#define TRACE_CPU_CHECK_END()  			TRACE_TO_PIN(0,CONFIG_TRACE_PIN_CLASS_B)
+#else
+#define TRACE_CPU_CHECK_START()			{}
+#define TRACE_CPU_CHECK_END()			{}
+#endif
+
+#if defined(CONFIG_TRACE_RAM_CHECK)
+#define TRACE_RAM_CHECK_START()			TRACE_TO_PIN(1,CONFIG_TRACE_PIN_CLASS_B)
+#define TRACE_RAM_CHECK_END()  			TRACE_TO_PIN(0,CONFIG_TRACE_PIN_CLASS_B)
+#else
+#define TRACE_RAM_CHECK_START()			{}
+#define TRACE_RAM_CHECK_END()			{}
+#endif
+
+#if defined(CONFIG_TRACE_FLASH_CHECK)
+#define TRACE_FLASH_CHECK_START()		TRACE_TO_PIN(1,CONFIG_TRACE_PIN_CLASS_B)
+#define TRACE_FLASH_CHECK_END()			TRACE_TO_PIN(0,CONFIG_TRACE_PIN_CLASS_B)
+#else
+#define TRACE_FLASH_CHECK_START()		{}
+#define TRACE_FLASH_CHECK_END()			{}
+#endif
+
+#if defined(CONFIG_TRACE_CLOCK_CHECK)
+#define TRACE_CLOCK_CHECK_START()		TRACE_TO_PIN(1,CONFIG_TRACE_PIN_CLASS_B)
+#define TRACE_CLOCK_CHECK_END()			TRACE_TO_PIN(0,CONFIG_TRACE_PIN_CLASS_B)
+#else
+#define TRACE_CLOCK_CHECK_START()		{}
+#define TRACE_CLOCK_CHECK_END()			{}
+#endif
+
+#if defined(CONFIG_TRACE_ADC_CHECK)
+#define TRACE_ADC_CHECK_START()			{EnterCriticalSection()/*OS_DI()*/; TRACE_TO_PIN(1,CONFIG_TRACE_PIN_CLASS_B);}
+#define TRACE_ADC_CHECK_END()			{TRACE_TO_PIN(0,CONFIG_TRACE_PIN_CLASS_B);ExitCriticalSection()/*OS_EI()*/;}
+#else
+#define TRACE_ADC_CHECK_START()			{}
+#define TRACE_ADC_CHECK_END()			{}
+#endif
+
+#if defined(CONFIG_TRACE_WD_CHECK)
+#define TRACE_WD_CHECK_START()			TRACE_TO_PIN(1,CONFIG_TRACE_PIN_CLASS_B)
+#define TRACE_WD_CHECK_END()			TRACE_TO_PIN(0,CONFIG_TRACE_PIN_CLASS_B)
+#else
+#define TRACE_WD_CHECK_START()			{}
+#define TRACE_WD_CHECK_END()			{}
+#endif
+
+#if defined(CONFIG_TRACE_DATA_CARE)
+#define TRACE_DATA_INTEGRITY_START()	TRACE_TO_PIN(1,CONFIG_TRACE_PIN_DATA_INTEGRITY)
+#define TRACE_DATA_INTEGRITY_END()		TRACE_TO_PIN(0,CONFIG_TRACE_PIN_DATA_INTEGRITY)
+#else
+#define TRACE_DATA_INTEGRITY_START()	{}
+#define TRACE_DATA_INTEGRITY_END()		{}
+#endif
+
+#if defined(CONFIG_TRACE_CPU_IDLE)
+#define TRACE_CPU_IDLE_START()			TRACE_TO_PIN(1,CONFIG_TRACE_PIN_CPU_IDLE)
+#define TRACE_CPU_IDLE_END()			TRACE_TO_PIN(0,CONFIG_TRACE_PIN_CPU_IDLE)
+#else
+#define TRACE_CPU_IDLE_START()			{}
+#define TRACE_CPU_IDLE_END()			{}
+#endif
+
+#if defined(CONFIG_TRACE_LINE_PEAK)
+#define TRACE_LINE_PEAK_START()			TRACE_TO_PIN(1,CONFIG_TRACE_PIN_LINE_PEAK)
+#define TRACE_LINE_PEAK_END()			TRACE_TO_PIN(0,CONFIG_TRACE_PIN_LINE_PEAK)
+#else
+#define TRACE_LINE_PEAK_START()			{}
+#define TRACE_LINE_PEAK_END()			{}
+#endif
+
+#if defined(CONFIG_TRACE_PLP)
+#define TRACE_PLP_START()				TRACE_TO_PIN(1, CONFIG_PM_PLP_DEBUG_SCH_TRACE_PIN)
+#define TRACE_PLP_END()					TRACE_TO_PIN(0, CONFIG_PM_PLP_DEBUG_SCH_TRACE_PIN)
+#define TRACE_PLP_ISR_START()			TRACE_TO_PIN(1, CONFIG_PM_PLP_DEBUG_ISR_TRACE_PIN)
+#define TRACE_PLP_ISR_END()				TRACE_TO_PIN(0, CONFIG_PM_PLP_DEBUG_ISR_TRACE_PIN)
+#else
+#define TRACE_PLP_START()				{}
+#define TRACE_PLP_END()					{}
+#define TRACE_PLP_ISR_START()			{}
+#define TRACE_PLP_ISR_END()				{}
+#endif
+
+#endif /* _TRACE_CFG_H_*/

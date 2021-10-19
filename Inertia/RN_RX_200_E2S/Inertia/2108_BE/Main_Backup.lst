@@ -1,0 +1,586 @@
+   1                             		.file	"Main_Backup.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.Main_BackupTask,"ax",@progbits
+   6                             	_Main_BackupTask:
+   7                             	.LFB3:
+   8                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS/Main_Backup.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n
+   8:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \par		Description
+   9:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n			Backup service implementation.
+  10:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n          The following functionalities are available:
+  11:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \li         Initialization
+  12:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \li         backup activation
+  13:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \li         backup data restoring
+  14:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n
+  15:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n          Backup runs on a high priority non-preempatble task
+  16:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n
+  17:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \file		Main_Backup.c
+  18:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \ingroup	Main
+  19:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \date		Feb 7, 2011
+  20:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \version	01.00.00
+  21:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \author		Roberto Fioravanti
+  22:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n
+  23:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n
+  24:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \par\b	History:
+  25:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n
+  26:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n 		01.04.00
+  27:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n		dd/mm/yyyy
+  28:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n		developer
+  29:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n		changes
+  30:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n 		- change 1
+  31:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n		- change 2
+  32:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n
+  33:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n
+  34:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n 		01.03.00
+  35:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n		dd/mm/yyyy
+  36:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n		developer
+  37:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n		changes
+  38:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n 		- change 1
+  39:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n		- change 2
+  40:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n
+  41:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n
+  42:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \n etc.
+  43:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** */
+  44:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* ******** */
+  45:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* Includes */
+  46:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* ******** */
+  47:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #include "Config.h"
+  48:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #include "callback.h"
+  49:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #include "Main.h"
+  50:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #include "LIB_BackupExp.h"
+  51:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #include "LIB_Reset.h"
+  52:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #if defined(CONFIG_LIB_TM_BACKUP)
+  53:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #include "LIB_TaskMonitoringExp.h"
+  54:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #endif /*defined(CONFIG_LIB_TM_BACKUP)*/
+  55:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #include "LIB_Trace.h"
+  56:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+  57:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+  58:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* ****************** */
+  59:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* Defines and Macros */
+  60:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* ****************** */
+  61:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #if !defined(CONFIG_LIB_TM_BACKUP)
+  62:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /** @name Backup task safety
+  63:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+  64:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \par Properties
+  65:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** Not mandatory. If they remain undefined assume by default an empty value.
+  66:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+  67:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** @{
+  68:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** */
+  69:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /** */
+  70:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #define START_BACKUP_TASK_MONITORING()		{}
+  71:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #define MAIN_BACKUP_TASK__MONITOR_IN()		{}
+  72:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #define MAIN_BACKUP_TASK__MONITOR_OUT()		{}
+  73:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /*@}*/
+  74:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #endif
+  75:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+  76:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* Check for definition od security check */
+  77:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #if !defined(START_BACKUP_TASK_MONITORING)
+  78:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #error "START_BACKUP_TASK_MONITORING() missing definition."
+  79:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #endif
+  80:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+  81:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #if !defined(MAIN_BACKUP_TASK__MONITOR_IN)
+  82:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #error "MAIN_BACKUP_TASK__MONITOR_IN() missing definition."
+  83:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #endif
+  84:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+  85:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #if !defined(MAIN_BACKUP_TASK__MONITOR_OUT)
+  86:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #error "MAIN_BACKUP_TASK__MONITOR_OUT() missing definition."
+  87:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #endif
+  88:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+  89:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+  90:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* *************************** */
+  91:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* Typedef, Structs and Unions */
+  92:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* *************************** */
+  93:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+  94:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* **************************** */
+  95:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* Prototype of local functions */
+  96:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* **************************** */
+  97:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+  98:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* ********* */
+  99:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* Variables */
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* ********* */
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* Global */
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* Static */
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /**
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** @name Service variables
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** @{
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** */
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /** Task Stack */
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** static STACK_SEC OS_STACKPTR int Main_BackupTaskStack[MAIN_BACKUP_TASK_STACK_SIZE] STACK_SEC_POST;
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /**
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** Backup task control block
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** */
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** static OS_TASK Main_BackupTaskTCB;
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /*@}*/
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #if defined(CONFIG_MAIN_BACKUP_STACK_MONITOR)
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** static 	TOOLS_STACKUSAGE_MONITOR	Main_BackupStackMonitor;
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #endif
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* ******************* */
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* Functions Prototype */
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* ******************* */
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* Exported function */
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* Local Function */
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** static void Main_BackupTask ( void );
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* *************** */
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* Function Bodies */
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* *************** */
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* Exported function */
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /**
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** Backup service initialization.
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** It creates task Main_BackupTask
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** */
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** void Main_BackupInit ( void )
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** {
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	OS_CREATETASK ( &Main_BackupTaskTCB,
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 					"BackupTask",
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 					Main_BackupTask,
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 					( OS_U8 ) MAIN_BACKUP_TASK_PRIORITY,
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 					Main_BackupTaskStack );
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #if defined(CONFIG_MAIN_BACKUP_STACK_MONITOR)
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	Tools_CreateTaskStackMonitor(&Main_BackupTaskTCB, &Main_BackupStackMonitor);
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** #endif
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** }
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /**
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** Backup activation
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** Resumes task Main_BackupTask
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** */
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** void Main_ActivateBackup ( void )
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** {
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	if ( OS_GetSuspendCnt ( &Main_BackupTaskTCB ) > 0 )
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	{
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		OS_Resume ( &Main_BackupTaskTCB );
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	}
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** }
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /*
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** Restores Application data
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** Calls the following callbacks:
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \li CALLBACK_Main_ColdReset_BeforeRestore
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \li CALLBACK_Main_ColdReset_OnRestoredData
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \li CALLBACK_Main_ColdReset_OnNotRestoredData
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \li CALLBACK_Main_ColdReset_AfterRestore
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \li CALLBACK_Main_WarmReset
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \li CALLBACK_Main_BackupAreaInvalidationRequired
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \warning	none
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \author 	Roberto Fioravanti
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \date		30/03/2011
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \version	1.0.0
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \note		\par \b Note 1:
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 			documentation by Roberto Fioravanti
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** */
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** void Main_Backup_DoRestore ( void )
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** {
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	if ( LIB_CheckKeywordsRam() == FALSE )
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	{
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		CALLBACK_Main_ColdReset_BeforeRestore();
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		if ( DoRestoreSystem() )
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		{
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 			CALLBACK_Main_ColdReset_OnRestoredData();
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		}
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		else
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		{
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 			CALLBACK_Main_ColdReset_OnNotRestoredData();
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		}
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		CALLBACK_Main_ColdReset_AfterRestore();
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		LIB_Backup_ResetBackupSource();
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		LIB_SetKeywordsRam();
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	}
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	else
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	{
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		CALLBACK_Main_WarmReset();
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	}
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	if ( CALLBACK_Main_BackupAreaInvalidationRequired() == TRUE )
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	{
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		/* Backup area Invalidation */
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		( void ) LIB_Backup_InvalidateBackupArea();
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	}
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** }
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /* Local Functions */
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** /*
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** No-preemptable task for backup. When it starts if goes in 'suspended mode'.
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** I can can be resumed calling Main_ActivateBackup() function
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \warning	none
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \author 	Roberto Fioravanti
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \date		30/03/2011
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \version	1.0.0
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** \note		\par \b Note 1:
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 			documentation by Roberto Fioravanti
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** */
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** static void Main_BackupTask ( void )
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** {
+   9                             		.loc 1 235 0
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c ****   	START_BACKUP_TASK_MONITORING();
+  10                             		.loc 1 236 0
+  11 0000 66 21                   		mov	#2, r1
+  12 0002 75 42 32                		mov	#50, r2
+  13 0005 66 03                   		mov.L	#0, r3
+  14 0007 05 00 00 00             		bsr	_LIB_TaskMonitoringConfig
+  15                             	.LVL0:
+  16 000b 03                      		.balign 2,3,1
+  17                             	.L2:
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	while ( 1 )
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	{
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		OS_Suspend ( NULL );
+  18                             		.loc 1 239 0 discriminator 1
+  19 000c 66 01                   		mov.L	#0, r1
+  20 000e 05 00 00 00             		bsr	_OS_Suspend
+  21                             	.LVL1:
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		TRACE_CPU_IDLE_END();
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		OS_EnterRegion();
+  22                             		.loc 1 243 0 discriminator 1
+  23 0012 05 00 00 00             		bsr	_OS_EnterRegionFunc
+  24                             	.LVL2:
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		/* here the scheduler is switched off */
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		MAIN_BACKUP_TASK__MONITOR_IN();
+  25                             		.loc 1 245 0 discriminator 1
+  26 0016 66 21                   		mov	#2, r1
+  27 0018 66 12                   		mov.L	#1, r2
+  28 001a 05 00 00 00             		bsr	_LIB_SetTask
+  29                             	.LVL3:
+  30 001e 66 21                   		mov	#2, r1
+  31 0020 05 00 00 00             		bsr	_LIB_TaskStartActivity
+  32                             	.LVL4:
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		Task_Backup();
+  33                             		.loc 1 246 0 discriminator 1
+  34 0024 05 00 00 00             		bsr	_Task_Backup
+  35                             	.LVL5:
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		MAIN_BACKUP_TASK__MONITOR_OUT();
+  36                             		.loc 1 247 0 discriminator 1
+  37 0028 66 21                   		mov	#2, r1
+  38 002a 05 00 00 00             		bsr	_LIB_TaskEndActivity
+  39                             	.LVL6:
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		OS_LeaveRegion();
+  40                             		.loc 1 248 0 discriminator 1
+  41 002e 05 00 00 00             		bsr	_OS_LeaveRegion
+  42                             	.LVL7:
+  43 0032 2E DA                   		bra	.L2
+  44                             	.LFE3:
+  46                             		.section	.rodata.str1.1,"aMS",@progbits,1
+  47                             	.LC0:
+  48 0000 42 61 63 6B 75 70 54 61 		.string	"BackupTask"
+  48      73 6B 00 
+  49                             		.section	.text.Main_BackupInit,"ax",@progbits
+  50                             		.global	_Main_BackupInit
+  52                             	_Main_BackupInit:
+  53                             	.LFB0:
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** {
+  54                             		.loc 1 143 0
+  55 0000 60 80                   		sub	#8, r0
+  56                             	.LCFI0:
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	OS_CREATETASK ( &Main_BackupTaskTCB,
+  57                             		.loc 1 144 0
+  58 0002 F8 02 00 00 00 00       		mov.L	#_Main_BackupTaskStack, [r0]
+  59 0008 F9 0A 01 00 02          		mov.L	#0x200, 4[r0]
+  60 000d FB 12 00 00 00 00       		mov.L	#_Main_BackupTaskTCB, r1
+  61 0013 FB 22 00 00 00 00       		mov.L	#.LC0, r2
+  62 0019 FB 36 A0                		mov	#0xffffffa0, r3
+  63 001c FB 42 00 00 00 00       		mov.L	#_Main_BackupTask, r4
+  64 0022 05 00 00 00             		bsr	_OS_CreateTask_S
+  65                             	.LVL8:
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** }
+  66                             		.loc 1 152 0
+  67 0026 67 02                   		rtsd	#8
+  68                             	.LFE0:
+  70                             		.section	.text.Main_ActivateBackup,"ax",@progbits
+  71                             		.global	_Main_ActivateBackup
+  73                             	_Main_ActivateBackup:
+  74                             	.LFB1:
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** {
+  75                             		.loc 1 159 0
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	if ( OS_GetSuspendCnt ( &Main_BackupTaskTCB ) > 0 )
+  76                             		.loc 1 160 0
+  77 0000 FB 12 00 00 00 00       		mov.L	#_Main_BackupTaskTCB, r1
+  78 0006 05 00 00 00             		bsr	_OS_GetSuspendCnt
+  79                             	.LVL9:
+  80 000a 76 21 FF 00             		and #0xff, r1
+  81 000e 20 0C                   		beq	.L5
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		OS_Resume ( &Main_BackupTaskTCB );
+  82                             		.loc 1 162 0
+  83 0010 FB 12 00 00 00 00       		mov.L	#_Main_BackupTaskTCB, r1
+  84 0016 04 00 00 00             		bra	_OS_Resume
+  85                             	.LVL10:
+  86                             	.L5:
+  87 001a 02                      		rts
+  88                             	.LFE1:
+  90                             		.section	.text.Main_Backup_DoRestore,"ax",@progbits
+  91                             		.global	_Main_Backup_DoRestore
+  93                             	_Main_Backup_DoRestore:
+  94                             	.LFB2:
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** {
+  95                             		.loc 1 189 0
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	if ( LIB_CheckKeywordsRam() == FALSE )
+  96                             		.loc 1 190 0
+  97 0000 05 00 00 00             		bsr	_LIB_CheckKeywordsRam
+  98                             	.LVL11:
+  99 0004 61 01                   		cmp	#0, r1
+ 100 0006 21 23                   		bne	.L8
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		CALLBACK_Main_ColdReset_BeforeRestore();
+ 101                             		.loc 1 192 0
+ 102 0008 05 00 00 00             		bsr	_CALLBACK_Main_ColdReset_BeforeRestore
+ 103                             	.LVL12:
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		if ( DoRestoreSystem() )
+ 104                             		.loc 1 194 0
+ 105 000c 05 00 00 00             		bsr	_DoRestoreSystem
+ 106                             	.LVL13:
+ 107 0010 61 01                   		cmp	#0, r1
+ 108 0012 16                      		beq	.L9
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 			CALLBACK_Main_ColdReset_OnRestoredData();
+ 109                             		.loc 1 196 0
+ 110 0013 05 00 00 00             		bsr	_CALLBACK_Main_ColdReset_OnRestoredData
+ 111                             	.LVL14:
+ 112 0017 0D                      		bra	.L10
+ 113                             	.L9:
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 			CALLBACK_Main_ColdReset_OnNotRestoredData();
+ 114                             		.loc 1 200 0
+ 115 0018 05 00 00 00             		bsr	_CALLBACK_Main_ColdReset_OnNotRestoredData
+ 116                             	.LVL15:
+ 117                             		.balign 2,3,3
+ 118                             	.L10:
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		CALLBACK_Main_ColdReset_AfterRestore();
+ 119                             		.loc 1 203 0
+ 120 001c 05 00 00 00             		bsr	_CALLBACK_Main_ColdReset_AfterRestore
+ 121                             	.LVL16:
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		LIB_Backup_ResetBackupSource();
+ 122                             		.loc 1 204 0
+ 123 0020 05 00 00 00             		bsr	_LIB_Backup_ResetBackupSource
+ 124                             	.LVL17:
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		LIB_SetKeywordsRam();
+ 125                             		.loc 1 205 0
+ 126 0024 05 00 00 00             		bsr	_LIB_SetKeywordsRam
+ 127                             	.LVL18:
+ 128 0028 0E                      		bra	.L11
+ 129                             	.L8:
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		CALLBACK_Main_WarmReset();
+ 130                             		.loc 1 209 0
+ 131 0029 05 00 00 00             		bsr	_CALLBACK_Main_WarmReset
+ 132                             	.LVL19:
+ 133 002d 03                      		.balign 2,3,3
+ 134                             	.L11:
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 	if ( CALLBACK_Main_BackupAreaInvalidationRequired() == TRUE )
+ 135                             		.loc 1 212 0
+ 136 002e 05 00 00 00             		bsr	_CALLBACK_Main_BackupAreaInvalidationRequired
+ 137                             	.LVL20:
+ 138 0032 61 11                   		cmp	#1, r1
+ 139 0034 1D                      		bne	.L7
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Backup.c **** 		( void ) LIB_Backup_InvalidateBackupArea();
+ 140                             		.loc 1 215 0
+ 141 0035 04 00 00 00             		bra	_LIB_Backup_InvalidateBackupArea
+ 142                             	.LVL21:
+ 143                             	.L7:
+ 144 0039 02                      		rts
+ 145                             	.LFE2:
+ 147                             		.section	.bss.Main_BackupTaskTCB,"aw",@nobits
+ 148                             		.balign 4
+ 151                             	_Main_BackupTaskTCB:
+ 152 0000 00 00 00 00 00 00 00 00 		.zero	44
+ 152      00 00 00 00 00 00 00 00 
+ 152      00 00 00 00 00 00 00 00 
+ 152      00 00 00 00 00 00 00 00 
+ 152      00 00 00 00 00 00 00 00 
+ 153                             		.section	.osstack,"aw",@progbits
+ 154                             		.balign 4
+ 157                             	_Main_BackupTaskStack:
+ 158 0000 00 00 00 00 00 00 00 00 		.zero	512
+ 158      00 00 00 00 00 00 00 00 
+ 158      00 00 00 00 00 00 00 00 
+ 158      00 00 00 00 00 00 00 00 
+ 158      00 00 00 00 00 00 00 00 
+ 213                             	.Letext0:
+ 214                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 215                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 216                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_SecurityCheck/LIB_TaskMon
+ 217                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_BackUp/LIB_Backup.h"
+ 218                             		.file 6 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary/callback.h"
+ 219                             		.file 7 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_Reset/LIB_Reset.h"
+ 220                             		.file 8 "C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS/Main.h"
+ 221                             		.file 9 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_BackUp/LIB_BackupExp.h"
+ 222                             		.file 10 "C:\\Workspace\\FW_Inertia\\branch_indesit\\CFG_DishWasher\\CFG_Inertia/TaskMonitor_Cfg.h
+DEFINED SYMBOLS
+                            *ABS*:00000000 Main_Backup.c
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:6      .text.Main_BackupTask:00000000 _Main_BackupTask
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:11     .text.Main_BackupTask:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:52     .text.Main_BackupInit:00000000 _Main_BackupInit
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:55     .text.Main_BackupInit:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:157    .osstack:00000000 _Main_BackupTaskStack
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:151    .bss.Main_BackupTaskTCB:00000000 _Main_BackupTaskTCB
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:73     .text.Main_ActivateBackup:00000000 _Main_ActivateBackup
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:77     .text.Main_ActivateBackup:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:93     .text.Main_Backup_DoRestore:00000000 _Main_Backup_DoRestore
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:97     .text.Main_Backup_DoRestore:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:47     .rodata.str1.1:00000000 .LC0
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:160    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:7      .text.Main_BackupTask:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:53     .text.Main_BackupInit:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:74     .text.Main_ActivateBackup:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:94     .text.Main_Backup_DoRestore:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1236   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1798   .debug_str:00000000 .LASF76
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1876   .debug_str:00000248 .LASF77
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1784   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1796   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1836   .debug_str:0000013d .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1902   .debug_str:00000373 .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1904   .debug_str:0000037c .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1924   .debug_str:000003fd .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1870   .debug_str:0000021d .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1896   .debug_str:00000343 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1860   .debug_str:000001d3 .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1842   .debug_str:00000160 .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1886   .debug_str:000002fa .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1894   .debug_str:00000337 .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1918   .debug_str:000003d8 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1900   .debug_str:00000366 .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1816   .debug_str:0000009d .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1958   .debug_str:00000538 .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1806   .debug_str:00000047 .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1898   .debug_str:0000035a .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1912   .debug_str:000003a6 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1830   .debug_str:00000114 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1856   .debug_str:000001c1 .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1852   .debug_str:000001ab .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1878   .debug_str:00000288 .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1854   .debug_str:000001ba .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1942   .debug_str:000004c1 .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1906   .debug_str:0000038f .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1818   .debug_str:000000a6 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1804   .debug_str:0000003e .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1814   .debug_str:00000096 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1840   .debug_str:00000156 .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1828   .debug_str:0000010f .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1930   .debug_str:00000430 .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1858   .debug_str:000001c9 .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1800   .debug_str:00000026 .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1832   .debug_str:0000011c .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1948   .debug_str:000004db .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1848   .debug_str:00000192 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1802   .debug_str:00000035 .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1944   .debug_str:000004cb .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1922   .debug_str:000003f1 .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1850   .debug_str:00000198 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1934   .debug_str:00000460 .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1890   .debug_str:00000321 .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1946   .debug_str:000004d1 .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1864   .debug_str:000001ed .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1908   .debug_str:00000397 .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1810   .debug_str:0000007b .LASF78
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1868   .debug_str:00000210 .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1838   .debug_str:00000147 .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1826   .debug_str:00000100 .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1874   .debug_str:00000236 .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1920   .debug_str:000003df .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1954   .debug_str:00000512 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1812   .debug_str:00000086 .LASF79
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:44     .text.Main_BackupTask:00000034 .LFE3
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:15     .text.Main_BackupTask:0000000b .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:21     .text.Main_BackupTask:00000012 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:24     .text.Main_BackupTask:00000016 .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:29     .text.Main_BackupTask:0000001e .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:32     .text.Main_BackupTask:00000024 .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:35     .text.Main_BackupTask:00000028 .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:39     .text.Main_BackupTask:0000002e .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:42     .text.Main_BackupTask:00000032 .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1950   .debug_str:000004ef .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:68     .text.Main_BackupInit:00000028 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1752   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:65     .text.Main_BackupInit:00000026 .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1846   .debug_str:0000017e .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:88     .text.Main_ActivateBackup:0000001b .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:79     .text.Main_ActivateBackup:0000000a .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:85     .text.Main_ActivateBackup:0000001a .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1844   .debug_str:00000168 .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:145    .text.Main_Backup_DoRestore:0000003a .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:98     .text.Main_Backup_DoRestore:00000004 .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:103    .text.Main_Backup_DoRestore:0000000c .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:106    .text.Main_Backup_DoRestore:00000010 .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:111    .text.Main_Backup_DoRestore:00000017 .LVL14
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:116    .text.Main_Backup_DoRestore:0000001c .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:121    .text.Main_Backup_DoRestore:00000020 .LVL16
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:124    .text.Main_Backup_DoRestore:00000024 .LVL17
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:127    .text.Main_Backup_DoRestore:00000028 .LVL18
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:132    .text.Main_Backup_DoRestore:0000002d .LVL19
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:137    .text.Main_Backup_DoRestore:00000032 .LVL20
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:142    .text.Main_Backup_DoRestore:00000039 .LVL21
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1822   .debug_str:000000d8 .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1940   .debug_str:000004ae .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1888   .debug_str:00000308 .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1926   .debug_str:0000040f .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1824   .debug_str:000000ed .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1862   .debug_str:000001e1 .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1928   .debug_str:0000041a .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1866   .debug_str:00000204 .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1834   .debug_str:00000129 .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1892   .debug_str:00000328 .LASF62
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1938   .debug_str:0000049e .LASF63
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1956   .debug_str:00000527 .LASF80
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1910   .debug_str:0000039c .LASF64
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1914   .debug_str:000003ab .LASF66
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1932   .debug_str:0000043a .LASF65
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1872   .debug_str:00000226 .LASF67
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1808   .debug_str:00000054 .LASF68
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1884   .debug_str:000002d0 .LASF69
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1880   .debug_str:0000028e .LASF70
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1882   .debug_str:000002b3 .LASF71
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1952   .debug_str:000004ff .LASF72
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1916   .debug_str:000003c0 .LASF73
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1820   .debug_str:000000ab .LASF74
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:1936   .debug_str:0000047e .LASF75
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:56     .text.Main_BackupInit:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccCnaYgX.s:224    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_LIB_TaskMonitoringConfig
+_OS_Suspend
+_OS_EnterRegionFunc
+_LIB_SetTask
+_LIB_TaskStartActivity
+_Task_Backup
+_LIB_TaskEndActivity
+_OS_LeaveRegion
+_OS_CreateTask_S
+_OS_GetSuspendCnt
+_OS_Resume
+_LIB_CheckKeywordsRam
+_CALLBACK_Main_ColdReset_BeforeRestore
+_DoRestoreSystem
+_CALLBACK_Main_ColdReset_OnRestoredData
+_CALLBACK_Main_ColdReset_OnNotRestoredData
+_CALLBACK_Main_ColdReset_AfterRestore
+_LIB_Backup_ResetBackupSource
+_LIB_SetKeywordsRam
+_CALLBACK_Main_WarmReset
+_CALLBACK_Main_BackupAreaInvalidationRequired
+_LIB_Backup_InvalidateBackupArea

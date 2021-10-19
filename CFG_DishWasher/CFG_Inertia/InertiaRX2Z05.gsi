@@ -1,0 +1,265 @@
+MEMORY 
+{ 
+		RAM			:	ORIGIN = 0x00000000, LENGTH = 0x00004000
+		DATA_BCK	:	ORIGIN = 0x00100000, LENGTH = 0x00000400
+		DATA_WBOX	:	ORIGIN = 0x00100400, LENGTH = 0x00000100
+		DATA_RODATA	:	ORIGIN = 0x00100500, LENGTH = 0x00001A00
+		DATA_CLONE	:	ORIGIN = 0x00101F00, LENGTH = 0x00000100
+		ROM_SETTING	: 	ORIGIN = 0xFFFE0000, LENGTH = 0x00004000 
+		ROM 		: 	ORIGIN = 0xFFFE4000, LENGTH = 0x0001C000 
+}
+
+
+SECTIONS
+{
+	.backup_stat :
+	{
+		__backup_stat_start = .;
+		KEEP(*(.backup_stat))
+		__backup_stat_end = .;
+	}>DATA_BCK
+	.wbox :
+	{
+		__wbox_start = .;
+		KEEP(*(.wbox))
+		__wbox_end = .;
+	}>DATA_WBOX
+	.MDATA	: 
+	{
+		_FlashCheck2 = .;
+		_mdata = .;
+		_endmdata = . + (_edata - _data);
+	}>DATA_RODATA
+
+	.rodata ( _endmdata ) : AT ( _endmdata )
+	{
+		*(.rodata)
+		*(.rodata.*)
+		*(C_1)
+		*(C_2)
+		*(C)
+		_erodata = .;
+		_FlashCheck2_End = (. - 1);
+	}>DATA_RODATA
+	.setting :
+	{
+		*(.setting)
+	}>ROM_SETTING
+	.pdm : 
+	{
+		__PDM_START__ = .;
+		KEEP(*(.pdm))
+		__PDM_END__ = .;
+	}>ROM
+	.ProgramCheckCode :
+	{
+		KEEP(*(.ProgramCheckCode))
+	}>ROM
+	.text ALIGN(0x10) :
+	{
+		_FlashCheck1 = .;
+        __text_start = .;
+		*(.PCTEST_TESTFUNCTION)
+		*(.text.*)
+		*(.text)
+		*(P)
+		etext = .;
+		__text_end = .;
+	}>ROM
+	.PFRAM ALIGN (0x04) :
+	{
+		_PFRAM = .;
+		KEEP(*(_PFRAM))
+		KEEP(*(.PFRAM))
+		KEEP(*(.PFRAM.*))
+		.PFRAM = .;
+		.ePFRAM = ((. + ((_ePRAM - _PRAM) + 3)) & ~ 3);
+	}>ROM
+	.rvectors .ePFRAM	: AT ( .ePFRAM )
+	{
+		_rvectors_start = .;
+		__RVECTORS_START__ = .;
+		KEEP(*(.rvectors))
+		__RVECTORS_END__ = .;
+	}>ROM
+	.init :
+	{
+		*(.init)
+		__preinit_array_start = .;
+		*(.preinit_array)
+		__preinit_array_end = .;
+		__init_array_start = (. + 3) & ~ 3;
+		*(.init_array)
+		*(SORT(.init_array.*))
+		__init_array_end = .;
+		__fini_array_start = .;
+		*(.fini_array)
+		*(SORT(.fini_array.*))
+		__fini_array_end = .;
+	}>ROM
+	.fini :
+	{
+		*(.fini)
+	}>ROM
+	.got :
+	{
+		*(.got)
+		*(.got.plt)
+	}>ROM
+	.eh_frame_hdr :
+	{
+		*(.eh_frame_hdr)
+	}>ROM
+	.eh_frame :
+	{
+		*(.eh_frame)
+	}>ROM
+	.jcr :
+	{
+		*(.jcr)
+	}>ROM
+	.tors :
+	{
+		__CTOR_LIST__ = .;
+		___ctors = .;
+		*(.ctors)
+		___ctors_end = .;
+		__CTOR_END__ = .;
+		__DTOR_LIST__ = .;
+		___dtors = .;
+		*(.dtors)
+		___dtors_end = .;
+		__DTOR_END__ = .;
+	}>ROM
+	.fvectors 0xFFFFEF80 		: AT ( 0xFFFFEF80 )
+	{
+		KEEP(*(.fvectors))
+	}>ROM
+	.Bootloader 0xFFFFF000  (NOLOAD)	: AT ( 0xFFFFF000 )
+	{
+		_FlashCheck1_End = (. - 1);
+		*(.Bootloader)
+	}>ROM
+	.EndianSelect 0xFFFFFF80 	: AT ( 0xFFFFFF80 )
+	{
+		KEEP(*(.EndianSelect))
+	}>ROM
+	.ResetVector 0xFFFFFFFC 	: AT ( 0xFFFFFFFC )
+	{
+		KEEP(*(.ResetVector))
+	}>ROM
+	.ResetInfo  0x00000000 (NOLOAD):
+	{
+		__CLASSB__NOINIT_START__ = .;	/* begin of no destructive test*/
+		
+		KEEP(*(.ResetInfo))
+	}>RAM
+	.noinit (NOLOAD):
+	{
+		*(.noinit)
+		*(.CLASS_B_temp)
+		*(CLASS_B_temp)
+		*(.CLASS_B_temp.*)
+		__CLASSB__NOINIT_END__ = . - 1;	/* end of no destructive test*/
+	}>RAM
+	.key_block_1 (NOLOAD):
+	{
+		__CLASSB__1_RAM_START__ = .;
+		__KEY1_START__ = .;
+		*(.key_block_1)
+		__KEY1_END__ = .;
+	}>RAM
+	.osstack ALIGN(0x04) (NOLOAD) :
+	{
+		__OSSTACK_START__ = .;
+		*(.osstack)
+		__OSSTACK_END__ = .;
+		__CLASSB__1_RAM_END__ = . -1;
+	}>RAM
+	.sysStack ALIGN(0x04) (NOLOAD) :
+	{
+		_ram_start = .;
+		_ustack_start = .;
+		KEEP(*(.userStack))
+		_ustack = .;
+		_istack_start = .;
+		KEEP(*(.interruptStack))
+		_istack = .;
+	}>RAM
+	.key_block_2 (NOLOAD):
+	{
+		__KEY2_START__ = .;
+		*(.key_block_2)
+		__KEY2_END__ = .;
+	}>RAM
+	.data ALIGN(0x4) : AT (_mdata)
+	{
+	    __CLASSB__3_RAM_START__ = .;
+		_data = .;
+		*(.data)
+		*(.data.*)
+		*(D)
+		*(D_1)
+		*(D_2)
+		_edata = .;
+		
+	}>RAM
+	.gcc_exc :
+	{
+		*(.gcc_exc)
+	}>RAM
+	.bss :
+	{
+        
+		_bss = .;
+		*(.bss)
+		*(.bss.*)
+		*(COMMON)
+		*(B)
+		*(B_1)
+		*(B_2)
+		_ebss = .;
+		_end = .;
+		
+	}>RAM
+
+	.PRAM : AT (_PFRAM)
+	{
+		_PRAM = .;
+		*(_PRAM)
+		*(.PRAM)
+		*(.PRAM.*)
+		_ePRAM = .;
+	}>RAM
+	.HAL_OVL :
+	{
+        _hal_ovl = .;
+    }>RAM
+	OVERLAY :
+	{
+		.PRAMERASE { o1/*.o(.text) }
+		.PRAMWRITE { o1/*.o(.text) }
+	}>RAM
+	.CLASS_B_vars :
+	{
+        __CLASS_B_vars_start = .;
+        *(_CLASS_B_vars)
+		*(.CLASS_B_vars)
+		*(.CLASS_B_vars.*)
+        __CLASS_B_vars_end = .;
+	}>RAM
+	__CLASS_B_vars_size = SIZEOF(.CLASS_B_vars);
+
+	.CLASS_B_check :
+	{
+        __CLASS_B_check_start = .;
+        *(_CLASS_B_check)
+		*(.CLASS_B_check)
+		*(.CLASS_B_check.*)
+        __CLASS_B_check_end = .;
+        __CLASSB__3_RAM_END__ = . -1;
+	}>RAM
+	__CLASS_B_check_size = SIZEOF(.CLASS_B_check);
+	
+
+}

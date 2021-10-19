@@ -1,0 +1,1278 @@
+   1                             		.file	"Main_Sequencer.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.Main_SequencerCallback,"ax",@progbits
+   6                             	_Main_SequencerCallback:
+   7                             	.LFB5:
+   8                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS/Main_Sequencer.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \n
+   8:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \par		Description
+   9:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \n			This module implements the service for loads synchronized with ZC .
+  10:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****             It makes use of a task which is resumed more times at the beginning of each sub-interva
+  11:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****             in which the halfwave is divided.
+  12:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \n
+  13:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \file		Main_Outputs.c
+  14:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \ingroup	Main
+  15:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \date		12/01/2011
+  16:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \version	01.00.00
+  17:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \author		Roberto Fioravanti
+  18:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \n
+  19:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \n
+  20:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \par\b	History:
+  21:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \n
+  22:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \n 		00.00.00
+  23:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \n		12/01/2011
+  24:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \n		Roberto Fioravanti
+  25:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \n		changes
+  26:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \n 		- Creation
+  27:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \n
+  28:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \n
+  29:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+  30:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* ******** */
+  31:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* Includes */
+  32:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* ******** */
+  33:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #include "Config.h"
+  34:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+  35:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if defined(CONFIG_MAIN_SEQUENCER_TASK_SUPPORT)
+  36:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+  37:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #include "TaskMonitor_Cfg.h"
+  38:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #include "Main.h"
+  39:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #include "Main_ActivityList.h"
+  40:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #include "LIB_Trace.h"
+  41:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+  42:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* ****************** */
+  43:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* Defines and Macros */
+  44:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* ****************** */
+  45:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if defined(CONFIG_MAIN_SEQUENCER_LENGTH_2)
+  46:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_LENGTH                   (2)
+  47:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #elif defined(CONFIG_MAIN_SEQUENCER_LENGTH_4)
+  48:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_LENGTH                   (4)
+  49:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #else
+  50:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #error "CONFIG_MAIN_SEQUENCER_LENGTH_2 or CONFIG_MAIN_SEQUENCER_LENGTH_4 missing definition."
+  51:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif
+  52:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+  53:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+  54:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if defined(CONFIG_MAIN_SEQUENCER_TASK_TRACE_PIN_ENABLE) && defined(CONFIG_LIB_TRACE_SUPPORT)
+  55:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK_TRACE_BEGIN()        TRACE_TO_PIN(ON, (CONFIG_MAIN_SEQUENCER_TASK_TRACE
+  56:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK_TRACE_END()          TRACE_TO_PIN(OFF , (CONFIG_MAIN_SEQUENCER_TASK_TRA
+  57:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #else
+  58:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK_TRACE_BEGIN()
+  59:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK_TRACE_END()
+  60:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif
+  61:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+  62:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if !defined(CONFIG_LIB_TM_MAIN)
+  63:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /** @name Synchronized loads task safety
+  64:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+  65:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \par Properties
+  66:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Not mandatory. They can remain undefined.
+  67:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** The configuration is defined in the file TaskMonitor_Cgf.h
+  68:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** @{
+  69:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+  70:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define START_SEQUENCER_TASK_MONITORING()
+  71:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK__MONITOR_IN()          /**< safety entry */
+  72:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK__MONITOR_OUT()         /**< safety exit */
+  73:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /*@}*/
+  74:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif
+  75:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+  76:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if !defined(MAIN_SEQUENCER_TASK__MONITOR_IN) && !defined(MAIN_SEQUENCER_TASK__MONITOR_OUT) && !def
+  77:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /** @name Sequencer task safety
+  78:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+  79:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \par Properties
+  80:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Not mandatory. If they remain undefined assume by default an empty value.
+  81:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+  82:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \par Examples
+  83:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \code
+  84:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK__MONITOR_IN()     helloTaskMonitor( APPLICATION_TASK_ID );
+  85:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK__MONITOR_OUT()
+  86:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \endcode
+  87:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** @{
+  88:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+  89:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+  90:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /** safety config */
+  91:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define START_SEQUENCER_TASK_MONITORING()
+  92:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /** safety entry */
+  93:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK__MONITOR_IN()
+  94:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /** safety exit */
+  95:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK__MONITOR_OUT()
+  96:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /*@}*/
+  97:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+  98:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #else
+  99:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if !defined(START_SEQUENCER_TASK_MONITORING)
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #error "START_SEQUENCER_TASK_MONITORING not defined"
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if !defined(MAIN_SEQUENCER_TASK__MONITOR_IN)
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #error "MAIN_SEQUENCER_TASK__MONITOR_IN not defined"
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if !defined(MAIN_SEQUENCER_TASK__MONITOR_OUT)
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #error "MAIN_SEQUENCER_TASK__MONITOR_OUT not defined"
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /** @name General macros
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \par Properties
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Not mandatory.
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \par Examples
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \li idEvent is unused
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \code
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define MAIN_SEQUENCER_TASK__BODY(idEvent)\
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {\
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     (void)LIB_ZcLoads_Manager(0);\
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \endcode
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** @{
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /*@}*/
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /**
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** @name Debug macros
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \par Properties
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Not mandatory. If not defined they assume the default values
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \li #define SEQUENCER_TASK_DEBUG                (1)
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \li #define SEQUENCER_TASK_DURATION             (1)
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \li #define SEQUENCER_TASK_TUNING               (1)
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** @{
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if !defined(SEQUENCER_TASK_DEBUG)
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /** Debug enable
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \li 0: all debug features disabled
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \li 1: allows to enable the debug level for SEQUENCER_TASK_DURATION, SEQUENCER_TASK_TUNING
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define SEQUENCER_TASK_DEBUG                (1)
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if !defined(SEQUENCER_TASK_DURATION)
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /** Measurement of the duration of the task
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \li 0: disabled
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \li 1: enabled
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define SEQUENCER_TASK_DURATION             (1)
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if !defined(SEQUENCER_TASK_TUNING)
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /** Dynamic Tuning. It allows to change dynamically the period and the delay of the exection of the
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** by changing the value of the variables OutputsTuning_Delay and OutputsTuning_Period.
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \li 0: disabled
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \li 1: enabled
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \attention When SEQUENCER_TASK_TUNING is defined as 1,  SEQUENCER_DELAY_ACTIVATION_TUNING_VAL and S
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** are not used
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define SEQUENCER_TASK_TUNING               (1)
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /*@}*/
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /**
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** @name Tuning macros
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \par Properties
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Not mandatory. If not defined they assume the default values
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \li #define SEQUENCER_DELAY_ACTIVATION_TUNING_VAL         (0)
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \li #define SEQUENCER_PERIOD_ACTIVATION_TUNING_VAL         (0)
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \attention Used only if \ref SEQUENCER_TASK_DEBUG is defined as 0.
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** @{
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #ifndef SEQUENCER_DELAY_ACTIVATION_TUNING_VAL
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define SEQUENCER_DELAY_ACTIVATION_TUNING_VAL           (0)     /**< First outputs activation delay
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #ifndef SEQUENCER_PERIOD_ACTIVATION_TUNING_VAL
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define SEQUENCER_PERIOD_ACTIVATION_TUNING_VAL          (0)    /**< Outputs activation period corre
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /*@}*/
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* *************************** */
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* Typedef, Structs and Unions */
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* *************************** */
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** typedef struct Main_SequencerCBStruct Main_SequencerCB_Type;
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** struct Main_SequencerCBStruct
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     Main_SequencerProfileType           SequencerID;            /* ID of the sequence */
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     Main_ActivityList_Type              SeqActivityList;        /* Standard Activity list manager *
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** };
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* **************************** */
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* Prototype of local functions */
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* **************************** */
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* ********* */
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* Variables */
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* ********* */
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* Global */
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* Static */
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /**
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** @name Service variables
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** @{
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /** Task Stack */
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static STACK_SEC OS_STACKPTR int  Main_SequencerTaskStack[CONFIG_MAIN_SEQUENCER_TASK_STACK_SIZE] ST
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /** Task Control Block*/
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static OS_TASK                  Main_SequencerTaskTCB;
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /** high resolution Alarm */
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static OS_ALARM                 Main_AlmSequencer;
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* first object */
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static Main_SequencerCB_Type    Main_Sequencer;
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /*@}*/
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if defined(CONFIG_MAIN_SEQUENCER_STACK_MONITOR)
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static 	TOOLS_STACKUSAGE_MONITOR	Main_SequencerStackMonitor;
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /**
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** @name Debug variables
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** @{
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if     SEQUENCER_TASK_DEBUG
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if     SEQUENCER_TASK_DURATION
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static  TOOLS_TIMING            SequencerDuration;        /**< task duration in [us]
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****                                                     \attention Available only if \ref SEQUENCER_TAS
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****                                                     defined as 1.
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****                                                     */
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static  TOOLS_TIMING_STATS      SequencerTaskDurationStat;/**< statistics about task duration [us]
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****                                                     \attention Available only if \ref SEQUENCER_TAS
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****                                                                                                    
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****                                                     */
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif  /* SEQUENCER_TASK_DURATION */
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if		SEQUENCER_TASK_TUNING
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static  OS_I32                  SequencerTuning_Delay;    /**< Current delay correction for first a
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****                                         \attention Available only if \ref SEQUENCER_TASK_DEBUG and 
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****                                         defined as 1.
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****                                         */
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static  OS_I32                  SequencerTuning_Period;   /**< Current period correction for subseq
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****                                         \attention Available only if \ref SEQUENCER_TASK_DEBUG and 
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****                                         defined as 1.
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****                                         */
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif /* SEQUENCER_TASK_TUNING */
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif  /* SEQUENCER_TASK_DEBUG */
+ 268:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /*@}*/
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* ******************* */
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* Functions Prototype */
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* ******************* */
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 273:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* Exported function */
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* Local Function */
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask ( void );
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static void AlmSequencerCallback ( void );
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerCallback(void);
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 280:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if     SEQUENCER_TASK_DEBUG   &&   SEQUENCER_TASK_DURATION
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask_Duration_Init ( void );
+ 282:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask_Duration_Start ( void );
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask_Duration_End ( void );
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #else
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define Main_SequencerTask_Duration_Init()
+ 286:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define Main_SequencerTask_Duration_Start()
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define Main_SequencerTask_Duration_End()
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif /* SEQUENCER_TASK_DEBUG   &&   SEQUENCER_TASK_DURATION */
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if     SEQUENCER_TASK_DEBUG   &&   SEQUENCER_TASK_TUNING
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask_Tuning_Init ( void );
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static OS_I32 Main_SequencerTask_DelayTuner ( OS_U32 usOffset );
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static OS_I32 Main_SequencerTask_PeriodTuner ( OS_U32 usOffset );
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #else
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define Main_SequencerTask_Tuning_Init()
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define Main_SequencerTask_DelayTuner(dummy)     ((OS_I32)SEQUENCER_DELAY_ACTIVATION_TUNING_VAL)
+ 297:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #define Main_SequencerTask_PeriodTuner(dummy)    ((OS_I32)SEQUENCER_PERIOD_ACTIVATION_TUNING_VAL)
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif /* SEQUENCER_TASK_DEBUG   &&   SEQUENCER_TASK_TUNING */
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* *************** */
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* Function Bodies */
+ 302:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* *************** */
+ 303:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* Exported function */
+ 305:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 306:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /**
+ 307:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Sequencer service initialization.
+ 308:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** It creates task \ref Main_SequencerTask and \ref Main_AlmSequencer alarm.
+ 309:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** If debug option OUTPUTS_TASK_DEBUG and
+ 310:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \li \ref OUTPUTS_TASK_TUNING or
+ 311:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \li \ref OUTPUTS_TASK_DURATION
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \n are enabled it initializes tools for timing measurement.
+ 313:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 314:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if defined(CONFIG_MAIN_SEQUENCER_TASK_SUPPORT)
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** void Main_SequencerInit ( void )
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     /* first Activity points to NULL*/
+ 318:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     Main_ActivityList_Init(&(Main_Sequencer.SeqActivityList));
+ 320:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     
+ 321:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     /* create the task */
+ 322:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	OS_CREATETASK ( &Main_SequencerTaskTCB,
+ 323:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 					"SequencerTask",
+ 324:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 					Main_SequencerTask,
+ 325:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 					MAIN_SEQUENCER_TASK_PRIORITY,
+ 326:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 					Main_SequencerTaskStack );
+ 327:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if defined(CONFIG_MAIN_SEQUENCER_STACK_MONITOR)
+ 328:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	Tools_CreateTaskStackMonitor(&Main_SequencerTaskTCB, &Main_SequencerStackMonitor);
+ 329:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif
+ 330:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     /* create the alarm */
+ 331:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	OS_CreateAlarm ( &Main_AlmSequencer, AlmSequencerCallback, ( OS_U32 ) 0, ( OS_U32 ) 0 );
+ 332:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     
+ 333:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     /* initialize debug utilities */
+ 334:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	Main_SequencerTask_Duration_Init();
+ 335:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	Main_SequencerTask_Tuning_Init();
+ 336:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     
+ 337:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     
+ 338:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 339:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif
+ 340:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /**
+ 341:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Sets the alarm on high resolution timer to resume Sequencer Task at the beginning of each sub-inter
+ 342:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** It must be called on ZC event.
+ 343:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** At each expiration of the alarm the task is resumed.
+ 344:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 345:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \param [in] usOffset first alarm expiration in microseconds
+ 346:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \param [in] usPeriod alarm period in microseconds
+ 347:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \param [in] count number of expiration in microseconds (See alarm documentation)
+ 348:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 349:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \author 	Roberto Fioravanti
+ 350:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \date		29/03/2011
+ 351:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \version	1.0.0
+ 352:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 353:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if defined(CONFIG_MAIN_SEQUENCER_TASK_SUPPORT)
+ 354:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** void Main_PeriodicScheduleSequencer ( OS_U32 usOffset, OS_U32 usPeriod, OS_U32 TickRef )
+ 355:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 356:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     OS_ALARM_TICK ref = (OS_ALARM_TICK)TickRef;
+ 357:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	usOffset += Main_SequencerTask_DelayTuner ( usOffset );
+ 358:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	usPeriod += Main_SequencerTask_PeriodTuner ( usPeriod );
+ 359:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	if(OS_IsTask(&Main_SequencerTaskTCB))
+ 360:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	{
+ 361:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	    OS_START_ABSALARM ( &Main_AlmSequencer, usOffset, usPeriod, MAIN_SEQUENCER_LENGTH, &ref );
+ 362:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	}
+ 363:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	Main_Sequencer.SequencerID = 1;
+ 364:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 365:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif
+ 366:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 367:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if defined(CONFIG_MAIN_SEQUENCER_TASK_SUPPORT)
+ 368:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** void Main_AddSequencerActivity ( Main_SequencerActivityType* pSeqActivity, Main_ActivityCallbackTyp
+ 369:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 370:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	Main_ActivityType * pActivity;
+ 371:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     
+ 372:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     /* Set the hook routine */
+ 373:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     pSeqActivity->pSeqCallback=pSeqCallback;
+ 374:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     pSeqActivity->profile=0;
+ 375:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     
+ 376:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     /* Process the standard Activity */
+ 377:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     pActivity= &(pSeqActivity->activity);
+ 378:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     Main_CreateActivity ( &(Main_Sequencer.SeqActivityList), pActivity, Main_SequencerCallback , NU
+ 379:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 380:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif
+ 381:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 382:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 383:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 384:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 385:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** int Main_GetSequencerLength(void)
+ 386:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 387:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     return (int) (MAIN_SEQUENCER_LENGTH);
+ 388:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 389:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 390:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 391:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Main_SequencerProfileType Main_GetSequencerMiddleEvent(void)
+ 392:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 393:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     return (Main_SequencerProfileType) (1<<(MAIN_SEQUENCER_LENGTH/2));
+ 394:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 395:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 396:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* Local Function */
+ 397:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 398:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerCallback(void)
+ 399:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+   9                             		.loc 1 399 0
+ 400:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     Main_SequencerActivityType * p = (Main_SequencerActivityType *) (Main_Sequencer.SeqActivityList
+  10                             		.loc 1 400 0
+  11 0000 FB 32 00 00 00 00       		mov.L	#_Main_Sequencer, r3
+  12 0006 A8 B4                   		mov.L	8[r3], r4
+  13                             	.LVL0:
+ 401:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     if(p->pSeqCallback)
+  14                             		.loc 1 401 0
+  15 0008 ED 4E 03                		mov.L	12[r4], r14
+  16 000b 61 0E                   		cmp	#0, r14
+  17 000d 20 0F                   		beq	.L1
+ 402:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     {
+ 403:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****       if ( p->profile & Main_Sequencer.SequencerID )
+  18                             		.loc 1 403 0
+  19 000f CC 33                   		mov.B	[r3], r3
+  20 0011 8A 44                   		mov.B	8[r4], r4
+  21                             	.LVL1:
+  22 0013 53 34                   		and	r3, r4
+  23 0015 CF 44                   		mov.B	r4, r4
+  24 0017 61 04                   		cmp	#0, r4
+  25 0019 13                      		beq	.L1
+ 404:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****       {
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****         (p->pSeqCallback)();
+  26                             		.loc 1 405 0
+  27 001a 7F 1E                   		jsr	r14
+  28                             	.LVL2:
+  29                             	.L1:
+  30 001c 02                      		rts
+  31                             	.LFE5:
+  33                             		.section	.text.AlmSequencerCallback,"ax",@progbits
+  35                             	_AlmSequencerCallback:
+  36                             	.LFB7:
+ 406:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****       }
+ 407:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     }
+ 408:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 409:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /**
+ 410:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 411:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerManager(void)
+ 412:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 413:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     Main_ActivityProcess(&(Main_Sequencer.SeqActivityList));
+ 414:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     
+ 415:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     Main_Sequencer.SequencerID <<= 1U;
+ 416:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 417:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 418:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /**
+ 419:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Sequencer Alarm callback that resumes Outputs task
+ 420:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 421:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static void AlmSequencerCallback ( void )
+ 422:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+  37                             		.loc 1 422 0
+ 423:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	if ( OS_GetSuspendCnt ( &Main_SequencerTaskTCB ) > 0 )
+  38                             		.loc 1 423 0
+  39 0000 FB 12 00 00 00 00       		mov.L	#_Main_SequencerTaskTCB, r1
+  40 0006 05 00 00 00             		bsr	_OS_GetSuspendCnt
+  41                             	.LVL3:
+  42 000a 76 21 FF 00             		and #0xff, r1
+  43 000e 20 0C                   		beq	.L9
+ 424:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	{
+ 425:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		OS_Resume ( &Main_SequencerTaskTCB );
+  44                             		.loc 1 425 0
+  45 0010 FB 12 00 00 00 00       		mov.L	#_Main_SequencerTaskTCB, r1
+  46 0016 04 00 00 00             		bra	_OS_Resume
+  47                             	.LVL4:
+  48                             	.L9:
+  49 001a 02                      		rts
+  50                             	.LFE7:
+  52                             		.section	.text.Main_SequencerTask,"ax",@progbits
+  54                             	_Main_SequencerTask:
+  55                             	.LFB8:
+ 426:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	}
+ 427:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 428:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 429:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 430:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 431:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 432:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /**
+ 433:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** normal Non-preemptable periodic task for ADC channels readings
+ 434:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 435:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \warning	none
+ 436:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 437:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \author 	Roberto Fioravanti
+ 438:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \date		29/03/2011
+ 439:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \version	1.0.0
+ 440:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 441:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \note		\par \b Note 1:
+ 442:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 			documentation by Roberto Fioravanti
+ 443:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 444:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 445:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask ( void )
+ 446:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+  56                             		.loc 1 446 0
+  57 0000 7E A7                   		push.l	r7
+  58                             	.LCFI0:
+ 447:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	START_SEQUENCER_TASK_MONITORING();
+  59                             		.loc 1 447 0
+  60 0002 66 41                   		mov	#4, r1
+  61 0004 75 42 1E                		mov	#30, r2
+  62 0007 66 03                   		mov.L	#0, r3
+  63 0009 05 00 00 00             		bsr	_LIB_TaskMonitoringConfig
+  64                             	.LVL5:
+  65                             	.LBB8:
+  66                             	.LBB9:
+ 415:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     Main_Sequencer.SequencerID <<= 1U;
+  67                             		.loc 1 415 0
+  68 000d FB 72 00 00 00 00       		mov.L	#_Main_Sequencer, r7
+  69 0013 03                      		.balign 2,3,1
+  70                             	.L12:
+  71                             	.LBE9:
+  72                             	.LBE8:
+ 448:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	while ( 1 )
+ 449:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	{
+ 450:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		OS_Suspend ( NULL );
+  73                             		.loc 1 450 0 discriminator 1
+  74 0014 66 01                   		mov.L	#0, r1
+  75 0016 05 00 00 00             		bsr	_OS_Suspend
+  76                             	.LVL6:
+ 451:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 452:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		TRACE_CPU_IDLE_END();
+ 453:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 454:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		MAIN_SEQUENCER_TASK_TRACE_BEGIN()
+ 455:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		OS_EnterRegion();
+  77                             		.loc 1 455 0 discriminator 1
+  78 001a 05 00 00 00             		bsr	_OS_EnterRegionFunc
+  79                             	.LVL7:
+  80                             	.LBB11:
+  81                             	.LBB12:
+ 456:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		/* here the scheduler is switched off */
+ 457:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		/* debug: begin */
+ 458:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		Main_SequencerTask_Duration_Start();
+ 459:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		/* debug: end */
+ 460:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		MAIN_SEQUENCER_TASK__MONITOR_IN();
+ 461:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		
+ 462:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****         Main_SequencerManager();
+ 463:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 464:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		MAIN_SEQUENCER_TASK__MONITOR_OUT();
+ 465:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		/* debug: begin */
+ 466:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		Main_SequencerTask_Duration_End();
+ 467:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		/* debug: end */
+ 468:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		OS_LeaveRegion();
+ 469:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****         MAIN_SEQUENCER_TASK_TRACE_END()
+ 470:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		/* here the scheduler is switched on */
+ 471:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	}
+ 472:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 473:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /* Local Function */
+ 474:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 475:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if SEQUENCER_TASK_DEBUG && SEQUENCER_TASK_DURATION
+ 476:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /**
+ 477:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Init Duration  measurement
+ 478:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 479:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask_Duration_Init ( void )
+ 480:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 481:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	Tools_CreateTimingMeasure ( &SequencerDuration );
+ 482:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	Tools_CreateTimingStats ( &SequencerTaskDurationStat );
+ 483:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 484:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /**
+ 485:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Starts a duration measurement
+ 486:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 487:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask_Duration_Start ( void )
+ 488:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 489:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	Tools_TimingSetRef ( &SequencerDuration );
+  82                             		.loc 1 489 0 discriminator 1
+  83 001e FB 12 00 00 00 00       		mov.L	#_SequencerDuration, r1
+  84 0024 05 00 00 00             		bsr	_Tools_TimingSetRef
+  85                             	.LVL8:
+  86                             	.LBE12:
+  87                             	.LBE11:
+ 460:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		MAIN_SEQUENCER_TASK__MONITOR_IN();
+  88                             		.loc 1 460 0 discriminator 1
+  89 0028 66 41                   		mov	#4, r1
+  90 002a 66 12                   		mov.L	#1, r2
+  91 002c 05 00 00 00             		bsr	_LIB_SetTask
+  92                             	.LVL9:
+  93 0030 66 41                   		mov	#4, r1
+  94 0032 05 00 00 00             		bsr	_LIB_TaskStartActivity
+  95                             	.LVL10:
+  96                             	.LBB13:
+  97                             	.LBB10:
+ 413:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     Main_ActivityProcess(&(Main_Sequencer.SeqActivityList));
+  98                             		.loc 1 413 0 discriminator 1
+  99 0036 FB 12 04 00 00 00       		mov.L	#_Main_Sequencer+4, r1
+ 100 003c 05 00 00 00             		bsr	_Main_ActivityProcess
+ 101                             	.LVL11:
+ 415:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     Main_Sequencer.SequencerID <<= 1U;
+ 102                             		.loc 1 415 0 discriminator 1
+ 103 0040 CC 7E                   		mov.B	[r7], r14
+ 104 0042 4B EE                   		add	r14, r14
+ 105 0044 C3 7E                   		mov.B	r14, [r7]
+ 106                             	.LBE10:
+ 107                             	.LBE13:
+ 464:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		MAIN_SEQUENCER_TASK__MONITOR_OUT();
+ 108                             		.loc 1 464 0 discriminator 1
+ 109 0046 66 41                   		mov	#4, r1
+ 110 0048 05 00 00 00             		bsr	_LIB_TaskEndActivity
+ 111                             	.LVL12:
+ 112                             	.LBB14:
+ 113                             	.LBB15:
+ 490:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 491:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 492:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /**
+ 493:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Stops the duration measurement
+ 494:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 495:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask_Duration_End ( void )
+ 496:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 497:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	Tools_ProcessValue ( &SequencerTaskDurationStat, Tools_GetTiming ( &SequencerDuration ) );
+ 114                             		.loc 1 497 0 discriminator 1
+ 115 004c FB 12 00 00 00 00       		mov.L	#_SequencerDuration, r1
+ 116 0052 05 00 00 00             		bsr	_Tools_GetTiming
+ 117                             	.LVL13:
+ 118 0056 EF 12                   		mov.L	r1, r2
+ 119 0058 FB 12 00 00 00 00       		mov.L	#_SequencerTaskDurationStat, r1
+ 120 005e 05 00 00 00             		bsr	_Tools_ProcessValue
+ 121                             	.LVL14:
+ 122                             	.LBE15:
+ 123                             	.LBE14:
+ 468:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		OS_LeaveRegion();
+ 124                             		.loc 1 468 0 discriminator 1
+ 125 0062 05 00 00 00             		bsr	_OS_LeaveRegion
+ 126                             	.LVL15:
+ 127 0066 2E AE                   		bra	.L12
+ 128                             	.LFE8:
+ 130                             		.section	.rodata.str1.1,"aMS",@progbits,1
+ 131                             	.LC0:
+ 132 0000 53 65 71 75 65 6E 63 65 		.string	"SequencerTask"
+ 132      72 54 61 73 6B 00 
+ 133                             		.section	.text.Main_SequencerInit,"ax",@progbits
+ 134                             		.global	_Main_SequencerInit
+ 136                             	_Main_SequencerInit:
+ 137                             	.LFB0:
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 138                             		.loc 1 316 0
+ 139 0000 60 80                   		sub	#8, r0
+ 140                             	.LCFI1:
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     Main_ActivityList_Init(&(Main_Sequencer.SeqActivityList));
+ 141                             		.loc 1 319 0
+ 142 0002 FB 12 04 00 00 00       		mov.L	#_Main_Sequencer+4, r1
+ 143 0008 05 00 00 00             		bsr	_Main_ActivityList_Init
+ 144                             	.LVL16:
+ 322:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	OS_CREATETASK ( &Main_SequencerTaskTCB,
+ 145                             		.loc 1 322 0
+ 146 000c F8 02 00 00 00 00       		mov.L	#_Main_SequencerTaskStack, [r0]
+ 147 0012 F9 0A 01 80 01          		mov.L	#0x180, 4[r0]
+ 148 0017 FB 12 00 00 00 00       		mov.L	#_Main_SequencerTaskTCB, r1
+ 149 001d FB 22 00 00 00 00       		mov.L	#.LC0, r2
+ 150 0023 FB 36 96                		mov	#0xffffff96, r3
+ 151 0026 FB 42 00 00 00 00       		mov.L	#_Main_SequencerTask, r4
+ 152 002c 05 00 00 00             		bsr	_OS_CreateTask_S
+ 153                             	.LVL17:
+ 331:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	OS_CreateAlarm ( &Main_AlmSequencer, AlmSequencerCallback, ( OS_U32 ) 0, ( OS_U32 ) 0 );
+ 154                             		.loc 1 331 0
+ 155 0030 FB 12 00 00 00 00       		mov.L	#_Main_AlmSequencer, r1
+ 156 0036 FB 22 00 00 00 00       		mov.L	#_AlmSequencerCallback, r2
+ 157 003c 66 03                   		mov.L	#0, r3
+ 158 003e EF 34                   		mov.L	r3, r4
+ 159 0040 05 00 00 00             		bsr	_OS_CreateAlarm_
+ 160                             	.LVL18:
+ 161                             	.LBB20:
+ 162                             	.LBB21:
+ 481:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	Tools_CreateTimingMeasure ( &SequencerDuration );
+ 163                             		.loc 1 481 0
+ 164 0044 FB 12 00 00 00 00       		mov.L	#_SequencerDuration, r1
+ 165 004a 05 00 00 00             		bsr	_Tools_CreateTimingMeasure
+ 166                             	.LVL19:
+ 482:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	Tools_CreateTimingStats ( &SequencerTaskDurationStat );
+ 167                             		.loc 1 482 0
+ 168 004e FB 12 00 00 00 00       		mov.L	#_SequencerTaskDurationStat, r1
+ 169 0054 05 00 00 00             		bsr	_Tools_CreateTimingStats
+ 170                             	.LVL20:
+ 171                             	.LBE21:
+ 172                             	.LBE20:
+ 173                             	.LBB22:
+ 174                             	.LBB23:
+ 498:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 499:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #endif /* SEQUENCER_TASK_DEBUG && SEQUENCER_TASK_DURATION */
+ 500:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 501:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 502:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** #if     SEQUENCER_TASK_DEBUG && SEQUENCER_TASK_TUNING
+ 503:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /**
+ 504:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Tuning initialization.
+ 505:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Resets OutputsTuning_Delay and OutputsTuning_Period at zero.
+ 506:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 507:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static void Main_SequencerTask_Tuning_Init ( void )
+ 508:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 509:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	SequencerTuning_Delay = 0;
+ 175                             		.loc 1 509 0
+ 176 0058 FB E2 00 00 00 00       		mov.L	#_SequencerTuning_Delay, r14
+ 177 005e F8 E6 00                		mov.L	#0, [r14]
+ 510:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	SequencerTuning_Period = 0;
+ 178                             		.loc 1 510 0
+ 179 0061 FB E2 00 00 00 00       		mov.L	#_SequencerTuning_Period, r14
+ 180 0067 F8 E6 00                		mov.L	#0, [r14]
+ 181                             	.LBE23:
+ 182                             	.LBE22:
+ 338:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 183                             		.loc 1 338 0
+ 184 006a 67 02                   		rtsd	#8
+ 185                             	.LFE0:
+ 187                             		.section	.text.Main_PeriodicScheduleSequencer,"ax",@progbits
+ 188                             		.global	_Main_PeriodicScheduleSequencer
+ 190                             	_Main_PeriodicScheduleSequencer:
+ 191                             	.LFB1:
+ 355:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 192                             		.loc 1 355 0
+ 193                             	.LVL21:
+ 194 0000 6E 7D                   		pushm	r7-r13
+ 195                             	.LCFI2:
+ 196 0002 60 40                   		sub	#4, r0
+ 197                             	.LCFI3:
+ 198 0004 EF 1B                   		mov.L	r1, r11
+ 199 0006 EF 2A                   		mov.L	r2, r10
+ 356:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     OS_ALARM_TICK ref = (OS_ALARM_TICK)TickRef;
+ 200                             		.loc 1 356 0
+ 201 0008 D3 03                   		mov.W	r3, [r0]
+ 202                             	.LVL22:
+ 203                             	.LBB28:
+ 204                             	.LBB29:
+ 511:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 512:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 513:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /**
+ 514:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Filters OutputsTuning_Delay.
+ 515:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \param [in] usOffset current delay
+ 516:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \return OS_I32
+ 517:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \retval OutputsTuning_Delay.
+ 518:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \attention range of OutputsTuning_Delay:
+ 519:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** from -usOffset to max of OS_I32
+ 520:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 521:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static OS_I32 Main_SequencerTask_DelayTuner ( OS_U32 usOffset )
+ 522:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 523:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	if ( SequencerTuning_Delay < 0 )
+ 205                             		.loc 1 523 0
+ 206 000a FB 72 00 00 00 00       		mov.L	#_SequencerTuning_Delay, r7
+ 207 0010 EC 7E                   		mov.L	[r7], r14
+ 208 0012 61 0E                   		cmp	#0, r14
+ 209 0014 28 0E                   		bge	.L17
+ 524:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	{
+ 525:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		if ( -SequencerTuning_Delay > (int)usOffset )
+ 210                             		.loc 1 525 0
+ 211 0016 7E 1E                   		neg	r14
+ 212 0018 47 1E                   		cmp	r1, r14
+ 213 001a 2B 08                   		ble	.L17
+ 526:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		{
+ 527:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 			SequencerTuning_Delay = - ( ( OS_I32 ) usOffset );
+ 214                             		.loc 1 527 0
+ 215 001c FC 07 1C                		neg	r1, r12
+ 216 001f E3 7C                   		mov.L	r12, [r7]
+ 217 0021 03                      		.balign 2,3,1
+ 218                             	.L17:
+ 528:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		}
+ 529:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	}
+ 530:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	
+ 531:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	return SequencerTuning_Delay;
+ 219                             		.loc 1 531 0
+ 220 0022 EC 7D                   		mov.L	[r7], r13
+ 221                             	.LVL23:
+ 222                             	.LBE29:
+ 223                             	.LBE28:
+ 224                             	.LBB30:
+ 225                             	.LBB31:
+ 532:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 533:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 
+ 534:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** /**
+ 535:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** Filters OutputsTuning_Period.
+ 536:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \param [in] usOffset current period
+ 537:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \return OS_I32
+ 538:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \retval OutputsTuning_Delay.
+ 539:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** \attention range of OutputsTuning_Delay:
+ 540:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** from -usOffset to max of OS_I32
+ 541:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** */
+ 542:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** static OS_I32 Main_SequencerTask_PeriodTuner ( OS_U32 usOffset )
+ 543:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 544:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	if ( SequencerTuning_Period < 0 )
+ 226                             		.loc 1 544 0
+ 227 0024 FB 72 00 00 00 00       		mov.L	#_SequencerTuning_Period, r7
+ 228 002a EC 7E                   		mov.L	[r7], r14
+ 229 002c 61 0E                   		cmp	#0, r14
+ 230 002e 28 0E                   		bge	.L18
+ 545:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	{
+ 546:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		if ( abs(SequencerTuning_Period) > usOffset )
+ 231                             		.loc 1 546 0
+ 232 0030 7E 1E                   		neg	r14
+ 233 0032 47 AE                   		cmp	r10, r14
+ 234 0034 25 08                   		bleu	.L18
+ 547:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		{
+ 548:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 			SequencerTuning_Period = - ( ( OS_I32 ) usOffset );
+ 235                             		.loc 1 548 0
+ 236 0036 FC 07 AC                		neg	r10, r12
+ 237 0039 E3 7C                   		mov.L	r12, [r7]
+ 238 003b 03                      		.balign 2,3,1
+ 239                             	.L18:
+ 549:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 		}
+ 550:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	}
+ 551:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	
+ 552:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	return SequencerTuning_Period;
+ 240                             		.loc 1 552 0
+ 241 003c EC 7C                   		mov.L	[r7], r12
+ 242                             	.LVL24:
+ 243                             	.LBE31:
+ 244                             	.LBE30:
+ 359:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	if(OS_IsTask(&Main_SequencerTaskTCB))
+ 245                             		.loc 1 359 0
+ 246 003e FB 12 00 00 00 00       		mov.L	#_Main_SequencerTaskTCB, r1
+ 247                             	.LVL25:
+ 248 0044 05 00 00 00             		bsr	_OS_IsTask
+ 249                             	.LVL26:
+ 250 0048 76 21 FF 00             		and #0xff, r1
+ 251 004c 20 62                   		beq	.L20
+ 361:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	    OS_START_ABSALARM ( &Main_AlmSequencer, usOffset, usPeriod, MAIN_SEQUENCER_LENGTH, &ref );
+ 252                             		.loc 1 361 0
+ 253 004e 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 254                             	.LVL27:
+ 255 0052 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 256 0058 CD 7E 01                		mov.B	1[r7], r14
+ 257 005b 62 1E                   		add	#1, r14
+ 258 005d C7 7E 01                		mov.B	r14, 1[r7]
+ 259 0060 FB 12 00 00 00 00       		mov.L	#_Main_AlmSequencer, r1
+ 260 0066 05 00 00 00             		bsr	_OS_StopAlarm
+ 261                             	.LVL28:
+ 262 006a FB 12 00 00 00 00       		mov.L	#_Main_AlmSequencer, r1
+ 263 0070 FF 22 DB                		add	r13, r11, r2
+ 264 0073 05 00 00 00             		bsr	_OS_SetAlarmOffset_
+ 265                             	.LVL29:
+ 266 0077 FB 12 00 00 00 00       		mov.L	#_Main_AlmSequencer, r1
+ 267 007d FF 22 CA                		add	r12, r10, r2
+ 268 0080 05 00 00 00             		bsr	_OS_SetAlarmPeriod_
+ 269                             	.LVL30:
+ 270 0084 FB 12 00 00 00 00       		mov.L	#_Main_AlmSequencer, r1
+ 271 008a 66 22                   		mov.L	#2, r2
+ 272 008c 05 00 00 00             		bsr	_OS_SetAlarmActivationsCount_
+ 273                             	.LVL31:
+ 274 0090 FB 12 00 00 00 00       		mov.L	#_Main_AlmSequencer, r1
+ 275 0096 EF 02                   		mov.L	r0, r2
+ 276 0098 05 00 00 00             		bsr	_OS_StartAbsAlarm
+ 277                             	.LVL32:
+ 278 009c CD 7A 01                		mov.B	1[r7], r10
+ 279                             	.LVL33:
+ 280 009f 60 1A                   		sub	#1, r10
+ 281 00a1 C7 7A 01                		mov.B	r10, 1[r7]
+ 282 00a4 76 2A FF 00             		and #0xff, r10
+ 283 00a8 1E                      		bne	.L20
+ 361:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	    OS_START_ABSALARM ( &Main_AlmSequencer, usOffset, usPeriod, MAIN_SEQUENCER_LENGTH, &ref );
+ 284                             		.loc 1 361 0 is_stmt 0 discriminator 1
+ 285 00a9 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 286                             	.LVL34:
+ 287 00ad 03                      		.balign 2,3,5
+ 288                             	.L20:
+ 363:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** 	Main_Sequencer.SequencerID = 1;
+ 289                             		.loc 1 363 0 is_stmt 1
+ 290 00ae FB 72 00 00 00 00       		mov.L	#_Main_Sequencer, r7
+ 291 00b4 3C 70 01                		mov.B	#1, [r7]
+ 364:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 292                             		.loc 1 364 0
+ 293 00b7 3F 7D 08                		rtsd	#32, r7-r13
+ 294                             	.LFE1:
+ 296                             		.section	.text.Main_AddSequencerActivity,"ax",@progbits
+ 297                             		.global	_Main_AddSequencerActivity
+ 299                             	_Main_AddSequencerActivity:
+ 300                             	.LFB2:
+ 369:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 301                             		.loc 1 369 0
+ 302                             	.LVL35:
+ 303 0000 EF 1E                   		mov.L	r1, r14
+ 373:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     pSeqActivity->pSeqCallback=pSeqCallback;
+ 304                             		.loc 1 373 0
+ 305 0002 A0 9A                   		mov.L	r2, 12[r1]
+ 374:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     pSeqActivity->profile=0;
+ 306                             		.loc 1 374 0
+ 307 0004 3C 18 00                		mov.B	#0, 8[r1]
+ 308                             	.LVL36:
+ 378:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c ****     Main_CreateActivity ( &(Main_Sequencer.SeqActivityList), pActivity, Main_SequencerCallback , NU
+ 309                             		.loc 1 378 0
+ 310 0007 FB 12 04 00 00 00       		mov.L	#_Main_Sequencer+4, r1
+ 311                             	.LVL37:
+ 312 000d EF E2                   		mov.L	r14, r2
+ 313                             	.LVL38:
+ 314 000f FB 32 00 00 00 00       		mov.L	#_Main_SequencerCallback, r3
+ 315 0015 66 04                   		mov.L	#0, r4
+ 316 0017 04 00 00 00             		bra	_Main_CreateActivity
+ 317                             	.LVL39:
+ 318                             	.LFE2:
+ 320                             		.section	.text.Main_GetSequencerLength,"ax",@progbits
+ 321                             		.global	_Main_GetSequencerLength
+ 323                             	_Main_GetSequencerLength:
+ 324                             	.LFB3:
+ 386:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 325                             		.loc 1 386 0
+ 388:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 326                             		.loc 1 388 0
+ 327 0000 66 21                   		mov.L	#2, r1
+ 328 0002 02                      		rts
+ 329                             	.LFE3:
+ 331                             		.section	.text.Main_GetSequencerMiddleEvent,"ax",@progbits
+ 332                             		.global	_Main_GetSequencerMiddleEvent
+ 334                             	_Main_GetSequencerMiddleEvent:
+ 335                             	.LFB4:
+ 392:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** {
+ 336                             		.loc 1 392 0
+ 394:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_Sequencer.c **** }
+ 337                             		.loc 1 394 0
+ 338 0000 66 21                   		mov.L	#2, r1
+ 339 0002 02                      		rts
+ 340                             	.LFE4:
+ 342                             		.section	.bss.Main_Sequencer,"aw",@nobits
+ 343                             		.balign 4
+ 346                             	_Main_Sequencer:
+ 347 0000 00 00 00 00 00 00 00 00 		.zero	12
+ 347      00 00 00 00 
+ 348                             		.section	.bss.Main_SequencerTaskTCB,"aw",@nobits
+ 349                             		.balign 4
+ 352                             	_Main_SequencerTaskTCB:
+ 353 0000 00 00 00 00 00 00 00 00 		.zero	44
+ 353      00 00 00 00 00 00 00 00 
+ 353      00 00 00 00 00 00 00 00 
+ 353      00 00 00 00 00 00 00 00 
+ 353      00 00 00 00 00 00 00 00 
+ 354                             		.section	.osstack,"aw",@progbits
+ 355                             		.balign 4
+ 358                             	_Main_SequencerTaskStack:
+ 359 0000 00 00 00 00 00 00 00 00 		.zero	384
+ 359      00 00 00 00 00 00 00 00 
+ 359      00 00 00 00 00 00 00 00 
+ 359      00 00 00 00 00 00 00 00 
+ 359      00 00 00 00 00 00 00 00 
+ 360                             		.section	.bss.Main_AlmSequencer,"aw",@nobits
+ 361                             		.balign 4
+ 364                             	_Main_AlmSequencer:
+ 365 0000 00 00 00 00 00 00 00 00 		.zero	20
+ 365      00 00 00 00 00 00 00 00 
+ 365      00 00 00 00 
+ 366                             		.section	.bss.SequencerDuration,"aw",@nobits
+ 367                             		.balign 4
+ 370                             	_SequencerDuration:
+ 371 0000 00 00 00 00 00 00 00 00 		.zero	16
+ 371      00 00 00 00 00 00 00 00 
+ 372                             		.section	.bss.SequencerTaskDurationStat,"aw",@nobits
+ 373                             		.balign 4
+ 376                             	_SequencerTaskDurationStat:
+ 377 0000 00 00 00 00 00 00 00 00 		.zero	12
+ 377      00 00 00 00 
+ 378                             		.section	.bss.SequencerTuning_Delay,"aw",@nobits
+ 379                             		.balign 4
+ 382                             	_SequencerTuning_Delay:
+ 383 0000 00 00 00 00             		.zero	4
+ 384                             		.section	.bss.SequencerTuning_Period,"aw",@nobits
+ 385                             		.balign 4
+ 388                             	_SequencerTuning_Period:
+ 389 0000 00 00 00 00             		.zero	4
+ 504                             	.Letext0:
+ 505                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 506                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 507                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Main\\EmbOS\\tools/Tools.h"
+ 508                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Main\\EmbOS\\Services\\ActivityList/Main_Activ
+ 509                             		.file 6 "C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS/MainInterface.h"
+ 510                             		.file 7 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_SecurityCheck/LIB_TaskMon
+ 511                             		.file 8 "C:\\Workspace\\FW_Inertia\\branch_indesit\\CFG_DishWasher\\CFG_Inertia/TaskMonitor_Cfg.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 Main_Sequencer.c
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:6      .text.Main_SequencerCallback:00000000 _Main_SequencerCallback
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:11     .text.Main_SequencerCallback:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:346    .bss.Main_Sequencer:00000000 _Main_Sequencer
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:35     .text.AlmSequencerCallback:00000000 _AlmSequencerCallback
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:39     .text.AlmSequencerCallback:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:352    .bss.Main_SequencerTaskTCB:00000000 _Main_SequencerTaskTCB
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:54     .text.Main_SequencerTask:00000000 _Main_SequencerTask
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:57     .text.Main_SequencerTask:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:370    .bss.SequencerDuration:00000000 _SequencerDuration
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:376    .bss.SequencerTaskDurationStat:00000000 _SequencerTaskDurationStat
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:136    .text.Main_SequencerInit:00000000 _Main_SequencerInit
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:139    .text.Main_SequencerInit:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:358    .osstack:00000000 _Main_SequencerTaskStack
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:364    .bss.Main_AlmSequencer:00000000 _Main_AlmSequencer
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:382    .bss.SequencerTuning_Delay:00000000 _SequencerTuning_Delay
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:388    .bss.SequencerTuning_Period:00000000 _SequencerTuning_Period
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:190    .text.Main_PeriodicScheduleSequencer:00000000 _Main_PeriodicScheduleSequencer
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:194    .text.Main_PeriodicScheduleSequencer:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:299    .text.Main_AddSequencerActivity:00000000 _Main_AddSequencerActivity
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:303    .text.Main_AddSequencerActivity:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:323    .text.Main_GetSequencerLength:00000000 _Main_GetSequencerLength
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:327    .text.Main_GetSequencerLength:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:334    .text.Main_GetSequencerMiddleEvent:00000000 _Main_GetSequencerMiddleEvent
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:338    .text.Main_GetSequencerMiddleEvent:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:131    .rodata.str1.1:00000000 .LC0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:391    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:7      .text.Main_SequencerCallback:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:36     .text.AlmSequencerCallback:00000000 .LFB7
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:55     .text.Main_SequencerTask:00000000 .LFB8
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:137    .text.Main_SequencerInit:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:191    .text.Main_PeriodicScheduleSequencer:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:300    .text.Main_AddSequencerActivity:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:324    .text.Main_GetSequencerLength:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:335    .text.Main_GetSequencerMiddleEvent:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:2721   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3952   .debug_str:000002e5 .LASF164
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4046   .debug_str:000005eb .LASF165
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3824   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3850   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4062   .debug_str:00000695 .LASF0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3928   .debug_str:0000024a .LASF6
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3982   .debug_str:000003bd .LASF1
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3966   .debug_str:00000351 .LASF2
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4170   .debug_str:000009a4 .LASF3
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3876   .debug_str:000000ad .LASF4
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3926   .debug_str:0000023c .LASF5
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4150   .debug_str:00000932 .LASF7
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4052   .debug_str:00000649 .LASF8
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4124   .debug_str:0000085f .LASF9
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3894   .debug_str:00000165 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3904   .debug_str:000001ac .LASF11
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4102   .debug_str:000007b1 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4154   .debug_str:00000945 .LASF13
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4168   .debug_str:0000099b .LASF14
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3924   .debug_str:0000022f .LASF15
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4122   .debug_str:00000853 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3852   .debug_str:00000000 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3930   .debug_str:00000253 .LASF18
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4096   .debug_str:00000795 .LASF19
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3948   .debug_str:000002d1 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3858   .debug_str:00000022 .LASF20
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3998   .debug_str:00000435 .LASF21
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3866   .debug_str:0000004e .LASF22
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3946   .debug_str:000002c9 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3968   .debug_str:00000363 .LASF24
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4140   .debug_str:000008e5 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4114   .debug_str:00000815 .LASF26
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4100   .debug_str:000007a7 .LASF27
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4144   .debug_str:00000904 .LASF28
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4184   .debug_str:000009fc .LASF29
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4146   .debug_str:00000909 .LASF30
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4022   .debug_str:00000505 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4058   .debug_str:00000673 .LASF32
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4138   .debug_str:000008d1 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4166   .debug_str:00000995 .LASF35
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4054   .debug_str:00000657 .LASF36
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3986   .debug_str:000003e6 .LASF37
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4084   .debug_str:00000743 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3854   .debug_str:00000005 .LASF39
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3868   .debug_str:00000058 .LASF40
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4008   .debug_str:00000471 .LASF41
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4070   .debug_str:000006d3 .LASF42
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3958   .debug_str:00000326 .LASF43
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4090   .debug_str:0000076e .LASF44
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4024   .debug_str:00000514 .LASF45
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4106   .debug_str:000007dc .LASF46
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3902   .debug_str:000001a0 .LASF47
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3974   .debug_str:00000391 .LASF48
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3956   .debug_str:00000318 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3988   .debug_str:000003ec .LASF50
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4108   .debug_str:000007e3 .LASF51
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4174   .debug_str:000009c2 .LASF52
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3862   .debug_str:00000033 .LASF53
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3880   .debug_str:000000db .LASF54
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4020   .debug_str:000004fe .LASF55
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3864   .debug_str:00000044 .LASF56
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3938   .debug_str:00000285 .LASF57
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4092   .debug_str:0000077b .LASF58
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4128   .debug_str:00000878 .LASF59
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4160   .debug_str:0000096c .LASF60
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3950   .debug_str:000002e0 .LASF61
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3898   .debug_str:00000189 .LASF62
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3936   .debug_str:0000027e .LASF63
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4158   .debug_str:00000965 .LASF64
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4182   .debug_str:000009f6 .LASF65
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3990   .debug_str:000003f9 .LASF66
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3860   .debug_str:00000028 .LASF67
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4178   .debug_str:000009da .LASF68
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4152   .debug_str:0000093a .LASF69
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3920   .debug_str:00000221 .LASF70
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3890   .debug_str:00000150 .LASF71
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4002   .debug_str:0000044f .LASF72
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4028   .debug_str:0000052f .LASF73
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3994   .debug_str:0000041f .LASF74
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4076   .debug_str:0000070e .LASF75
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3962   .debug_str:00000336 .LASF76
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4004   .debug_str:00000458 .LASF77
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3914   .debug_str:000001f8 .LASF78
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4110   .debug_str:000007e8 .LASF166
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4040   .debug_str:000005ae .LASF79
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4082   .debug_str:00000734 .LASF80
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3910   .debug_str:000001d3 .LASF81
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4030   .debug_str:00000538 .LASF82
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4072   .debug_str:000006e4 .LASF83
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4172   .debug_str:000009ad .LASF84
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3932   .debug_str:0000025b .LASF85
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4048   .debug_str:0000062e .LASF86
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3886   .debug_str:00000125 .LASF87
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3916   .debug_str:00000208 .LASF88
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3954   .debug_str:0000030b .LASF89
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3976   .debug_str:00000398 .LASF90
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3872   .debug_str:0000007b .LASF91
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4018   .debug_str:000004e4 .LASF92
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4116   .debug_str:0000081c .LASF93
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4026   .debug_str:0000051b .LASF94
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4098   .debug_str:0000079d .LASF95
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3972   .debug_str:0000037b .LASF96
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4120   .debug_str:00000845 .LASF97
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4044   .debug_str:000005da .LASF98
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3870   .debug_str:00000064 .LASF99
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3992   .debug_str:00000405 .LASF100
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4016   .debug_str:000004c9 .LASF101
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3884   .debug_str:00000108 .LASF102
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3922   .debug_str:00000226 .LASF103
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3960   .debug_str:0000032e .LASF104
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3996   .debug_str:00000428 .LASF105
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4142   .debug_str:000008ee .LASF106
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4012   .debug_str:00000495 .LASF107
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4088   .debug_str:00000762 .LASF108
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3940   .debug_str:0000029c .LASF109
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4118   .debug_str:0000082e .LASF110
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:31     .text.Main_SequencerCallback:0000001d .LFE5
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3583   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4094   .debug_str:00000780 .LASF111
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:50     .text.AlmSequencerCallback:0000001b .LFE7
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:41     .text.AlmSequencerCallback:0000000a .LVL3
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:47     .text.AlmSequencerCallback:0000001a .LVL4
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4112   .debug_str:000007f3 .LASF112
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4064   .debug_str:0000069f .LASF113
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3888   .debug_str:00000130 .LASF114
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3978   .debug_str:000003a0 .LASF115
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:128    .text.Main_SequencerTask:00000068 .LFE8
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3595   .debug_loc:00000022 .LLST1
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:65     .text.Main_SequencerTask:0000000d .LBB8
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:101    .text.Main_SequencerTask:00000040 .LVL11
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:80     .text.Main_SequencerTask:0000001e .LBB11
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:87     .text.Main_SequencerTask:00000028 .LBE11
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:85     .text.Main_SequencerTask:00000028 .LVL8
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:112    .text.Main_SequencerTask:0000004c .LBB14
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:123    .text.Main_SequencerTask:00000062 .LBE14
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:117    .text.Main_SequencerTask:00000056 .LVL13
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:121    .text.Main_SequencerTask:00000062 .LVL14
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:64     .text.Main_SequencerTask:0000000d .LVL5
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:76     .text.Main_SequencerTask:0000001a .LVL6
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:79     .text.Main_SequencerTask:0000001e .LVL7
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:92     .text.Main_SequencerTask:00000030 .LVL9
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:95     .text.Main_SequencerTask:00000036 .LVL10
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:111    .text.Main_SequencerTask:0000004c .LVL12
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:126    .text.Main_SequencerTask:00000066 .LVL15
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4038   .debug_str:0000058d .LASF116
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4042   .debug_str:000005bb .LASF117
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4162   .debug_str:00000975 .LASF121
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:185    .text.Main_SequencerInit:0000006c .LFE0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3608   .debug_loc:00000042 .LLST2
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:161    .text.Main_SequencerInit:00000044 .LBB20
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:172    .text.Main_SequencerInit:00000058 .LBE20
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:166    .text.Main_SequencerInit:0000004e .LVL19
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:170    .text.Main_SequencerInit:00000058 .LVL20
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:173    .text.Main_SequencerInit:00000058 .LBB22
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:182    .text.Main_SequencerInit:0000006a .LBE22
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:144    .text.Main_SequencerInit:0000000c .LVL16
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:153    .text.Main_SequencerInit:00000030 .LVL17
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:160    .text.Main_SequencerInit:00000044 .LVL18
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4104   .debug_str:000007be .LASF118
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4080   .debug_str:0000072b .LASF120
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4148   .debug_str:00000913 .LASF119
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3874   .debug_str:0000008e .LASF122
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:294    .text.Main_PeriodicScheduleSequencer:000000ba .LFE1
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3621   .debug_loc:00000062 .LLST3
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3639   .debug_loc:0000008e .LLST4
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3944   .debug_str:000002c0 .LASF123
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3664   .debug_loc:000000c1 .LLST5
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4006   .debug_str:00000469 .LASF124
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3699   .debug_loc:00000105 .LLST6
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:203    .text.Main_PeriodicScheduleSequencer:0000000a .LBB28
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:223    .text.Main_PeriodicScheduleSequencer:00000024 .LBE28
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3713   .debug_loc:00000126 .LLST7
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:224    .text.Main_PeriodicScheduleSequencer:00000024 .LBB30
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:244    .text.Main_PeriodicScheduleSequencer:0000003e .LBE30
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3724   .debug_loc:00000144 .LLST8
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:249    .text.Main_PeriodicScheduleSequencer:00000048 .LVL26
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:254    .text.Main_PeriodicScheduleSequencer:00000052 .LVL27
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:261    .text.Main_PeriodicScheduleSequencer:0000006a .LVL28
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:265    .text.Main_PeriodicScheduleSequencer:00000077 .LVL29
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:269    .text.Main_PeriodicScheduleSequencer:00000084 .LVL30
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:273    .text.Main_PeriodicScheduleSequencer:00000090 .LVL31
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:277    .text.Main_PeriodicScheduleSequencer:0000009c .LVL32
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:286    .text.Main_PeriodicScheduleSequencer:000000ad .LVL34
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3934   .debug_str:00000264 .LASF125
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:318    .text.Main_AddSequencerActivity:0000001b .LFE2
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4136   .debug_str:000008c4 .LASF126
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3742   .debug_loc:00000170 .LLST9
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3760   .debug_loc:0000019c .LLST10
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4186   .debug_str:00000a06 .LASF127
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3779   .debug_loc:000001c9 .LLST11
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:317    .text.Main_AddSequencerActivity:0000001b .LVL39
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4032   .debug_str:0000054a .LASF128
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:329    .text.Main_GetSequencerLength:00000003 .LFE3
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4188   .debug_str:00000a10 .LASF129
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:340    .text.Main_GetSequencerMiddleEvent:00000003 .LFE4
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3896   .debug_str:00000171 .LASF130
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3912   .debug_str:000001e2 .LASF131
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4050   .debug_str:00000637 .LASF132
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4078   .debug_str:0000071c .LASF133
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4126   .debug_str:00000866 .LASF134
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4010   .debug_str:0000047b .LASF135
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3984   .debug_str:000003d0 .LASF136
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3878   .debug_str:000000c4 .LASF137
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3892   .debug_str:0000015b .LASF167
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4036   .debug_str:0000057c .LASF141
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3980   .debug_str:000003b3 .LASF138
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4060   .debug_str:00000680 .LASF139
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4086   .debug_str:0000074f .LASF140
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3900   .debug_str:00000190 .LASF142
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3918   .debug_str:0000020e .LASF143
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4130   .debug_str:00000881 .LASF144
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4066   .debug_str:000006b5 .LASF145
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3970   .debug_str:00000368 .LASF149
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3908   .debug_str:000001c7 .LASF146
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4132   .debug_str:0000089a .LASF147
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3942   .debug_str:000002ac .LASF148
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3882   .debug_str:000000f9 .LASF150
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4034   .debug_str:00000562 .LASF151
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4074   .debug_str:000006f6 .LASF152
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4156   .debug_str:0000094e .LASF153
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4176   .debug_str:000009ca .LASF154
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3964   .debug_str:00000341 .LASF155
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3856   .debug_str:00000018 .LASF156
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:3906   .debug_str:000001b3 .LASF157
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4164   .debug_str:00000988 .LASF158
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4068   .debug_str:000006c0 .LASF159
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4056   .debug_str:00000660 .LASF160
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4014   .debug_str:000004ac .LASF161
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4180   .debug_str:000009e5 .LASF162
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4000   .debug_str:0000043c .LASF163
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:4134   .debug_str:000008b0 .LASF168
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:13     .text.Main_SequencerCallback:00000008 .LVL0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:21     .text.Main_SequencerCallback:00000013 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:28     .text.Main_SequencerCallback:0000001c .LVL2
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:58     .text.Main_SequencerTask:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:140    .text.Main_SequencerInit:00000002 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:195    .text.Main_PeriodicScheduleSequencer:00000002 .LCFI2
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:197    .text.Main_PeriodicScheduleSequencer:00000004 .LCFI3
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:193    .text.Main_PeriodicScheduleSequencer:00000000 .LVL21
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:221    .text.Main_PeriodicScheduleSequencer:00000024 .LVL23
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:247    .text.Main_PeriodicScheduleSequencer:00000044 .LVL25
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:242    .text.Main_PeriodicScheduleSequencer:0000003e .LVL24
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:279    .text.Main_PeriodicScheduleSequencer:0000009f .LVL33
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:202    .text.Main_PeriodicScheduleSequencer:0000000a .LVL22
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:302    .text.Main_AddSequencerActivity:00000000 .LVL35
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:311    .text.Main_AddSequencerActivity:0000000d .LVL37
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:313    .text.Main_AddSequencerActivity:0000000f .LVL38
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:308    .text.Main_AddSequencerActivity:00000007 .LVL36
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:513    .debug_info:00000000 .Ldebug_info0
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:72     .text.Main_SequencerTask:00000014 .LBE8
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:96     .text.Main_SequencerTask:00000036 .LBB13
+C:\Users\Andrea\AppData\Local\Temp\cchD8nHc.s:107    .text.Main_SequencerTask:00000046 .LBE13
+
+UNDEFINED SYMBOLS
+_OS_GetSuspendCnt
+_OS_Resume
+_LIB_TaskMonitoringConfig
+_OS_Suspend
+_OS_EnterRegionFunc
+_Tools_TimingSetRef
+_LIB_SetTask
+_LIB_TaskStartActivity
+_Main_ActivityProcess
+_LIB_TaskEndActivity
+_Tools_GetTiming
+_Tools_ProcessValue
+_OS_LeaveRegion
+_Main_ActivityList_Init
+_OS_CreateTask_S
+_OS_CreateAlarm_
+_Tools_CreateTimingMeasure
+_Tools_CreateTimingStats
+_OS_IsTask
+_OS_DisableInterrupt
+_OS_Global
+_OS_StopAlarm
+_OS_SetAlarmOffset_
+_OS_SetAlarmPeriod_
+_OS_SetAlarmActivationsCount_
+_OS_StartAbsAlarm
+_OS_EnableInterrupt
+_Main_CreateActivity

@@ -1,0 +1,1070 @@
+   1                             		.file	"APP_StandBy.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.STB_HarakiriManager,"ax",@progbits
+   5                             		.global	_STB_HarakiriManager
+   7                             	_STB_HarakiriManager:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Application_Platform/APP_StandBy.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+   2:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /*
+   3:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** ** **************************************************************************
+   4:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** ** **************************************************************************
+   5:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** */ 
+   6:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c ****  
+   8:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** Si occupa della gestione dello stand by dell'elettrodomestico
+   9:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c ****  
+  10:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \file    	APP_StandBy.c
+  11:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  12:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \version 	1.0.0
+  13:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \date    	27/03/2008
+  14:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \authors	Simone Costantini
+  15:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** */ 
+  16:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /*
+  17:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** ** **************************************************************************
+  18:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** ** **************************************************************************
+  19:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** */
+  20:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  21:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /*
+  22:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** Copyright (c) 2004-2006, Indesit Company, EDT.
+  23:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** Tutti i diritti sono riservati. All rights reserved.
+  24:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** */
+  25:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  26:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* Old Versions
+  27:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \version
+  28:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \date
+  29:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \author
+  30:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** */
+  31:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  32:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* ******** */
+  33:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* Includes */
+  34:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* ******** */
+  35:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #include "CstmHeaders.h"
+  36:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #include "LIB_BackUpExp.h"
+  37:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #include "LIB_ResetExp.h"
+  38:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  39:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  40:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #if	(SBY_STANDBY_ENABLE == 1)
+  41:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  42:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* ****************** */
+  43:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* Defines and Macros */
+  44:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* ****************** */
+  45:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  46:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* *************************** */
+  47:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* Typedef, Structs and Unions */
+  48:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* *************************** */
+  49:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  50:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* **************************** */
+  51:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* Prototype of local functions */
+  52:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* **************************** */
+  53:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** static uint8_t STB_CheckStandByFlags(uint8_t flag);
+  54:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  55:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* ****************** */
+  56:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* Exported variables */
+  57:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* ****************** */
+  58:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  59:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* **************** */
+  60:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* Global variables */
+  61:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* **************** */
+  62:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /**
+  63:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** DUMMY & DEBUG
+  64:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** */
+  65:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  66:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #ifdef _STANDBY_DBG
+  67:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** _WM_GLOBAL_ bool_t DBG_seppukuEnabled;
+  68:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #endif
+  69:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  70:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* ***************** */
+  71:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* Exported function */
+  72:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /* ***************** */
+  73:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /**
+  74:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** Processa la variabile ExternalRequest e a seconda del suo valore
+  75:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** attiva la modalità di standby.
+  76:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  77:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \param [in,out]	ExternalRequest (global) è la modalità speciale di funzionamento richiesta
+  78:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  79:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \return			none
+  80:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  81:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \notes:
+  82:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  83:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \author			Simone Costantini
+  84:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \date			27/03/2008
+  85:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \version		1.0.0
+  86:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  87:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \review 		Valeria Catani
+  88:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \date 			11/12/09
+  89:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \notes			pilotaggio pin solo in presenza del pin Autokill in Output Map
+  90:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  91:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \review 		Emanuela Antognoli
+  92:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \date 			19/03/10
+  93:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \notes			inserimento numeri di tentativi se fallisce lo standby con cella Hw (autotaratura stile ar
+  94:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+  95:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** */
+  96:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** void STB_HarakiriManager(void)
+  97:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** {
+  10                             		.loc 1 97 0
+  11 0000 7E A7                   		push.l	r7
+  12                             	.LCFI0:
+  13 0002 60 40                   		sub	#4, r0
+  14                             	.LCFI1:
+  15                             	.LBB6:
+  16                             	.LBB7:
+  98:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** L_PARAM load;
+  99:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** static bool_t backupDisabled = FALSE;
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	/*lint -save -e960 */
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	if(
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		( STB_CheckStandByFlags((uint8_t) SBY_DISABLE_FLAG) == 0 )
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		&&
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		(!( (STB_CheckStandByFlags((uint8_t) SBY_WAIT_DISABLE_FLAG) != 0) && (RegDev_Pos[LD_STANDBY_REG_I
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	  )
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	/*lint -restore */
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	{/* Standby abilitato */
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		load.b = LOAD_OFF; /* SbyLowPow 14.12.09: inizializzato a LOAD_ON 
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 							per essere a FALSE nel controllo successivo
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 							se RegDev_Pos[LD_STANDBY_REG_IND] = NO_LD_POS */
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		if(RegDev_Pos[LD_STANDBY_REG_IND] != NO_LD_POS)	/* 11.12.09 SbyLowPow*/
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		{
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			/* Non viene resettato ExternalRequest: finchè non avviene un reset freddo
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			la Main continua a pilotare il pin */
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			/* ExternalRequest = 0; */
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		 	load = LoadsReq_New[RegDev_Pos[LD_STANDBY_REG_IND]]; /* SS - TODO verificare quando avviene la 
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		}
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		if (
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		(( ExternalRequest == SYSTEM_NORMAL_FAST_STANDBY_MODE) || (LOAD_ON == load.b)  )
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #ifdef _STANDBY_DBG
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			|| (DBG_seppukuEnabled)
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #endif /* _STANDBY_DBG */
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		)
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		{
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			/* StandBy Fast */
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			HarakiriRequired = HKM_FAST_SB_ON;
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		}
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		else if(SYSTEM_NORMAL_STANDBY_MODE == ExternalRequest)
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		{
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			/* StandBy Full */
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			if(HKM_SB_RESET == HarakiriRequired)
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			{
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				/* Setta il counter prima di mandare il comando di harakiri */
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				HarakiriRequired = HKM_SB_ON;
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #if ( SW_TIMER_NORM_MODE ==	FALSE)
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				                (SWTC_PrescalerType)COUNTERS2_TBASE_100MS,
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				                TOUT_PRE_STANDBY(Tab_SFTStandByData.Data));
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #else
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				Set_DownCounter((uint8_t) MEDIUM_COUNTER, (SWTC_CountersType) STB_HARAKIRI_COUNTER_M, (SWTC_Pre
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #endif				
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				SWTC_Run((SWTC_CountersType)STB_HARAKIRI_COUNTER_M);
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			}
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			else if ( SWTC_IsExpired((SWTC_CountersType)STB_HARAKIRI_COUNTER_M) )
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			{
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				/* Terminato il tempo di attesa */
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				HarakiriRequired = HKM_FAST_SB_ON;
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			}
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			else
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			{
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				/* do nothing... */
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			}
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		}
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		else if(ExternalRequest == SYSTEM_NORMAL_RESET_STANDBY_MODE)
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		{
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			/* Pacchetto Reset StandBy */
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			HarakiriRequired = HKM_SB_RESET;
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			SWTC_Stop((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		}
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		else
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		{
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			/* Ricevuto altro Normal Mode o ExternalRequest = 0 dopo RESET FREDDO */
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			if(HarakiriLowPower.Req !=  HKM_LOW_POWER_REQ )
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			{
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				/* non siamo in attesa della comunicazione UI,
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				potrebbe essere un caso di Wait disabilitato da setting (vecchia gestione con cella)
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				o un qualsiasi altro stato della macchina a stati Standby - Wait */
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				HarakiriRequired = HKM_SB_RESET;
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				SWTC_Stop((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			}
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		}
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		/* SbyLowPow 15.12.09 */
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		if(HarakiriLowPower.Req == HKM_LOW_POWER_REQ)
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		{
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			/* attesa comunicazione UI dopo RESET FREDDO in Standby Low Power */
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			if(SWTC_IsExpired((SWTC_CountersType) STB_HARAKIRI_COUNTER_M))
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			{
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				/* conteggio attesa comunicazione UI concluso -> auto -standby */
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				HarakiriRequired = HKM_FAST_SB_ON;	/* rientro nello stato FAST_SBY_ON ma con stato HarakiriLowP
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			}
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		}
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		if(HarakiriRequired == HKM_FAST_SB_ON)
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		{
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			/* StandBy Attivato */
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #if defined(SLEEP_MODE_ENABLE)
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			if(STB_CheckStandByFlags(SBY_WAIT_DISABLE_FLAG) == 0)
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			{
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				if(RegDev_Pos[LD_STANDBY_REG_IND] != NO_LD_POS)	/* 11.12.09 SbyLowPow*/
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				{
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					/* stanby con cella di memoria HW */
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					if(HarakiriLowPower.Hitpoints < HKM_N_MAX_HITPOINTS)
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					{
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 						HarakiriLowPower.Mode = HKM_SBY_HW_MODE;	
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					}
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					else
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					{
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 						HarakiriLowPower.Mode = HKM_SBY_LOW_POWER_MODE;
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					}
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				}
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				else
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				{
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					/* wait mode*/
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					HarakiriLowPower.Mode = HKM_SBY_LOW_POWER_MODE;
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				}
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			}
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			else
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #endif /* SLEEP_MODE_ENABLE */
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			{
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				/* NB: il caso in cui il flag wait disable sia impostato ma non sia definito il pin è stato co
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				 * standby in qualche modo.
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				 */
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				/* stanby con cella Hw ma senza tentativi di sleep*/
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Mode = HKM_SBY_NO_SLEEP_MODE;
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			}
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			if (!backupDisabled)
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			{
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				backupDisabled = TRUE;
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Req =  HKM_LOW_POWER_REQ;
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				/* Config+init timer reset post StandBy */
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #if ( SW_TIMER_NORM_MODE ==	FALSE)
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				                (SWTC_PrescalerType)COUNTERS2_TBASE_100MS,
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				                (2*TOUT_RESET_STANDBY(Tab_SFTStandByData.Data)));
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #else
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				Set_DownCounter((uint8_t) MEDIUM_COUNTER, (SWTC_CountersType) STB_HARAKIRI_COUNTER_M, (SWTC_Pre
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #endif				
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				/* Disables futher backups */
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				LIB_Backup_SetBackupControlMonitor(BACKUP_NO_SOURCE);
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				/* Force backup */
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				LIB_Backup_ForceBackup();
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			}
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			SWTC_Run((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			if((HarakiriLowPower.Mode == HKM_SBY_NO_SLEEP_MODE) || (HarakiriLowPower.Hitpoints < HKM_N_MAX_H
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			{
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				if(RegDev_Pos[LD_STANDBY_REG_IND] != NO_LD_POS)	/* 11.12.09 SbyLowPow*/
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				{
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					load.b = LOAD_ON;
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #if ( PILOT_NORM_STANDBY_PIN ==  1) 
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					/* MQ AN Tutta da verificare */
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					LoadsReq_New[RegDev_Pos[LD_STANDBY_REG_IND]] = load;
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #else
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					(void)LIB_IOM_SetLoad(RegDev_Pos[LD_STANDBY_REG_IND], load);
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #endif /* PILOT_NORM_STANDBY_PIN ==   1 */
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				}
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			}
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		}
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	}
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	else
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	{
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		/* Standby disabilitato */
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		HarakiriRequired = HKM_SB_RESET;
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		SWTC_Stop((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 268:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	}
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** } /* END: STB_HarakiriManager */
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /**
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** Forza un reset quando il count-down impostato
+ 273:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** dallo StandBy è scaduto.
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \return			none
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \notes:			
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \author			Simone Costantini
+ 280:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \date			04/04/2008
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \version		1.0.0
+ 282:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \review			Emanuela Antognoli
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \date			19/03/10
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \notes			inserimento doppio backup stile arcadia se fallisce il pilotaggio della cella di standby
+ 286:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** */
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** void STB_CheckStandByCounter(void)
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** {
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #if defined(SLEEP_MODE_ENABLE)
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** WAKEUPTYPE wakeUpRequest;
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #endif /* defined(SLEEP_MODE_ENABLE) */
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #if(STANDBY_EXCEPTION_PROCEDURE == 1)
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	STB_Standby_Exception_Proc();
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #endif /*STANDBY_EXCEPTION_PROCEDURE */	
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	if(HarakiriRequired == HKM_FAST_SB_ON)
+ 297:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	{
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		/* Andando in Off... */
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		if(!(SWTC_IsStopped((SWTC_CountersType) STB_HARAKIRI_COUNTER_M)))
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		{
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			if(SWTC_IsExpired((SWTC_CountersType) STB_HARAKIRI_COUNTER_M))
+ 302:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			{
+ 303:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				/* TimeOut scaduto */
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				if(HarakiriLowPower.Mode == HKM_SBY_NO_SLEEP_MODE)
+ 305:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				{
+ 306:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					/* non posso andare in sleep mode*/
+ 307:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					LIB_Reset_ForceColdReset();
+ 308:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				}
+ 309:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				else
+ 310:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				{
+ 311:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					/* posso andare in sleep mode*/
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					if( HarakiriLowPower.Mode == HKM_SBY_HW_MODE)
+ 313:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					{
+ 314:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 						/* Sby con cella di memoria -> Sby HW abilitato ->! */
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 						if(HarakiriLowPower.Hitpoints < HKM_N_MAX_HITPOINTS)
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 						{
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 							/* Entra qui solo le prime volta dopo la ripogrammazione del setting
+ 318:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 							e in caso di RESET FREDDI con mancato backup */
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 							HarakiriLowPower.Mode= HKM_SBY_LOW_POWER_MODE;
+ 320:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 							HarakiriLowPower.Hitpoints++;
+ 321:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 							HarakiriLowPower.Req = HKM_LOW_POWER_REQ;
+ 322:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 323:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 							/* Forza cancellazione pagina + Backup - da questo momento la modalità di
+ 324:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 							Wait è fissa e sarà ribadita ad ogni salvataggio in Backup */
+ 325:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 							(void)LIB_Backup_InvalidateBackupArea();
+ 326:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 							LIB_Backup_ForceBackup();	/* backup dello stato di Wait */
+ 327:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 						}
+ 328:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					}
+ 329:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					/* Sby Wait abilitato -> Wait Mode Request! */
+ 330:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #if defined(SLEEP_MODE_ENABLE) /* SS - FIXME MQ PA Manca la parte di piattaforma che gestisce lo sl
+ 331:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					wakeUpRequest.I2C = 1;
+ 332:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					Plt_Sleep_Request(&wakeUpRequest);		/* SS - TODO sostituire funzioni con PLT */
+ 333:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #endif				
+ 334:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				}
+ 335:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			}
+ 336:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		}
+ 337:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	}
+ 338:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** } /* END: STB_CheckStandByCounter */
+ 339:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 340:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /**
+ 341:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** Verifica disabilitazione Standby - disabilitazione Wait Mode
+ 342:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \return			codice che indica quale tipo di Standby è disabilitato
+ 343:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 344:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \notes:			in mancanza di RAM si usa la Flash
+ 345:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				(routine chiamata più volte che lavora su variabili locali)
+ 346:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 347:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \author			Valeria Catani
+ 348:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \date			14/12/2009
+ 349:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \version		1.0.0
+ 350:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 351:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \review 		Emanuela Antognoli
+ 352:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \date 			1/03/10
+ 353:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \notes			Hottima già si carica i flag in ram , quindi la gestionne è diversa.
+ 354:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** */
+ 355:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** static uint8_t STB_CheckStandByFlags(uint8_t flag )
+ 356:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** {
+ 357:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #if defined (CK_HOTTIMA) 
+ 358:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	return (TESTBIT(N_Application, flag)? TRUE:FALSE);
+ 359:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #elif defined (DW_DISHWASHER) || defined (CK_HOOD)
+ 360:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	return (TESTBIT(HWC_Flags.flags, flag)? TRUE: FALSE);	
+  17                             		.loc 1 360 0
+  18 0004 FB 72 00 00 00 00       		mov.L	#_HWC_Flags, r7
+  19 000a 5C 7E                   		movu.W	[r7], r14
+  20                             	.LBE7:
+  21                             	.LBE6:
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	if(
+  22                             		.loc 1 102 0
+  23 000c 7C BE                   		btst #11, r14
+  24 000e 3B 72 01                		bne	.L2
+  25 0011 FB 72 00 00 00 00       		mov.L	#_RegDev_Pos, r7
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		&&
+  26                             		.loc 1 104 0
+  27 0017 7C AE                   		btst #10, r14
+  28 0019 20 0B                   		beq	.L3
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		(!( (STB_CheckStandByFlags((uint8_t) SBY_WAIT_DISABLE_FLAG) != 0) && (RegDev_Pos[LD_STANDBY_REG_I
+  29                             		.loc 1 105 0
+  30 001b 59 7E 01                		movu.B	1[r7], r14
+  31 001e 75 5E FF                		cmp	#0xff, r14
+  32 0021 3A 5F 01                		beq	.L2
+  33                             		.balign 2,3,3
+  34                             	.L3:
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		if(RegDev_Pos[LD_STANDBY_REG_IND] != NO_LD_POS)	/* 11.12.09 SbyLowPow*/
+  35                             		.loc 1 114 0
+  36 0024 B0 7F                   		movu.B	1[r7], r7
+  37 0026 75 57 FF                		cmp	#0xff, r7
+  38 0029 12                      		beq	.L23
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		 	load = LoadsReq_New[RegDev_Pos[LD_STANDBY_REG_IND]]; /* SS - TODO verificare quando avviene la 
+  39                             		.loc 1 119 0
+  40 002a 70 77 00 00 00 00       		add	#_LoadsReq_New, r7
+  41 0030 CC 7E                   		mov.B	[r7], r14
+  42 0032 0C                      		bra	.L4
+  43                             	.L23:
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		load.b = LOAD_OFF; /* SbyLowPow 14.12.09: inizializzato a LOAD_ON 
+  44                             		.loc 1 110 0
+  45 0033 66 0E                   		mov	#0, r14
+  46 0035 03                      		.balign 2,3,5
+  47                             	.L4:
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		if (
+  48                             		.loc 1 122 0
+  49 0036 FB 72 00 00 00 00       		mov.L	#_ExternalRequest, r7
+  50 003c 58 74                   		movu.B	[r7], r4
+  51 003e FB 72 00 00 00 00       		mov.L	#_HarakiriRequired, r7
+  52 0044 61 84                   		cmp	#8, r4
+  53 0046 10                      		beq	.L5
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		(( ExternalRequest == SYSTEM_NORMAL_FAST_STANDBY_MODE) || (LOAD_ON == load.b)  )
+  54                             		.loc 1 123 0
+  55 0047 5B EE                   		movu.B	r14, r14
+  56 0049 61 1E                   		cmp	#1, r14
+  57 004b 21 15                   		bne	.L6
+  58 004d 03                      		.balign 2,3,4
+  59                             	.L5:
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			HarakiriRequired = HKM_FAST_SB_ON;
+  60                             		.loc 1 130 0
+  61 004e 3C 70 02                		mov.B	#2, [r7]
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+  62                             		.loc 1 131 0
+  63 0051 FB 72 00 00 00 00       		mov.L	#_HarakiriLowPower, r7
+  64 0057 CC 7E                   		mov.B	[r7], r14
+  65 0059 75 2E F8                		and #-8, r14
+  66 005c C3 7E                   		mov.B	r14, [r7]
+  67 005e 2E 70                   		bra	.L7
+  68                             	.L6:
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		else if(SYSTEM_NORMAL_STANDBY_MODE == ExternalRequest)
+  69                             		.loc 1 133 0
+  70 0060 61 64                   		cmp	#6, r4
+  71 0062 21 49                   		bne	.L8
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			if(HKM_SB_RESET == HarakiriRequired)
+  72                             		.loc 1 136 0
+  73 0064 58 7E                   		movu.B	[r7], r14
+  74 0066 61 0E                   		cmp	#0, r14
+  75 0068 21 34                   		bne	.L9
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				HarakiriRequired = HKM_SB_ON;
+  76                             		.loc 1 139 0
+  77 006a 3C 70 01                		mov.B	#1, [r7]
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+  78                             		.loc 1 140 0
+  79 006d FB 72 00 00 00 00       		mov.L	#_HarakiriLowPower, r7
+  80 0073 CC 7E                   		mov.B	[r7], r14
+  81 0075 75 2E F8                		and #-8, r14
+  82 0078 C3 7E                   		mov.B	r14, [r7]
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				                TOUT_PRE_STANDBY(Tab_SFTStandByData.Data));
+  83                             		.loc 1 144 0
+  84 007a FB 72 00 00 00 00       		mov.L	#_Tab_SFTStandByData, r7
+  85 0080 EC 77                   		mov.L	[r7], r7
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+  86                             		.loc 1 142 0
+  87 0082 61 07                   		cmp	#0, r7
+  88 0084 14                      		beq	.L24
+  89 0085 B0 7B                   		movu.B	1[r7], r3
+  90 0087 0D                      		bra	.L10
+  91                             	.L24:
+  92 0088 75 43 96                		mov	#0x96, r3
+  93 008b 03                      		.balign 2,3,1
+  94                             	.L10:
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+  95                             		.loc 1 142 0 is_stmt 0 discriminator 2
+  96 008c 66 21                   		mov	#2, r1
+  97 008e 66 12                   		mov	#1, r2
+  98 0090 05 00 00 00             		bsr	_Set_MediumCounter
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				SWTC_Run((SWTC_CountersType)STB_HARAKIRI_COUNTER_M);
+  99                             		.loc 1 148 0 is_stmt 1 discriminator 2
+ 100 0094 66 21                   		mov	#2, r1
+ 101 0096 05 00 00 00             		bsr	_SWTC_Run
+ 102 009a 2E 34                   		bra	.L7
+ 103                             	.L9:
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			else if ( SWTC_IsExpired((SWTC_CountersType)STB_HARAKIRI_COUNTER_M) )
+ 104                             		.loc 1 150 0
+ 105 009c 66 21                   		mov	#2, r1
+ 106 009e 05 00 00 00             		bsr	_SWTC_IsExpired
+ 107 00a2 61 01                   		cmp	#0, r1
+ 108 00a4 20 2A                   		beq	.L7
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				HarakiriRequired = HKM_FAST_SB_ON;
+ 109                             		.loc 1 153 0
+ 110 00a6 3C 70 02                		mov.B	#2, [r7]
+ 111 00a9 2E 25                   		bra	.L7
+ 112                             	.L8:
+ 113 00ab FB E2 00 00 00 00       		mov.L	#_HarakiriLowPower, r14
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		else if(ExternalRequest == SYSTEM_NORMAL_RESET_STANDBY_MODE)
+ 114                             		.loc 1 160 0
+ 115 00b1 61 74                   		cmp	#7, r4
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+ 116                             		.loc 1 163 0
+ 117 00b3 CC E4                   		mov.B	[r14], r4
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		else if(ExternalRequest == SYSTEM_NORMAL_RESET_STANDBY_MODE)
+ 118                             		.loc 1 160 0
+ 119 00b5 21 03                   		bne	.L12
+ 120 00b7 09                      		bra	.L48
+ 121                             	.L12:
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			if(HarakiriLowPower.Req !=  HKM_LOW_POWER_REQ )
+ 122                             		.loc 1 170 0
+ 123 00b8 EF 43                   		mov.L	r4, r3
+ 124 00ba 64 73                   		and #7, r3
+ 125 00bc 61 13                   		cmp	#1, r3
+ 126 00be 20 10                   		beq	.L7
+ 127                             		.balign 2,3,2
+ 128                             	.L48:
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+ 129                             		.loc 1 175 0
+ 130 00c0 75 24 F8                		and #-8, r4
+ 131 00c3 C3 E4                   		mov.B	r4, [r14]
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				HarakiriRequired = HKM_SB_RESET;
+ 132                             		.loc 1 176 0
+ 133 00c5 3C 70 00                		mov.B	#0, [r7]
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				SWTC_Stop((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 134                             		.loc 1 177 0
+ 135 00c8 66 21                   		mov	#2, r1
+ 136 00ca 05 00 00 00             		bsr	_SWTC_Stop
+ 137                             		.balign 2,3,5
+ 138                             	.L7:
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		if(HarakiriLowPower.Req == HKM_LOW_POWER_REQ)
+ 139                             		.loc 1 182 0
+ 140 00ce FB 72 00 00 00 00       		mov.L	#_HarakiriLowPower, r7
+ 141 00d4 CC 77                   		mov.B	[r7], r7
+ 142 00d6 64 77                   		and #7, r7
+ 143 00d8 61 17                   		cmp	#1, r7
+ 144 00da 21 16                   		bne	.L15
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			if(SWTC_IsExpired((SWTC_CountersType) STB_HARAKIRI_COUNTER_M))
+ 145                             		.loc 1 185 0
+ 146 00dc 66 21                   		mov	#2, r1
+ 147 00de 05 00 00 00             		bsr	_SWTC_IsExpired
+ 148 00e2 61 01                   		cmp	#0, r1
+ 149 00e4 20 0C                   		beq	.L15
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				HarakiriRequired = HKM_FAST_SB_ON;	/* rientro nello stato FAST_SBY_ON ma con stato HarakiriLowP
+ 150                             		.loc 1 188 0
+ 151 00e6 FB 72 00 00 00 00       		mov.L	#_HarakiriRequired, r7
+ 152 00ec 3C 70 02                		mov.B	#2, [r7]
+ 153 00ef 03                      		.balign 2,3,5
+ 154                             	.L15:
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		if(HarakiriRequired == HKM_FAST_SB_ON)
+ 155                             		.loc 1 192 0
+ 156 00f0 FB 72 00 00 00 00       		mov.L	#_HarakiriRequired, r7
+ 157 00f6 58 77                   		movu.B	[r7], r7
+ 158 00f8 61 27                   		cmp	#2, r7
+ 159 00fa 3B A6 00                		bne	.L1
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Mode = HKM_SBY_NO_SLEEP_MODE;
+ 160                             		.loc 1 223 0
+ 161 00fd FB 72 00 00 00 00       		mov.L	#_HarakiriLowPower, r7
+ 162 0103 CC 7E                   		mov.B	[r7], r14
+ 163 0105 75 3E C0                		or	#-64, r14
+ 164 0108 C3 7E                   		mov.B	r14, [r7]
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			if (!backupDisabled)
+ 165                             		.loc 1 226 0
+ 166 010a FB 42 00 00 00 00       		mov.L	#_backupDisabled.11665, r4
+ 167 0110 EC 43                   		mov.L	[r4], r3
+ 168 0112 61 03                   		cmp	#0, r3
+ 169 0114 21 32                   		bne	.L19
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				backupDisabled = TRUE;
+ 170                             		.loc 1 228 0
+ 171 0116 3E 40 01                		mov.L	#1, [r4]
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Req =  HKM_LOW_POWER_REQ;
+ 172                             		.loc 1 230 0
+ 173 0119 75 2E F8                		and #-8, r14
+ 174 011c 78 0E                   		bset #0, r14
+ 175 011e C3 7E                   		mov.B	r14, [r7]
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				                (2*TOUT_RESET_STANDBY(Tab_SFTStandByData.Data)));
+ 176                             		.loc 1 235 0
+ 177 0120 FB 72 00 00 00 00       		mov.L	#_Tab_SFTStandByData, r7
+ 178 0126 EC 77                   		mov.L	[r7], r7
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+ 179                             		.loc 1 233 0
+ 180 0128 61 07                   		cmp	#0, r7
+ 181 012a 16                      		beq	.L25
+ 182 012b 58 73                   		movu.B	[r7], r3
+ 183 012d 4B 33                   		add	r3, r3
+ 184 012f 0D                      		bra	.L20
+ 185                             	.L25:
+ 186 0130 75 43 14                		mov	#20, r3
+ 187 0133 03                      		.balign 2,3,1
+ 188                             	.L20:
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+ 189                             		.loc 1 233 0 is_stmt 0 discriminator 2
+ 190 0134 66 21                   		mov	#2, r1
+ 191 0136 66 12                   		mov	#1, r2
+ 192 0138 05 00 00 00             		bsr	_Set_MediumCounter
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				LIB_Backup_SetBackupControlMonitor(BACKUP_NO_SOURCE);
+ 193                             		.loc 1 240 0 is_stmt 1 discriminator 2
+ 194 013c 66 01                   		mov	#0, r1
+ 195 013e 05 00 00 00             		bsr	_LIB_Backup_SetBackupControlMonitor
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				LIB_Backup_ForceBackup();
+ 196                             		.loc 1 242 0 discriminator 2
+ 197 0142 05 00 00 00             		bsr	_LIB_Backup_ForceBackup
+ 198                             		.balign 2,3,1
+ 199                             	.L19:
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			SWTC_Run((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 200                             		.loc 1 245 0
+ 201 0146 66 21                   		mov	#2, r1
+ 202 0148 05 00 00 00             		bsr	_SWTC_Run
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			if((HarakiriLowPower.Mode == HKM_SBY_NO_SLEEP_MODE) || (HarakiriLowPower.Hitpoints < HKM_N_MAX_H
+ 203                             		.loc 1 247 0
+ 204 014c FB 72 00 00 00 00       		mov.L	#_HarakiriLowPower, r7
+ 205 0152 CC 7E                   		mov.B	[r7], r14
+ 206 0154 76 2E C0 00             		and #0xc0, r14
+ 207 0158 75 5E C0                		cmp	#0xc0, r14
+ 208 015b 20 0D                   		beq	.L21
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			if((HarakiriLowPower.Mode == HKM_SBY_NO_SLEEP_MODE) || (HarakiriLowPower.Hitpoints < HKM_N_MAX_H
+ 209                             		.loc 1 247 0 is_stmt 0 discriminator 1
+ 210 015d 58 77                   		movu.B	[r7], r7
+ 211 015f 68 37                   		shlr	#3, r7
+ 212 0161 64 77                   		and #7, r7
+ 213 0163 61 27                   		cmp	#2, r7
+ 214 0165 2A 3B                   		bgt	.L1
+ 215 0167 03                      		.balign 2,3,5
+ 216                             	.L21:
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				if(RegDev_Pos[LD_STANDBY_REG_IND] != NO_LD_POS)	/* 11.12.09 SbyLowPow*/
+ 217                             		.loc 1 249 0 is_stmt 1
+ 218 0168 FB 72 00 00 00 00       		mov.L	#_RegDev_Pos, r7
+ 219 016e 88 79                   		mov.B	1[r7], r1
+ 220 0170 5B 17                   		movu.B	r1, r7
+ 221 0172 75 57 FF                		cmp	#0xff, r7
+ 222 0175 20 2B                   		beq	.L1
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					(void)LIB_IOM_SetLoad(RegDev_Pos[LD_STANDBY_REG_IND], load);
+ 223                             		.loc 1 256 0
+ 224 0177 3C 00 01                		mov.B	#1, [r0]
+ 225 017a 05 00 00 00             		bsr	_LIB_IOM_SetLoad
+ 226 017e 2E 22                   		bra	.L1
+ 227                             	.L2:
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+ 228                             		.loc 1 265 0
+ 229 0180 FB 72 00 00 00 00       		mov.L	#_HarakiriLowPower, r7
+ 230 0186 CC 7E                   		mov.B	[r7], r14
+ 231 0188 75 2E F8                		and #-8, r14
+ 232 018b C3 7E                   		mov.B	r14, [r7]
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		HarakiriRequired = HKM_SB_RESET;
+ 233                             		.loc 1 266 0
+ 234 018d FB 72 00 00 00 00       		mov.L	#_HarakiriRequired, r7
+ 235 0193 3C 70 00                		mov.B	#0, [r7]
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		SWTC_Stop((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 236                             		.loc 1 267 0
+ 237 0196 66 21                   		mov	#2, r1
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** } /* END: STB_HarakiriManager */
+ 238                             		.loc 1 269 0
+ 239 0198 62 40                   		add	#4, r0
+ 240 019a 7E B7                   		pop	r7
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		SWTC_Stop((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 241                             		.loc 1 267 0
+ 242 019c 04 00 00 00             		bra	_SWTC_Stop
+ 243                             	.L1:
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** } /* END: STB_HarakiriManager */
+ 244                             		.loc 1 269 0
+ 245 01a0 3F 77 02                		rtsd	#8, r7-r7
+ 246                             	.LFE0:
+ 248 01a3 03                      		.section	.text.STB_CheckStandByCounter,"ax",@progbits
+ 249                             		.global	_STB_CheckStandByCounter
+ 251                             	_STB_CheckStandByCounter:
+ 252                             	.LFB1:
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** {
+ 253                             		.loc 1 289 0
+ 254 0000 7E A7                   		push.l	r7
+ 255                             	.LCFI2:
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	if(HarakiriRequired == HKM_FAST_SB_ON)
+ 256                             		.loc 1 296 0
+ 257 0002 FB 72 00 00 00 00       		mov.L	#_HarakiriRequired, r7
+ 258 0008 58 77                   		movu.B	[r7], r7
+ 259 000a 61 27                   		cmp	#2, r7
+ 260 000c 21 50                   		bne	.L49
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		if(!(SWTC_IsStopped((SWTC_CountersType) STB_HARAKIRI_COUNTER_M)))
+ 261                             		.loc 1 299 0
+ 262 000e CF 71                   		mov.B	r7, r1
+ 263 0010 05 00 00 00             		bsr	_SWTC_IsStopped
+ 264 0014 61 01                   		cmp	#0, r1
+ 265 0016 21 46                   		bne	.L49
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			if(SWTC_IsExpired((SWTC_CountersType) STB_HARAKIRI_COUNTER_M))
+ 266                             		.loc 1 301 0
+ 267 0018 CF 71                   		mov.B	r7, r1
+ 268 001a 05 00 00 00             		bsr	_SWTC_IsExpired
+ 269 001e 61 01                   		cmp	#0, r1
+ 270 0020 20 3C                   		beq	.L49
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				if(HarakiriLowPower.Mode == HKM_SBY_NO_SLEEP_MODE)
+ 271                             		.loc 1 304 0
+ 272 0022 FB 72 00 00 00 00       		mov.L	#_HarakiriLowPower, r7
+ 273 0028 CC 7E                   		mov.B	[r7], r14
+ 274 002a 76 2E C0 00             		and #0xc0, r14
+ 275 002e 75 5E C0                		cmp	#0xc0, r14
+ 276 0031 1F                      		bne	.L53
+ 338:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** } /* END: STB_CheckStandByCounter */
+ 277                             		.loc 1 338 0
+ 278 0032 7E B7                   		pop	r7
+ 307:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					LIB_Reset_ForceColdReset();
+ 279                             		.loc 1 307 0
+ 280 0034 04 00 00 00             		bra	_LIB_Reset_ForceColdReset
+ 281                             	.L53:
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 					if( HarakiriLowPower.Mode == HKM_SBY_HW_MODE)
+ 282                             		.loc 1 312 0
+ 283 0038 75 5E 80                		cmp	#0x80, r14
+ 284 003b 21 21                   		bne	.L49
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 						if(HarakiriLowPower.Hitpoints < HKM_N_MAX_HITPOINTS)
+ 285                             		.loc 1 315 0
+ 286 003d 58 7E                   		movu.B	[r7], r14
+ 287 003f 68 3E                   		shlr	#3, r14
+ 288 0041 64 7E                   		and #7, r14
+ 289 0043 61 2E                   		cmp	#2, r14
+ 290 0045 2A 17                   		bgt	.L49
+ 320:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 							HarakiriLowPower.Hitpoints++;
+ 291                             		.loc 1 320 0
+ 292 0047 62 1E                   		add	#1, r14
+ 293 0049 64 7E                   		and #7, r14
+ 294 004b 6C 3E                   		shll	#3, r14
+ 321:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 							HarakiriLowPower.Req = HKM_LOW_POWER_REQ;
+ 295                             		.loc 1 321 0
+ 296 004d 75 3E 41                		or	#0x41, r14
+ 297 0050 C3 7E                   		mov.B	r14, [r7]
+ 325:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 							(void)LIB_Backup_InvalidateBackupArea();
+ 298                             		.loc 1 325 0
+ 299 0052 05 00 00 00             		bsr	_LIB_Backup_InvalidateBackupArea
+ 338:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** } /* END: STB_CheckStandByCounter */
+ 300                             		.loc 1 338 0
+ 301 0056 7E B7                   		pop	r7
+ 326:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 							LIB_Backup_ForceBackup();	/* backup dello stato di Wait */
+ 302                             		.loc 1 326 0
+ 303 0058 04 00 00 00             		bra	_LIB_Backup_ForceBackup
+ 304                             	.L49:
+ 338:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** } /* END: STB_CheckStandByCounter */
+ 305                             		.loc 1 338 0
+ 306 005c 3F 77 01                		rtsd	#4, r7-r7
+ 307                             	.LFE1:
+ 309                             		.section	.text.STB_InitStandBy_AfterBackUp,"ax",@progbits
+ 310                             		.global	_STB_InitStandBy_AfterBackUp
+ 312                             	_STB_InitStandBy_AfterBackUp:
+ 313                             	.LFB3:
+ 361:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #else
+ 362:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** Loader_Struct flagData;	/* SbyLowPow 11.12.09 */
+ 363:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** uint8_t standbyFlags = 0; /* Default: flag SBY_WAIT_DISABLE_FLAG e SBY_DISABLE_FLAG entrambi 0 */
+ 364:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	
+ 365:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	if(BasicLoader(APP_PTR_HW_CONFIG_DATA, FLAG_DISPL, &flagData) == S_OK)
+ 366:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	{
+ 367:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		standbyFlags = (OFFS_B(flagData.Data, 0) & SBY_FLAGS_BITMASK);
+ 368:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	}
+ 369:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	/* else non necessario perchè la validità del campo dati è verificata in Hound */
+ 370:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 371:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	if(TESTBIT(standbyFlags,flag) == 0)
+ 372:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	{
+ 373:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		return FALSE;
+ 374:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	}
+ 375:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	else
+ 376:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	{
+ 377:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		return TRUE;
+ 378:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	}
+ 379:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #endif
+ 380:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** } /* END: STB_CheckStandByFlags */
+ 381:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 382:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** /**
+ 383:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** Init dello standby dopo backup
+ 384:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 385:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \param			none
+ 386:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 387:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \return			none
+ 388:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 389:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \notes:			
+ 390:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 391:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \author			Emanuela Antognoli
+ 392:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \date			17/03/2010
+ 393:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** \version		1.0.0
+ 394:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** */
+ 395:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** void STB_InitStandBy_AfterBackUp (void)
+ 396:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** {
+ 314                             		.loc 1 396 0
+ 315                             	.LVL0:
+ 316                             	.LBB10:
+ 317                             	.LBB11:
+ 360:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	return (TESTBIT(HWC_Flags.flags, flag)? TRUE: FALSE);	
+ 318                             		.loc 1 360 0
+ 319 0000 FB E2 00 00 00 00       		mov.L	#_HWC_Flags, r14
+ 320 0006 5C E4                   		movu.W	[r14], r4
+ 321 0008 FB E2 00 00 00 00       		mov.L	#_HarakiriLowPower, r14
+ 322                             	.LBE11:
+ 323                             	.LBE10:
+ 397:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	if(STB_CheckStandByFlags((uint8_t) SBY_DISABLE_FLAG) == 0)
+ 324                             		.loc 1 397 0
+ 325 000e 7C B4                   		btst #11, r4
+ 398:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	{
+ 399:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		/* Standby abilitato */
+ 400:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		if(HarakiriLowPower.Mode == HKM_SBY_HW_MODE)
+ 326                             		.loc 1 400 0
+ 327 0010 CC E4                   		mov.B	[r14], r4
+ 397:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	if(STB_CheckStandByFlags((uint8_t) SBY_DISABLE_FLAG) == 0)
+ 328                             		.loc 1 397 0
+ 329 0012 21 6C                   		bne	.L59
+ 330                             		.loc 1 400 0
+ 331 0014 EF 43                   		mov.L	r4, r3
+ 332 0016 76 23 C0 00             		and #0xc0, r3
+ 333 001a 75 53 80                		cmp	#0x80, r3
+ 334 001d 1F                      		bne	.L60
+ 401:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		{
+ 402:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			/* venivo da uno standby Hw quindi andato a buon fine -> resetto il numero di tentativi */
+ 403:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			HarakiriLowPower.Hitpoints = 0;
+ 335                             		.loc 1 403 0
+ 336 001e 75 24 C7                		and #-57, r4
+ 337 0021 C3 E4                   		mov.B	r4, [r14]
+ 338 0023 03                      		.balign 2,3,3
+ 339                             	.L60:
+ 404:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		}
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 
+ 406:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		if(
+ 407:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			STB_getStatusAppliance()
+ 340                             		.loc 1 407 0
+ 341 0024 05 00 00 00             		bsr	_STB_getStatusAppliance
+ 342                             	.LVL1:
+ 406:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		if(
+ 343                             		.loc 1 406 0
+ 344 0028 76 21 FF 00             		and #0xff, r1
+ 345 002c 20 3C                   		beq	.L61
+ 408:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #if(STANDBY_RESTORE_ONLY_IN_SLEEP == 1)
+ 409:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			&& (HarakiriLowPower.Mode == HKM_SBY_LOW_POWER_MODE)
+ 346                             		.loc 1 409 0
+ 347 002e FB E2 00 00 00 00       		mov.L	#_HarakiriLowPower, r14
+ 348 0034 CC EE                   		mov.B	[r14], r14
+ 349 0036 EF E4                   		mov.L	r14, r4
+ 350 0038 76 24 C0 00             		and #0xc0, r4
+ 351 003c 75 54 40                		cmp	#64, r4
+ 352 003f 21 29                   		bne	.L61
+ 410:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #else
+ 411:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			/* questa condizione copre il caso di Hottima in cui
+ 412:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			lo stato di sleep non è presente: in questo caso se la
+ 413:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			cella è rotta la scheda non va in standby.
+ 414:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			Vale anche per gli altri prodotti, la cui condizione sopra,
+ 415:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			però, risulta ancora più stringente */
+ 416:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			&&( (HarakiriLowPower.Mode != HKM_SBY_NO_SLEEP_MODE)
+ 417:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #ifdef STANDBY_EXCEPTION_PROCEDURE
+ 418:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			|| (STB_Standby_Exception_Restore()  )
+ 419:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #endif
+ 420:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			 )
+ 421:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #endif /*STANDBY_RESTORE_ONLY_IN_SLEEP == 1  */
+ 422:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		)
+ 423:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		{
+ 424:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			/* cioè sono in PROGRAMMING o END : stati in cui lo Standby - Wait è ammesso */
+ 425:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			if(HarakiriLowPower.Req == HKM_LOW_POWER_REQ)
+ 353                             		.loc 1 425 0
+ 354 0041 64 7E                   		and #7, r14
+ 355 0043 61 1E                   		cmp	#1, r14
+ 356 0045 21 47                   		bne	.L58
+ 426:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			{
+ 427:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				/* provengo dallo stato di Wait -> check comunicazione con UI */
+ 428:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				/* Init + Enable Standby Delay Counter per check su comunicazione UI */
+ 429:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #if ( SW_TIMER_NORM_MODE ==	FALSE)				
+ 430:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	        	Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+ 431:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	        	                (SWTC_PrescalerType)COUNTERS2_TBASE_100MS,
+ 432:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	        	                TOUT_PRE_STANDBY(Tab_SFTStandByData.Data));
+ 357                             		.loc 1 432 0
+ 358 0047 FB E2 00 00 00 00       		mov.L	#_Tab_SFTStandByData, r14
+ 359 004d EC EE                   		mov.L	[r14], r14
+ 430:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	        	Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+ 360                             		.loc 1 430 0
+ 361 004f 61 0E                   		cmp	#0, r14
+ 362 0051 15                      		beq	.L64
+ 363 0052 59 E3 01                		movu.B	1[r14], r3
+ 364 0055 0D                      		bra	.L63
+ 365                             	.L64:
+ 366 0056 75 43 96                		mov	#0x96, r3
+ 367 0059 03                      		.balign 2,3,1
+ 368                             	.L63:
+ 430:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	        	Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+ 369                             		.loc 1 430 0 is_stmt 0 discriminator 2
+ 370 005a 66 21                   		mov	#2, r1
+ 371 005c 66 12                   		mov	#1, r2
+ 372 005e 05 00 00 00             		bsr	_Set_MediumCounter
+ 373                             	.LVL2:
+ 433:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #else
+ 434:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				Set_DownCounter((uint8_t) MEDIUM_COUNTER, (SWTC_CountersType) STB_HARAKIRI_COUNTER_M, (SWTC_Pre
+ 435:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** #endif
+ 436:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 				SWTC_Run((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 374                             		.loc 1 436 0 is_stmt 1 discriminator 2
+ 375 0062 66 21                   		mov	#2, r1
+ 376 0064 04 00 00 00             		bra	_SWTC_Run
+ 377                             	.LVL3:
+ 378                             	.L61:
+ 437:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			}
+ 438:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		}
+ 439:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		else
+ 440:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		{
+ 441:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			/* RUN, PAUSE, DELAY, FAULT : stati in cui NON è ammesso lo Standby */
+ 442:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			HarakiriRequired = HKM_SB_RESET;
+ 379                             		.loc 1 442 0
+ 380 0068 FB E2 00 00 00 00       		mov.L	#_HarakiriRequired, r14
+ 381 006e F8 E4 00                		mov.B	#0, [r14]
+ 443:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 			HarakiriLowPower.Req = HKM_LOW_POWER_RESET;
+ 382                             		.loc 1 443 0
+ 383 0071 FB E2 00 00 00 00       		mov.L	#_HarakiriLowPower, r14
+ 384 0077 CC E4                   		mov.B	[r14], r4
+ 385 0079 75 24 F8                		and #-8, r4
+ 386 007c 2E 0E                   		bra	.L68
+ 387                             	.L59:
+ 444:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		}
+ 445:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	}
+ 446:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	else
+ 447:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 	{
+ 448:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		/* Standby disabilitato */
+ 449:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		HarakiriLowPower.Mode = HKM_SBY_OFF_MODE;
+ 450:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		HarakiriRequired = HKM_SB_RESET;
+ 388                             		.loc 1 450 0
+ 389 007e FB 32 00 00 00 00       		mov.L	#_HarakiriRequired, r3
+ 390 0084 3C 30 00                		mov.B	#0, [r3]
+ 451:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_StandBy.c **** 		HarakiriLowPower.Req = HKM_LOW_POWER_RESET;
+ 391                             		.loc 1 451 0
+ 392 0087 75 24 38                		and #56, r4
+ 393                             		.balign 2,3,1
+ 394                             	.L68:
+ 395 008a C3 E4                   		mov.B	r4, [r14]
+ 396                             	.L58:
+ 397 008c 02                      		rts
+ 398                             	.LFE3:
+ 400 008d 03                      		.section	.bss.backupDisabled.11665,"aw",@nobits
+ 401                             		.balign 4
+ 404                             	_backupDisabled.11665:
+ 405 0000 00 00 00 00             		.zero	4
+ 464                             	.Letext0:
+ 465                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 466                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_SwTimersCounters/SwTimersCo
+ 467                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Application_Platform/APP_Types.h"
+ 468                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_BusCOMM/BCP_General.h"
+ 469                             		.file 6 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Inertia\\General/CstmTypes.h"
+ 470                             		.file 7 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_IOManager/OutputManagerEx
+ 471                             		.file 8 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_BusCOMM/BCP_BusCommMng.h"
+ 472                             		.file 9 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Application_Platform/APP_Global.h"
+ 473                             		.file 10 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Inertia\\General/CstmGlobal.h"
+ 474                             		.file 11 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Inertia\\General/CstmDefines.h"
+ 475                             		.file 12 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Application_Platform/APP_callback.h"
+ 476                             		.file 13 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Application_Platform/APP_FuncLib.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 APP_StandBy.c
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:7      .text.STB_HarakiriManager:00000000 _STB_HarakiriManager
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:11     .text.STB_HarakiriManager:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:404    .bss.backupDisabled.11665:00000000 _backupDisabled.11665
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:251    .text.STB_CheckStandByCounter:00000000 _STB_CheckStandByCounter
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:254    .text.STB_CheckStandByCounter:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:312    .text.STB_InitStandBy_AfterBackUp:00000000 _STB_InitStandBy_AfterBackUp
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:319    .text.STB_InitStandBy_AfterBackUp:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:407    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:8      .text.STB_HarakiriManager:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:252    .text.STB_CheckStandByCounter:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:313    .text.STB_InitStandBy_AfterBackUp:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1187   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1904   .debug_str:00000000 .LASF72
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2002   .debug_str:000002f3 .LASF73
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1892   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1902   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1960   .debug_str:0000019b .LASF0
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2030   .debug_str:000003d0 .LASF2
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1918   .debug_str:00000089 .LASF1
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2004   .debug_str:0000033d .LASF3
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2016   .debug_str:00000389 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2000   .debug_str:000002ea .LASF5
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2040   .debug_str:00000418 .LASF6
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1952   .debug_str:0000016a .LASF7
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2024   .debug_str:000003bb .LASF8
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1996   .debug_str:000002bf .LASF9
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1962   .debug_str:000001a8 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1946   .debug_str:00000147 .LASF11
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1988   .debug_str:0000028a .LASF12
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1992   .debug_str:000002ad .LASF13
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2028   .debug_str:000003c9 .LASF14
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2072   .debug_str:00000524 .LASF40
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2014   .debug_str:00000384 .LASF15
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2038   .debug_str:0000040d .LASF16
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1970   .debug_str:000001fe .LASF17
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1922   .debug_str:00000098 .LASF18
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2022   .debug_str:000003b6 .LASF19
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1958   .debug_str:00000188 .LASF20
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2062   .debug_str:000004b7 .LASF21
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2008   .debug_str:0000035d .LASF22
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1936   .debug_str:00000108 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2060   .debug_str:000004a5 .LASF74
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2064   .debug_str:000004c9 .LASF24
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1934   .debug_str:000000f2 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2050   .debug_str:00000462 .LASF26
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2052   .debug_str:00000478 .LASF27
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2070   .debug_str:0000050f .LASF28
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2066   .debug_str:000004de .LASF29
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1990   .debug_str:00000298 .LASF30
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1906   .debug_str:00000026 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2068   .debug_str:000004f4 .LASF32
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2074   .debug_str:0000052b .LASF33
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1916   .debug_str:00000071 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1972   .debug_str:0000020c .LASF35
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1964   .debug_str:000001b6 .LASF36
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1966   .debug_str:000001d1 .LASF37
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2044   .debug_str:00000435 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1968   .debug_str:000001ed .LASF39
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1976   .debug_str:00000230 .LASF41
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2056   .debug_str:0000049b .LASF42
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1908   .debug_str:0000003c .LASF43
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1912   .debug_str:00000053 .LASF44
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1926   .debug_str:000000b2 .LASF45
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1978   .debug_str:00000245 .LASF46
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1980   .debug_str:0000024a .LASF47
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2026   .debug_str:000003c4 .LASF48
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1914   .debug_str:00000067 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1984   .debug_str:00000262 .LASF50
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2054   .debug_str:0000048d .LASF51
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2042   .debug_str:0000042a .LASF52
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1954   .debug_str:00000172 .LASF53
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1982   .debug_str:00000250 .LASF54
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2018   .debug_str:0000039c .LASF55
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1940   .debug_str:00000128 .LASF56
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1944   .debug_str:00000139 .LASF57
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1974   .debug_str:00000227 .LASF58
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2048   .debug_str:00000459 .LASF59
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1910   .debug_str:00000046 .LASF75
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1994   .debug_str:000002b9 .LASF60
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1924   .debug_str:000000a1 .LASF61
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1942   .debug_str:00000132 .LASF62
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1930   .debug_str:000000d4 .LASF63
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1932   .debug_str:000000dc .LASF76
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2058   .debug_str:000004a0 .LASF77
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1998   .debug_str:000002d6 .LASF78
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:246    .text.STB_HarakiriManager:000001a3 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1844   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1920   .debug_str:00000093 .LASF79
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2012   .debug_str:00000375 .LASF80
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:15     .text.STB_HarakiriManager:00000004 .LBB6
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:21     .text.STB_HarakiriManager:0000000c .LBE6
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2034   .debug_str:000003ea .LASF81
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:307    .text.STB_CheckStandByCounter:0000005f .LFE1
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1862   .debug_loc:0000002c .LLST1
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1986   .debug_str:0000026e .LASF82
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:398    .text.STB_InitStandBy_AfterBackUp:0000008d .LFE3
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:316    .text.STB_InitStandBy_AfterBackUp:00000000 .LBB10
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:323    .text.STB_InitStandBy_AfterBackUp:0000000e .LBE10
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:342    .text.STB_InitStandBy_AfterBackUp:00000028 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:373    .text.STB_InitStandBy_AfterBackUp:00000062 .LVL2
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:377    .text.STB_InitStandBy_AfterBackUp:00000068 .LVL3
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1950   .debug_str:00000162 .LASF64
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1956   .debug_str:00000177 .LASF65
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1948   .debug_str:0000014f .LASF66
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1928   .debug_str:000000c3 .LASF67
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2036   .debug_str:00000402 .LASF68
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:1938   .debug_str:0000011b .LASF69
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2010   .debug_str:0000036b .LASF70
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2046   .debug_str:00000449 .LASF71
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2006   .debug_str:00000346 .LASF83
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2032   .debug_str:000003d8 .LASF84
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:2020   .debug_str:000003ad .LASF85
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:12     .text.STB_HarakiriManager:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:14     .text.STB_HarakiriManager:00000004 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:255    .text.STB_CheckStandByCounter:00000002 .LCFI2
+C:\Users\Andrea\AppData\Local\Temp\cckY1qIP.s:478    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_HWC_Flags
+_RegDev_Pos
+_LoadsReq_New
+_ExternalRequest
+_HarakiriRequired
+_HarakiriLowPower
+_Tab_SFTStandByData
+_Set_MediumCounter
+_SWTC_Run
+_SWTC_IsExpired
+_SWTC_Stop
+_LIB_Backup_SetBackupControlMonitor
+_LIB_Backup_ForceBackup
+_LIB_IOM_SetLoad
+_SWTC_IsStopped
+_LIB_Reset_ForceColdReset
+_LIB_Backup_InvalidateBackupArea
+_STB_getStatusAppliance

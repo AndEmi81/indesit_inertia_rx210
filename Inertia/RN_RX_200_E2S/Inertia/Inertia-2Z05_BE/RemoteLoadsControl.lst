@@ -1,0 +1,646 @@
+   1                             		.file	"RemoteLoadsControl.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.Main_RemoteLoadsControl_Init,"ax",@progbits
+   5                             		.global	_Main_RemoteLoadsControl_Init
+   7                             	_Main_RemoteLoadsControl_Init:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/RemoteLoadsControl.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** Copyright (c) 2004-2009, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /**
+   6:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \defgroup	RemoteloadsControl  RemoteLoads Control Library
+   7:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** @{
+   8:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \par            Description
+   9:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \n              This module contains the implementation of the Remote Loads control, also known as
+  10:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 'PC Control'. Remote control is the control by an external tool that communicates with the applicat
+  11:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c ****                 Each command is a buffer which contains data for only one load.
+  12:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+  13:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c ****                 Two types of command are availale: normal and extended.
+  14:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+  15:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \par            Configuration
+  16:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \li             PP_REMOTE_LOADS_CONTROL_BUFFER_SIZE is the size of the queue in number of bytes for
+  17:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+  18:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \par            Use
+  19:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+  20:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c ****                 After the initializazion of the module by calling Main_RemoteLoadsControl_Init, a c
+  21:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c ****                 can stored in the queue by Main_RemoteLoadsControl_PutCommand.
+  22:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c ****                 Main_RemoteLoadsControl_GetCommand retrieves the command, if exists,that must be pr
+  23:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c ****                 Main_RemoteLoadsControl_ProcessCommand.
+  24:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c ****                 Once processed, the command must be deleted by calling Main_RemoteLoadsControl_Purg
+  25:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** @}
+  26:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \ingroup        MainLibrary
+  27:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** */
+  28:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /**
+  29:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \n
+  30:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \par		    Description
+  31:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \n			    This module uses EmbOS queues that work as FIFO, because it allows commands of various siz
+  32:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c ****                 EmbOS queues enhance performance as they save memory and time: retrieving a message
+  33:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c ****                 but returns a pointer allowing to process the message by accessing the content thro
+  34:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \n
+  35:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \file		    RemoteLoadsControl.c
+  36:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \ingroup	    MainLibrary
+  37:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \date		    Feb 2011
+  38:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \version	    00.00.00
+  39:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \author		    Roberto Fioravanti
+  40:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \n
+  41:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \n
+  42:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \par\b	History:
+  43:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \n
+  44:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \n 		        00.00.00
+  45:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \n          	Feb 2011
+  46:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \n          	Roberto Fioravanti
+  47:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \n            - Creation
+  48:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \n
+  49:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** */
+  50:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /*lint -idlen(60) */
+  51:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+  52:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* ******** */
+  53:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* Includes */
+  54:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* ******** */
+  55:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+  56:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** #include "Main.h"
+  57:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** #include "OutputManager.h"
+  58:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** #include "OutputManagerExp.h"
+  59:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** #if defined(CONFIG_LIB_LOADSREQUEST_SUPPORT)
+  60:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** #include "LoadsRequestExp.h"
+  61:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** #endif
+  62:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* ****************** */
+  63:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* Defines and Macros */
+  64:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* ****************** */
+  65:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+  66:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** #define RLC_HDR_SIZE()      (sizeof(GIOM_RemoteLoadsControlExtendedType)-sizeof(GIOM_RemoteLoadsCon
+  67:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+  68:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+  69:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* *************************** */
+  70:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* Typedef, Structs and Unions */
+  71:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* *************************** */
+  72:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+  73:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+  74:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+  75:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /**
+  76:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+  77:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** */
+  78:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** typedef  enum
+  79:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+  80:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	REMOTELOADSCONTROL_STATE_INVALID = 0,
+  81:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	REMOTELOADSCONTROL_STATE_RUNNING
+  82:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** } Main_RemoteLoadsControlStateType;
+  83:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+  84:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /**
+  85:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+  86:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** */
+  87:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** typedef struct
+  88:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+  89:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	Main_RemoteLoadsControlStateType  state;
+  90:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	Main_RemoteLoadsControlErrorType  error;
+  91:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	OS_Q Q;
+  92:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	char QBuffer[PP_REMOTE_LOADS_CONTROL_BUFFER_SIZE * 1 /*\todo make property*/];
+  93:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** } Main_RemoteLoadsControlObjType;
+  94:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+  95:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** typedef struct
+  96:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+  97:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	uint8_t data [PP_REMOTE_LOADS_CONTROL_BUFFER_SIZE];
+  98:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** } GIOM_RemoteLoadsControlBufferType;
+  99:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /**
+ 100:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 101:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** */
+ 102:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** typedef struct
+ 103:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+ 104:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	RemoteLoadsControlType type;
+ 105:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	uint8_t	len;
+ 106:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	GIOM_RemoteLoadsControlBufferType buffer;
+ 107:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** } GIOM_RemoteLoadsControlExtendedType;
+ 108:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 109:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 110:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 111:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* ********* */
+ 112:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* Variables */
+ 113:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* ********* */
+ 114:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** GIOM_LoadStruct dbg_load;
+ 115:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 116:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* Static */
+ 117:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /**
+ 118:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 119:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** */
+ 120:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** static Main_RemoteLoadsControlObjType Main_RemoteLoadsControl; /* Instance of the object */
+ 121:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 122:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* Global */
+ 123:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 124:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* ******************** */
+ 125:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* Functions Prototypes */
+ 126:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* ******************** */
+ 127:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 128:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** bool_t Main_RemoteLoadsControl_IsInitialized ( void );
+ 129:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 130:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* *************** */
+ 131:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* Function Bodies */
+ 132:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* *************** */
+ 133:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 134:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* Exported function */
+ 135:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 136:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /**
+ 137:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** Initializes EmbOs objects and global variables of the module.
+ 138:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** */
+ 139:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** void Main_RemoteLoadsControl_Init ( void )
+ 140:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+  10                             		.loc 1 140 0
+ 141:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	OS_Q_Create ( & ( Main_RemoteLoadsControl.Q ),
+  11                             		.loc 1 141 0
+  12 0000 FB 12 00 00 00 00       		mov.L	#_Main_RemoteLoadsControl+8, r1
+  13 0006 FB 22 00 00 00 00       		mov.L	#_Main_RemoteLoadsControl+44, r2
+  14 000c 75 43 14                		mov.L	#20, r3
+  15 000f 05 00 00 00             		bsr	_OS_Q_Create
+  16                             	.LVL0:
+ 142:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 				  & ( Main_RemoteLoadsControl.QBuffer ),
+ 143:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 				  sizeof ( Main_RemoteLoadsControl.QBuffer ) );
+ 144:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	Main_RemoteLoadsControl.state = REMOTELOADSCONTROL_STATE_RUNNING;
+  17                             		.loc 1 144 0
+  18 0013 FB E2 00 00 00 00       		mov.L	#_Main_RemoteLoadsControl, r14
+  19 0019 F8 E6 01                		mov.L	#1, [r14]
+ 145:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_NO_ERROR;
+  20                             		.loc 1 145 0
+  21 001c F9 E6 01 00             		mov.L	#0, 4[r14]
+  22 0020 02                      		rts
+  23                             	.LFE0:
+  25                             		.section	.text.Main_RemoteLoadsControl_PutCommand,"ax",@progbits
+  26                             		.global	_Main_RemoteLoadsControl_PutCommand
+  28                             	_Main_RemoteLoadsControl_PutCommand:
+  29                             	.LFB1:
+ 146:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** }
+ 147:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 148:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /**
+ 149:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** Stores a command in the queue
+ 150:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \param [in] type type of command (see RemoteLoadsControlType)
+ 151:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \param [in] len lenght in bytes of the command
+ 152:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \param [in] pData pointer to command
+ 153:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 154:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \return bool_t
+ 155:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 156:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \retval REMOTELOADSCONTROL_NO_ERROR no error
+ 157:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \retval REMOTELOADSCONTROL_UNKNOWN_OBJ uninitilized module. Call Main_RemoteLoadsControl_Init.
+ 158:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \retval REMOTELOADSCONTROL_FULLQUEUE_ON_PUTCOMMAND queue is full, not enough space. Purge command o
+ 159:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** define PP_REMOTE_LOADS_CONTROL_BUFFER_SIZE with a greater value.
+ 160:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \retval REMOTELOADSCONTROL_INVALID_DATA_ON_PUTCOMMAND   invalid pData (null) or len is greater than
+ 161:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 162:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** The returned value is available on Main_RemoteLoadsControl.error
+ 163:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** */
+ 164:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** Main_RemoteLoadsControlErrorType Main_RemoteLoadsControl_PutCommand ( RemoteLoadsControlType type, 
+ 165:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+  30                             		.loc 1 165 0
+  31                             	.LVL1:
+  32 0000 7E A7                   		push.l	r7
+  33                             	.LCFI0:
+  34                             	.LBB7:
+  35                             	.LBB8:
+ 166:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	Main_RemoteLoadsControlErrorType result = REMOTELOADSCONTROL_UNKNOWN_OBJ;
+ 167:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	GIOM_RemoteLoadsControlExtendedType param;
+ 168:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	
+ 169:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	if ( !Main_RemoteLoadsControl_IsInitialized() )
+ 170:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	{
+ 171:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_UNKNOWN_OBJ;
+ 172:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	}
+ 173:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	else
+ 174:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	{
+ 175:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		OS_MEMSET(&param, 0, sizeof(param));
+ 176:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		param.type = type;
+ 177:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		
+ 178:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		if ( len <= sizeof ( GIOM_RemoteLoadsControlBufferType ) )
+ 179:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		{
+ 180:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			param.len = len;
+ 181:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			
+ 182:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			if ( pData )
+ 183:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			{
+ 184:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			    bool_t res;
+ 185:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 				memcpy ( param.buffer.data, pData, ( size_t ) len );
+ 186:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 				
+ 187:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 				res = ( bool_t ) OS_Q_Put ( &Main_RemoteLoadsControl.Q, &param, len + RLC_HDR_SIZE() );
+ 188:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 				
+ 189:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 				if ( res )
+ 190:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 				{
+ 191:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 					result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_FULLQUEUE_ON_PUTCOMMAND;
+ 192:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 				}
+ 193:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 				else
+ 194:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 				{
+ 195:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 					result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_NO_ERROR;
+ 196:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 				}
+ 197:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			}
+ 198:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			else
+ 199:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			{
+ 200:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 				result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_INVALID_DATA_ON_PUTCOMMAND;
+ 201:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			}
+ 202:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		}
+ 203:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		else
+ 204:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		{
+ 205:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_INVALID_DATA_ON_PUTCOMMAND;
+ 206:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		}
+ 207:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	}
+ 208:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	
+ 209:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	return result;
+ 210:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** }
+ 211:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 212:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /**
+ 213:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** Retrieves a command from the queue
+ 214:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \param [out] ppData pointer to pointer to command
+ 215:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \param [out] pLen lenght in bytes of the command
+ 216:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 217:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \attention
+ 218:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** Global variables:
+ 219:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** Main_RemoteLoadsControl.error assumes the following values
+ 220:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \li REMOTELOADSCONTROL_NO_ERROR no error
+ 221:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \li REMOTELOADSCONTROL_UNKNOWN_OBJ uninitilized module. Call Main_RemoteLoadsControl_Init.
+ 222:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \li REMOTELOADSCONTROL_FULLQUEUE_ON_PUTCOMMAND queue is full, not enough space. Purge command or
+ 223:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** define PP_REMOTE_LOADS_CONTROL_BUFFER_SIZE with a greater value.
+ 224:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \li REMOTELOADSCONTROL_INVALID_DATA_POINTER_ON_GETCOMMAND   invalid pData or len (null).
+ 225:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** */
+ 226:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** void Main_RemoteLoadsControl_GetCommand ( void** ppData, int* pLen )
+ 227:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+ 228:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	if ( !Main_RemoteLoadsControl_IsInitialized() )
+ 229:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	{
+ 230:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_UNKNOWN_OBJ;
+ 231:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	}
+ 232:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	else
+ 233:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	{
+ 234:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		if ( pLen && ppData )
+ 235:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		{
+ 236:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_NO_ERROR;
+ 237:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			*pLen = OS_Q_GetPtrCond ( &Main_RemoteLoadsControl.Q, ppData );
+ 238:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		}
+ 239:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		else
+ 240:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		{
+ 241:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_INVALID_DATA_POINTER_ON_GETCOMMAND;
+ 242:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		}
+ 243:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	}
+ 244:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** }
+ 245:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 246:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 247:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 248:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /**
+ 249:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** Processes the command.
+ 250:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** If the command is valid it calls LIB_IOM_SetAllLoadsOff() or LIB_IOM_GIOM_SetLoad()
+ 251:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 252:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \param [in] pData pointer to the command
+ 253:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 254:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \attention
+ 255:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** Global variables:
+ 256:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** Main_RemoteLoadsControl.error assumes the following values:
+ 257:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \li REMOTELOADSCONTROL_NO_ERROR no error
+ 258:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** \li REMOTELOADSCONTROL_UNKNOWN_COMMAND command is invalid
+ 259:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** */
+ 260:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** void Main_RemoteLoadsControl_ProcessCommand ( void* pData )
+ 261:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+ 262:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	uint8_t* pFirstData;
+ 263:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	GIOM_LoadStruct load;
+ 264:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	uint8_t len;
+ 265:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	GIOM_RemoteLoadsControlExtendedType* pRemoteLoadsData = ( GIOM_RemoteLoadsControlExtendedType* ) p
+ 266:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	
+ 267:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	switch ( ( ( GIOM_RemoteLoadsControlExtendedType* ) pData )->type )
+ 268:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	{
+ 269:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	case REMOTE_LOADS_CONTROL_EXTENDED:
+ 270:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	case REMOTE_LOADS_CONTROL_BASIC:
+ 271:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		pFirstData = pRemoteLoadsData->buffer.data;
+ 272:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		len = pRemoteLoadsData->len;
+ 273:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		break;
+ 274:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	default:
+ 275:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_UNKNOWN_COMMAND;
+ 276:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		return;
+ 277:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	}
+ 278:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	
+ 279:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	if ( *pFirstData == 0xFF )
+ 280:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	{
+ 281:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** #if defined(CONFIG_LIB_LOADSREQUEST_SUPPORT)
+ 282:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		LIB_IOM_ResetAllLoadRequest();
+ 283:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** #else
+ 284:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		LIB_IOM_SetAllLoadsOff ( SOURCE_SALO_PCCONTROL );
+ 285:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** #endif
+ 286:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	}
+ 287:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	else
+ 288:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	{
+ 289:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		load.loadID = *pFirstData; /* ID Load / Position */
+ 290:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		load.loadParam.b = * ( pFirstData + 1 );
+ 291:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		memcpy ( load.data, ( pFirstData + 1 ), ( size_t ) ( len - 1 ) );
+ 292:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 293:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** #if defined(CONFIG_LIB_LOADSREQUEST_SUPPORT)
+ 294:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		LIB_IOM_ProcessSingleLoadRequest( &load );
+ 295:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** #else
+ 296:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		( void ) LIB_IOM_GIOM_SetLoad ( &load );
+ 297:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** #endif
+ 298:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 299:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	}
+ 300:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	
+ 301:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_NO_ERROR;
+ 302:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** }
+ 303:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 304:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 305:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /**
+ 306:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** Deletes the last retrieved command.
+ 307:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** */
+ 308:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** void Main_RemoteLoadsControl_PurgeCommand ( void )
+ 309:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+ 310:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	OS_Q_Purge ( &Main_RemoteLoadsControl.Q );
+ 311:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** }
+ 312:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 313:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 314:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 315:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /* Local Function */
+ 316:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 
+ 317:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** /**
+ 318:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** Returns if module has beel initialized.
+ 319:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** */
+ 320:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** bool_t Main_RemoteLoadsControl_IsInitialized ( void )
+ 321:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+ 322:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	return ( bool_t ) ( Main_RemoteLoadsControl.state == REMOTELOADSCONTROL_STATE_RUNNING );
+  36                             		.loc 1 322 0
+  37 0002 FB 72 00 00 00 00       		mov.L	#_Main_RemoteLoadsControl, r7
+  38                             	.LBE8:
+  39                             	.LBE7:
+ 169:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	if ( !Main_RemoteLoadsControl_IsInitialized() )
+  40                             		.loc 1 169 0
+  41 0008 EC 7E                   		mov.L	[r7], r14
+ 165:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+  42                             		.loc 1 165 0
+  43 000a 71 00 E4                		add	#-28, r0
+  44                             	.LCFI1:
+ 169:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	if ( !Main_RemoteLoadsControl_IsInitialized() )
+  45                             		.loc 1 169 0
+  46 000d 61 1E                   		cmp	#1, r14
+  47 000f 20 09                   		beq	.L3
+ 171:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_UNKNOWN_OBJ;
+  48                             		.loc 1 171 0
+  49 0011 3E 71 04                		mov.L	#4, 4[r7]
+  50 0014 66 41                   		mov.L	#4, r1
+  51                             	.LVL2:
+  52 0016 2E 4E                   		bra	.L4
+  53                             	.LVL3:
+  54                             	.L3:
+  55 0018 EF 14                   		mov.L	r1, r4
+  56 001a CF 2F                   		mov.B	r2, r15
+  57 001c EF 35                   		mov.L	r3, r5
+ 175:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		OS_MEMSET(&param, 0, sizeof(param));
+  58                             		.loc 1 175 0
+  59 001e EF 01                   		mov.L	r0, r1
+  60                             	.LVL4:
+  61 0020 75 43 1C                		mov.L	#28, r3
+  62                             	.LVL5:
+  63 0023 66 02                   		mov	#0, r2
+  64                             	.LVL6:
+  65 0025 7F 88                   		sstr.b
+ 176:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		param.type = type;
+  66                             		.loc 1 176 0
+  67 0027 E3 04                   		mov.L	r4, [r0]
+ 178:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		if ( len <= sizeof ( GIOM_RemoteLoadsControlBufferType ) )
+  68                             		.loc 1 178 0
+  69 0029 5B F4                   		movu.B	r15, r4
+  70                             	.LVL7:
+  71 002b 75 54 14                		cmp	#20, r4
+  72 002e 24 30                   		bgtu	.L5
+ 180:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			param.len = len;
+  73                             		.loc 1 180 0
+  74 0030 C7 0F 04                		mov.B	r15, 4[r0]
+ 182:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			if ( pData )
+  75                             		.loc 1 182 0
+  76 0033 61 05                   		cmp	#0, r5
+  77 0035 20 29                   		beq	.L5
+  78                             	.LBB9:
+ 185:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 				memcpy ( param.buffer.data, pData, ( size_t ) len );
+  79                             		.loc 1 185 0
+  80 0037 71 01 05                		add	#5, r0, r1
+  81 003a EF 52                   		mov.L	r5, r2
+  82 003c EF 43                   		mov.L	r4, r3
+  83 003e 7F 8F                   		smovf
+ 187:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 				res = ( bool_t ) OS_Q_Put ( &Main_RemoteLoadsControl.Q, &param, len + RLC_HDR_SIZE() );
+  84                             		.loc 1 187 0
+  85 0040 71 43 08                		add	#8, r4, r3
+  86 0043 FB 12 00 00 00 00       		mov.L	#_Main_RemoteLoadsControl+8, r1
+  87 0049 EF 02                   		mov.L	r0, r2
+  88 004b 05 00 00 00             		bsr	_OS_Q_Put
+  89                             	.LVL8:
+ 189:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 				if ( res )
+  90                             		.loc 1 189 0
+  91 004f 61 01                   		cmp	#0, r1
+  92 0051 20 09                   		beq	.L7
+ 191:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 					result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_FULLQUEUE_ON_PUTCOMMAND;
+  93                             		.loc 1 191 0
+  94 0053 3E 71 03                		mov.L	#3, 4[r7]
+  95                             	.LVL9:
+  96 0056 66 31                   		mov.L	#3, r1
+  97                             	.LVL10:
+  98 0058 2E 0C                   		bra	.L4
+  99                             	.LVL11:
+ 100                             	.L7:
+ 195:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 					result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_NO_ERROR;
+ 101                             		.loc 1 195 0
+ 102 005a A0 79                   		mov.L	r1, 4[r7]
+ 103                             	.LVL12:
+ 104 005c 2E 08                   		bra	.L4
+ 105                             	.LVL13:
+ 106                             	.L5:
+ 107                             	.LBE9:
+ 205:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			result = Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_INVALID_DATA_ON_PUTCOMMAND;
+ 108                             		.loc 1 205 0
+ 109 005e E7 7E 01                		mov.L	r14, 4[r7]
+ 110                             	.LVL14:
+ 111 0061 EF E1                   		mov.L	r14, r1
+ 112                             	.LVL15:
+ 113 0063 03                      		.balign 2,3,2
+ 114                             	.L4:
+ 210:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** }
+ 115                             		.loc 1 210 0
+ 116 0064 3F 77 08                		rtsd	#32, r7-r7
+ 117                             	.LFE1:
+ 119 0067 03                      		.section	.text.Main_RemoteLoadsControl_GetCommand,"ax",@progbits
+ 120                             		.global	_Main_RemoteLoadsControl_GetCommand
+ 122                             	_Main_RemoteLoadsControl_GetCommand:
+ 123                             	.LFB2:
+ 227:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+ 124                             		.loc 1 227 0
+ 125                             	.LVL16:
+ 126                             	.LBB10:
+ 127                             	.LBB11:
+ 128                             		.loc 1 322 0
+ 129 0000 FB E2 00 00 00 00       		mov.L	#_Main_RemoteLoadsControl, r14
+ 130                             	.LBE11:
+ 131                             	.LBE10:
+ 227:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+ 132                             		.loc 1 227 0
+ 133 0006 7E A7                   		push.l	r7
+ 134                             	.LCFI2:
+ 227:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+ 135                             		.loc 1 227 0
+ 136 0008 EF 27                   		mov.L	r2, r7
+ 228:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	if ( !Main_RemoteLoadsControl_IsInitialized() )
+ 137                             		.loc 1 228 0
+ 138 000a EC E2                   		mov.L	[r14], r2
+ 139                             	.LVL17:
+ 140 000c 61 12                   		cmp	#1, r2
+ 141 000e 20 08                   		beq	.L10
+ 230:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_UNKNOWN_OBJ;
+ 142                             		.loc 1 230 0
+ 143 0010 F9 E6 01 04             		mov.L	#4, 4[r14]
+ 144 0014 2E 24                   		bra	.L9
+ 145                             	.L10:
+ 234:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		if ( pLen && ppData )
+ 146                             		.loc 1 234 0
+ 147 0016 61 07                   		cmp	#0, r7
+ 148 0018 EF E3                   		mov.L	r14, r3
+ 149 001a 20 1B                   		beq	.L12
+ 234:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		if ( pLen && ppData )
+ 150                             		.loc 1 234 0 is_stmt 0 discriminator 1
+ 151 001c 71 14 00                		add	#0, r1, r4
+ 152 001f 20 16                   		beq	.L12
+ 237:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			*pLen = OS_Q_GetPtrCond ( &Main_RemoteLoadsControl.Q, ppData );
+ 153                             		.loc 1 237 0 is_stmt 1
+ 154 0021 FB 12 00 00 00 00       		mov.L	#_Main_RemoteLoadsControl+8, r1
+ 155                             	.LVL18:
+ 156 0027 EF 42                   		mov.L	r4, r2
+ 236:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_NO_ERROR;
+ 157                             		.loc 1 236 0
+ 158 0029 F9 E6 01 00             		mov.L	#0, 4[r14]
+ 237:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			*pLen = OS_Q_GetPtrCond ( &Main_RemoteLoadsControl.Q, ppData );
+ 159                             		.loc 1 237 0
+ 160 002d 05 00 00 00             		bsr	_OS_Q_GetPtrCond
+ 161                             	.LVL19:
+ 162 0031 E3 71                   		mov.L	r1, [r7]
+ 163 0033 2E 05                   		bra	.L9
+ 164                             	.LVL20:
+ 165                             	.L12:
+ 241:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 			Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_INVALID_DATA_POINTER_ON_GETCOMMAND;
+ 166                             		.loc 1 241 0
+ 167 0035 3E 31 02                		mov.L	#2, 4[r3]
+ 168                             	.LVL21:
+ 169                             		.balign 2,3,2
+ 170                             	.L9:
+ 244:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** }
+ 171                             		.loc 1 244 0
+ 172 0038 3F 77 01                		rtsd	#4, r7-r7
+ 173                             	.LFE2:
+ 175 003b 03                      		.section	.text.Main_RemoteLoadsControl_ProcessCommand,"ax",@progbits
+ 176                             		.global	_Main_RemoteLoadsControl_ProcessCommand
+ 178                             	_Main_RemoteLoadsControl_ProcessCommand:
+ 179                             	.LFB3:
+ 261:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+ 180                             		.loc 1 261 0
+ 267:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	switch ( ( ( GIOM_RemoteLoadsControlExtendedType* ) pData )->type )
+ 181                             		.loc 1 267 0
+ 182 0000 EC 1E                   		mov.L	[r1], r14
+ 261:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+ 183                             		.loc 1 261 0
+ 184 0002 EF 12                   		mov.L	r1, r2
+ 267:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	switch ( ( ( GIOM_RemoteLoadsControlExtendedType* ) pData )->type )
+ 185                             		.loc 1 267 0
+ 186 0004 60 1E                   		sub	#1, r14
+ 187 0006 61 1E                   		cmp	#1, r14
+ 188 0008 24 14                   		bgtu	.L21
+ 261:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+ 189                             		.loc 1 261 0
+ 190 000a 7E A7                   		push.l	r7
+ 191                             	.LCFI3:
+ 279:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	if ( *pFirstData == 0xFF )
+ 192                             		.loc 1 279 0
+ 193 000c CD 1E 05                		mov.B	5[r1], r14
+ 261:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+ 194                             		.loc 1 261 0
+ 195 000f 60 C0                   		sub	#12, r0
+ 196                             	.LCFI4:
+ 279:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	if ( *pFirstData == 0xFF )
+ 197                             		.loc 1 279 0
+ 198 0011 5B E4                   		movu.B	r14, r4
+ 199 0013 75 54 FF                		cmp	#0xff, r4
+ 272:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		len = pRemoteLoadsData->len;
+ 200                             		.loc 1 272 0
+ 201 0016 89 13                   		mov.B	4[r1], r3
+ 279:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	if ( *pFirstData == 0xFF )
+ 202                             		.loc 1 279 0
+ 203 0018 21 17                   		bne	.L27
+ 204 001a 2E 0D                   		bra	.L23
+ 205                             	.L21:
+ 206                             	.LCFI5:
+ 275:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_UNKNOWN_COMMAND;
+ 207                             		.loc 1 275 0
+ 208 001c FB E2 00 00 00 00       		mov.L	#_Main_RemoteLoadsControl, r14
+ 209 0022 F9 E6 01 05             		mov.L	#5, 4[r14]
+ 210 0026 02                      		rts
+ 211                             	.L23:
+ 212                             	.LCFI6:
+ 284:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		LIB_IOM_SetAllLoadsOff ( SOURCE_SALO_PCCONTROL );
+ 213                             		.loc 1 284 0
+ 214 0027 66 01                   		mov	#0, r1
+ 215 0029 05 00 00 00             		bsr	_LIB_IOM_SetAllLoadsOff
+ 216 002d 2E 19                   		bra	.L26
+ 217                             	.L27:
+ 290:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		load.loadParam.b = * ( pFirstData + 1 );
+ 218                             		.loc 1 290 0
+ 219 002f 89 97                   		mov.B	6[r1], r7
+ 291:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		memcpy ( load.data, ( pFirstData + 1 ), ( size_t ) ( len - 1 ) );
+ 220                             		.loc 1 291 0
+ 221 0031 5B 33                   		movu.B	r3, r3
+ 222 0033 71 01 02                		add	#2, r0, r1
+ 223 0036 62 62                   		add	#6, r2
+ 224 0038 60 13                   		sub	#1, r3
+ 289:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		load.loadID = *pFirstData; /* ID Load / Position */
+ 225                             		.loc 1 289 0
+ 226 003a C3 0E                   		mov.B	r14, [r0]
+ 290:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		load.loadParam.b = * ( pFirstData + 1 );
+ 227                             		.loc 1 290 0
+ 228 003c 80 0F                   		mov.B	r7, 1[r0]
+ 291:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		memcpy ( load.data, ( pFirstData + 1 ), ( size_t ) ( len - 1 ) );
+ 229                             		.loc 1 291 0
+ 230 003e 7F 8F                   		smovf
+ 296:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 		( void ) LIB_IOM_GIOM_SetLoad ( &load );
+ 231                             		.loc 1 296 0
+ 232 0040 EF 01                   		mov.L	r0, r1
+ 233 0042 05 00 00 00             		bsr	_LIB_IOM_GIOM_SetLoad
+ 234                             		.balign 2,3,5
+ 235                             	.L26:
+ 301:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	Main_RemoteLoadsControl.error = REMOTELOADSCONTROL_NO_ERROR;
+ 236                             		.loc 1 301 0
+ 237 0046 FB E2 00 00 00 00       		mov.L	#_Main_RemoteLoadsControl, r14
+ 238 004c F9 E6 01 00             		mov.L	#0, 4[r14]
+ 302:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** }
+ 239                             		.loc 1 302 0
+ 240 0050 3F 77 04                		rtsd	#16, r7-r7
+ 241                             	.LFE3:
+ 243 0053 03                      		.section	.text.Main_RemoteLoadsControl_PurgeCommand,"ax",@progbits
+ 244                             		.global	_Main_RemoteLoadsControl_PurgeCommand
+ 246                             	_Main_RemoteLoadsControl_PurgeCommand:
+ 247                             	.LFB4:
+ 309:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+ 248                             		.loc 1 309 0
+ 310:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** 	OS_Q_Purge ( &Main_RemoteLoadsControl.Q );
+ 249                             		.loc 1 310 0
+ 250 0000 FB 12 00 00 00 00       		mov.L	#_Main_RemoteLoadsControl+8, r1
+ 251 0006 04 00 00 00             		bra	_OS_Q_Purge
+ 252                             	.LVL22:
+ 253                             	.LFE4:
+ 255                             		.section	.text.Main_RemoteLoadsControl_IsInitialized,"ax",@progbits
+ 256                             		.global	_Main_RemoteLoadsControl_IsInitialized
+ 258                             	_Main_RemoteLoadsControl_IsInitialized:
+ 259                             	.LFB5:
+ 321:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** {
+ 260                             		.loc 1 321 0
+ 261                             		.loc 1 322 0
+ 262 0000 FB E2 00 00 00 00       		mov.L	#_Main_RemoteLoadsControl, r14
+ 263 0006 EC E1                   		mov.L	[r14], r1
+ 323:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\RemoteLoadsControl.c **** }
+ 264                             		.loc 1 323 0
+ 265 0008 61 11                   		cmp	#1, r1
+ 266 000a FC DB 10                		sceq.L	r1
+ 267 000d 02                      		rts
+ 268                             	.LFE5:
+ 270                             		.comm	_dbg_load,12,1
+ 271                             		.section	.bss.Main_RemoteLoadsControl,"aw",@nobits
+ 272                             		.balign 4
+ 275                             	_Main_RemoteLoadsControl:
+ 276 0000 00 00 00 00 00 00 00 00 		.zero	64
+ 276      00 00 00 00 00 00 00 00 
+ 276      00 00 00 00 00 00 00 00 
+ 276      00 00 00 00 00 00 00 00 
+ 276      00 00 00 00 00 00 00 00 
+ 380                             	.Letext0:
+ 381                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 382                             		.file 3 "C:\\Renesas\\e2studio\\GNURXV~1.03-\\rx-elf/rx-elf/optlibinc/stddef.h"
+ 383                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 384                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_IOManager/OutputManagerExp.h"
+ 385                             		.file 6 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/MainInterface.h"

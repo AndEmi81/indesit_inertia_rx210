@@ -1,0 +1,675 @@
+   1                             		.file	"SWCRC_drv.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.SWCRC_InitSync,"ax",@progbits
+   5                             		.global	_SWCRC_InitSync
+   7                             	_SWCRC_InitSync:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC/SWCRC_drv.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \n
+   8:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \par		SWCRC_drv.c
+   9:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \n			Implementation of all functions necessary to achieve the aim.
+  10:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \n
+  11:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \file		SWCRC_drv.c
+  12:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \ingroup	SWCRC
+  13:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \date		Apr 06, 2010
+  14:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \version	01.00.00
+  15:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \author		stefano.ughi
+  16:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \n
+  17:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \n
+  18:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \Par\b	History:
+  19:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \n
+  20:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \n 		01.00.00
+  21:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \n		Apr 06,2010
+  22:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \n		Stefano Ughi
+  23:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \n		First Insertion
+  24:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \n
+  25:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \n 		01.00.01
+  26:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \n		Apr 07,2011
+  27:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \n		Stefano Ughi
+  28:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \n		- Added IO_ErrorType CRC_InitSync(void)
+  29:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \n      - Added IO_ErrorType CRC_DeInitSync(void)
+  30:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \n
+  31:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** */
+  32:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+  33:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* ******** */
+  34:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* Includes */
+  35:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* ******** */
+  36:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** #include "SWCRC_drv.h"
+  37:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+  38:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* ****************** */
+  39:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* Defines and Macros */
+  40:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* ****************** */
+  41:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* loop driven crc_ccitt calculation */
+  42:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** #define WIDTH (8 * sizeof(uint16_t))
+  43:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** #define TOPBIT (1u << (WIDTH - 1))
+  44:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** #define POLYNOMIAL	0x1021
+  45:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+  46:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* *************************** */
+  47:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* Typedef, Structs and Unions */
+  48:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* *************************** */
+  49:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+  50:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+  51:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* ********* */
+  52:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* Variables */
+  53:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* ********* */
+  54:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+  55:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* Global */
+  56:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+  57:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* Static */
+  58:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** #if defined(CONFIG_PL_DRV_SWCRC_TABLEDRIVEN)
+  59:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+  60:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /** CRC_CCITT Table driven computation */
+  61:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** static const uint16_t Table_CCITT[256]=
+  62:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** {
+  63:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/*            0,     1,     2,     3,     4,     5,     6,     7,*/
+  64:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/*   0 */     0,  4129,  8258, 12387, 16516, 20645, 24774, 28903,
+  65:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/*   8 */ 33032, 37161, 41290, 45419, 49548, 53677, 57806, 61935,
+  66:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/*  16 */  4657,   528, 12915,  8786, 21173, 17044, 29431, 25302,
+  67:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/*  24 */ 37689, 33560, 45947, 41818, 54205, 50076, 62463, 58334,
+  68:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/*  32 */  9314, 13379,  1056,  5121, 25830, 29895, 17572, 21637,
+  69:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/*  40 */ 42346, 46411, 34088, 38153, 58862, 62927, 50604, 54669,
+  70:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/*  48 */ 13907,  9842,  5649,  1584, 30423, 26358, 22165, 18100,
+  71:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/*  56 */ 46939, 42874, 38681, 34616, 63455, 59390, 55197, 51132,
+  72:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/*  64 */ 18628, 22757, 26758, 30887,  2112,  6241, 10242, 14371,
+  73:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/*  72 */ 51660, 55789, 59790, 63919, 35144, 39273, 43274, 47403,
+  74:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/*  80 */ 23285, 19156, 31415, 27286,  6769,  2640, 14899, 10770,
+  75:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/*  88 */ 56317, 52188, 64447, 60318, 39801, 35672, 47931, 43802,
+  76:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/*  96 */ 27814, 31879, 19684, 23749, 11298, 15363,  3168,  7233,
+  77:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 104 */ 60846, 64911, 52716, 56781, 44330, 48395, 36200, 40265,
+  78:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 112 */ 32407, 28342, 24277, 20212, 15891, 11826,  7761,  3696,
+  79:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 120 */ 65439, 61374, 57309, 53244, 48923, 44858, 40793, 36728,
+  80:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 128 */ 37256, 33193, 45514, 41451, 53516, 49453, 61774, 57711,
+  81:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 136 */  4224,   161, 12482,  8419, 20484, 16421, 28742, 24679,
+  82:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 144 */ 33721, 37784, 41979, 46042, 49981, 54044, 58239, 62302,
+  83:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 152 */   689,  4752,  8947, 13010, 16949, 21012, 25207, 29270,
+  84:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 160 */ 46570, 42443, 38312, 34185, 62830, 58703, 54572, 50445,
+  85:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 168 */ 13538,  9411,  5280,  1153, 29798, 25671, 21540, 17413,
+  86:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 176 */ 42971, 47098, 34713, 38840, 59231, 63358, 50973, 55100,
+  87:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 184 */  9939, 14066,  1681,  5808, 26199, 30326, 17941, 22068,
+  88:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 192 */ 55628, 51565, 63758, 59695, 39368, 35305, 47498, 43435,
+  89:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 200 */ 22596, 18533, 30726, 26663,  6336,  2273, 14466, 10403,
+  90:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 208 */ 52093, 56156, 60223, 64286, 35833, 39896, 43963, 48026,
+  91:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 216 */ 19061, 23124, 27191, 31254,  2801,  6864, 10931, 14994,
+  92:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 224 */ 64814, 60687, 56684, 52557, 48554, 44427, 40424, 36297,
+  93:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 232 */ 31782, 27655, 23652, 19525, 15522, 11395,  7392,  3265,
+  94:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 240 */ 61215, 65342, 53085, 57212, 44955, 49082, 36825, 40952,
+  95:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	/* 248 */ 28183, 32310, 20053, 24180, 11923, 16050,  3793,  7920,
+  96:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** };
+  97:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** #endif  /* CRC_SW_TABLE_DRIVEN */
+  98:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+  99:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* ******************* */
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* Functions Prototype */
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* ******************* */
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* Exported function */
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* Local Function */
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* *************** */
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* Function Bodies */
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* *************** */
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /* Exported function */
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /**
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** Module's init.
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \return 	IO_ErrorType
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \retval		IO_E_OK
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \author 	Stefano Ughi
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \date		Feb 11,2011
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \version	1.0.0
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \note		\par \b Nota 1:
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 			documentation by Stefano Ughi
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** */
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** IO_ErrorType SWCRC_InitSync(void)
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** {
+  10                             		.loc 1 129 0
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** }
+  11                             		.loc 1 131 0
+  12 0000 66 01                   		mov.L	#0, r1
+  13 0002 02                      		rts
+  14                             	.LFE0:
+  16                             		.section	.text.SWCRC_DeInitSync,"ax",@progbits
+  17                             		.global	_SWCRC_DeInitSync
+  19                             	_SWCRC_DeInitSync:
+  20                             	.LFB1:
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /**
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** Deinit CRC module, M.C.U. reset state.
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \return 	IO_ErrorType
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \retval		IO_E_OK
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \author 	Stefano Ughi
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \date		Feb 11,2011
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \version	1.0.0
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \note		\par \b Nota 1:
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 			documentation by Stefano Ughi
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 			\par \b Note 2:
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 			After an CRC_DeInitSync call it's mandatory to call a CRC_InitSync\n
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 			if you want use the driver.
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** */
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** IO_ErrorType SWCRC_DeInitSync(void)
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** {
+  21                             		.loc 1 151 0
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** }
+  22                             		.loc 1 153 0
+  23 0000 66 01                   		mov.L	#0, r1
+  24 0002 02                      		rts
+  25                             	.LFE1:
+  27                             		.section	.text.SWCRC_Calculate,"ax",@progbits
+  28                             		.global	_SWCRC_Calculate
+  30                             	_SWCRC_Calculate:
+  31                             	.LFB2:
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** #if !defined (CONFIG_PL_DRV_SWCRC_TABLEDRIVEN)
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /**
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** Crc CCITT loop driven computation.
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** Polynomial: x^16+x^12+x^5+1
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \param  [in]		len number of bytes on which CRC is calculated
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \param  [in]		pSource point to the first byte of the array on which CRC is calculated
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \param  [in]		seed is the initial value for CRC computation, typically 0xFFFF but\n
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c ****                     if you have some fixed bytes you may precompute CRC and pass it as seed.
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c ****                     (E.g. Master Mode Tx)
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \return 	uint16_t
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \retval		crc
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \author 	stefano.ughi
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \date		Apr 6, 2010
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \version	1.0.0
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \todo       Insert WatchDog Refresh
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \note		\par \b Note 1:
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 			documentation by stefano.ughi
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** */
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** uint16_t SWCRC_Calculate (IO_BufferSizeType len, uint8_t *pSource, uint16_t seed)
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** {
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	IO_BufferSizeType i;
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	uint8_t	*pData=pSource;
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	uint16_t crc;
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	uint8_t bit;
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	crc = seed;
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	for(i=0; i<len; i++)
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	{
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 		/*
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 		Bring the next byte into the remainder.
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 		*/
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 		crc ^= (*pData << (WIDTH - 8));
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 		/*
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 		Perform modulo-2 division, a bit at a time.
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 		*/
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 		for (bit = 0; bit < 8; bit++)
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 		{
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 			/*
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 			Try to divide the current data bit.
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 			*/
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 			if (crc & TOPBIT)
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 			{
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 				crc = (uint16_t) ((crc<<1)^(POLYNOMIAL));
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 			}
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 			else
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 			{
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 				crc = (uint16_t) (crc<<1);
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 			}
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 		}
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 		pData++;
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	}
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	return crc;
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** }
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** #else
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** /**
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** Crc CCITT table driven computation.
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** Polynomial: x^16+x^12+x^5+1
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \param  [in]		len number of bytes on which CRC is calculated
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \param  [in]		pSource point to the first byte of the array on which CRC is calculated
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \param  [in]		seed is the initial value for CRC computation, typically 0xFFFF but\n
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c ****                     if you have some fixed bytes you may precompute CRC and pass it as seed.\n
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c ****                     (E.g. Master Mode Tx)
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \return 	uint16_t
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \retval		crc
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \author 	stefano.ughi
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \date		Apr 6, 2010
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \version	1.0.0
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \todo       Insert WatchDog Refresh
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** \note		\par \b Note 1:
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 			documentation by stefano.ughi
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** */
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** uint16_t SWCRC_Calculate( IO_BufferSizeType len, uint8_t *pSource,uint16_t seed )
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** {
+  32                             		.loc 1 248 0
+  33                             	.LVL0:
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	IO_BufferSizeType i;
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	uint8_t	*pData=pSource;
+  34                             		.loc 1 250 0
+  35 0000 EF 2E                   		mov.L	r2, r14
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	uint16_t crc;
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	uint8_t tmp;
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	crc = seed;
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	for(i=0; i<len; i++)
+  36                             		.loc 1 256 0
+  37 0002 5F 15                   		movu.W	r1, r5
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	{
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 		tmp = (crc >> 8) ^ *pData;
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 		crc = (crc << 8) ^ Table_CCITT[tmp];
+  38                             		.loc 1 260 0
+  39 0004 FB F2 00 00 00 00       		mov.L	#_Table_CCITT, r15
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	for(i=0; i<len; i++)
+  40                             		.loc 1 256 0
+  41 000a 2E 14                   		bra	.L4
+  42                             	.LVL1:
+  43                             	.L5:
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 		tmp = (crc >> 8) ^ *pData;
+  44                             		.loc 1 259 0 discriminator 2
+  45 000c FD 88 13                		shlr	#8, r1, r3
+  46                             	.LVL2:
+  47 000f FD 38 E4                		movu.B	[r14+], r4
+  48                             	.LVL3:
+  49                             		.loc 1 260 0 discriminator 2
+  50 0012 FC 37 34                		xor	r3, r4
+  51 0015 FD C8 13                		shll	#8, r1, r3
+  52 0018 FE 54 F4                		mov.W	[r4,r15], r4
+  53 001b FC 37 43                		xor	r4, r3
+  54                             	.LVL4:
+  55                             		.balign 2,3,2
+  56                             	.L4:
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	for(i=0; i<len; i++)
+  57                             		.loc 1 256 0 discriminator 1
+  58 001e FF 04 2E                		sub	r2, r14, r4
+  59 0021 5F 44                   		movu.W	r4, r4
+  60 0023 5F 31                   		movu.W	r3, r1
+  61 0025 47 45                   		cmp	r4, r5
+  62 0027 24 E5                   		bgtu	.L5
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 		pData++;
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	}
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 	return crc;
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** 
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Drivers/SWCRC\SWCRC_drv.c **** }
+  63                             		.loc 1 267 0
+  64 0029 02                      		rts
+  65                             	.LFE2:
+  67                             		.section	.rodata.Table_CCITT,"a",@progbits
+  68                             		.balign 2
+  71                             	_Table_CCITT:
+  72 0000 00 00                   		.short	0
+  73 0002 10 21                   		.short	0x1021
+  74 0004 20 42                   		.short	0x2042
+  75 0006 30 63                   		.short	0x3063
+  76 0008 40 84                   		.short	0x4084
+  77 000a 50 A5                   		.short	0x50a5
+  78 000c 60 C6                   		.short	0x60c6
+  79 000e 70 E7                   		.short	0x70e7
+  80 0010 81 08                   		.short	0xffff8108
+  81 0012 91 29                   		.short	0xffff9129
+  82 0014 A1 4A                   		.short	0xffffa14a
+  83 0016 B1 6B                   		.short	0xffffb16b
+  84 0018 C1 8C                   		.short	0xffffc18c
+  85 001a D1 AD                   		.short	0xffffd1ad
+  86 001c E1 CE                   		.short	0xffffe1ce
+  87 001e F1 EF                   		.short	0xfffff1ef
+  88 0020 12 31                   		.short	0x1231
+  89 0022 02 10                   		.short	0x210
+  90 0024 32 73                   		.short	0x3273
+  91 0026 22 52                   		.short	0x2252
+  92 0028 52 B5                   		.short	0x52b5
+  93 002a 42 94                   		.short	0x4294
+  94 002c 72 F7                   		.short	0x72f7
+  95 002e 62 D6                   		.short	0x62d6
+  96 0030 93 39                   		.short	0xffff9339
+  97 0032 83 18                   		.short	0xffff8318
+  98 0034 B3 7B                   		.short	0xffffb37b
+  99 0036 A3 5A                   		.short	0xffffa35a
+ 100 0038 D3 BD                   		.short	0xffffd3bd
+ 101 003a C3 9C                   		.short	0xffffc39c
+ 102 003c F3 FF                   		.short	0xfffff3ff
+ 103 003e E3 DE                   		.short	0xffffe3de
+ 104 0040 24 62                   		.short	0x2462
+ 105 0042 34 43                   		.short	0x3443
+ 106 0044 04 20                   		.short	0x420
+ 107 0046 14 01                   		.short	0x1401
+ 108 0048 64 E6                   		.short	0x64e6
+ 109 004a 74 C7                   		.short	0x74c7
+ 110 004c 44 A4                   		.short	0x44a4
+ 111 004e 54 85                   		.short	0x5485
+ 112 0050 A5 6A                   		.short	0xffffa56a
+ 113 0052 B5 4B                   		.short	0xffffb54b
+ 114 0054 85 28                   		.short	0xffff8528
+ 115 0056 95 09                   		.short	0xffff9509
+ 116 0058 E5 EE                   		.short	0xffffe5ee
+ 117 005a F5 CF                   		.short	0xfffff5cf
+ 118 005c C5 AC                   		.short	0xffffc5ac
+ 119 005e D5 8D                   		.short	0xffffd58d
+ 120 0060 36 53                   		.short	0x3653
+ 121 0062 26 72                   		.short	0x2672
+ 122 0064 16 11                   		.short	0x1611
+ 123 0066 06 30                   		.short	0x630
+ 124 0068 76 D7                   		.short	0x76d7
+ 125 006a 66 F6                   		.short	0x66f6
+ 126 006c 56 95                   		.short	0x5695
+ 127 006e 46 B4                   		.short	0x46b4
+ 128 0070 B7 5B                   		.short	0xffffb75b
+ 129 0072 A7 7A                   		.short	0xffffa77a
+ 130 0074 97 19                   		.short	0xffff9719
+ 131 0076 87 38                   		.short	0xffff8738
+ 132 0078 F7 DF                   		.short	0xfffff7df
+ 133 007a E7 FE                   		.short	0xffffe7fe
+ 134 007c D7 9D                   		.short	0xffffd79d
+ 135 007e C7 BC                   		.short	0xffffc7bc
+ 136 0080 48 C4                   		.short	0x48c4
+ 137 0082 58 E5                   		.short	0x58e5
+ 138 0084 68 86                   		.short	0x6886
+ 139 0086 78 A7                   		.short	0x78a7
+ 140 0088 08 40                   		.short	0x840
+ 141 008a 18 61                   		.short	0x1861
+ 142 008c 28 02                   		.short	0x2802
+ 143 008e 38 23                   		.short	0x3823
+ 144 0090 C9 CC                   		.short	0xffffc9cc
+ 145 0092 D9 ED                   		.short	0xffffd9ed
+ 146 0094 E9 8E                   		.short	0xffffe98e
+ 147 0096 F9 AF                   		.short	0xfffff9af
+ 148 0098 89 48                   		.short	0xffff8948
+ 149 009a 99 69                   		.short	0xffff9969
+ 150 009c A9 0A                   		.short	0xffffa90a
+ 151 009e B9 2B                   		.short	0xffffb92b
+ 152 00a0 5A F5                   		.short	0x5af5
+ 153 00a2 4A D4                   		.short	0x4ad4
+ 154 00a4 7A B7                   		.short	0x7ab7
+ 155 00a6 6A 96                   		.short	0x6a96
+ 156 00a8 1A 71                   		.short	0x1a71
+ 157 00aa 0A 50                   		.short	0xa50
+ 158 00ac 3A 33                   		.short	0x3a33
+ 159 00ae 2A 12                   		.short	0x2a12
+ 160 00b0 DB FD                   		.short	0xffffdbfd
+ 161 00b2 CB DC                   		.short	0xffffcbdc
+ 162 00b4 FB BF                   		.short	0xfffffbbf
+ 163 00b6 EB 9E                   		.short	0xffffeb9e
+ 164 00b8 9B 79                   		.short	0xffff9b79
+ 165 00ba 8B 58                   		.short	0xffff8b58
+ 166 00bc BB 3B                   		.short	0xffffbb3b
+ 167 00be AB 1A                   		.short	0xffffab1a
+ 168 00c0 6C A6                   		.short	0x6ca6
+ 169 00c2 7C 87                   		.short	0x7c87
+ 170 00c4 4C E4                   		.short	0x4ce4
+ 171 00c6 5C C5                   		.short	0x5cc5
+ 172 00c8 2C 22                   		.short	0x2c22
+ 173 00ca 3C 03                   		.short	0x3c03
+ 174 00cc 0C 60                   		.short	0xc60
+ 175 00ce 1C 41                   		.short	0x1c41
+ 176 00d0 ED AE                   		.short	0xffffedae
+ 177 00d2 FD 8F                   		.short	0xfffffd8f
+ 178 00d4 CD EC                   		.short	0xffffcdec
+ 179 00d6 DD CD                   		.short	0xffffddcd
+ 180 00d8 AD 2A                   		.short	0xffffad2a
+ 181 00da BD 0B                   		.short	0xffffbd0b
+ 182 00dc 8D 68                   		.short	0xffff8d68
+ 183 00de 9D 49                   		.short	0xffff9d49
+ 184 00e0 7E 97                   		.short	0x7e97
+ 185 00e2 6E B6                   		.short	0x6eb6
+ 186 00e4 5E D5                   		.short	0x5ed5
+ 187 00e6 4E F4                   		.short	0x4ef4
+ 188 00e8 3E 13                   		.short	0x3e13
+ 189 00ea 2E 32                   		.short	0x2e32
+ 190 00ec 1E 51                   		.short	0x1e51
+ 191 00ee 0E 70                   		.short	0xe70
+ 192 00f0 FF 9F                   		.short	0xffffff9f
+ 193 00f2 EF BE                   		.short	0xffffefbe
+ 194 00f4 DF DD                   		.short	0xffffdfdd
+ 195 00f6 CF FC                   		.short	0xffffcffc
+ 196 00f8 BF 1B                   		.short	0xffffbf1b
+ 197 00fa AF 3A                   		.short	0xffffaf3a
+ 198 00fc 9F 59                   		.short	0xffff9f59
+ 199 00fe 8F 78                   		.short	0xffff8f78
+ 200 0100 91 88                   		.short	0xffff9188
+ 201 0102 81 A9                   		.short	0xffff81a9
+ 202 0104 B1 CA                   		.short	0xffffb1ca
+ 203 0106 A1 EB                   		.short	0xffffa1eb
+ 204 0108 D1 0C                   		.short	0xffffd10c
+ 205 010a C1 2D                   		.short	0xffffc12d
+ 206 010c F1 4E                   		.short	0xfffff14e
+ 207 010e E1 6F                   		.short	0xffffe16f
+ 208 0110 10 80                   		.short	0x1080
+ 209 0112 00 A1                   		.short	0xa1
+ 210 0114 30 C2                   		.short	0x30c2
+ 211 0116 20 E3                   		.short	0x20e3
+ 212 0118 50 04                   		.short	0x5004
+ 213 011a 40 25                   		.short	0x4025
+ 214 011c 70 46                   		.short	0x7046
+ 215 011e 60 67                   		.short	0x6067
+ 216 0120 83 B9                   		.short	0xffff83b9
+ 217 0122 93 98                   		.short	0xffff9398
+ 218 0124 A3 FB                   		.short	0xffffa3fb
+ 219 0126 B3 DA                   		.short	0xffffb3da
+ 220 0128 C3 3D                   		.short	0xffffc33d
+ 221 012a D3 1C                   		.short	0xffffd31c
+ 222 012c E3 7F                   		.short	0xffffe37f
+ 223 012e F3 5E                   		.short	0xfffff35e
+ 224 0130 02 B1                   		.short	0x2b1
+ 225 0132 12 90                   		.short	0x1290
+ 226 0134 22 F3                   		.short	0x22f3
+ 227 0136 32 D2                   		.short	0x32d2
+ 228 0138 42 35                   		.short	0x4235
+ 229 013a 52 14                   		.short	0x5214
+ 230 013c 62 77                   		.short	0x6277
+ 231 013e 72 56                   		.short	0x7256
+ 232 0140 B5 EA                   		.short	0xffffb5ea
+ 233 0142 A5 CB                   		.short	0xffffa5cb
+ 234 0144 95 A8                   		.short	0xffff95a8
+ 235 0146 85 89                   		.short	0xffff8589
+ 236 0148 F5 6E                   		.short	0xfffff56e
+ 237 014a E5 4F                   		.short	0xffffe54f
+ 238 014c D5 2C                   		.short	0xffffd52c
+ 239 014e C5 0D                   		.short	0xffffc50d
+ 240 0150 34 E2                   		.short	0x34e2
+ 241 0152 24 C3                   		.short	0x24c3
+ 242 0154 14 A0                   		.short	0x14a0
+ 243 0156 04 81                   		.short	0x481
+ 244 0158 74 66                   		.short	0x7466
+ 245 015a 64 47                   		.short	0x6447
+ 246 015c 54 24                   		.short	0x5424
+ 247 015e 44 05                   		.short	0x4405
+ 248 0160 A7 DB                   		.short	0xffffa7db
+ 249 0162 B7 FA                   		.short	0xffffb7fa
+ 250 0164 87 99                   		.short	0xffff8799
+ 251 0166 97 B8                   		.short	0xffff97b8
+ 252 0168 E7 5F                   		.short	0xffffe75f
+ 253 016a F7 7E                   		.short	0xfffff77e
+ 254 016c C7 1D                   		.short	0xffffc71d
+ 255 016e D7 3C                   		.short	0xffffd73c
+ 256 0170 26 D3                   		.short	0x26d3
+ 257 0172 36 F2                   		.short	0x36f2
+ 258 0174 06 91                   		.short	0x691
+ 259 0176 16 B0                   		.short	0x16b0
+ 260 0178 66 57                   		.short	0x6657
+ 261 017a 76 76                   		.short	0x7676
+ 262 017c 46 15                   		.short	0x4615
+ 263 017e 56 34                   		.short	0x5634
+ 264 0180 D9 4C                   		.short	0xffffd94c
+ 265 0182 C9 6D                   		.short	0xffffc96d
+ 266 0184 F9 0E                   		.short	0xfffff90e
+ 267 0186 E9 2F                   		.short	0xffffe92f
+ 268 0188 99 C8                   		.short	0xffff99c8
+ 269 018a 89 E9                   		.short	0xffff89e9
+ 270 018c B9 8A                   		.short	0xffffb98a
+ 271 018e A9 AB                   		.short	0xffffa9ab
+ 272 0190 58 44                   		.short	0x5844
+ 273 0192 48 65                   		.short	0x4865
+ 274 0194 78 06                   		.short	0x7806
+ 275 0196 68 27                   		.short	0x6827
+ 276 0198 18 C0                   		.short	0x18c0
+ 277 019a 08 E1                   		.short	0x8e1
+ 278 019c 38 82                   		.short	0x3882
+ 279 019e 28 A3                   		.short	0x28a3
+ 280 01a0 CB 7D                   		.short	0xffffcb7d
+ 281 01a2 DB 5C                   		.short	0xffffdb5c
+ 282 01a4 EB 3F                   		.short	0xffffeb3f
+ 283 01a6 FB 1E                   		.short	0xfffffb1e
+ 284 01a8 8B F9                   		.short	0xffff8bf9
+ 285 01aa 9B D8                   		.short	0xffff9bd8
+ 286 01ac AB BB                   		.short	0xffffabbb
+ 287 01ae BB 9A                   		.short	0xffffbb9a
+ 288 01b0 4A 75                   		.short	0x4a75
+ 289 01b2 5A 54                   		.short	0x5a54
+ 290 01b4 6A 37                   		.short	0x6a37
+ 291 01b6 7A 16                   		.short	0x7a16
+ 292 01b8 0A F1                   		.short	0xaf1
+ 293 01ba 1A D0                   		.short	0x1ad0
+ 294 01bc 2A B3                   		.short	0x2ab3
+ 295 01be 3A 92                   		.short	0x3a92
+ 296 01c0 FD 2E                   		.short	0xfffffd2e
+ 297 01c2 ED 0F                   		.short	0xffffed0f
+ 298 01c4 DD 6C                   		.short	0xffffdd6c
+ 299 01c6 CD 4D                   		.short	0xffffcd4d
+ 300 01c8 BD AA                   		.short	0xffffbdaa
+ 301 01ca AD 8B                   		.short	0xffffad8b
+ 302 01cc 9D E8                   		.short	0xffff9de8
+ 303 01ce 8D C9                   		.short	0xffff8dc9
+ 304 01d0 7C 26                   		.short	0x7c26
+ 305 01d2 6C 07                   		.short	0x6c07
+ 306 01d4 5C 64                   		.short	0x5c64
+ 307 01d6 4C 45                   		.short	0x4c45
+ 308 01d8 3C A2                   		.short	0x3ca2
+ 309 01da 2C 83                   		.short	0x2c83
+ 310 01dc 1C E0                   		.short	0x1ce0
+ 311 01de 0C C1                   		.short	0xcc1
+ 312 01e0 EF 1F                   		.short	0xffffef1f
+ 313 01e2 FF 3E                   		.short	0xffffff3e
+ 314 01e4 CF 5D                   		.short	0xffffcf5d
+ 315 01e6 DF 7C                   		.short	0xffffdf7c
+ 316 01e8 AF 9B                   		.short	0xffffaf9b
+ 317 01ea BF BA                   		.short	0xffffbfba
+ 318 01ec 8F D9                   		.short	0xffff8fd9
+ 319 01ee 9F F8                   		.short	0xffff9ff8
+ 320 01f0 6E 17                   		.short	0x6e17
+ 321 01f2 7E 36                   		.short	0x7e36
+ 322 01f4 4E 55                   		.short	0x4e55
+ 323 01f6 5E 74                   		.short	0x5e74
+ 324 01f8 2E 93                   		.short	0x2e93
+ 325 01fa 3E B2                   		.short	0x3eb2
+ 326 01fc 0E D1                   		.short	0xed1
+ 327 01fe 1E F0                   		.short	0x1ef0
+ 370                             	.Letext0:
+ 371                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 372                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Drivers/IO_driver.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 SWCRC_drv.c
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:7      .text.SWCRC_InitSync:00000000 _SWCRC_InitSync
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:12     .text.SWCRC_InitSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:19     .text.SWCRC_DeInitSync:00000000 _SWCRC_DeInitSync
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:23     .text.SWCRC_DeInitSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:30     .text.SWCRC_Calculate:00000000 _SWCRC_Calculate
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:35     .text.SWCRC_Calculate:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:71     .rodata.Table_CCITT:00000000 _Table_CCITT
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:329    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:8      .text.SWCRC_InitSync:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:20     .text.SWCRC_DeInitSync:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:31     .text.SWCRC_Calculate:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:645    .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1077   .debug_str:000001a6 .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1095   .debug_str:0000022f .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1015   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1025   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1109   .debug_str:000002b8 .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1113   .debug_str:000002cf .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1061   .debug_str:00000117 .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1059   .debug_str:00000105 .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1117   .debug_str:000002dd .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1049   .debug_str:000000a7 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1027   .debug_str:00000000 .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1089   .debug_str:0000020c .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1067   .debug_str:0000014e .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1123   .debug_str:0000030e .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1039   .debug_str:00000058 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1097   .debug_str:00000270 .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1087   .debug_str:00000207 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1031   .debug_str:0000001f .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1099   .debug_str:00000279 .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1107   .debug_str:000002ae .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1071   .debug_str:00000174 .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1127   .debug_str:00000329 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1037   .debug_str:00000045 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1055   .debug_str:000000e6 .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1069   .debug_str:0000015c .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1063   .debug_str:0000012a .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1035   .debug_str:00000033 .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1041   .debug_str:00000065 .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1119   .debug_str:000002e6 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1047   .debug_str:0000008d .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1051   .debug_str:000000be .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1105   .debug_str:0000029e .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1033   .debug_str:00000029 .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1081   .debug_str:000001db .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1091   .debug_str:00000214 .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1085   .debug_str:000001fb .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1093   .debug_str:00000222 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1083   .debug_str:000001f0 .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1073   .debug_str:00000181 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1053   .debug_str:000000d3 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1079   .debug_str:000001cc .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1065   .debug_str:0000013d .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1057   .debug_str:000000f9 .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1103   .debug_str:00000289 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1111   .debug_str:000002c2 .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1075   .debug_str:00000194 .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1125   .debug_str:0000031a .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:14     .text.SWCRC_InitSync:00000003 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1029   .debug_str:0000000e .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:25     .text.SWCRC_DeInitSync:00000003 .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1121   .debug_str:000002fe .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:65     .text.SWCRC_Calculate:0000002a .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:929    .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1101   .debug_str:00000281 .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1115   .debug_str:000002d8 .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:940    .debug_loc:0000001e .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:954    .debug_loc:0000003f .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1045   .debug_str:00000087 .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:962    .debug_loc:00000053 .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:983    .debug_loc:00000089 .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:1043   .debug_str:0000007b .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:33     .text.SWCRC_Calculate:00000000 .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:42     .text.SWCRC_Calculate:0000000c .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:48     .text.SWCRC_Calculate:00000012 .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:54     .text.SWCRC_Calculate:0000001e .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:46     .text.SWCRC_Calculate:0000000f .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccNoLyVc.s:374    .debug_info:00000000 .Ldebug_info0
+
+NO UNDEFINED SYMBOLS

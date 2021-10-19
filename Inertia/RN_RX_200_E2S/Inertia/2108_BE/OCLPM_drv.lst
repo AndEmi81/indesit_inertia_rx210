@@ -1,0 +1,982 @@
+   1                             		.file	"OCLPM_drv.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.OCLPM_LowPowerModeInit,"ax",@progbits
+   5                             		.global	_OCLPM_LowPowerModeInit
+   7                             	_OCLPM_LowPowerModeInit:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM/OCLPM_drv.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /**
+   6:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \defgroup	LPM 
+   7:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** @{
+   8:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \par		On Chip LPM Driver
+   9:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n			The OCLPM driver offers functions to put the processor into the low power mode with
+  10:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n          possible source of wake-up. The sources are:
+  11:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n\li		I2C match address. The CONFIG_OCLPM_DRV_I2C_TO_CANCEL_LP_MODE_SUPPORT define must be defined
+  12:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n\li		UART 00 A5 sequence where the 00 byte is corrupted so A5 is received only.
+  13:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n			The CONFIG_OCLPM_DRV_UART_TO_CANCEL_LP_MODE_SUPPORT define must be defined.
+  14:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n\li 		Digital pin wake-up. The CONFIG_OCLPM_DRV_DIO_TO_CANCEL_LP_MODE_SUPPORT define must be defi
+  15:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n\li		Periodical wake-up followed by ADC or digital pin reading. The _HAL_LPM_PERIOD define must b
+  16:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n
+  17:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n          The driver reuses the I2C, UART, DIO and ADC drivers' functions and ISR's.
+  18:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n 
+  19:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** @}
+  20:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \ingroup   	Drivers
+  21:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** */
+  22:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /**
+  23:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n
+  24:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \par		OCLPM_drv.c
+  25:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n			Implementation of all functions necessary to achieve the aim.
+  26:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n
+  27:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \file		OCLPM_drv.c 
+  28:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \ingroup	LPM
+  29:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \date		July 02, 2012 
+  30:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \version	01.01.01 
+  31:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \author		Leonardo Sparti
+  32:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n
+  33:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n
+  34:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \par\b	History:
+  35:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n
+  36:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n 		01.00.00 
+  37:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n		17/09/2010 
+  38:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n		Jaroslav Musil
+  39:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n		- Creation
+  40:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n
+  41:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n
+  42:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n etc.
+  43:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** */
+  44:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+  45:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* ******** */
+  46:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* Includes */
+  47:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* ******** */
+  48:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #include "OCLPM_drv.h"
+  49:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #include HAL
+  50:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+  51:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+  52:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(CONFIG_OCLPM_DRV_I2C_TO_CANCEL_LP_MODE_SUPPORT)
+  53:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #include "OCI2C_drv.h"
+  54:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+  55:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+  56:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(CONFIG_OCLPM_DRV_UART_TO_CANCEL_LP_MODE_SUPPORT)
+  57:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #include "OCUART_drv.h"
+  58:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+  59:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+  60:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(CONFIG_OCLPM_DRV_DIO_TO_CANCEL_LP_MODE_SUPPORT) || defined(_HAL_LPM_PERIOD)
+  61:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #include "OCDIO_drv.h"
+  62:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #define LPM_WAKEUP_IO_ENABLE()
+  63:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #define LPM_WAKEUP_IO_DISABLE()
+  64:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+  65:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+  66:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+  67:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* ****************** */
+  68:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* Defines and Macros */
+  69:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* ****************** */
+  70:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+  71:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+  72:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* *************************** */
+  73:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* Typedef, Structs and Unions */
+  74:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* *************************** */
+  75:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+  76:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+  77:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* ********* */
+  78:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* Variables */
+  79:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* ********* */
+  80:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+  81:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* Global */
+  82:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(CONFIG_OCLPM_DRV_DIO_TO_CANCEL_LP_MODE_SUPPORT)
+  83:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+  84:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** OCLPM_WakeUpPinType OCLPM_WakeUpPin = {
+  85:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 		CONFIG_LPM_WAKEUP_PIN,
+  86:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 		0, /* basso per il wakup */
+  87:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 		CONFIG_LPM_WAKEUP_FILTER,
+  88:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** };
+  89:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+  90:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+  91:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(_HAL_LPM_PERIOD)
+  92:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** OCLPM_WakeUpPeriodType OCLPM_WakeUpPeriod;
+  93:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+  94:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+  95:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+  96:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+  97:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* Static */
+  98:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** static uint8_t leaveLPM = 0;
+  99:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(_HAL_LPM_PERIOD)
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** static ADC_ValueType centerADCValue;
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* ******************* */
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* Functions Prototype */
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* ******************* */
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* Local Function */
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /*static IO_ErrorType OCLPM_Callback(IO_NotificationType notification, IO_ChannelType channel, IO_E
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* *************** */
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* Function Bodies */
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* *************** */
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /* Exported function */
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /**
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n This function initializes the LPM driver.
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \return 	IO_ErrorType
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \retval		IO_E_OK initialization done		 	 		
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \author 	Leonardo Sparti 
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \date		Jul 5, 2012 
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \version	1.0.1
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****    
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \note		
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** */
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** IO_ErrorType OCLPM_LowPowerModeInit(void)
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** {
+  10                             		.loc 1 132 0
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     LPM_SleepModeInit();
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     return (IO_ErrorType)IO_E_OK;
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** }
+  11                             		.loc 1 136 0
+  12 0000 66 01                   		mov.L	#0, r1
+  13 0002 02                      		rts
+  14                             	.LFE0:
+  16                             		.section	.text.OCLPM_GoLowPowerMode,"ax",@progbits
+  17                             		.global	_OCLPM_GoLowPowerMode
+  19                             	_OCLPM_GoLowPowerMode:
+  20                             	.LFB1:
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /**
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n This function manages the low power mode defined by the wakeupCriteria bitmap.
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n If the processor is switched into the low power mode, the input parameter determines
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n which criteria will wake it up.
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \param  [in]	wakeupCriteria Peripherals to wake up the processor.
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                LPM_CRITERIA_I2C - I2C wakeup bit
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                LPM_CRITERIA_UART - UART wakeup bit
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                LPM_CRITERIA_DIO - pin wakeup bit
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                LPM_CRITERIA_PERIOD - periodic wakeup bit
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \return 	IO_ErrorType
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \retval		IO_E_OK processor waken up
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     		IO_E_INVALID_VALUE unapplicable criteria for the current platform 	 		
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \author 	Leonardo Sparti 
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \date		Jul 5, 2012 
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \version	1.0.1
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****    
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \note		
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** */
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** IO_ErrorType OCLPM_GoLowPowerMode(uint16_t wakeupCriteria)
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** {
+  21                             		.loc 1 164 0
+  22                             	.LVL0:
+  23 0000 6E 7B                   		pushm	r7-r11
+  24                             	.LCFI0:
+  25 0002 DF 1B                   		mov.W	r1, r11
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(_HAL_LPM_PERIOD)
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     ADC_SumType adcSum;
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     uint8_t i;
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     bool_t centerPointMeasured = 0;
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     uint8_t adcChannel;
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     leaveLPM = 1;
+  26                             		.loc 1 172 0
+  27 0004 FB 72 00 00 00 00       		mov.L	#_leaveLPM, r7
+  28 000a 3C 70 01                		mov.B	#1, [r7]
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     do
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     {
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         /* All peripherals clock off */
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         LPM_AllClockOff();
+  29                             		.loc 1 177 0
+  30 000d FB 7E 00 00 08          		mov.L	#0x80000, r7
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(CONFIG_OCLPM_DRV_I2C_TO_CANCEL_LP_MODE_SUPPORT)
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         if ((wakeupCriteria & LPM_CRITERIA_I2C) != 0)
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         {
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         	I2C_ClkEnable();
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             /* Low power with wake-up */
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             (void)OCI2C_LowPowerMode(OCLPM_Callback);
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             leaveLPM = 0;    
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         }
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #else
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         if ((wakeupCriteria & LPM_CRITERIA_I2C) != 0)
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         {
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         }
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(CONFIG_OCLPM_DRV_UART_TO_CANCEL_LP_MODE_SUPPORT)
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         if ((wakeupCriteria & LPM_CRITERIA_UART) != 0)
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         {
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             UART_ClockOn(HAL_UART_DEV);    	
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             /* Low power with wake-up */
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             (void)OCUART_LowPowerMode(OCLPM_Callback);    
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             leaveLPM = 0;
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         }
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #else
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         if ((wakeupCriteria & LPM_CRITERIA_UART) != 0)
+  31                             		.loc 1 207 0
+  32 0012 EF BA                   		mov.L	r11, r10
+  33 0014 64 3A                   		and #3, r10
+  34                             	.LVL1:
+  35                             		.balign 2,3,5
+  36                             	.L4:
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         LPM_AllClockOff();
+  37                             		.loc 1 177 0
+  38 0016 FA 79 FF 01 0F A5       		mov.W	#0xffffa50f, 1022[r7]
+  39 001c F9 72 04 FF FF FF 7F    		mov.L	#0x7fffffff, 16[r7]
+  40 0023 F9 76 05 FF             		mov.L	#-1, 20[r7]
+  41 0027 F9 76 06 FE             		mov.L	#-2, 24[r7]
+  42 002b FA 79 FF 01 00 A5       		mov.W	#0xffffa500, 1022[r7]
+  43                             		.loc 1 207 0
+  44 0031 61 0A                   		cmp	#0, r10
+  45 0033 21 1B                   		bne	.L6
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         {
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         }
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(CONFIG_OCLPM_DRV_DIO_TO_CANCEL_LP_MODE_SUPPORT)
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         if ((wakeupCriteria & LPM_CRITERIA_DIO) != 0)
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         {
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             /* Low power with wake-up */
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         	LPM_WakupIoEnable(OCLPM_WakeUpPin.modulePin, 1);
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             leaveLPM = 0;
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         }
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #else
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         if ((wakeupCriteria & LPM_CRITERIA_DIO) != 0)
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         {
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         }
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(_HAL_LPM_PERIOD)
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         if ((wakeupCriteria & LPM_CRITERIA_PERIOD) != 0)
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         {
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             /* if it is a mode where the center point is measured */
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             if ((OCLPM_WakeUpPeriod.type & LPM_WAKE_UP_PERIOD_DELTA_MASK) == (LPM_WAKE_UP_PERIOD_TY
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             {
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 /* the center point hasn't been measured yet */
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 if (!centerPointMeasured)
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 {
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     /* Clock on ADC */
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     ADC_ClockGateOn();
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     /* ADC Init */
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     ADC_Init();
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     /* ADC channel mapped by the pin number */
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     if (OCADC_GetADchannelSync(&ModuleIOmap[OCLPM_WakeUpPeriod.modulePin & LPM_WAKE
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     {
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         adcSum = 0;
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         /* Sumes 8 samples */
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         for (i = 0; i < 8; i++)
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         {
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             if (OCADC_SampleSync(adcChannel, (IO_PositionType)0) == (IO_ErrorType)I
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             {
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                 adcSum += OCADC_GetSync((IO_PositionType)0);
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             }
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             else
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             {
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                 leaveLPM = 0;
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                     
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                 return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION; 
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             }
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         }
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         /* Avg. value */
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         centerADCValue = (ADC_ValueType)(adcSum >> 3);
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         /* The center point already measured */
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         centerPointMeasured = TRUE;
+ 268:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     }
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 }
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             }
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             
+ 273:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             /* Sets the sleep timer with a sleep period of ms * 10 */
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             LPM_SetWakeupTimer(OCLPM_WakeUpPeriod.sleepTime);
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             leaveLPM = 0;
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         }
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #else
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         if ((wakeupCriteria & LPM_CRITERIA_PERIOD) != 0)
+  46                             		.loc 1 279 0
+  47 0035 EF BE                   		mov.L	r11, r14
+  48 0037 64 CE                   		and	#12, r14
+  49 0039 21 15                   		bne	.L6
+ 280:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         {
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 282:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         }
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         /* Sleep mode procedure */
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         LPM_SleepModeProc();
+  50                             		.loc 1 285 0
+  51 003b 05 00 00 00             		bsr	_LPM_SleepModeProc
+  52                             	.LVL2:
+ 286:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     } while (leaveLPM == 0);
+  53                             		.loc 1 286 0
+  54 003f FB E2 00 00 00 00       		mov.L	#_leaveLPM, r14
+  55 0045 58 EE                   		movu.B	[r14], r14
+  56 0047 61 0E                   		cmp	#0, r14
+  57 0049 20 CD                   		beq	.L4
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(CONFIG_OCLPM_DRV_I2C_TO_CANCEL_LP_MODE_SUPPORT)
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     if ((wakeupCriteria & LPM_CRITERIA_I2C) != 0)
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     {
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         OCI2C_ResetLowPowerMode();
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     }
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(CONFIG_OCLPM_DRV_UART_TO_CANCEL_LP_MODE_SUPPORT)
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     if ((wakeupCriteria & LPM_CRITERIA_UART) != 0)
+ 297:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     {
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         OCUART_ResetLowPowerMode();
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     }
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 302:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(CONFIG_OCLPM_DRV_DIO_TO_CANCEL_LP_MODE_SUPPORT)
+ 303:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     if ((wakeupCriteria & LPM_CRITERIA_DIO) != 0)
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     {
+ 305:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     	LPM_WakupIoEnable(OCLPM_WakeUpPin.modulePin, 0);
+ 306:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     }
+ 307:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+ 308:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 309:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     return (IO_ErrorType)IO_E_OK;
+  58                             		.loc 1 309 0
+  59 004b CF A1                   		mov.B	r10, r1
+  60 004d 0D                      		bra	.L3
+  61                             	.L6:
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             return (IO_ErrorType)IO_E_INVALID_VALUE;
+  62                             		.loc 1 209 0
+  63 004e 75 41 13                		mov	#19, r1
+  64 0051 03                      		.balign 2,3,2
+  65                             	.L3:
+ 310:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** }
+  66                             		.loc 1 310 0
+  67 0052 75 21 13                		and #19, r1
+  68 0055 3F 7B 05                		rtsd	#20, r7-r11
+  69                             	.LFE1:
+  71                             		.section	.text.OCLPM_Callback,"ax",@progbits
+  72                             		.global	_OCLPM_Callback
+  74                             	_OCLPM_Callback:
+  75                             	.LFB2:
+ 311:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 313:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /**
+ 314:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n This function is the callback when a peripheral wakes the processor. The data are transferred vi
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \n the input parameters. The return value determines if the wake-up is correct.
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \param  [in]	notification Transmitted value from the peripheral
+ 318:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \param  [in]	channel      Wake-up source
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \param  [in]	error        Unused
+ 320:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                
+ 321:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 322:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \return 	IO_ErrorType
+ 323:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 324:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \retval		IO_E_OK Processor wake-up condition occurred
+ 325:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     		IO_E_UNEXPECTED_CONDITION The condition is not to wake up		
+ 326:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 327:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \author 	Jaroslav Musil 
+ 328:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \date		Sep 16, 2010 
+ 329:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \version	1.0.0
+ 330:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****    
+ 331:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** \note		
+ 332:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 333:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** */
+ 334:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** /*static*/ IO_ErrorType OCLPM_Callback(IO_NotificationType notification, IO_ChannelType channel, IO
+ 335:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** {
+  76                             		.loc 1 335 0
+  77                             	.LVL3:
+ 336:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined (_HAL_LPM_PERIOD)
+ 337:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     bool_t expectedPinValue;
+ 338:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     uint8_t wakeUpPin;
+ 339:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     uint8_t adcChannel;
+ 340:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     ADC_ValueType adcSample;
+ 341:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     ADC_ValueType adcRangeMax, adcRangeMin;
+ 342:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+ 343:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 344:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     (void)error;
+ 345:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     (void)notification;
+ 346:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     (void)channel;
+ 347:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 348:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(CONFIG_OCLPM_DRV_I2C_TO_CANCEL_LP_MODE_SUPPORT)
+ 349:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     /* if I2C wake-up */
+ 350:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     if (channel == LPM_ID_I2C)
+ 351:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     {
+ 352:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         /* Flag to leave the low power mode */
+ 353:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         leaveLPM = 1;    
+ 354:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     
+ 355:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         return (IO_ErrorType)IO_E_OK;
+ 356:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     }
+ 357:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+ 358:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     
+ 359:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(CONFIG_OCLPM_DRV_UART_TO_CANCEL_LP_MODE_SUPPORT)
+ 360:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     /* if I2C wake-up */
+ 361:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     if (channel == LPM_ID_UART)
+ 362:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     {
+ 363:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         /* checks if the received byte is A5 */
+ 364:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         if (notification == 0xA5)
+ 365:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         {
+ 366:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             /* Flag to leave the low power mode */
+ 367:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             leaveLPM = 1;    
+ 368:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         
+ 369:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             return (IO_ErrorType)IO_E_OK;
+ 370:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         }
+ 371:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         else
+ 372:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         {
+ 373:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+ 374:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         }
+ 375:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     }
+ 376:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+ 377:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 378:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(CONFIG_OCLPM_DRV_DIO_TO_CANCEL_LP_MODE_SUPPORT)
+ 379:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     /* if pin wake-up */
+ 380:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     if (channel == LPM_ID_DIO)
+ 381:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     {
+ 382:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         /* filter timer on */
+ 383:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         int filterCnt = OCLPM_WakeUpPin.timeFilter;
+ 384:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 385:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         while (filterCnt > 0)
+ 386:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         {
+ 387:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             /* if the pin doesn't keep the expected value */
+ 388:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             if (OCDIO_GetPinValueSync(OCLPM_WakeUpPin.modulePin) != OCLPM_WakeUpPin.expectedPinValu
+ 389:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             {
+ 390:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 /* Flag to reenter the low power mode */
+ 391:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 leaveLPM = 0;
+ 392:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 
+ 393:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION; 
+ 394:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             }
+ 395:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             filterCnt--;
+ 396:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         }
+ 397:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 398:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         /* Flag to leave the low power mode */
+ 399:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         leaveLPM = 1;
+ 400:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         
+ 401:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         return (IO_ErrorType)IO_E_OK;
+ 402:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     }
+ 403:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+ 404:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 406:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #if defined(_HAL_LPM_PERIOD)
+ 407:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     /* if period wake-up */
+ 408:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     if (channel == LPM_ID_PERIOD)    
+ 409:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     {
+ 410:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         /* if analog reading with delta */
+ 411:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         if ((OCLPM_WakeUpPeriod.type & LPM_WAKE_UP_PERIOD_DELTA_MASK) == (LPM_WAKE_UP_PERIOD_TYPE_A
+ 412:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         {
+ 413:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             /* ADC clock on */
+ 414:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             ADC_ClockGateOn();
+ 415:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 416:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             /* ADC init */
+ 417:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             ADC_Init();
+ 418:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     
+ 419:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             /* Gets the adc channel based on the pins table */
+ 420:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             if (OCADC_GetADchannelSync(OCDIO_GetIOMapItem(OCLPM_WakeUpPeriod.modulePin & LPM_WAKE_U
+ 421:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             {
+ 422:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 /* filter timer on */
+ 423:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 LPM_SetFilterTimer(OCLPM_WakeUpPeriod.timeFilter);
+ 424:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 425:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 /* upper frontier */
+ 426:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 adcRangeMax = (ADC_ValueType)(centerADCValue + (OCLPM_WakeUpPeriod.adcDelta & LPM_W
+ 427:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 
+ 428:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 /* lower frontier */
+ 429:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 adcRangeMin = (ADC_ValueType)(centerADCValue - (OCLPM_WakeUpPeriod.adcDelta & LPM_W
+ 430:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 431:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 while (!LPM_IsFilterTimerExpired())
+ 432:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 {
+ 433:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     /* Sample channel */
+ 434:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     if (OCADC_SampleSync(adcChannel, 0) == (IO_ErrorType)IO_E_OK)
+ 435:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     {
+ 436:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         /* Get sample */
+ 437:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         adcSample = OCADC_GetSync(0);
+ 438:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         
+ 439:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         /* if the sample is inside the range */
+ 440:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         if ((adcSample <= adcRangeMax) && (adcSample >= adcRangeMin))
+ 441:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         {
+ 442:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             /* Flag to reenter the low power mode */
+ 443:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             leaveLPM = 0;
+ 444:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                 
+ 445:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION; 
+ 446:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         }
+ 447:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         
+ 448:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     }
+ 449:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 }
+ 450:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 451:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 /* Flag to leave the low power mode */
+ 452:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 leaveLPM = 1;
+ 453:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 
+ 454:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 return (IO_ErrorType)IO_E_OK;
+ 455:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             }
+ 456:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             else
+ 457:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             {
+ 458:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 /* Flag to reenter the low power mode */
+ 459:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 leaveLPM = 0;
+ 460:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     
+ 461:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION; 
+ 462:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             }
+ 463:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             
+ 464:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             
+ 465:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         }
+ 466:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         /* if analog reading with range */
+ 467:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         else if ((OCLPM_WakeUpPeriod.type & LPM_WAKE_UP_PERIOD_DELTA_MASK) == (LPM_WAKE_UP_PERIOD_T
+ 468:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         {
+ 469:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             /* ADC clock on */
+ 470:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             ADC_ClockGateOn();
+ 471:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 472:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             /* ADC init */
+ 473:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             ADC_Init();
+ 474:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     
+ 475:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             /* Gets the adc channel based on the pins table */
+ 476:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             if (OCADC_GetADchannelSync(OCDIO_GetIOMapItem(OCLPM_WakeUpPeriod.modulePin & LPM_WAKE_U
+ 477:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             {
+ 478:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 /* filter timer on */
+ 479:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 LPM_SetFilterTimer(OCLPM_WakeUpPeriod.timeFilter);
+ 480:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 481:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 /* upper frontier */
+ 482:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 adcRangeMax = (ADC_ValueType)(OCLPM_WakeUpPeriod.adcSetPoint + (OCLPM_WakeUpPeriod.
+ 483:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 484:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 /* lower frontier */
+ 485:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 adcRangeMin = (ADC_ValueType)(OCLPM_WakeUpPeriod.adcSetPoint - (OCLPM_WakeUpPeriod.
+ 486:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 487:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 while (!LPM_IsFilterTimerExpired())
+ 488:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 {
+ 489:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     /* Sample channel */
+ 490:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     if (OCADC_SampleSync(adcChannel, 0) == (IO_ErrorType)IO_E_OK)
+ 491:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     {
+ 492:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         /* Get sample */
+ 493:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         adcSample = OCADC_GetSync(0);
+ 494:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         
+ 495:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         
+ 496:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         /* Checks the condtion of inside/outside range option */
+ 497:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         if ((OCLPM_WakeUpPeriod.adcDelta & LPM_WAKE_UP_PERIOD_CONDITION_MASK) == 0)
+ 498:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         {
+ 499:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             /* if the sample is outside the range */
+ 500:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             if ((adcSample > adcRangeMax) || (adcSample < adcRangeMin))
+ 501:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             {
+ 502:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                 /* Flag to reenter the low power mode */
+ 503:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                 leaveLPM = 0;
+ 504:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                     
+ 505:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                 return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION; 
+ 506:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             }
+ 507:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         }
+ 508:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         else
+ 509:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         {
+ 510:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             /* if the sample is inside the range */
+ 511:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             if ((adcSample <= adcRangeMax) && (adcSample >= adcRangeMin))
+ 512:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             {
+ 513:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                 /* Flag to reenter the low power mode */
+ 514:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                 leaveLPM = 0;
+ 515:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                     
+ 516:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                                 return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION; 
+ 517:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             }
+ 518:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         
+ 519:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         }
+ 520:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     }
+ 521:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     else
+ 522:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     {
+ 523:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         /* Flag to reenter the low power mode */
+ 524:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         leaveLPM = 0;
+ 525:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                             
+ 526:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                         return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION; 
+ 527:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     }
+ 528:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 }
+ 529:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 530:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 /* Flag to leave the low power mode */
+ 531:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 leaveLPM = 1;
+ 532:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 
+ 533:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 return (IO_ErrorType)IO_E_OK;
+ 534:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             }
+ 535:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             else
+ 536:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             {
+ 537:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 /* Flag to reenter the low power mode */
+ 538:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 leaveLPM = 0;
+ 539:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     
+ 540:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION; 
+ 541:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             }
+ 542:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         }
+ 543:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         /* if digital reading */
+ 544:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         else if ((OCLPM_WakeUpPeriod.type & LPM_WAKE_UP_PERIOD_DELTA_MASK) == (LPM_WAKE_UP_PERIOD_T
+ 545:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         {
+ 546:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             /* pin id */
+ 547:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             wakeUpPin = (uint8_t)(OCLPM_WakeUpPeriod.modulePin & LPM_WAKE_UP_PIN_MODULE_MASK);
+ 548:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 549:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             /* expected pin value */
+ 550:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             expectedPinValue = (uint8_t)(OCLPM_WakeUpPeriod.modulePin >> 7);
+ 551:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             
+ 552:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             /* filter timer on */
+ 553:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             LPM_SetFilterTimer(OCLPM_WakeUpPeriod.timeFilter);
+ 554:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 555:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             while (!LPM_IsFilterTimerExpired())
+ 556:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             {
+ 557:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 /* if the pin doesn't keep the expected value */
+ 558:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 if (OCDIO_GetPinValueSync(wakeUpPin) != expectedPinValue)
+ 559:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 {
+ 560:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     /* Flag to reenter the low power mode */
+ 561:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     leaveLPM = 0;
+ 562:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     
+ 563:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                     return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION; 
+ 564:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****                 }
+ 565:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             }
+ 566:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 567:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             /* Flag to leave the low power mode */
+ 568:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             leaveLPM = 1;
+ 569:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             
+ 570:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             return (IO_ErrorType)IO_E_OK;
+ 571:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         
+ 572:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         }
+ 573:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         else
+ 574:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         {
+ 575:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****             return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+ 576:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****         }
+ 577:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     }
+ 578:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 579:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** #endif
+ 580:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** 
+ 581:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c ****     return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+ 582:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLPM\OCLPM_drv.c **** }
+  78                             		.loc 1 582 0
+  79 0000 75 41 17                		mov.L	#23, r1
+  80                             	.LVL4:
+  81 0003 02                      		rts
+  82                             	.LFE2:
+  84                             		.section	.bss.leaveLPM,"aw",@nobits
+  87                             	_leaveLPM:
+  88 0000 00                      		.zero	1
+ 145                             	.Letext0:
+ 146                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 147                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\RN_RX200/RN_RX200_reg.h"
+ 148                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Drivers/IO_driver.h"
+ 149                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\RN_RX200/RN_RX200_hal.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 OCLPM_drv.c
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:7      .text.OCLPM_LowPowerModeInit:00000000 _OCLPM_LowPowerModeInit
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:12     .text.OCLPM_LowPowerModeInit:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:19     .text.OCLPM_GoLowPowerMode:00000000 _OCLPM_GoLowPowerMode
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:23     .text.OCLPM_GoLowPowerMode:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:87     .bss.leaveLPM:00000000 _leaveLPM
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:74     .text.OCLPM_Callback:00000000 _OCLPM_Callback
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:79     .text.OCLPM_Callback:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:90     .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:8      .text.OCLPM_LowPowerModeInit:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:20     .text.OCLPM_GoLowPowerMode:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:75     .text.OCLPM_Callback:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4001   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5018   .debug_str:0000091d .LASF274
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4494   .debug_str:00000000 .LASF275
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4482   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4492   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4868   .debug_str:0000069c .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4824   .debug_str:000005eb .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5016   .debug_str:0000090a .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4930   .debug_str:0000079c .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4874   .debug_str:000006b2 .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4632   .debug_str:000002b2 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4762   .debug_str:000004d5 .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4742   .debug_str:0000047d .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4964   .debug_str:00000814 .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4596   .debug_str:0000020c .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4914   .debug_str:00000756 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4928   .debug_str:00000793 .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4506   .debug_str:0000007e .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4570   .debug_str:0000018a .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4704   .debug_str:000003f8 .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4794   .debug_str:00000560 .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4748   .debug_str:00000497 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4872   .debug_str:000006ad .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4674   .debug_str:00000388 .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4920   .debug_str:00000778 .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4932   .debug_str:000007ae .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4584   .debug_str:000001de .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4852   .debug_str:0000065c .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4850   .debug_str:00000654 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4706   .debug_str:000003fd .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4844   .debug_str:0000063e .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4802   .debug_str:0000057d .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4800   .debug_str:00000575 .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4798   .debug_str:0000056d .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4796   .debug_str:00000565 .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4896   .debug_str:00000719 .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4892   .debug_str:00000708 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4766   .debug_str:000004e8 .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5024   .debug_str:0000095d .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4548   .debug_str:00000126 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4546   .debug_str:0000011e .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4520   .debug_str:000000b8 .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4518   .debug_str:000000b0 .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4514   .debug_str:00000099 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4510   .debug_str:0000008a .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5040   .debug_str:000009a3 .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5034   .debug_str:0000098b .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4926   .debug_str:0000078c .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4924   .debug_str:00000785 .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4768   .debug_str:000004ef .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4842   .debug_str:00000637 .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4738   .debug_str:0000046c .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4736   .debug_str:00000464 .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4702   .debug_str:000003f0 .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4968   .debug_str:00000828 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4556   .debug_str:0000015a .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4652   .debug_str:0000032a .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4656   .debug_str:00000336 .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4718   .debug_str:0000042b .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4728   .debug_str:00000449 .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4864   .debug_str:00000688 .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4774   .debug_str:00000509 .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4760   .debug_str:000004cd .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4610   .debug_str:00000247 .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4566   .debug_str:0000017e .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4832   .debug_str:00000610 .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4692   .debug_str:000003cb .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4504   .debug_str:00000078 .LASF62
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4904   .debug_str:00000735 .LASF63
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4580   .debug_str:000001d2 .LASF64
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4862   .debug_str:00000681 .LASF65
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4582   .debug_str:000001d8 .LASF66
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4988   .debug_str:000008a6 .LASF67
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4684   .debug_str:000003ab .LASF68
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4604   .debug_str:0000022e .LASF69
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4942   .debug_str:000007d9 .LASF70
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4764   .debug_str:000004e3 .LASF71
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5032   .debug_str:00000986 .LASF72
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4624   .debug_str:00000293 .LASF73
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4588   .debug_str:000001f0 .LASF74
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4790   .debug_str:00000545 .LASF75
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4722   .debug_str:00000437 .LASF76
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4828   .debug_str:00000603 .LASF77
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4690   .debug_str:000003c4 .LASF78
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4972   .debug_str:0000083c .LASF79
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4744   .debug_str:00000485 .LASF80
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4648   .debug_str:00000311 .LASF81
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4532   .debug_str:000000e5 .LASF82
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4770   .debug_str:000004f6 .LASF83
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4502   .debug_str:0000006d .LASF84
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5020   .debug_str:00000943 .LASF85
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4726   .debug_str:00000441 .LASF86
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4906   .debug_str:0000073b .LASF87
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4882   .debug_str:000006d2 .LASF88
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4724   .debug_str:0000043c .LASF89
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4878   .debug_str:000006c3 .LASF90
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4908   .debug_str:00000741 .LASF91
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4714   .debug_str:0000041a .LASF92
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4776   .debug_str:0000050e .LASF93
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4698   .debug_str:000003e2 .LASF94
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4666   .debug_str:00000363 .LASF95
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4628   .debug_str:000002a4 .LASF96
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4590   .debug_str:000001f6 .LASF97
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4562   .debug_str:00000170 .LASF98
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4522   .debug_str:000000c0 .LASF99
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5042   .debug_str:000009ab .LASF100
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5012   .debug_str:000008fc .LASF101
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4642   .debug_str:000002f1 .LASF102
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4854   .debug_str:00000664 .LASF103
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4856   .debug_str:0000066c .LASF104
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4538   .debug_str:000000ff .LASF105
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4620   .debug_str:00000283 .LASF106
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4694   .debug_str:000003d2 .LASF107
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5036   .debug_str:00000993 .LASF108
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4700   .debug_str:000003e9 .LASF109
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4668   .debug_str:0000036a .LASF110
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4630   .debug_str:000002ab .LASF111
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4592   .debug_str:000001fd .LASF112
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4564   .debug_str:00000177 .LASF113
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4524   .debug_str:000000c7 .LASF114
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5044   .debug_str:000009b2 .LASF115
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5014   .debug_str:00000903 .LASF116
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4938   .debug_str:000007c3 .LASF117
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4602   .debug_str:00000225 .LASF118
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4858   .debug_str:00000672 .LASF119
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4540   .debug_str:00000107 .LASF120
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4622   .debug_str:0000028b .LASF121
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4696   .debug_str:000003da .LASF122
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5038   .debug_str:0000099b .LASF123
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4682   .debug_str:000003a3 .LASF124
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4922   .debug_str:0000077d .LASF125
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4708   .debug_str:00000405 .LASF126
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5048   .debug_str:000009c1 .LASF127
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4808   .debug_str:00000596 .LASF128
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4600   .debug_str:0000021d .LASF129
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4934   .debug_str:000007b3 .LASF130
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4902   .debug_str:0000072d .LASF131
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4782   .debug_str:00000524 .LASF132
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5028   .debug_str:00000968 .LASF133
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4758   .debug_str:000004c6 .LASF134
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4560   .debug_str:00000168 .LASF135
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4890   .debug_str:00000700 .LASF136
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5004   .debug_str:000008d3 .LASF137
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4910   .debug_str:00000747 .LASF138
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4662   .debug_str:00000355 .LASF139
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4830   .debug_str:00000609 .LASF140
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4746   .debug_str:00000490 .LASF141
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4500   .debug_str:00000068 .LASF142
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4634   .debug_str:000002c9 .LASF143
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4614   .debug_str:00000260 .LASF144
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4526   .debug_str:000000ce .LASF145
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4568   .debug_str:00000184 .LASF146
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4912   .debug_str:0000074f .LASF147
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4836   .debug_str:0000061d .LASF148
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4720   .debug_str:00000431 .LASF149
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4680   .debug_str:0000039d .LASF150
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4688   .debug_str:000003ba .LASF151
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4816   .debug_str:000005cc .LASF152
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4686   .debug_str:000003b0 .LASF153
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4814   .debug_str:000005c1 .LASF154
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5010   .debug_str:000008f4 .LASF155
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4670   .debug_str:00000371 .LASF156
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4840   .debug_str:00000630 .LASF157
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4834   .debug_str:00000616 .LASF158
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4554   .debug_str:00000150 .LASF159
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4860   .debug_str:00000678 .LASF160
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4754   .debug_str:000004b7 .LASF161
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4976   .debug_str:00000859 .LASF162
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4512   .debug_str:00000092 .LASF163
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4508   .debug_str:00000083 .LASF164
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4838   .debug_str:00000626 .LASF165
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4608   .debug_str:0000023e .LASF166
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4916   .debug_str:00000763 .LASF167
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4734   .debug_str:0000045c .LASF168
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4880   .debug_str:000006c8 .LASF276
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4710   .debug_str:0000040d .LASF169
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4756   .debug_str:000004c1 .LASF170
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4818   .debug_str:000005d7 .LASF171
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4820   .debug_str:000005de .LASF172
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4848   .debug_str:0000064e .LASF173
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4784   .debug_str:0000052d .LASF174
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4786   .debug_str:00000535 .LASF175
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4788   .debug_str:0000053d .LASF176
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5006   .debug_str:000008db .LASF177
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4870   .debug_str:000006a6 .LASF178
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4780   .debug_str:0000051e .LASF179
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4664   .debug_str:0000035c .LASF180
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4966   .debug_str:00000822 .LASF181
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4778   .debug_str:00000517 .LASF182
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4578   .debug_str:000001cb .LASF183
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4732   .debug_str:00000455 .LASF184
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4606   .debug_str:00000236 .LASF185
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4544   .debug_str:00000117 .LASF186
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4898   .debug_str:00000720 .LASF187
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4654   .debug_str:0000032f .LASF188
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4676   .debug_str:0000038d .LASF189
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4822   .debug_str:000005e5 .LASF190
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4542   .debug_str:0000010f .LASF191
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4740   .debug_str:00000474 .LASF192
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4806   .debug_str:0000058d .LASF193
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4804   .debug_str:00000585 .LASF194
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4944   .debug_str:000007e2 .LASF195
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4982   .debug_str:00000871 .LASF196
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4894   .debug_str:0000070f .LASF197
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4946   .debug_str:000007e7 .LASF198
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5054   .debug_str:000009d7 .LASF199
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4948   .debug_str:000007ec .LASF200
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4730   .debug_str:00000450 .LASF201
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4950   .debug_str:000007f1 .LASF202
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4772   .debug_str:00000501 .LASF203
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4888   .debug_str:000006f9 .LASF204
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4530   .debug_str:000000dd .LASF205
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4558   .debug_str:00000161 .LASF206
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4952   .debug_str:000007f6 .LASF207
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4900   .debug_str:00000728 .LASF208
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4954   .debug_str:000007fb .LASF209
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4936   .debug_str:000007bb .LASF210
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4956   .debug_str:00000800 .LASF211
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4978   .debug_str:00000861 .LASF212
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4958   .debug_str:00000805 .LASF213
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4980   .debug_str:00000869 .LASF214
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4960   .debug_str:0000080a .LASF215
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4638   .debug_str:000002e1 .LASF216
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4962   .debug_str:0000080f .LASF217
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4640   .debug_str:000002e9 .LASF218
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4992   .debug_str:000008b5 .LASF219
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4534   .debug_str:000000ed .LASF220
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4994   .debug_str:000008ba .LASF221
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4536   .debug_str:000000f6 .LASF222
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4996   .debug_str:000008bf .LASF223
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4644   .debug_str:000002f9 .LASF224
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5050   .debug_str:000009c9 .LASF225
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5052   .debug_str:000009d0 .LASF226
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4998   .debug_str:000008c4 .LASF227
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5026   .debug_str:00000962 .LASF228
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5046   .debug_str:000009b9 .LASF229
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5000   .debug_str:000008c9 .LASF230
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4594   .debug_str:00000204 .LASF231
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4616   .debug_str:00000266 .LASF232
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5002   .debug_str:000008ce .LASF233
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4750   .debug_str:0000049c .LASF234
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4528   .debug_str:000000d5 .LASF235
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4598   .debug_str:00000218 .LASF236
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4990   .debug_str:000008ae .LASF237
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4576   .debug_str:000001c1 .LASF277
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4876   .debug_str:000006bb .LASF238
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4884   .debug_str:000006d7 .LASF239
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4586   .debug_str:000001e3 .LASF240
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4974   .debug_str:00000847 .LASF241
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4612   .debug_str:0000024d .LASF242
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4752   .debug_str:000004a4 .LASF243
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4574   .debug_str:000001a9 .LASF244
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4636   .debug_str:000002ce .LASF245
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4550   .debug_str:0000012e .LASF246
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4986   .debug_str:00000890 .LASF247
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4886   .debug_str:000006e1 .LASF248
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4572   .debug_str:0000018f .LASF249
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4984   .debug_str:0000087b .LASF250
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4552   .debug_str:00000140 .LASF251
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4716   .debug_str:00000421 .LASF252
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4618   .debug_str:0000026e .LASF253
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4866   .debug_str:0000068e .LASF254
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4810   .debug_str:0000059e .LASF255
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4658   .debug_str:0000033b .LASF256
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4918   .debug_str:0000076d .LASF257
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5008   .debug_str:000008e1 .LASF258
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4496   .debug_str:00000041 .LASF259
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4672   .debug_str:00000379 .LASF260
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4650   .debug_str:00000319 .LASF261
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4626   .debug_str:00000298 .LASF262
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5030   .debug_str:00000971 .LASF263
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4940   .debug_str:000007cc .LASF264
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4516   .debug_str:000000a1 .LASF265
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4660   .debug_str:00000348 .LASF266
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4498   .debug_str:00000054 .LASF267
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4812   .debug_str:000005aa .LASF278
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:14     .text.OCLPM_LowPowerModeInit:00000003 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4792   .debug_str:0000054b .LASF268
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:69     .text.OCLPM_GoLowPowerMode:00000058 .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4427   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4826   .debug_str:000005f4 .LASF270
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4440   .debug_loc:00000020 .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:52     .text.OCLPM_GoLowPowerMode:0000003f .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4646   .debug_str:00000302 .LASF269
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:82     .text.OCLPM_Callback:00000004 .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4970   .debug_str:0000082f .LASF271
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4451   .debug_loc:0000003e .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4846   .debug_str:00000646 .LASF272
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4712   .debug_str:00000414 .LASF273
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:4678   .debug_str:00000394 .LASF279
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:5022   .debug_str:0000094b .LASF280
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:24     .text.OCLPM_GoLowPowerMode:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:22     .text.OCLPM_GoLowPowerMode:00000000 .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:34     .text.OCLPM_GoLowPowerMode:00000016 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:77     .text.OCLPM_Callback:00000000 .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:80     .text.OCLPM_Callback:00000003 .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccCFTJsb.s:151    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_LPM_SleepModeProc

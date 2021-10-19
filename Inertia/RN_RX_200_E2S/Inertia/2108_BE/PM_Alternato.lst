@@ -1,0 +1,1215 @@
+   1                             		.file	"PM_Alternato.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.PM_ALT_Manager,"ax",@progbits
+   6                             	_PM_ALT_Manager:
+   7                             	.LFB4:
+   8                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato/PM_Alternato.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****  * PM_Alternato.c
+   3:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****  *
+   4:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****  *  Created on: 06/nov/2013
+   5:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****  *      Author: consul.fimiani
+   6:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****  */
+   7:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+   8:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+   9:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+  10:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+  11:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* ******** */
+  12:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* Includes */
+  13:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* ******** */
+  14:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** #include "PM_Alternato.h"
+  15:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** #include "DigitalOutputs.h"
+  16:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+  17:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+  18:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* ****************** */
+  19:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* Defines and Macros */
+  20:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* ****************** */
+  21:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /** Valori possibili per command_t: Command per procedura ricerca posizione default */
+  22:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** #define ALT_DRIV_TO_REF	0
+  23:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /** Valori possibili per command_t: Command per procedura incremento posizione rispetto l'attuale *
+  24:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** #define ALT_DRIV_INC	1
+  25:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+  26:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /** Valori ammissibili per ALT_ManagerResult_t: posizione raggiunta  */
+  27:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** #define LAV_ALT_POS_REACHED		TRUE
+  28:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /** Valori ammissibili per ALT_ManagerResult_t: posizione non raggiunta  */
+  29:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** #define LAV_ALT_POS_NOT_REACHED	FALSE
+  30:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+  31:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+  32:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** #define IS_ALT_TYPE1(pAltData)	(pAltData->DataLenght == 3)
+  33:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** #define IS_ALT_TYPE2(pAltData)	(pAltData->DataLenght == 5)
+  34:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** #define IS_ALT_TYPE3(pAltData)	(pAltData->DataLenght == 8)
+  35:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+  36:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* *************************** */
+  37:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* Typedef, Structs and Unions */
+  38:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* *************************** */
+  39:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** typedef uint8_t command_t;
+  40:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** typedef uint8_t ALT_ManagerResult_t;
+  41:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+  42:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+  43:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /** struttura flags */
+  44:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** typedef struct {
+  45:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     /** se '1' servomeccanismo alternato presente */
+  46:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     uint8_t altEngineIsPresent      :1;
+  47:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     /** se '1' richiesta procedura di sincronizzazione */
+  48:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     uint8_t altEngineReqSync        :1;
+  49:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     /** se '1' driver in attesa di fine procedura sincronizzazione */
+  50:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     uint8_t waitForSyncPos          :1;
+  51:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     /** se '0' inizializzare procedura incremento posizione rispetto all'attuale */
+  52:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     uint8_t initIncPos              :1;
+  53:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** }FlagsStruct_t;
+  54:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+  55:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /** union flags */
+  56:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** typedef union {
+  57:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     /** accesso a byte dei flags */
+  58:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     uint8_t all;
+  59:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     /** accesso a bit dei flags */
+  60:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     FlagsStruct_t bit;
+  61:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** }AlternatoFlags_t;
+  62:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+  63:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+  64:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /** struttura variabili utilizzate dal modulo */
+  65:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** typedef struct {
+  66:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     /** struttura dati contente lunghezza dati
+  67:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     e puntatore all'inizio della struttura dati stessa */
+  68:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     struct Loader data;
+  69:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     /** pin cui è connesso il modulo */
+  70:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     uint8_t pin;
+  71:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     /** posizione richiesta per il servomeccanismo */
+  72:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     uint8_t altEnginePosReq;
+  73:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     /** posizione corrente per il servomeccanismo dell'alternato */
+  74:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     uint8_t altEnginePosCurr;
+  75:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     /** offset vs tabella temporizzazioni output Off/On */
+  76:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     uint8_t stepCurrent;
+  77:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     /** offset vs tabella temporizzazioni output Off/On */
+  78:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     uint8_t stepTarget;
+  79:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     /** contatore per ottenere i 100 msec */
+  80:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     uint8_t cntr100msec;
+  81:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     /** contatore che indica se debbo tenere l'uscita alta o bassa */
+  82:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     uint8_t cntrOutputHighLow;
+  83:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     /** numero di posizioni del servomeccanismo da gestire, 3 o 6 */
+  84:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     uint8_t numAltPositions;
+  85:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     /** Posizione servomeccanismo alternato NON definita */
+  86:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     uint8_t altPositionNotDef;
+  87:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     /** numero di ripetizioni necessarie per riportare la camma in posizione
+  88:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     di riferimento. Sono usate solo per il servomeccanismo a 6 posizioni */
+  89:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     uint8_t altRepetitions;
+  90:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+  91:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     AlternatoFlags_t flags;
+  92:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** }AlternatoStruct_t;
+  93:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+  94:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+  95:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* ****************** */
+  96:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* Exported variables */
+  97:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* ****************** */
+  98:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+  99:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* **************** */
+ 100:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* Global variables */
+ 101:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* **************** */
+ 102:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 103:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 104:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** AlternatoStruct_t AlternatoVars;
+ 105:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 106:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 107:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 108:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* **************************** */
+ 109:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* Prototype of local functions */
+ 110:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /* **************************** */
+ 111:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 112:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** static void PM_ALT_SetCommand(command_t command);
+ 113:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** static ALT_ManagerResult_t PM_ALT_Manager(void);
+ 114:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 115:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 116:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /**
+ 117:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** Inizializzazione delle variabili necessarie al modulo.
+ 118:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** Chiamata in OutputInitialization() indipendentemente dal tipo di reset.
+ 119:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 120:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \param  [in] pAlternatoData pointer to a struct type Loader
+ 121:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 122:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \attention \b AlternatoVars used as I/O
+ 123:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 124:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \return 	AlternatoError_t
+ 125:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 126:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \retval		ALTERNATO_E_OK, ALTERNATO_E_KO
+ 127:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 128:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 129:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \author 	Stefano Ughi
+ 130:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \date		29/01/2008
+ 131:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \version	1.0.0
+ 132:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 133:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \note		\par \b Nota 1:
+ 134:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			documentation by Stefano Ughi
+ 135:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 136:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** */
+ 137:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 138:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** AlternatoError_t PM_ALT_Init(pAlternatoData_t pAlternatoData, uint8_t pin)
+ 139:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** {
+ 140:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	AlternatoError_t err = ALTERNATO_E_OK;
+ 141:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 142:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	AlternatoVars.flags.all = 0;
+ 143:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 144:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	if(IS_ALT_TYPE1(pAlternatoData) || IS_ALT_TYPE2(pAlternatoData) || IS_ALT_TYPE3(pAlternatoData))
+ 145:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	{
+ 146:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.data = *pAlternatoData;
+ 147:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.pin = pin;
+ 148:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.flags.bit.altEngineIsPresent = 1;
+ 149:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 150:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		/* The alternate of type 3 has 6 positions, the others have 3 */
+ 151:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		if (IS_ALT_TYPE3(pAlternatoData))
+ 152:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		{
+ 153:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		  AlternatoVars.numAltPositions = 6;
+ 154:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		}
+ 155:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		else
+ 156:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		{
+ 157:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		  AlternatoVars.numAltPositions = 3;
+ 158:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		}
+ 159:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.altPositionNotDef = AlternatoVars.numAltPositions; /* please don't touch */
+ 160:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 161:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 162:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.altEnginePosReq = AlternatoVars.altPositionNotDef;
+ 163:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.altEnginePosCurr = AlternatoVars.altPositionNotDef;
+ 164:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	}
+ 165:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	else
+ 166:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	{
+ 167:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		err = ALTERNATO_E_KO;
+ 168:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	}
+ 169:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 170:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	#if defined (CONFIG_ALT_PULSE_PARTIALIZATION)
+ 171:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	  PM_PLP_InsertLoad(pin,DIM_LAMP_L);
+ 172:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	#endif
+ 173:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 174:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	return err;
+ 175:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** }
+ 176:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 177:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 178:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 179:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 180:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /**
+ 181:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** Fissa la posizione da raggiungere per il servomeccanismo dell'alternato, eventualmente
+ 182:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** viene richiesta la sincronizzazione.
+ 183:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** Chiamata nella SetLoad().
+ 184:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 185:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \param  [in] loadParam typedef L_PARAM
+ 186:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 187:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \attention \b AlternatoVars used as I/O
+ 188:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 189:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 190:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \author 	Stefano Ughi
+ 191:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \date		29/01/2008
+ 192:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \version	1.0.0
+ 193:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 194:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \note		\par \b Nota 1:
+ 195:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			documentation by Stefano Ughi
+ 196:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			\par \b Nota 2:
+ 197:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			not portable cfr. L_PARAM (big Endian little Endian ? )
+ 198:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 199:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** */
+ 200:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** void PM_ALT_SetPosition(L_PARAM loadParam)
+ 201:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** {
+ 202:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     AlternatoVars.flags.bit.altEngineReqSync = ((loadParam.b & BIT4_MASK )?1:0);
+ 203:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     AlternatoVars.altEnginePosReq = loadParam.s.reg;
+ 204:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** }
+ 205:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 206:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 207:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /**
+ 208:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****  *\n Driver for management of the servomechansim.
+ 209:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****  *\n This procedure is called from the task 10ms when SystemMode == SYSTEM_NORMAL_MODE
+ 210:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****  *\n
+ 211:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****  *
+ 212:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****  *\attention\b  AlternatoVars used as I/O
+ 213:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****  *
+ 214:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****  *\author 	Stefano Ughi
+ 215:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****  *\date		03/08/2006
+ 216:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****  *\version	1.0.0
+ 217:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****  *
+ 218:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****  */
+ 219:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** void PM_ALT_EngineDrv( void )
+ 220:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** {
+ 221:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****   	if (AlternatoVars.flags.bit.altEngineIsPresent == 0)
+ 222:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	{
+ 223:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		return;
+ 224:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	}
+ 225:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	/* La condizione di sincronizzazione è prioritaria */
+ 226:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	if (AlternatoVars.flags.bit.altEngineReqSync)
+ 227:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	{
+ 228:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		PM_ALT_SetCommand((command_t)ALT_DRIV_TO_REF);
+ 229:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.flags.bit.waitForSyncPos = 1;
+ 230:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.altEnginePosCurr = AlternatoVars.altPositionNotDef; /* flag posizione corrente non 
+ 231:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.flags.bit.altEngineReqSync = 0;
+ 232:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     }
+ 233:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     if (AlternatoVars.flags.bit.waitForSyncPos == 1)
+ 234:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     {
+ 235:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		if (PM_ALT_Manager() == LAV_ALT_POS_REACHED)
+ 236:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		{
+ 237:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         	AlternatoVars.altEnginePosCurr = 0;	  /* flag posizione corrente 0 */
+ 238:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         	AlternatoVars.flags.bit.initIncPos = 0;
+ 239:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         	AlternatoVars.flags.bit.waitForSyncPos = 0;
+ 240:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		}
+ 241:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     }
+ 242:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     else
+ 243:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     {
+ 244:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         if ( ( AlternatoVars.altEnginePosReq != AlternatoVars.altEnginePosCurr ) &&
+ 245:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****              ( AlternatoVars.altEnginePosReq < AlternatoVars.numAltPositions ) )
+ 246:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         {
+ 247:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         	if ( AlternatoVars.altEnginePosCurr >= AlternatoVars.numAltPositions )
+ 248:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         	{
+ 249:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         		/* recovery procedure */
+ 250:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.flags.bit.altEngineReqSync = 1;
+ 251:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         	}
+ 252:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         	else
+ 253:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         	{
+ 254:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     			if ( AlternatoVars.flags.bit.initIncPos == 0 )
+ 255:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    {
+ 256:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 					PM_ALT_SetCommand((command_t)ALT_DRIV_INC);
+ 257:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 					AlternatoVars.flags.bit.initIncPos = 1;
+ 258:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    }
+ 259:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    else
+ 260:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    {
+ 261:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    	if ( PM_ALT_Manager() == LAV_ALT_POS_REACHED )
+ 262:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    	{
+ 263:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    		if( AlternatoVars.altEnginePosCurr < (AlternatoVars.numAltPositions-1) )
+ 264:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    		{
+ 265:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    			AlternatoVars.altEnginePosCurr ++;
+ 266:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    		}
+ 267:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    		else
+ 268:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    		{
+ 269:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    			AlternatoVars.altEnginePosCurr = 0;
+ 270:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    		}
+ 271:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     					AlternatoVars.flags.bit.initIncPos = 0;
+ 272:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 					}
+ 273:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    }
+ 274:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         	}
+ 275:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         }
+ 276:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     }
+ 277:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** }
+ 278:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 279:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 280:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 281:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /**
+ 282:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** Inizializzazioni per driver alternato.
+ 283:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 284:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \param  [in] command valori ammissibili \n
+ 285:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****             ALT_DRIV_INC -> incrementa di una posizione rispetto la corrente \n
+ 286:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****             ALT_DRIVE_TO_REF -> esegui il posizionamento assoluto per trovare la posizione di defau
+ 287:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 288:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \attention \b AlternatoVars used as I/O
+ 289:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 290:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \author 	Stefano Ughi
+ 291:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \date		29/01/2008
+ 292:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \version	1.0.0
+ 293:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 294:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 295:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \note		\par \b Nota 1:
+ 296:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			documentation by Stefano Ughi
+ 297:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** */
+ 298:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 299:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** static void PM_ALT_SetCommand(command_t command)
+ 300:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** {
+ 301:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 302:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****   AlternatoVars.altRepetitions = 0;
+ 303:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 304:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	switch (command)
+ 305:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	{
+ 306:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		case ALT_DRIV_INC:		/* Target position: Next */
+ 307:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 308:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			if( AlternatoVars.data.DataLenght == 3 )
+ 309:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			{/* For alternate type 1 */
+ 310:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.stepCurrent = 4;
+ 311:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.stepTarget  = 5;
+ 312:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			}
+ 313:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			else if( AlternatoVars.data.DataLenght == 5 )
+ 314:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			{/* For alternate type 2 */
+ 315:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.stepCurrent = 7;
+ 316:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.stepTarget  = 8;
+ 317:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			}
+ 318:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			else
+ 319:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			{/* For alternate type 3 */
+ 320:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.stepCurrent = 14;
+ 321:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.stepTarget  = 15;
+ 322:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			}
+ 323:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 324:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			break;
+ 325:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 326:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		case ALT_DRIV_TO_REF:	/* Target position: Ref */
+ 327:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 328:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			AlternatoVars.stepCurrent = 0;
+ 329:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 330:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			if( AlternatoVars.data.DataLenght == 3 )
+ 331:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			{/* For alternate type 1 */
+ 332:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.stepTarget = 3;
+ 333:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			}
+ 334:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			else if( AlternatoVars.data.DataLenght == 5 )
+ 335:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			{/* For alternate type 2 */
+ 336:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.stepTarget = 6;
+ 337:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			}
+ 338:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			else
+ 339:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			{/* For alternate type 3 */
+ 340:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			  AlternatoVars.stepTarget = 13;
+ 341:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			  AlternatoVars.altRepetitions = 5;
+ 342:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			}
+ 343:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 344:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			break;
+ 345:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 346:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		default:
+ 347:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 348:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		    break;
+ 349:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	}
+ 350:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	AlternatoVars.cntr100msec = 0;
+ 351:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	AlternatoVars.cntrOutputHighLow = 0;
+ 352:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 353:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** }
+ 354:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /**
+ 355:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** Applica i tempi di On e Off al pin di output del driver per raggiungere la posizione
+ 356:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** corretta del servomeccanismo.
+ 357:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 358:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \attention \b AlternatoVars used as I/O
+ 359:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 360:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \return 	ALT_ManagerResult_t
+ 361:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 362:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \retval		LAV_ALT_POS_NOT_REACHED -> posizione non raggiunta \n
+ 363:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****             LAV_ALT_POS_REACHED -> posizione raggiunta
+ 364:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 365:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 366:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \author 	Stefano Ughi
+ 367:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \date		29/01/2008
+ 368:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \version	1.0.0
+ 369:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 370:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 371:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \note		\par \b Nota 1:
+ 372:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			documentation by Stefano Ughi
+ 373:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 374:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** */
+ 375:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 376:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** static ALT_ManagerResult_t PM_ALT_Manager (void)
+ 377:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** {
+   9                             		.loc 1 377 0
+  10 0000 7E A7                   		push.l	r7
+  11                             	.LCFI0:
+  12                             	.LVL0:
+ 378:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** ALT_ManagerResult_t posReached = LAV_ALT_POS_NOT_REACHED;
+ 379:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** uint8_t Output = 0;
+ 380:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 381:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	if (AlternatoVars.stepCurrent > AlternatoVars.stepTarget)
+  13                             		.loc 1 381 0
+  14 0002 FB E2 00 00 00 00       		mov.L	#_AlternatoVars, r14
+  15 0008 CD E7 0B                		mov.B	11[r14], r7
+  16 000b 5B 73                   		movu.B	r7, r3
+  17 000d 45 E3 0C                		cmp	12[r14].UB, r3
+  18 0010 24 76                   		bgtu	.L7
+ 382:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	{
+ 383:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		/* final position has been reached */
+ 384:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 385:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		posReached = LAV_ALT_POS_REACHED;
+ 386:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 387:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	}
+ 388:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     else
+ 389:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     {
+ 390:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.cntr100msec++;
+  19                             		.loc 1 390 0
+  20 0012 CD E4 0D                		mov.B	13[r14], r4
+  21 0015 62 14                   		add	#1, r4
+  22 0017 C7 E4 0D                		mov.B	r4, 13[r14]
+ 391:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 392:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		if (AlternatoVars.cntr100msec >= 10)
+  23                             		.loc 1 392 0
+  24 001a 5B 44                   		movu.B	r4, r4
+  25 001c 61 94                   		cmp	#9, r4
+  26 001e 25 0E                   		bleu	.L3
+ 393:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		{
+ 394:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			AlternatoVars.cntrOutputHighLow++;
+  27                             		.loc 1 394 0
+  28 0020 CD E4 0E                		mov.B	14[r14], r4
+  29 0023 62 14                   		add	#1, r4
+  30 0025 C7 E4 0E                		mov.B	r4, 14[r14]
+ 395:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			AlternatoVars.cntr100msec = 0;
+  31                             		.loc 1 395 0
+  32 0028 F9 E4 0D 00             		mov.B	#0, 13[r14]
+  33                             		.balign 2,3,5
+  34                             	.L3:
+ 396:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		}
+ 397:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	    if (AlternatoVars.cntrOutputHighLow < *(AlternatoVars.data.Data + AlternatoVars.stepCurrent) )
+  35                             		.loc 1 397 0
+  36 002c FB E2 00 00 00 00       		mov.L	#_AlternatoVars, r14
+  37 0032 5B 74                   		movu.B	r7, r4
+  38 0034 EC E2                   		mov.L	[r14], r2
+  39 0036 59 E3 0E                		movu.B	14[r14], r3
+  40 0039 FE C4 24                		movu.B	[r4,r2], r4
+  41 003c 47 43                   		cmp	r4, r3
+  42 003e 22 1A                   		bgeu	.L4
+ 398:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		{
+ 399:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 400:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			/* Per il servomeccanismo a 6 posizioni il primo parametro deve essere un ON */
+ 401:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			if(AlternatoVars.numAltPositions == 6)
+  43                             		.loc 1 401 0
+  44 0040 59 EE 0F                		movu.B	15[r14], r14
+  45 0043 61 6E                   		cmp	#6, r14
+  46 0045 1F                      		bne	.L5
+ 402:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			{
+ 403:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				/*
+ 404:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				 time is not elapsed
+ 405:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				 controlla se lo step corrente è pari
+ 406:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				*/
+ 407:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				if ( (AlternatoVars.stepCurrent & BIT0_MASK) == 0 )
+  47                             		.loc 1 407 0
+  48 0046 64 17                   		and	#1, r7
+  49 0048 20 43                   		beq	.L8
+  50 004a 2E 38                   		bra	.L15
+  51                             	.L5:
+ 408:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				{
+ 409:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				    /* drive output */
+ 410:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				    Output = 1;
+ 411:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				}
+ 412:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			}
+ 413:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			else
+ 414:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			{
+ 415:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				/*
+ 416:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				 time is not elapsed
+ 417:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				 controlla se lo step corrente è dispari
+ 418:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				*/
+ 419:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				if ( AlternatoVars.stepCurrent & BIT0_MASK )
+  52                             		.loc 1 419 0
+  53 004c 64 17                   		and	#1, r7
+  54 004e EF 71                   		mov.L	r7, r1
+  55 0050 20 3E                   		beq	.L2
+ 420:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				{
+ 421:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				    /* drive output */
+ 422:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				    Output = 1;
+  56                             		.loc 1 422 0
+  57 0052 66 11                   		mov	#1, r1
+  58                             		.balign 2,3,1
+  59                             	.L14:
+ 378:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** ALT_ManagerResult_t posReached = LAV_ALT_POS_NOT_REACHED;
+  60                             		.loc 1 378 0
+  61 0054 66 07                   		mov	#0, r7
+  62 0056 2E 38                   		bra	.L2
+  63                             	.L4:
+ 423:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				}
+ 424:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			}
+ 425:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 426:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 427:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		}
+ 428:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		else
+ 429:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		{
+ 430:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			/* time is elapsed -> increment step */
+ 431:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			AlternatoVars.stepCurrent++;
+  64                             		.loc 1 431 0
+  65 0058 62 17                   		add	#1, r7
+  66 005a CF 74                   		mov.B	r7, r4
+  67 005c C7 E7 0B                		mov.B	r7, 11[r14]
+ 432:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 433:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			/* Per il servomeccanismo a 6 posizioni in caso di riposizionamento */
+ 434:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			if( AlternatoVars.altRepetitions )
+  68                             		.loc 1 434 0
+  69 005f CD E7 11                		mov.B	17[r14], r7
+  70 0062 5B 73                   		movu.B	r7, r3
+  71 0064 61 03                   		cmp	#0, r3
+  72 0066 20 12                   		beq	.L6
+ 435:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			{
+ 436:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			  if( AlternatoVars.stepCurrent == 14)
+  73                             		.loc 1 436 0
+  74 0068 5B 44                   		movu.B	r4, r4
+  75 006a 61 E4                   		cmp	#14, r4
+  76 006c 21 0C                   		bne	.L6
+ 437:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			  {
+ 438:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    AlternatoVars.altRepetitions--;
+  77                             		.loc 1 438 0
+  78 006e 60 17                   		sub	#1, r7
+  79 0070 C7 E7 11                		mov.B	r7, 17[r14]
+ 439:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    AlternatoVars.stepCurrent = 2;
+  80                             		.loc 1 439 0
+  81 0073 F9 E4 0B 02             		mov.B	#2, 11[r14]
+  82 0077 03                      		.balign 2,3,5
+  83                             	.L6:
+ 440:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			  }
+ 441:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			}
+ 442:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 443:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			/* Reset counter */
+ 444:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			AlternatoVars.cntrOutputHighLow = 0;
+  84                             		.loc 1 444 0
+  85 0078 FB 72 00 00 00 00       		mov.L	#_AlternatoVars, r7
+  86 007e 3C 7E 00                		mov.B	#0, 14[r7]
+  87 0081 03                      		.balign 2,3,1
+  88                             	.L15:
+ 379:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** uint8_t Output = 0;
+  89                             		.loc 1 379 0
+  90 0082 66 01                   		mov	#0, r1
+  91 0084 2E D0                   		bra	.L14
+  92                             	.L7:
+  93 0086 66 01                   		mov	#0, r1
+ 385:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		posReached = LAV_ALT_POS_REACHED;
+  94                             		.loc 1 385 0
+  95 0088 66 17                   		mov	#1, r7
+  96 008a 0C                      		bra	.L2
+  97                             	.L8:
+ 410:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				    Output = 1;
+  98                             		.loc 1 410 0
+  99 008b 66 11                   		mov	#1, r1
+ 100 008d 03                      		.balign 2,3,5
+ 101                             	.L2:
+ 102                             	.LVL1:
+ 445:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		}
+ 446:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     }
+ 447:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 448:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 449:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     #if defined(CONFIG_ALT_PULSE_PARTIALIZATION)
+ 450:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         /* Per 300 ms l'impulso positivo viene parzializzato */
+ 451:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         /* 370 è il valore di parzializzazione al 35% di ON  */
+ 452:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****       	if( Output && (AlternatoVars.cntrOutputHighLow < 3) )
+ 453:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****       	{
+ 454:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****       	  DIM_Const_SetLoad( Output, 0, AlternatoVars.pin, ((uint16_t)370), DIM_OFF );
+ 455:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****       	}
+ 456:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****       	else
+ 457:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****       	{
+ 458:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****       		DIM_Const_SetLoad( Output, 0, AlternatoVars.pin, DIM_MAX, DIM_OFF );
+ 459:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****       	}
+ 460:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     #else
+ 461:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         LIB_DIO_SET_LOAD(Output, AlternatoVars.pin);
+ 103                             		.loc 1 461 0
+ 104 008e FB E2 00 00 00 00       		mov.L	#_AlternatoVars, r14
+ 105 0094 CD E2 08                		mov.B	8[r14], r2
+ 106 0097 05 00 00 00             		bsr	_LIB_DIO_SET_LOAD
+ 107                             	.LVL2:
+ 462:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     #endif /* defined(CONFIG_ALT_PULSE_PARTIALIZATION) */
+ 463:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 464:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 465:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	return (posReached);
+ 466:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** }
+ 108                             		.loc 1 466 0
+ 109 009b EF 71                   		mov.L	r7, r1
+ 110 009d 64 11                   		and #1, r1
+ 111 009f 3F 77 01                		rtsd	#4, r7-r7
+ 112                             	.LFE4:
+ 114                             		.section	.text.PM_ALT_Init,"ax",@progbits
+ 115                             		.global	_PM_ALT_Init
+ 117                             	_PM_ALT_Init:
+ 118                             	.LFB0:
+ 139:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** {
+ 119                             		.loc 1 139 0
+ 120                             	.LVL3:
+ 142:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	AlternatoVars.flags.all = 0;
+ 121                             		.loc 1 142 0
+ 122 0000 FB E2 00 00 00 00       		mov.L	#_AlternatoVars, r14
+ 123 0006 F9 E4 12 00             		mov.B	#0, 18[r14]
+ 144:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	if(IS_ALT_TYPE1(pAlternatoData) || IS_ALT_TYPE2(pAlternatoData) || IS_ALT_TYPE3(pAlternatoData))
+ 124                             		.loc 1 144 0
+ 125 000a B8 94                   		movu.W	4[r1], r4
+ 126 000c 61 34                   		cmp	#3, r4
+ 127 000e 10                      		beq	.L17
+ 144:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	if(IS_ALT_TYPE1(pAlternatoData) || IS_ALT_TYPE2(pAlternatoData) || IS_ALT_TYPE3(pAlternatoData))
+ 128                             		.loc 1 144 0 is_stmt 0 discriminator 1
+ 129 000f 61 54                   		cmp	#5, r4
+ 130 0011 15                      		beq	.L17
+ 131 0012 61 84                   		cmp	#8, r4
+ 132 0014 21 3B                   		bne	.L21
+ 133                             		.balign 2,3,5
+ 134                             	.L17:
+ 146:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.data = *pAlternatoData;
+ 135                             		.loc 1 146 0 is_stmt 1
+ 136 0016 FB 42 00 00 00 00       		mov.L	#_AlternatoVars, r4
+ 137 001c E0 1E                   		mov.L	[r1], [r14]
+ 138 001e E5 1E 01 01             		mov.L	4[r1], 4[r14]
+ 147:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.pin = pin;
+ 139                             		.loc 1 147 0
+ 140 0022 C7 E2 08                		mov.B	r2, 8[r14]
+ 148:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.flags.bit.altEngineIsPresent = 1;
+ 141                             		.loc 1 148 0
+ 142 0025 CD E3 12                		mov.B	18[r14], r3
+ 143 0028 78 73                   		bset	#7, r3
+ 144 002a C7 E3 12                		mov.B	r3, 18[r14]
+ 151:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		if (IS_ALT_TYPE3(pAlternatoData))
+ 145                             		.loc 1 151 0
+ 146 002d 5D 1E 02                		movu.W	4[r1], r14
+ 147 0030 61 8E                   		cmp	#8, r14
+ 148 0032 1D                      		bne	.L19
+ 153:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		  AlternatoVars.numAltPositions = 6;
+ 149                             		.loc 1 153 0
+ 150 0033 3C 4F 06                		mov.B	#6, 15[r4]
+ 151 0036 0C                      		bra	.L20
+ 152                             	.L19:
+ 157:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		  AlternatoVars.numAltPositions = 3;
+ 153                             		.loc 1 157 0
+ 154 0037 3C 4F 03                		mov.B	#3, 15[r4]
+ 155                             		.balign 2,3,5
+ 156                             	.L20:
+ 159:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.altPositionNotDef = AlternatoVars.numAltPositions; /* please don't touch */
+ 157                             		.loc 1 159 0
+ 158 003a FB E2 00 00 00 00       		mov.L	#_AlternatoVars, r14
+ 159 0040 CD E4 0F                		mov.B	15[r14], r4
+ 160 0043 C7 E4 10                		mov.B	r4, 16[r14]
+ 162:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.altEnginePosReq = AlternatoVars.altPositionNotDef;
+ 161                             		.loc 1 162 0
+ 162 0046 C7 E4 09                		mov.B	r4, 9[r14]
+ 163:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.altEnginePosCurr = AlternatoVars.altPositionNotDef;
+ 163                             		.loc 1 163 0
+ 164 0049 C7 E4 0A                		mov.B	r4, 10[r14]
+ 140:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	AlternatoError_t err = ALTERNATO_E_OK;
+ 165                             		.loc 1 140 0
+ 166 004c 66 01                   		mov	#0, r1
+ 167                             	.LVL4:
+ 163:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.altEnginePosCurr = AlternatoVars.altPositionNotDef;
+ 168                             		.loc 1 163 0
+ 169 004e 0C                      		bra	.L18
+ 170                             	.LVL5:
+ 171                             	.L21:
+ 167:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		err = ALTERNATO_E_KO;
+ 172                             		.loc 1 167 0
+ 173 004f 66 11                   		mov	#1, r1
+ 174                             	.LVL6:
+ 175 0051 03                      		.balign 2,3,1
+ 176                             	.L18:
+ 175:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** }
+ 177                             		.loc 1 175 0
+ 178 0052 64 11                   		and #1, r1
+ 179                             	.LVL7:
+ 180 0054 02                      		rts
+ 181                             	.LFE0:
+ 183 0055 03                      		.section	.text.PM_ALT_SetPosition,"ax",@progbits
+ 184                             		.global	_PM_ALT_SetPosition
+ 186                             	_PM_ALT_SetPosition:
+ 187                             	.LFB1:
+ 201:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** {
+ 188                             		.loc 1 201 0
+ 189                             	.LVL8:
+ 190 0000 60 40                   		sub	#4, r0
+ 191                             	.LCFI1:
+ 192 0002 8A 04                   		mov.B	8[r0], r4
+ 202:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     AlternatoVars.flags.bit.altEngineReqSync = ((loadParam.b & BIT4_MASK )?1:0);
+ 193                             		.loc 1 202 0
+ 194 0004 FB E2 00 00 00 00       		mov.L	#_AlternatoVars, r14
+ 195 000a FD 84 42                		shlr	#4, r4, r2
+ 196 000d CD E3 12                		mov.B	18[r14], r3
+ 197 0010 FD 74 C2 01             		tst	#1, r2
+ 198 0014 FD E6 13                		bmne	#6, r3
+ 199 0017 C7 E3 12                		mov.B	r3, 18[r14]
+ 203:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     AlternatoVars.altEnginePosReq = loadParam.s.reg;
+ 200                             		.loc 1 203 0
+ 201 001a 64 F4                   		and #15, r4
+ 202 001c C7 E4 09                		mov.B	r4, 9[r14]
+ 204:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** }
+ 203                             		.loc 1 204 0
+ 204 001f 67 01                   		rtsd	#4
+ 205                             	.LFE1:
+ 207                             		.section	.text.PM_ALT_EngineDrv,"ax",@progbits
+ 208                             		.global	_PM_ALT_EngineDrv
+ 210                             	_PM_ALT_EngineDrv:
+ 211                             	.LFB2:
+ 220:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** {
+ 212                             		.loc 1 220 0
+ 213 0000 6E 7A                   		pushm	r7-r10
+ 214                             	.LCFI2:
+ 221:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****   	if (AlternatoVars.flags.bit.altEngineIsPresent == 0)
+ 215                             		.loc 1 221 0
+ 216 0002 FB 72 00 00 00 00       		mov.L	#_AlternatoVars, r7
+ 217 0008 ED 7A 04                		mov.L	16[r7], r10
+ 218 000b 7C FA                   		btst #15, r10
+ 219 000d 3A ED 00                		beq	.L30
+ 226:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	if (AlternatoVars.flags.bit.altEngineReqSync)
+ 220                             		.loc 1 226 0
+ 221 0010 7C EA                   		btst #14, r10
+ 222 0012 20 3A                   		beq	.L33
+ 223                             	.LVL9:
+ 224                             	.LBB6:
+ 225                             	.LBB7:
+ 302:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****   AlternatoVars.altRepetitions = 0;
+ 226                             		.loc 1 302 0
+ 227 0014 3C F1 00                		mov.B	#0, 17[r7]
+ 328:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			AlternatoVars.stepCurrent = 0;
+ 228                             		.loc 1 328 0
+ 229 0017 3C 7B 00                		mov.B	#0, 11[r7]
+ 330:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			if( AlternatoVars.data.DataLenght == 3 )
+ 230                             		.loc 1 330 0
+ 231 001a 5D 7E 02                		movu.W	4[r7], r14
+ 232 001d 61 3E                   		cmp	#3, r14
+ 233 001f 1E                      		bne	.L34
+ 332:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.stepTarget = 3;
+ 234                             		.loc 1 332 0
+ 235 0020 C7 7E 0C                		mov.B	r14, 12[r7]
+ 236 0023 2E 0F                   		bra	.L35
+ 237                             	.L34:
+ 334:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			else if( AlternatoVars.data.DataLenght == 5 )
+ 238                             		.loc 1 334 0
+ 239 0025 61 5E                   		cmp	#5, r14
+ 240 0027 1D                      		bne	.L36
+ 336:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.stepTarget = 6;
+ 241                             		.loc 1 336 0
+ 242 0028 3C 7C 06                		mov.B	#6, 12[r7]
+ 243 002b 0F                      		bra	.L35
+ 244                             	.L36:
+ 340:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			  AlternatoVars.stepTarget = 13;
+ 245                             		.loc 1 340 0
+ 246 002c 3C 7C 0D                		mov.B	#13, 12[r7]
+ 341:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			  AlternatoVars.altRepetitions = 5;
+ 247                             		.loc 1 341 0
+ 248 002f 3C F1 05                		mov.B	#5, 17[r7]
+ 249                             		.balign 2,3,5
+ 250                             	.L35:
+ 350:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	AlternatoVars.cntr100msec = 0;
+ 251                             		.loc 1 350 0
+ 252 0032 FB 72 00 00 00 00       		mov.L	#_AlternatoVars, r7
+ 253 0038 3C 7D 00                		mov.B	#0, 13[r7]
+ 351:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	AlternatoVars.cntrOutputHighLow = 0;
+ 254                             		.loc 1 351 0
+ 255 003b 3C 7E 00                		mov.B	#0, 14[r7]
+ 256                             	.LBE7:
+ 257                             	.LBE6:
+ 229:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.flags.bit.waitForSyncPos = 1;
+ 258                             		.loc 1 229 0
+ 259 003e CD 7A 12                		mov.B	18[r7], r10
+ 260 0041 78 5A                   		bset	#5, r10
+ 230:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.altEnginePosCurr = AlternatoVars.altPositionNotDef; /* flag posizione corrente non 
+ 261                             		.loc 1 230 0
+ 262 0043 C5 77 10 0A             		mov.B	16[r7], 10[r7]
+ 231:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		AlternatoVars.flags.bit.altEngineReqSync = 0;
+ 263                             		.loc 1 231 0
+ 264 0047 7A 6A                   		bclr	#6, r10
+ 265 0049 C7 7A 12                		mov.B	r10, 18[r7]
+ 266                             	.LVL10:
+ 267                             		.balign 2,3,5
+ 268                             	.L33:
+ 233:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     if (AlternatoVars.flags.bit.waitForSyncPos == 1)
+ 269                             		.loc 1 233 0
+ 270 004c FB 72 00 00 00 00       		mov.L	#_AlternatoVars, r7
+ 271 0052 ED 7E 04                		mov.L	16[r7], r14
+ 272 0055 EF EA                   		mov.L	r14, r10
+ 273 0057 76 2A 00 20             		and	#0x2000, r10
+ 274 005b 20 1A                   		beq	.L37
+ 235:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		if (PM_ALT_Manager() == LAV_ALT_POS_REACHED)
+ 275                             		.loc 1 235 0
+ 276 005d 05 00 00 00             		bsr	_PM_ALT_Manager
+ 277                             	.LVL11:
+ 278 0061 5B 11                   		movu.B	r1, r1
+ 279 0063 61 11                   		cmp	#1, r1
+ 280 0065 3B 95 00                		bne	.L30
+ 237:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         	AlternatoVars.altEnginePosCurr = 0;	  /* flag posizione corrente 0 */
+ 281                             		.loc 1 237 0
+ 282 0068 3C 7A 00                		mov.B	#0, 10[r7]
+ 238:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         	AlternatoVars.flags.bit.initIncPos = 0;
+ 283                             		.loc 1 238 0
+ 284 006b CD 7A 12                		mov.B	18[r7], r10
+ 285 006e 7A 4A                   		bclr	#4, r10
+ 239:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         	AlternatoVars.flags.bit.waitForSyncPos = 0;
+ 286                             		.loc 1 239 0
+ 287 0070 7A 5A                   		bclr	#5, r10
+ 288 0072 38 84 00                		bra	.L50
+ 289                             	.L37:
+ 244:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         if ( ( AlternatoVars.altEnginePosReq != AlternatoVars.altEnginePosCurr ) &&
+ 290                             		.loc 1 244 0
+ 291 0075 B2 7A                   		movu.B	9[r7], r2
+ 292 0077 B2 F3                   		movu.B	10[r7], r3
+ 293 0079 47 32                   		cmp	r3, r2
+ 294 007b 20 7F                   		beq	.L30
+ 244:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         if ( ( AlternatoVars.altEnginePosReq != AlternatoVars.altEnginePosCurr ) &&
+ 295                             		.loc 1 244 0 is_stmt 0 discriminator 1
+ 296 007d B3 FC                   		movu.B	15[r7], r4
+ 297 007f 47 42                   		cmp	r4, r2
+ 298 0081 22 79                   		bgeu	.L30
+ 247:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****         	if ( AlternatoVars.altEnginePosCurr >= AlternatoVars.numAltPositions )
+ 299                             		.loc 1 247 0 is_stmt 1
+ 300 0083 47 43                   		cmp	r4, r3
+ 301 0085 23 09                   		bltu	.L39
+ 250:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.flags.bit.altEngineReqSync = 1;
+ 302                             		.loc 1 250 0
+ 303 0087 CD 7A 12                		mov.B	18[r7], r10
+ 304 008a 78 6A                   		bset	#6, r10
+ 305 008c 2E 6A                   		bra	.L50
+ 306                             	.L39:
+ 254:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     			if ( AlternatoVars.flags.bit.initIncPos == 0 )
+ 307                             		.loc 1 254 0
+ 308 008e 76 2E 00 10             		and	#0x1000, r14
+ 309 0092 21 37                   		bne	.L40
+ 310                             	.LVL12:
+ 311                             	.LBB8:
+ 312                             	.LBB9:
+ 302:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****   AlternatoVars.altRepetitions = 0;
+ 313                             		.loc 1 302 0
+ 314 0094 C7 7E 11                		mov.B	r14, 17[r7]
+ 308:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			if( AlternatoVars.data.DataLenght == 3 )
+ 315                             		.loc 1 308 0
+ 316 0097 5D 7A 02                		movu.W	4[r7], r10
+ 317 009a 61 3A                   		cmp	#3, r10
+ 318 009c 19                      		bne	.L41
+ 310:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.stepCurrent = 4;
+ 319                             		.loc 1 310 0
+ 320 009d 3C 7B 04                		mov.B	#4, 11[r7]
+ 311:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.stepTarget  = 5;
+ 321                             		.loc 1 311 0
+ 322 00a0 3C 7C 05                		mov.B	#5, 12[r7]
+ 323 00a3 2E 13                   		bra	.L42
+ 324                             	.L41:
+ 313:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			else if( AlternatoVars.data.DataLenght == 5 )
+ 325                             		.loc 1 313 0
+ 326 00a5 61 5A                   		cmp	#5, r10
+ 327 00a7 18                      		bne	.L43
+ 315:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.stepCurrent = 7;
+ 328                             		.loc 1 315 0
+ 329 00a8 3C 7B 07                		mov.B	#7, 11[r7]
+ 316:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.stepTarget  = 8;
+ 330                             		.loc 1 316 0
+ 331 00ab 3C 7C 08                		mov.B	#8, 12[r7]
+ 332 00ae 08                      		bra	.L42
+ 333                             	.L43:
+ 320:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.stepCurrent = 14;
+ 334                             		.loc 1 320 0
+ 335 00af 3C 7B 0E                		mov.B	#14, 11[r7]
+ 321:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 				AlternatoVars.stepTarget  = 15;
+ 336                             		.loc 1 321 0
+ 337 00b2 3C 7C 0F                		mov.B	#15, 12[r7]
+ 338 00b5 03                      		.balign 2,3,5
+ 339                             	.L42:
+ 350:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	AlternatoVars.cntr100msec = 0;
+ 340                             		.loc 1 350 0
+ 341 00b6 FB 72 00 00 00 00       		mov.L	#_AlternatoVars, r7
+ 342 00bc 3C 7D 00                		mov.B	#0, 13[r7]
+ 351:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	AlternatoVars.cntrOutputHighLow = 0;
+ 343                             		.loc 1 351 0
+ 344 00bf 3C 7E 00                		mov.B	#0, 14[r7]
+ 345                             	.LBE9:
+ 346                             	.LBE8:
+ 257:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 					AlternatoVars.flags.bit.initIncPos = 1;
+ 347                             		.loc 1 257 0
+ 348 00c2 CD 7A 12                		mov.B	18[r7], r10
+ 349 00c5 78 4A                   		bset	#4, r10
+ 350 00c7 2E 2F                   		bra	.L50
+ 351                             	.LVL13:
+ 352                             	.L40:
+ 261:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    	if ( PM_ALT_Manager() == LAV_ALT_POS_REACHED )
+ 353                             		.loc 1 261 0
+ 354 00c9 05 00 00 00             		bsr	_PM_ALT_Manager
+ 355                             	.LVL14:
+ 356 00cd 5B 11                   		movu.B	r1, r1
+ 357 00cf 61 11                   		cmp	#1, r1
+ 358 00d1 21 29                   		bne	.L30
+ 263:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    		if( AlternatoVars.altEnginePosCurr < (AlternatoVars.numAltPositions-1) )
+ 359                             		.loc 1 263 0
+ 360 00d3 CD 7E 0A                		mov.B	10[r7], r14
+ 361 00d6 5B E3                   		movu.B	r14, r3
+ 362 00d8 B3 FC                   		movu.B	15[r7], r4
+ 363 00da 60 14                   		sub	#1, r4
+ 364 00dc 47 43                   		cmp	r4, r3
+ 365 00de 28 08                   		bge	.L44
+ 265:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    			AlternatoVars.altEnginePosCurr ++;
+ 366                             		.loc 1 265 0
+ 367 00e0 62 1E                   		add	#1, r14
+ 368 00e2 C7 7E 0A                		mov.B	r14, 10[r7]
+ 369 00e5 0D                      		bra	.L45
+ 370                             	.L44:
+ 269:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			    			AlternatoVars.altEnginePosCurr = 0;
+ 371                             		.loc 1 269 0
+ 372 00e6 C7 7A 0A                		mov.B	r10, 10[r7]
+ 373 00e9 03                      		.balign 2,3,5
+ 374                             	.L45:
+ 271:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****     					AlternatoVars.flags.bit.initIncPos = 0;
+ 375                             		.loc 1 271 0
+ 376 00ea FB 72 00 00 00 00       		mov.L	#_AlternatoVars, r7
+ 377 00f0 CD 7A 12                		mov.B	18[r7], r10
+ 378 00f3 7A 4A                   		bclr	#4, r10
+ 379 00f5 03                      		.balign 2,3,5
+ 380                             	.L50:
+ 381 00f6 C7 7A 12                		mov.B	r10, 18[r7]
+ 382 00f9 03                      		.balign 2,3,2
+ 383                             	.L30:
+ 277:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** }
+ 384                             		.loc 1 277 0
+ 385 00fa 3F 7A 04                		rtsd	#16, r7-r10
+ 386                             	.LFE2:
+ 388 00fd 03                      		.section	.text.PM_ALT_getNumPos,"ax",@progbits
+ 389                             		.global	_PM_ALT_getNumPos
+ 391                             	_PM_ALT_getNumPos:
+ 392                             	.LFB5:
+ 467:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 468:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 469:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 470:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 471:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /**
+ 472:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** Ritorna il numero di posizioni del corrente alternato.
+ 473:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 474:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \attention \b AlternatoVars used as I/O
+ 475:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 476:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \return 	uint8_t
+ 477:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 478:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \retval		AlternatoVars.numAltPositions
+ 479:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 480:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \author 	Leonardo Sparti
+ 481:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \date		21/02/2012
+ 482:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \version	1.0.0
+ 483:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 484:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 485:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \note		\par \b Nota 1:
+ 486:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			documentation by Leonardo Sparti
+ 487:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 488:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** */
+ 489:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 490:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** uint8_t PM_ALT_getNumPos( void )
+ 491:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** {
+ 393                             		.loc 1 491 0
+ 492:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	return( AlternatoVars.numAltPositions );
+ 493:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** }
+ 394                             		.loc 1 493 0
+ 395 0000 FB E2 00 00 00 00       		mov.L	#_AlternatoVars, r14
+ 396 0006 59 E1 0F                		movu.B	15[r14], r1
+ 397 0009 02                      		rts
+ 398                             	.LFE5:
+ 400                             		.section	.text.PM_ALT_getPosNotDef,"ax",@progbits
+ 401                             		.global	_PM_ALT_getPosNotDef
+ 403                             	_PM_ALT_getPosNotDef:
+ 404                             	.LFB6:
+ 494:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 495:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 496:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /**
+ 497:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** Ritorna il valore "Posizione non definita".
+ 498:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 499:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \attention \b AlternatoVars used as I/O
+ 500:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 501:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \return 	uint8_t
+ 502:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 503:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \retval		AlternatoVars.altPositionNotDef
+ 504:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 505:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \author 	Leonardo Sparti
+ 506:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \date		21/02/2012
+ 507:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \version	1.0.0
+ 508:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 509:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 510:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \note		\par \b Nota 1:
+ 511:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			documentation by Leonardo Sparti
+ 512:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 513:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** */
+ 514:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 515:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** uint8_t PM_ALT_getPosNotDef( void )
+ 516:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** {
+ 405                             		.loc 1 516 0
+ 517:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	return( AlternatoVars.altPositionNotDef );
+ 518:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** }
+ 406                             		.loc 1 518 0
+ 407 0000 FB E2 00 00 00 00       		mov.L	#_AlternatoVars, r14
+ 408 0006 59 E1 10                		movu.B	16[r14], r1
+ 409 0009 02                      		rts
+ 410                             	.LFE6:
+ 412                             		.section	.text.PM_ALT_getPos,"ax",@progbits
+ 413                             		.global	_PM_ALT_getPos
+ 415                             	_PM_ALT_getPos:
+ 416                             	.LFB7:
+ 519:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 520:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 521:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 522:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /**
+ 523:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** Ritorna la posizione corrente dell'alternato.
+ 524:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 525:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \attention \b AlternatoVars used as I/O
+ 526:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 527:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \return 	uint8_t
+ 528:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 529:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \retval		valori ammissibili tra 0 e (AlternatoVars.numAltPositions - 1)
+ 530:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 531:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \author 	Stefano Ughi
+ 532:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \date		30/01/2008
+ 533:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \version	1.0.0
+ 534:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 535:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 536:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \note		\par \b Nota 1:
+ 537:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			documentation by Stefano Ughi
+ 538:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 539:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** */
+ 540:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 541:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** uint8_t PM_ALT_getPos( void )
+ 542:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** {
+ 417                             		.loc 1 542 0
+ 543:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	return( AlternatoVars.altEnginePosCurr );
+ 544:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** }
+ 418                             		.loc 1 544 0
+ 419 0000 FB E2 00 00 00 00       		mov.L	#_AlternatoVars, r14
+ 420 0006 59 E1 0A                		movu.B	10[r14], r1
+ 421 0009 02                      		rts
+ 422                             	.LFE7:
+ 424                             		.section	.text.PM_ALT_posReached,"ax",@progbits
+ 425                             		.global	_PM_ALT_posReached
+ 427                             	_PM_ALT_posReached:
+ 428                             	.LFB8:
+ 545:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 546:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 547:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** /**
+ 548:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** Posizione servomeccanismo raggiunta o meno.
+ 549:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 550:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \attention \b AlternatoVars used as I/O
+ 551:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 552:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \return 	bool_t
+ 553:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 554:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \retval		TRUE -> posizione corrente = posizione richiesta e \n
+ 555:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****             posizione corrente compresa tra quelle possibili \n
+ 556:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c ****             FALSE -> altrimenti
+ 557:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 558:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 559:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \author 	Stefano Ughi
+ 560:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \date		30/01/2008
+ 561:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \version	1.0.0
+ 562:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 563:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 564:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** \note		\par \b Nota 1:
+ 565:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 			documentation by Stefano Ughi
+ 566:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 567:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** */
+ 568:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 
+ 569:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** bool_t PM_ALT_posReached( void )
+ 570:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** {
+ 429                             		.loc 1 570 0
+ 571:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	if( ( AlternatoVars.altEnginePosReq == AlternatoVars.altEnginePosCurr ) &&
+ 430                             		.loc 1 571 0
+ 431 0000 FB E2 00 00 00 00       		mov.L	#_AlternatoVars, r14
+ 432 0006 59 E4 09                		movu.B	9[r14], r4
+ 433 0009 45 E4 0A                		cmp	10[r14].UB, r4
+ 434 000c 18                      		bne	.L56
+ 572:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	    ( AlternatoVars.altEnginePosCurr < AlternatoVars.numAltPositions ) )
+ 573:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	{
+ 574:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		return TRUE;
+ 435                             		.loc 1 574 0 discriminator 1
+ 436 000d 45 E4 0F                		cmp	15[r14].UB, r4
+ 437 0010 FC DB 13                		scltu.L	r1
+ 438 0013 02                      		rts
+ 439                             	.L56:
+ 575:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	}
+ 576:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	else
+ 577:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	{
+ 578:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 		return FALSE;
+ 440                             		.loc 1 578 0
+ 441 0014 66 01                   		mov.L	#0, r1
+ 579:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** 	}
+ 580:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato\PM_Alternato.c **** }
+ 442                             		.loc 1 580 0
+ 443 0016 02                      		rts
+ 444                             	.LFE8:
+ 446                             		.comm	_AlternatoVars,20,4
+ 551                             	.Letext0:
+ 552                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 553                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_IOManager/OutputManagerEx
+ 554                             		.file 4 "C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_Alternato/PM_Alternato.h"
+ 555                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_DigitalIO/DigitalOutputs.
+DEFINED SYMBOLS
+                            *ABS*:00000000 PM_Alternato.c
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:6      .text.PM_ALT_Manager:00000000 _PM_ALT_Manager
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:10     .text.PM_ALT_Manager:00000000 L0
+                            *COM*:00000014 _AlternatoVars
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:117    .text.PM_ALT_Init:00000000 _PM_ALT_Init
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:122    .text.PM_ALT_Init:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:186    .text.PM_ALT_SetPosition:00000000 _PM_ALT_SetPosition
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:190    .text.PM_ALT_SetPosition:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:210    .text.PM_ALT_EngineDrv:00000000 _PM_ALT_EngineDrv
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:213    .text.PM_ALT_EngineDrv:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:391    .text.PM_ALT_getNumPos:00000000 _PM_ALT_getNumPos
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:395    .text.PM_ALT_getNumPos:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:403    .text.PM_ALT_getPosNotDef:00000000 _PM_ALT_getPosNotDef
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:407    .text.PM_ALT_getPosNotDef:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:415    .text.PM_ALT_getPos:00000000 _PM_ALT_getPos
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:419    .text.PM_ALT_getPos:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:427    .text.PM_ALT_posReached:00000000 _PM_ALT_posReached
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:431    .text.PM_ALT_posReached:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:448    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:7      .text.PM_ALT_Manager:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:118    .text.PM_ALT_Init:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:187    .text.PM_ALT_SetPosition:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:211    .text.PM_ALT_EngineDrv:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:392    .text.PM_ALT_getNumPos:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:404    .text.PM_ALT_getPosNotDef:00000000 .LFB6
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:416    .text.PM_ALT_getPos:00000000 .LFB7
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:428    .text.PM_ALT_posReached:00000000 .LFB8
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1117   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1795   .debug_str:000000e2 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1793   .debug_str:00000090 .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1749   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1769   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1845   .debug_str:00000258 .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1789   .debug_str:00000073 .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1811   .debug_str:00000162 .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1807   .debug_str:0000014b .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1787   .debug_str:0000006a .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1775   .debug_str:0000001c .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1781   .debug_str:00000049 .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1873   .debug_str:00000320 .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1839   .debug_str:00000229 .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1783   .debug_str:00000057 .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1785   .debug_str:00000063 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1797   .debug_str:00000108 .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1779   .debug_str:00000042 .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1875   .debug_str:00000328 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1817   .debug_str:00000188 .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1821   .debug_str:000001a4 .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1855   .debug_str:000002a7 .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1861   .debug_str:000002c7 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1829   .debug_str:000001e0 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1819   .debug_str:00000193 .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1837   .debug_str:0000021f .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1863   .debug_str:000002cf .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1823   .debug_str:000001ad .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1835   .debug_str:0000020e .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1841   .debug_str:00000237 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1773   .debug_str:00000011 .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1869   .debug_str:00000301 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1853   .debug_str:00000296 .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1809   .debug_str:0000015d .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1851   .debug_str:00000286 .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1771   .debug_str:00000000 .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1813   .debug_str:00000175 .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1857   .debug_str:000002ae .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1865   .debug_str:000002e3 .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1867   .debug_str:000002ef .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1877   .debug_str:0000032d .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1843   .debug_str:00000246 .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1825   .debug_str:000001c0 .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1879   .debug_str:0000033d .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1833   .debug_str:000001fc .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1777   .debug_str:00000033 .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:112    .text.PM_ALT_Manager:000000a2 .LFE4
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1606   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1831   .debug_str:000001f1 .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1619   .debug_loc:00000020 .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1815   .debug_str:00000181 .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1631   .debug_loc:0000003f .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:107    .text.PM_ALT_Manager:0000009b .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1805   .debug_str:0000013f .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:181    .text.PM_ALT_Init:00000055 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1799   .debug_str:00000115 .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1643   .debug_loc:0000005e .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1668   .debug_loc:00000098 .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1803   .debug_str:0000012c .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:205    .text.PM_ALT_SetPosition:00000021 .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1680   .debug_loc:000000b7 .LLST5
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1883   .debug_str:00000351 .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1847   .debug_str:00000262 .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1801   .debug_str:00000124 .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1827   .debug_str:000001cf .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:386    .text.PM_ALT_EngineDrv:000000fd .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1693   .debug_loc:000000d7 .LLST6
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:224    .text.PM_ALT_EngineDrv:00000014 .LBB6
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:257    .text.PM_ALT_EngineDrv:0000003e .LBE6
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1706   .debug_loc:000000f7 .LLST7
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:311    .text.PM_ALT_EngineDrv:00000094 .LBB8
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:346    .text.PM_ALT_EngineDrv:000000c2 .LBE8
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1714   .debug_loc:0000010b .LLST8
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:277    .text.PM_ALT_EngineDrv:00000061 .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:355    .text.PM_ALT_EngineDrv:000000cd .LVL14
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1885   .debug_str:0000035b .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:398    .text.PM_ALT_getNumPos:0000000a .LFE5
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1791   .debug_str:0000007c .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:410    .text.PM_ALT_getPosNotDef:0000000a .LFE6
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1859   .debug_str:000002b9 .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:422    .text.PM_ALT_getPos:0000000a .LFE7
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1849   .debug_str:00000274 .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:444    .text.PM_ALT_posReached:00000017 .LFE8
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1881   .debug_str:00000343 .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:1871   .debug_str:0000030f .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:11     .text.PM_ALT_Manager:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:12     .text.PM_ALT_Manager:00000002 .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:102    .text.PM_ALT_Manager:0000008e .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:120    .text.PM_ALT_Init:00000000 .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:167    .text.PM_ALT_Init:0000004e .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:170    .text.PM_ALT_Init:0000004f .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:174    .text.PM_ALT_Init:00000051 .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:179    .text.PM_ALT_Init:00000054 .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:191    .text.PM_ALT_SetPosition:00000002 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:214    .text.PM_ALT_EngineDrv:00000002 .LCFI2
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:223    .text.PM_ALT_EngineDrv:00000014 .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:266    .text.PM_ALT_EngineDrv:0000004c .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:310    .text.PM_ALT_EngineDrv:00000094 .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:351    .text.PM_ALT_EngineDrv:000000c9 .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccYEHzTj.s:557    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_LIB_DIO_SET_LOAD

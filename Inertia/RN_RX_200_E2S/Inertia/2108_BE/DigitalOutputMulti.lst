@@ -1,0 +1,685 @@
+   1                             		.file	"DigitalOutputMulti.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.PM_DigDelayedMulti_InitSync,"ax",@progbits
+   5                             		.global	_PM_DigDelayedMulti_InitSync
+   7                             	_PM_DigDelayedMulti_InitSync:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti/DigitalOutput
+   1:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** Copyright (c) 2004-2005, Indesit Company, EDT.
+   3:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+   7:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+   8:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /**
+   9:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** Gestione di carichi collegati a 2 pin utilizzati in modalità On/Off.
+  10:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \file    DigitalOutputMulti.c
+  11:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \ingroup PM_DigitalOutputMulti
+  12:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \version 1.0.0
+  13:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \date    28/01/2008
+  14:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \author  Stefano Ughi
+  15:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** */
+  16:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  17:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* Old Versions
+  18:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \version 1.4.0
+  19:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \date    gg/mm/aaaa
+  20:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \author  Progettista_1
+  21:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  22:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \version 1.3.0
+  23:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \date    10/04/2004
+  24:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \author  Progettista_1
+  25:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** */
+  26:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  27:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* ******** */
+  28:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* Includes */
+  29:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* ******** */
+  30:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #if defined(PLATFORM2_SUPPORT) && ( defined(DR_DRYER) || defined (DW_DEA700) || defined(WILD_CARD) 
+  31:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #include "Config.h"
+  32:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #include "DigitalOutputMulti.h"
+  33:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #else
+  34:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #include "SkeletonGlobal.h"
+  35:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #include "IO_Manager.h"
+  36:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #endif
+  37:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #include "LIB_ClassBVar.h"
+  38:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  39:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* ****************** */
+  40:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* Defines and Macros */
+  41:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* ****************** */
+  42:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #if defined(CONFIG_DIGITAL_OUTPUT_MULTI_NUM_OF_LOADS)
+  43:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #define DMD_NUM_OF_LOADS CONFIG_DIGITAL_OUTPUT_MULTI_NUM_OF_LOADS
+  44:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  45:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  46:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* *************************** */
+  47:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* Typedef, Structs and Unions */
+  48:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* *************************** */
+  49:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** typedef struct DMDEL_Struct {
+  50:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  51:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t   pin1;           /* 1� Pin */
+  52:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t   pin2;           /* 2� Pin */
+  53:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t   act_delay;      /* Ritardo di attivazione */
+  54:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t   deact_delay;    /* Ritardo di disattivazione */
+  55:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t   delay_cnt;      /* Contatore per la gestione del ritardo di pilotaggio */
+  56:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t   loadState;      /* Stato del carico */
+  57:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	
+  58:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** } DMDEL_Type;
+  59:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  60:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* **************************** */
+  61:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* Prototype of local functions */
+  62:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* **************************** */
+  63:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  64:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* **************************** */
+  65:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* External functions           */
+  66:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* **************************** */
+  67:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  68:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* ****************** */
+  69:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* Exported variables */
+  70:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* ****************** */
+  71:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  72:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* **************** */
+  73:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* Global variables */
+  74:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* **************** */
+  75:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** static DMDEL_Type DMDVar[DMD_NUM_OF_LOADS];
+  76:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** static uint8_t    DMDLoads;
+  77:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  78:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* ***************** */
+  79:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* Exported function */
+  80:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* ***************** */
+  81:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** void PM_DigDelayedMulti_InitSync(void)
+  82:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** {	int i;
+  10                             		.loc 1 82 0
+  83:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	SAFETY_REGION_START();
+  84:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	DMDLoads = 0;
+  11                             		.loc 1 84 0
+  12 0000 FB E2 00 00 00 00       		mov.L	#_DMDLoads, r14
+  13 0006 F8 E4 00                		mov.B	#0, [r14]
+  14                             	.LVL0:
+  15 0009 02                      		rts
+  16                             	.LFE0:
+  18                             		.section	.text.DigDelayedMulti_Init,"ax",@progbits
+  19                             		.global	_DigDelayedMulti_Init
+  21                             	_DigDelayedMulti_Init:
+  22                             	.LFB1:
+  85:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	for(i=0;i<DMD_NUM_OF_LOADS; i++){
+  86:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 		SAFETY_DATA_ELEM_UPDATE( DMDVar, i );
+  87:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	}
+  88:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	SAFETY_DATA_UPDATE( DMDLoads );
+  89:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	SAFETY_REGION_END();
+  90:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** }
+  91:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  92:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /**
+  93:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** Funzione per l'inizializzazione di un carico con PylotType DIGITALDELAYED_MULTI_L. 
+  94:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  95:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	pModulePins puntatore al campo contenente i 2 pins
+  96:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	delay_activation: ritardo, impostabile da setting, per l'attivazione del carico
+  97:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	delay_deactivation: ritardo, impostabile da setting, per la disattivazione del carico
+  98:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  99:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \author 	Leonardo Sparti
+ 100:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \date		  27/05/2011
+ 101:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \version	1.0.0
+ 102:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****    
+ 103:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \note		\par \b Nota 1:
+ 104:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 			documentation by Leonardo Sparti
+ 105:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 106:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** */
+ 107:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** void DigDelayedMulti_Init(pModulesPins_t pModulePins, uint8_t delay_activation, uint8_t delay_deact
+ 108:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** {
+  23                             		.loc 1 108 0
+  24                             	.LVL1:
+ 109:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   DMDEL_Type *pDMDVar;
+ 110:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   
+ 111:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   PLT_ASSERT(DMDLoads < DMD_NUM_OF_LOADS)
+ 112:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 113:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_REGION_START();
+ 114:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_DATA_CHECK( DMDLoads );
+ 115:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_DATA_ELEM_CHECK( DMDVar, DMDLoads );
+ 116:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 117:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   pDMDVar = &DMDVar[DMDLoads];
+  25                             		.loc 1 117 0
+  26 0000 FB 42 00 00 00 00       		mov.L	#_DMDLoads, r4
+  27 0006 CC 45                   		mov.B	[r4], r5
+  28 0008 5B 5E                   		movu.B	r5, r14
+  29 000a 63 6E                   		mul	#6, r14
+  30 000c 70 EE 00 00 00 00       		add	#_DMDVar, r14
+  31                             	.LVL2:
+ 118:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   
+ 119:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   pDMDVar->pin1 = *pModulePins;
+  32                             		.loc 1 119 0
+  33 0012 C0 1E                   		mov.B	[r1], [r14]
+ 120:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   pDMDVar->pin2 = *(pModulePins+1);
+  34                             		.loc 1 120 0
+  35 0014 C5 1E 01 01             		mov.B	1[r1], 1[r14]
+ 121:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   pDMDVar->act_delay = delay_activation;
+  36                             		.loc 1 121 0
+  37 0018 C7 E2 02                		mov.B	r2, 2[r14]
+ 122:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   pDMDVar->deact_delay = delay_deactivation;
+  38                             		.loc 1 122 0
+  39 001b C7 E3 03                		mov.B	r3, 3[r14]
+ 123:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   pDMDVar->delay_cnt = 0;
+  40                             		.loc 1 123 0
+  41 001e F9 E4 04 00             		mov.B	#0, 4[r14]
+ 124:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   
+ 125:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   DMDLoads++;
+  42                             		.loc 1 125 0
+  43 0022 62 15                   		add	#1, r5
+  44 0024 C3 45                   		mov.B	r5, [r4]
+  45 0026 02                      		rts
+  46                             	.LFE1:
+  48                             		.section	.text.DigOutMultiSetLoad,"ax",@progbits
+  49                             		.global	_DigOutMultiSetLoad
+  51                             	_DigOutMultiSetLoad:
+  52                             	.LFB2:
+ 126:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 127:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_DATA_ELEM_UPDATE( DMDVar, DMDLoads );
+ 128:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_DATA_UPDATE( DMDLoads );
+ 129:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_REGION_END();
+ 130:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** }
+ 131:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 132:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /**
+ 133:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** Funzione per l'attivazione/disattivazione di un carico con PylotType DIGITAL_OUTPUT_MULTI_L.
+ 134:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \n Se cfg = DIGOUT_MULTI_FIRST_PIN viene pilotato solo il primo pin mentre il secondo
+ 135:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \n mantiene lo stato corrente
+ 136:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 137:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \n Se cfg = DIGOUT_MULTI_SECOND_PIN viene pilotato solo il secondo pin mentre il primo
+ 138:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \n mantiene lo stato corrente
+ 139:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 140:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \n Se cfg è diverso dalle precedenti, allora i pin vengono pilotati insieme
+ 141:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 142:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	loadParam type L_PARAM stato del carico
+ 143:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	pModulePins puntatore al campo contenente i 2 pins che servono a \n
+ 144:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****                 pilotare il carico
+ 145:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 146:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \author 	Stefano Ughi
+ 147:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \date		10/03/2008
+ 148:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \version	1.0.0
+ 149:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****    
+ 150:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \note		\par \b Nota 1:
+ 151:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 			documentation by Stefano Ughi
+ 152:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 153:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** */
+ 154:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** void DigOutMultiSetLoad(L_PARAM loadParam, pModulesPins_t pModulePins )
+ 155:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** {
+  53                             		.loc 1 155 0
+  54                             	.LVL3:
+  55 0000 6E 7A                   		pushm	r7-r10
+  56                             	.LCFI0:
+  57 0002 60 40                   		sub	#4, r0
+  58                             	.LCFI1:
+  59 0004 CD 0A 18                		mov.B	24[r0], r10
+  60 0007 EF 27                   		mov.L	r2, r7
+ 156:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t loadState1 = (loadParam.s.reg?1:0);
+  61                             		.loc 1 156 0
+  62 0009 64 FA                   		and	#15, r10
+  63 000b FC DB A1                		scne.L	r10
+ 157:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t loadState2 = loadState1;
+ 158:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	#if defined(PLATFORM2_SUPPORT) && ( defined(DR_DRYER) || defined (DW_DEA700) || defined(WILD_CARD)
+ 159:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #if defined(CONFIG_DIGITAL_OUTPUT_MULTI_SELECTABLE_PINS)
+ 160:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t cfg;
+ 161:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	cfg = loadParam.s.config;
+ 162:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	if(cfg == DIGOUT_MULTI_FIRST_PIN )
+ 163:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	{
+ 164:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 		loadState1 = 1 - loadState1;
+ 165:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	}
+ 166:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	else if (cfg == DIGOUT_MULTI_SECOND_PIN)
+ 167:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	{
+ 168:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 		loadState2 = 1 - loadState2;
+ 169:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	}
+ 170:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #endif /* CONFIG_DIGITAL_OUTPUT_MULTI_SELECTABLE_PINS */
+ 171:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 172:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	LIB_DIO_SET_LOAD(loadState1, *pModulePins);
+  64                             		.loc 1 172 0
+  65 000e CF A1                   		mov.B	r10, r1
+  66 0010 CC 22                   		mov.B	[r2], r2
+  67                             	.LVL4:
+  68 0012 05 00 00 00             		bsr	_LIB_DIO_SET_LOAD
+  69                             	.LVL5:
+ 173:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	LIB_DIO_SET_LOAD(loadState2, *(pModulePins+1));
+  70                             		.loc 1 173 0
+  71 0016 CF A1                   		mov.B	r10, r1
+  72 0018 88 7A                   		mov.B	1[r7], r2
+ 174:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 175:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	#else
+ 176:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     SET_LOAD( loadState1, *pModulePins );
+ 177:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     SET_LOAD( loadState2, *(pModulePins+1) );
+ 178:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	#endif
+ 179:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** }
+  73                             		.loc 1 179 0
+  74 001a 62 40                   		add	#4, r0
+  75 001c 6F 7A                   		popm	r7-r10
+  76                             	.LVL6:
+ 173:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	LIB_DIO_SET_LOAD(loadState2, *(pModulePins+1));
+  77                             		.loc 1 173 0
+  78 001e 04 00 00 00             		bra	_LIB_DIO_SET_LOAD
+  79                             	.LVL7:
+  80                             	.LFE2:
+  82                             		.section	.text.DigOutMul3PSetLoad,"ax",@progbits
+  83                             		.global	_DigOutMul3PSetLoad
+  85                             	_DigOutMul3PSetLoad:
+  86                             	.LFB3:
+ 180:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 181:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /**
+ 182:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** Funzione per l'attivazione/disattivazione di un carico con PylotType DIGITAL_OUTPUT_MULTI_3P_L. 
+ 183:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 184:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	loadParam type L_PARAM stato del carico
+ 185:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	pModulePins puntatore al campo contenente i 3 pins che servono a \n
+ 186:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****                 pilotare il carico
+ 187:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 188:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \author 	Leonardo Sparti
+ 189:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \date		  22/09/2010
+ 190:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \version	1.0.0
+ 191:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****    
+ 192:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \note		\par \b Nota 1:
+ 193:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 			documentation by Leonardo Sparti
+ 194:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 195:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** */
+ 196:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** void DigOutMul3PSetLoad(L_PARAM loadParam, pModulesPins_t pModulePins )
+ 197:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** {
+  87                             		.loc 1 197 0
+  88                             	.LVL8:
+  89 0000 6E 7A                   		pushm	r7-r10
+  90                             	.LCFI2:
+  91 0002 60 40                   		sub	#4, r0
+  92                             	.LCFI3:
+  93 0004 CD 0A 18                		mov.B	24[r0], r10
+  94 0007 EF 27                   		mov.L	r2, r7
+ 198:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t loadState;
+ 199:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 200:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     loadState = (loadParam.s.reg?1:0); 
+  95                             		.loc 1 200 0
+  96 0009 64 FA                   		and	#15, r10
+  97 000b FC DB A1                		scne.L	r10
+ 201:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	#if defined(PLATFORM2_SUPPORT) && ( defined(DR_DRYER) || defined (DW_DEA700) || defined(WILD_CARD)
+ 202:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     LIB_DIO_SET_LOAD(loadState, *pModulePins);
+  98                             		.loc 1 202 0
+  99 000e CF A1                   		mov.B	r10, r1
+ 100 0010 CC 22                   		mov.B	[r2], r2
+ 101                             	.LVL9:
+ 102 0012 05 00 00 00             		bsr	_LIB_DIO_SET_LOAD
+ 103                             	.LVL10:
+ 203:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     LIB_DIO_SET_LOAD(loadState, *(pModulePins+1));
+ 104                             		.loc 1 203 0
+ 105 0016 CF A1                   		mov.B	r10, r1
+ 106 0018 88 7A                   		mov.B	1[r7], r2
+ 107 001a 05 00 00 00             		bsr	_LIB_DIO_SET_LOAD
+ 108                             	.LVL11:
+ 204:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     LIB_DIO_SET_LOAD(loadState, *(pModulePins+2));
+ 109                             		.loc 1 204 0
+ 110 001e CF A1                   		mov.B	r10, r1
+ 111 0020 88 F2                   		mov.B	2[r7], r2
+ 205:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	#else
+ 206:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	/* Non usato perch� si � gi� passati alla piattaforma 2 */
+ 207:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     SET_LOAD( loadState, *pModulePins );
+ 208:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     SET_LOAD( loadState, *(pModulePins+1) );
+ 209:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     SET_LOAD( loadState, *(pModulePins+2) );
+ 210:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	#endif
+ 211:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** }
+ 112                             		.loc 1 211 0
+ 113 0022 62 40                   		add	#4, r0
+ 114 0024 6F 7A                   		popm	r7-r10
+ 115                             	.LVL12:
+ 204:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     LIB_DIO_SET_LOAD(loadState, *(pModulePins+2));
+ 116                             		.loc 1 204 0
+ 117 0026 04 00 00 00             		bra	_LIB_DIO_SET_LOAD
+ 118                             	.LVL13:
+ 119                             	.LFE3:
+ 121                             		.section	.text.DigDelayedMultiSetLoad,"ax",@progbits
+ 122                             		.global	_DigDelayedMultiSetLoad
+ 124                             	_DigDelayedMultiSetLoad:
+ 125                             	.LFB4:
+ 212:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 213:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /**
+ 214:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** Funzione per l'attivazione/disattivazione di un carico con PylotType DIGITALDELAYED_MULTI_L. 
+ 215:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 216:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	loadParam type L_PARAM stato del carico
+ 217:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	pModulePins puntatore al campo contenente i 2 pins che servono a \n
+ 218:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****                 pilotare il carico
+ 219:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 220:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \author 	Leonardo Sparti
+ 221:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \date		  27/05/2011
+ 222:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \version	1.0.0
+ 223:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****    
+ 224:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \note		\par \b Nota 1:
+ 225:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 			documentation by Leonardo Sparti
+ 226:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 227:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** */
+ 228:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** void DigDelayedMultiSetLoad(L_PARAM loadParam, pModulesPins_t pModulePins )
+ 229:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** {
+ 126                             		.loc 1 229 0
+ 127                             	.LVL14:
+ 128 0000 60 40                   		sub	#4, r0
+ 129                             	.LCFI4:
+ 130 0002 CD 0E 08                		mov.B	8[r0], r14
+ 131                             	.LVL15:
+ 230:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   uint8_t i;
+ 231:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   DMDEL_Type *pDMDVar;
+ 232:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   
+ 233:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_REGION_START();
+ 234:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_DATA_CHECK( DMDLoads );
+ 235:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 236:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   PLT_ASSERT(DMDLoads < DMD_NUM_OF_LOADS)
+ 237:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 238:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   for(i=0;i<DMDLoads;i++)
+ 239:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   {
+ 240:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	SAFETY_DATA_ELEM_CHECK( DMDVar, i );
+ 241:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 242:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     pDMDVar = &DMDVar[i];
+ 243:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     
+ 244:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     if( (pDMDVar->pin1 == *pModulePins) && (pDMDVar->pin2 == *(pModulePins+1)) )
+ 245:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     {
+ 246:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****       pDMDVar->loadState = (loadParam.s.reg?ON:OFF);
+ 132                             		.loc 1 246 0
+ 133 0005 EF E1                   		mov.L	r14, r1
+ 134 0007 64 F1                   		and	#15, r1
+ 135 0009 FC DB 11                		scne.L	r1
+ 238:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   for(i=0;i<DMDLoads;i++)
+ 136                             		.loc 1 238 0
+ 137 000c 66 0E                   		mov.L	#0, r14
+ 138 000e FB 42 00 00 00 00       		mov.L	#_DMDLoads, r4
+ 139 0014 58 43                   		movu.B	[r4], r3
+ 140 0016 2E 20                   		bra	.L8
+ 141                             	.LVL16:
+ 142                             	.L10:
+ 242:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     pDMDVar = &DMDVar[i];
+ 143                             		.loc 1 242 0
+ 144 0018 EF E4                   		mov.L	r14, r4
+ 145 001a 63 64                   		mul	#6, r4
+ 146 001c 70 44 00 00 00 00       		add	#_DMDVar, r4
+ 147                             	.LVL17:
+ 244:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     if( (pDMDVar->pin1 == *pModulePins) && (pDMDVar->pin2 == *(pModulePins+1)) )
+ 148                             		.loc 1 244 0
+ 149 0022 58 4F                   		movu.B	[r4], r15
+ 150 0024 44 2F                   		cmp	[r2].UB, r15
+ 151 0026 21 0E                   		bne	.L9
+ 244:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     if( (pDMDVar->pin1 == *pModulePins) && (pDMDVar->pin2 == *(pModulePins+1)) )
+ 152                             		.loc 1 244 0 is_stmt 0 discriminator 1
+ 153 0028 59 4F 01                		movu.B	1[r4], r15
+ 154 002b 45 2F 01                		cmp	1[r2].UB, r15
+ 155 002e 1E                      		bne	.L9
+ 156                             		.loc 1 246 0 is_stmt 1
+ 157 002f 81 49                   		mov.B	r1, 5[r4]
+ 247:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****       pDMDVar->delay_cnt = 0;
+ 158                             		.loc 1 247 0
+ 159 0031 3C 44 00                		mov.B	#0, 4[r4]
+ 160                             		.balign 2,3,1
+ 161                             	.L9:
+ 162 0034 62 1E                   		add	#1, r14
+ 163                             	.LVL18:
+ 164                             		.balign 2,3,1
+ 165                             	.L8:
+ 238:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   for(i=0;i<DMDLoads;i++)
+ 166                             		.loc 1 238 0 discriminator 1
+ 167 0036 5B E4                   		movu.B	r14, r4
+ 168 0038 47 43                   		cmp	r4, r3
+ 169 003a 24 DE                   		bgtu	.L10
+ 248:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     }
+ 249:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 250:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     SAFETY_DATA_ELEM_UPDATE( DMDVar, i );
+ 251:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   }
+ 252:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 253:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_REGION_END();
+ 254:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** }
+ 170                             		.loc 1 254 0
+ 171 003c 67 01                   		rtsd	#4
+ 172                             	.LFE4:
+ 174                             		.section	.text.DigDelayedMulti_Manager,"ax",@progbits
+ 175                             		.global	_DigDelayedMulti_Manager
+ 177                             	_DigDelayedMulti_Manager:
+ 178                             	.LFB5:
+ 255:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 256:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 257:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /**
+ 258:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** Funzione per la gestione delle temporizzazioni di un carico con PylotType DIGITALDELAYED_MULTI_L. 
+ 259:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 260:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]  none
+ 261:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 262:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \author 	Leonardo Sparti
+ 263:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \date		  27/05/2011
+ 264:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \version	1.0.0
+ 265:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****    
+ 266:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \note		\par \b Nota 1:
+ 267:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 			documentation by Leonardo Sparti
+ 268:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 269:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** */
+ 270:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** void DigDelayedMulti_Manager( void )
+ 271:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** {
+ 179                             		.loc 1 271 0
+ 180 0000 6E 7B                   		pushm	r7-r11
+ 181                             	.LCFI5:
+ 182                             	.LVL19:
+ 272:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   uint8_t i;
+ 273:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   DMDEL_Type *pDMDVar;
+ 274:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   
+ 275:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_REGION_START();
+ 276:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_DATA_CHECK( DMDLoads );
+ 277:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 278:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   for(i=0;i<DMDLoads;i++)
+ 183                             		.loc 1 278 0
+ 184 0002 66 0A                   		mov	#0, r10
+ 185 0004 FB B2 00 00 00 00       		mov.L	#_DMDLoads, r11
+ 186 000a 2E 54                   		bra	.L13
+ 187                             	.LVL20:
+ 188                             	.L19:
+ 279:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   {
+ 280:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	SAFETY_DATA_ELEM_CHECK( DMDVar, i );
+ 281:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 282:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     pDMDVar = &DMDVar[i];
+ 189                             		.loc 1 282 0
+ 190 000c 63 67                   		mul	#6, r7
+ 191 000e 70 77 00 00 00 00       		add	#_DMDVar, r7
+ 192                             	.LVL21:
+ 283:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     
+ 284:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     if(  ( (pDMDVar->loadState == ON)  && (pDMDVar->delay_cnt>=pDMDVar->act_delay)   )  ||
+ 193                             		.loc 1 284 0
+ 194 0014 89 79                   		mov.B	5[r7], r1
+ 195 0016 5B 1E                   		movu.B	r1, r14
+ 196 0018 61 1E                   		cmp	#1, r14
+ 197 001a 18                      		bne	.L14
+ 198                             		.loc 1 284 0 is_stmt 0 discriminator 1
+ 199 001b B1 74                   		movu.B	4[r7], r4
+ 200 001d 59 7E 02                		movu.B	2[r7], r14
+ 201 0020 2E 0C                   		bra	.L21
+ 202                             	.L14:
+ 203                             		.loc 1 284 0 discriminator 2
+ 204 0022 61 0E                   		cmp	#0, r14
+ 205 0024 21 1A                   		bne	.L16
+ 285:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****          ( (pDMDVar->loadState == OFF) && (pDMDVar->delay_cnt>=pDMDVar->deact_delay) )   )
+ 206                             		.loc 1 285 0 is_stmt 1
+ 207 0026 B1 74                   		movu.B	4[r7], r4
+ 208 0028 59 7E 03                		movu.B	3[r7], r14
+ 209 002b 03                      		.balign 2,3,1
+ 210                             	.L21:
+ 211 002c 47 E4                   		cmp	r14, r4
+ 212 002e 23 10                   		bltu	.L16
+ 286:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     {
+ 287:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****       #if defined(PLATFORM2_SUPPORT) && ( defined(DR_DRYER) || defined (DW_DEA700) || defined(WILD_
+ 288:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****         LIB_DIO_SET_LOAD(pDMDVar->loadState, pDMDVar->pin1);
+ 213                             		.loc 1 288 0
+ 214 0030 CC 72                   		mov.B	[r7], r2
+ 215 0032 05 00 00 00             		bsr	_LIB_DIO_SET_LOAD
+ 216                             	.LVL22:
+ 289:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****         LIB_DIO_SET_LOAD(pDMDVar->loadState, pDMDVar->pin2);
+ 217                             		.loc 1 289 0
+ 218 0036 89 79                   		mov.B	5[r7], r1
+ 219 0038 88 7A                   		mov.B	1[r7], r2
+ 220 003a 05 00 00 00             		bsr	_LIB_DIO_SET_LOAD
+ 221                             	.LVL23:
+ 222                             		.balign 2,3,5
+ 223                             	.L16:
+ 290:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****       #else
+ 291:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****         SET_LOAD( pDMDVar->loadState, pDMDVar->pin1 );
+ 292:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****         SET_LOAD( pDMDVar->loadState, pDMDVar->pin2 );
+ 293:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****       #endif
+ 294:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     }
+ 295:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     
+ 296:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     if( pDMDVar->delay_cnt < (pDMDVar->act_delay > pDMDVar->deact_delay ? pDMDVar->act_delay : pDMD
+ 224                             		.loc 1 296 0
+ 225 003e 89 74                   		mov.B	4[r7], r4
+ 226 0040 5B 42                   		movu.B	r4, r2
+ 227 0042 88 FB                   		mov.B	3[r7], r3
+ 228 0044 CD 7E 02                		mov.B	2[r7], r14
+ 229 0047 5B E5                   		movu.B	r14, r5
+ 230 0049 5B 31                   		movu.B	r3, r1
+ 231 004b 47 15                   		cmp	r1, r5
+ 232 004d 22 05                   		bgeu	.L18
+ 233 004f CF 3E                   		mov.B	r3, r14
+ 234 0051 03                      		.balign 2,3,1
+ 235                             	.L18:
+ 236 0052 5B EE                   		movu.B	r14, r14
+ 237 0054 47 E2                   		cmp	r14, r2
+ 238 0056 28 06                   		bge	.L17
+ 297:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     {
+ 298:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****       pDMDVar->delay_cnt++;
+ 239                             		.loc 1 298 0
+ 240 0058 62 14                   		add	#1, r4
+ 241 005a 81 74                   		mov.B	r4, 4[r7]
+ 242                             		.balign 2,3,1
+ 243                             	.L17:
+ 278:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   for(i=0;i<DMDLoads;i++)
+ 244                             		.loc 1 278 0
+ 245 005c 62 1A                   		add	#1, r10
+ 246                             	.LVL24:
+ 247                             		.balign 2,3,1
+ 248                             	.L13:
+ 278:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   for(i=0;i<DMDLoads;i++)
+ 249                             		.loc 1 278 0 is_stmt 0 discriminator 1
+ 250 005e 5B A7                   		movu.B	r10, r7
+ 251 0060 44 B7                   		cmp	[r11].UB, r7
+ 252 0062 23 AA                   		bltu	.L19
+ 299:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     }
+ 300:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     
+ 301:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     SAFETY_DATA_ELEM_UPDATE( DMDVar, i );
+ 302:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   }
+ 303:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   
+ 304:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_REGION_END();
+ 305:C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** }
+ 253                             		.loc 1 305 0 is_stmt 1
+ 254 0064 3F 7B 05                		rtsd	#20, r7-r11
+ 255                             	.LFE5:
+ 257 0067 03                      		.section	.bss.DMDLoads,"aw",@nobits
+ 260                             	_DMDLoads:
+ 261 0000 00                      		.zero	1
+ 262                             		.section	.bss.DMDVar,"aw",@nobits
+ 265                             	_DMDVar:
+ 266 0000 00 00 00 00 00 00 00 00 		.zero	24
+ 266      00 00 00 00 00 00 00 00 
+ 266      00 00 00 00 00 00 00 00 
+ 383                             	.Letext0:
+ 384                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_IOManager/OutputManagerEx
+ 385                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 386                             		.file 4 "C:/Workspace/FW_Inertia/branch_indesit/ProductModules/PM_DigitalOutputMulti/DigitalOutput
+ 387                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_DigitalIO/DigitalOutputs.
+DEFINED SYMBOLS
+                            *ABS*:00000000 DigitalOutputMulti.c
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:7      .text.PM_DigDelayedMulti_InitSync:00000000 _PM_DigDelayedMulti_InitSync
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:12     .text.PM_DigDelayedMulti_InitSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:260    .bss.DMDLoads:00000000 _DMDLoads
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:21     .text.DigDelayedMulti_Init:00000000 _DigDelayedMulti_Init
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:26     .text.DigDelayedMulti_Init:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:265    .bss.DMDVar:00000000 _DMDVar
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:51     .text.DigOutMultiSetLoad:00000000 _DigOutMultiSetLoad
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:55     .text.DigOutMultiSetLoad:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:85     .text.DigOutMul3PSetLoad:00000000 _DigOutMul3PSetLoad
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:89     .text.DigOutMul3PSetLoad:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:124    .text.DigDelayedMultiSetLoad:00000000 _DigDelayedMultiSetLoad
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:128    .text.DigDelayedMultiSetLoad:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:177    .text.DigDelayedMulti_Manager:00000000 _DigDelayedMulti_Manager
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:180    .text.DigDelayedMulti_Manager:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:268    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:8      .text.PM_DigDelayedMulti_InitSync:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:22     .text.DigDelayedMulti_Init:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:52     .text.DigOutMultiSetLoad:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:86     .text.DigOutMul3PSetLoad:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:125    .text.DigDelayedMultiSetLoad:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:178    .text.DigDelayedMulti_Manager:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:887    .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1563   .debug_str:0000011c .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1539   .debug_str:0000000a .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1517   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1533   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1571   .debug_str:00000160 .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1541   .debug_str:0000006b .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1557   .debug_str:000000f2 .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1603   .debug_str:00000230 .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1581   .debug_str:0000019e .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1593   .debug_str:000001f2 .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1583   .debug_str:000001b5 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1551   .debug_str:000000d0 .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1607   .debug_str:00000251 .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1575   .debug_str:00000174 .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1589   .debug_str:000001e1 .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1595   .debug_str:00000200 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1567   .debug_str:0000014f .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1587   .debug_str:000001d9 .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1561   .debug_str:0000010d .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1565   .debug_str:00000142 .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1535   .debug_str:00000000 .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1537   .debug_str:00000005 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1555   .debug_str:000000e8 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1615   .debug_str:0000027e .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1573   .debug_str:0000016a .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1553   .debug_str:000000de .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1613   .debug_str:00000273 .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1585   .debug_str:000001bd .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:16     .text.PM_DigDelayedMulti_InitSync:0000000a .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1549   .debug_str:000000bb .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:46     .text.DigDelayedMulti_Init:00000027 .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1579   .debug_str:00000192 .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1577   .debug_str:00000181 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1547   .debug_str:000000a8 .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1591   .debug_str:000001ea .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1597   .debug_str:00000205 .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:80     .text.DigOutMultiSetLoad:00000022 .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1362   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1569   .debug_str:00000156 .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1380   .debug_loc:0000002c .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1609   .debug_str:0000025d .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1611   .debug_str:00000268 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:69     .text.DigOutMultiSetLoad:00000016 .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:79     .text.DigOutMultiSetLoad:00000022 .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1543   .debug_str:0000007e .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:119    .text.DigOutMul3PSetLoad:0000002a .LFE3
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1398   .debug_loc:00000058 .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1416   .debug_loc:00000084 .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:103    .text.DigOutMul3PSetLoad:00000016 .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:108    .text.DigOutMul3PSetLoad:0000001e .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:118    .text.DigOutMul3PSetLoad:0000002a .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1545   .debug_str:00000091 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:172    .text.DigDelayedMultiSetLoad:0000003e .LFE4
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1434   .debug_loc:000000b0 .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1447   .debug_loc:000000d0 .LLST5
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1455   .debug_loc:000000e4 .LLST6
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1605   .debug_str:00000239 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:255    .text.DigDelayedMulti_Manager:00000067 .LFE5
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1462   .debug_loc:000000f7 .LLST7
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1475   .debug_loc:00000117 .LLST8
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1487   .debug_loc:00000136 .LLST9
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:216    .text.DigDelayedMulti_Manager:00000036 .LVL22
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:221    .text.DigDelayedMulti_Manager:0000003e .LVL23
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1599   .debug_str:00000218 .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1559   .debug_str:00000104 .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:1601   .debug_str:0000021f .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:56     .text.DigOutMultiSetLoad:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:58     .text.DigOutMultiSetLoad:00000004 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:54     .text.DigOutMultiSetLoad:00000000 .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:67     .text.DigOutMultiSetLoad:00000012 .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:76     .text.DigOutMultiSetLoad:0000001e .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:90     .text.DigOutMul3PSetLoad:00000002 .LCFI2
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:92     .text.DigOutMul3PSetLoad:00000004 .LCFI3
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:88     .text.DigOutMul3PSetLoad:00000000 .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:101    .text.DigOutMul3PSetLoad:00000012 .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:115    .text.DigOutMul3PSetLoad:00000026 .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:129    .text.DigDelayedMultiSetLoad:00000002 .LCFI4
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:131    .text.DigDelayedMultiSetLoad:00000005 .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:141    .text.DigDelayedMultiSetLoad:00000018 .LVL16
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:147    .text.DigDelayedMultiSetLoad:00000022 .LVL17
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:163    .text.DigDelayedMultiSetLoad:00000036 .LVL18
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:181    .text.DigDelayedMulti_Manager:00000002 .LCFI5
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:182    .text.DigDelayedMulti_Manager:00000002 .LVL19
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:187    .text.DigDelayedMulti_Manager:0000000c .LVL20
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:192    .text.DigDelayedMulti_Manager:00000014 .LVL21
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:246    .text.DigDelayedMulti_Manager:0000005e .LVL24
+C:\Users\Andrea\AppData\Local\Temp\ccS6Dnpf.s:389    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_LIB_DIO_SET_LOAD

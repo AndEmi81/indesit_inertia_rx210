@@ -1,0 +1,132 @@
+#############################################################################
+#
+#	Platform 2 library configuration
+#
+#############################################################################
+
+menu "Coductivity Sensor configuration"
+  depends on PM_CONDUCTIVITY_SENSOR
+
+config CSN_DISABLE_MODULE
+  bool "Disable module"
+  default n
+  help
+    Disable Coductivity Sensor module. 
+    All functions and variables are still present, but nothing 
+    will happen when functions are called - no initialization and no updates.
+    
+    It's useful if you want save flash without excluding from build. 
+
+config CSN_PWD_FILTER_ENABLE
+	bool "Enable PWD filter support"
+	default n
+	help
+		Enable PWD Timer filter
+		This option allows to define a minimum time of each edge (rising/falling) to filter
+		noise.
+
+config CSN_PWD_FILTER_TIME
+depends on CSN_PWD_FILTER_ENABLE
+	int "PWD filter time (in ns)"
+	range 1 50000000
+	default 1000000
+	help
+		Set PWD filter time
+		This is minimum time (in ns) accepted for edge validation.    
+
+choice
+	prompt "Edge Sensitivity"
+
+config CSN_EDGE_RISING
+	bool "Rising"
+	help
+	  	the signal's period is measured starting from rising edge
+
+config CSN_EDGE_FALLING
+	bool "Falling"
+	help
+	  	the signal's period is measured starting from falling edge
+endchoice
+
+config CSN_USE_DIGITAL_FILTER
+    bool "Enable Digital pin filter (if available in micro used) on tacho"
+    default n
+    help
+        Enable Digital Pin filter
+        This option allows to define maximum acceptance frequency for Tacho
+        input; real filter applied depends on features availalbe on 
+        micro used for this application. 
+
+config CSN_DIGITAL_FILTER_FREQ
+    depends on CSN_USE_DIGITAL_FILTER
+    int "Digital filter frequency (in kHz)"
+    range 1 50000
+    default 2000
+    help
+        Set Digital filter time
+        This is maximum frequency (in kHz) accepted for edge validation.            
+
+config CSN_DISABLE_TON_READING
+    bool "Disable T.On Reading"
+    default y
+    help
+        Disable T.On Reading
+        This option forces reading of Period only, reducing too high interrupt
+        occurrencies while keeping same information. If this option is disabled
+        there are more interrupts but signal is better validated (check on
+        both edges and I/O validation on the signal)
+
+config CSN_CHECK_IOSENSE
+    bool "Edge detection configured depending on Inverted logic flag"
+    default y
+    help 
+        Edge detection configured depending on Inverted logic flag
+        Enabling this option, edge detection will be set regardless of
+        Invert logic flag set in setting file: this ensures to detect the most
+        robust edge found (e.g. rising edge)  
+
+choice
+	prompt "Output variable type"
+	
+config CSN_VALUE_16BIT
+	bool "16-bit"
+	help
+		Output value will be returned on a 16-bit integer variable
+
+config CSN_VALUE_32BIT
+	bool "32-bit"
+	help
+	  	Output value will be returned on a 32-bit integer variable
+
+endchoice
+
+choice
+	prompt "Type of measure"
+
+config CSN_MEASURE_PERIOD
+	bool "Period"
+	help
+	  	Return value is related to period value
+
+config CSN_MEASURE_SEMIPERIOD
+	bool "Semiperiod"
+	help
+		Return value is related to half-period value
+endchoice
+
+
+config CSN_CONTINUOUS_ENABLE_FREQ
+	int "Enabling Continuous mode Frequency"
+	default  30
+	help
+	  Define minimum frequency to switch to continous mode
+
+config CSN_ONESHOT_ENABLE_FREQ
+	int "Enabling One shot mode Frequency"
+	default  70
+	help
+	 Define maximum frequency to switch to continous mode
+
+endmenu
+
+#############################################################################

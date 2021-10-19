@@ -1,0 +1,897 @@
+   1                             		.file	"APP_Loader.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.LDR_phaseLoader,"ax",@progbits
+   5                             		.global	_LDR_phaseLoader
+   7                             	_LDR_phaseLoader:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Application_Platform/APP_Loader.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /**
+   2:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \defgroup	APP_Loader Modulo Loader
+   3:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \ingroup	ApplPlatform
+   4:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+   5:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** Il modulo fornisce funzionalita' di caricamento dati dal file di setting.
+   6:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** */
+   7:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+   8:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /**
+   9:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** Source file del modulo Loader
+  10:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  11:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \file		APP_Loader.c
+  12:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \ingroup	APP_Loader
+  13:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \date		23/07/2008
+  14:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \version	01.00.00
+  15:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \author		Valeria Catani, Simone Costantini, Stefano Ughi, Marco Quintini
+  16:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  17:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \par		History
+  18:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  19:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \par		PCLint
+  20:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 			Report 16/01/2009: 0 Errors, 0 Warnings, 0 Info
+  21:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  22:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** */
+  23:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  24:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /*
+  25:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** Copyright (c) 2004-2007, Indesit Company, EDT.
+  26:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** Tutti i diritti sono riservati. All rights reserved.
+  27:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** */
+  28:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  29:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* ******** */
+  30:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* Includes */
+  31:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* ******** */
+  32:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** #include "CstmHeaders.h"
+  33:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  34:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  35:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* ****************** */
+  36:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* Defines and Macros */
+  37:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* ****************** */
+  38:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /**
+  39:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \name Valori particolari assunti dai puntatori nel file di setting
+  40:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** */
+  41:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /*@{*/ 
+  42:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** #define NULL_POINTER				0x0000U	/**< Puntatore nullo */
+  43:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** #define INVALID_POINTER				0xFFFFU	/**< Puntatori non valido */
+  44:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /*@}*/ 
+  45:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  46:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  47:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  48:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* *************************** */
+  49:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* Typedef, Structs and Unions */
+  50:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* *************************** */
+  51:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  52:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* **************************** */
+  53:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* Prototype of local functions */
+  54:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* **************************** */
+  55:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  56:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* ****************** */
+  57:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* Exported variables */
+  58:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* ****************** */
+  59:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  60:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* **************** */
+  61:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* Global variables */
+  62:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* **************** */
+  63:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /** Puntatori ai selettori per i diversi vani */
+  64:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** extern const uint16_t SelectorDataPointers[APP_N_COMP];
+  65:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  66:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* ***************** */
+  67:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* Exported function */
+  68:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /* ***************** */
+  69:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  70:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  71:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /**
+  72:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** Carica i dati relativi alla fase indicata in ingresso: numero di fasi nel ciclo
+  73:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** cui la fase appartiene, numero di statement che la compongono, puntatore agli High
+  74:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** Statement, puntatore ai Low Statement.
+  75:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  76:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \param [in]		compartment e' il vano in cui si trova il ciclo a cui appartiene
+  77:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 				la fase che si vuole caricare
+  78:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \param [in]		cycle e' il ciclo a cui appartiene la fase che si vuole caricare
+  79:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \param [in]		phase e' la fase che si vuole caricare
+  80:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \param [out]	pDataOut punta ai dati relativi alla fase caricata
+  81:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \attention		SelectorDataPointers (global, buffer puntatori ai selettori per
+  82:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 				i diversi vani) e' usata come input
+  83:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  84:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \return			S_OK se la funzione e' stata eseguita correttamente,
+  85:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 				un codice d'errore altrimenti.
+  86:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  87:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \warning		none		
+  88:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  89:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \version		1.0.0
+  90:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \date 			04/01/2006
+  91:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \author			Simone Costantini, Stefano Ughi
+  92:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** */
+  93:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** #if (MULTI_COMPARTMENT_APPL == 1)
+  94:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** uint8_t LDR_phaseLoader(uint8_t compartment, uint8_t cycle, uint8_t phase, uint8_t mSetting, PhaseL
+  95:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** #else /* (MULTI_COMPARTMENT_APPL == 1) */
+  96:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  97:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+  98:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** uint8_t LDR_phaseLoader(uint8_t cycle, uint8_t phase, uint8_t mSetting, PhaseLoader_Struct *pDataOu
+  99:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** #endif /* (MULTI_COMPARTMENT_APPL != 1) */
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** {
+  10                             		.loc 1 101 0
+  11                             	.LVL0:
+  12 0000 6E 7B                   		pushm	r7-r11
+  13                             	.LCFI0:
+  14 0002 60 80                   		sub	#8, r0
+  15                             	.LCFI1:
+  16 0004 CF 3B                   		mov.B	r3, r11
+  17                             	.LVL1:
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** #if (MULTI_COMPARTMENT_APPL == 0)
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** uint8_t compartment = 0;
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** #endif /* (MULTI_COMPARTMENT_APPL == 0) */  	
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** Loader_Struct ldData;
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** uint8_t result;
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** uint8_t hiStatRefMacro, loStatRefMacro;
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** #if (MULTI_COMPARTMENT_APPL == 1)
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	if( compartment >= SIZE(SelectorDataPointers) )
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return LDR_ERR_OVFL_SELECTORS;
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** #endif /* (MULTI_COMPARTMENT_APPL == 1) */
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	/**	cycle indica il numero del ciclo partendo da 0 
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	per questo motivo nel test va usato >= */
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	if( cycle >= N_MAX_CYCLES_PC )
+  18                             		.loc 1 119 0
+  19 0006 5B 13                   		movu.B	r1, r3
+  20                             	.LVL2:
+  21 0008 75 53 3F                		cmp	#63, r3
+  22 000b 25 05 38 8C 00          		bgtu	.L3
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return LDR_ERR_OVFL_CYCLES;
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	if( phase >= N_MAX_PHASES )
+  23                             		.loc 1 124 0
+  24 0010 5B 2A                   		movu.B	r2, r10
+  25 0012 75 5A 3F                		cmp	#63, r10
+  26 0015 25 05 38 87 00          		bgtu	.L4
+  27 001a EF 47                   		mov.L	r4, r7
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return LDR_ERR_OVFL_PHASES;
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	result = MSettingBasicLoader( mSetting, SelectorDataPointers[compartment], cycle, &ldData );
+  28                             		.loc 1 128 0
+  29 001c CF B1                   		mov.B	r11, r1
+  30                             	.LVL3:
+  31 001e FB E2 00 00 00 00       		mov.L	#_SelectorDataPointers, r14
+  32 0024 DC E2                   		mov.W	[r14], r2
+  33                             	.LVL4:
+  34 0026 EF 04                   		mov.L	r0, r4
+  35                             	.LVL5:
+  36 0028 05 00 00 00             		bsr	_MSettingBasicLoader
+  37                             	.LVL6:
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	if( result != S_OK )
+  38                             		.loc 1 130 0
+  39 002c 5B 1E                   		movu.B	r1, r14
+  40 002e 61 0E                   		cmp	#0, r14
+  41 0030 21 7E                   		bne	.L2
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return result;
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	if( phase >= ldData.DataLenght )
+  42                             		.loc 1 135 0
+  43 0032 DD 0E 02                		mov.W	4[r0], r14
+  44 0035 5F E4                   		movu.W	r14, r4
+  45 0037 47 4A                   		cmp	r4, r10
+  46 0039 22 6A                   		bgeu	.L5
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return LDR_ERR_INVALID_PHASE;
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	pDataOut->nCyclePhases = ldData.DataLenght; 	
+  47                             		.loc 1 140 0
+  48 003b C3 7E                   		mov.B	r14, [r7]
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	ldData.Data += 2*phase;
+  49                             		.loc 1 142 0
+  50 003d 4B AA                   		add	r10, r10
+  51                             	.LVL7:
+  52 003f 06 88 0A                		add	[r0], r10
+  53 0042 E3 0A                   		mov.L	r10, [r0]
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	hiStatRefMacro = OFFS_B(ldData.Data, 0);
+  54                             		.loc 1 143 0
+  55 0044 CC A3                   		mov.B	[r10], r3
+  56                             	.LVL8:
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	loStatRefMacro = OFFS_B(ldData.Data, 1);
+  57                             		.loc 1 144 0
+  58 0046 CD AA 01                		mov.B	1[r10], r10
+  59                             	.LVL9:
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	if( ( hiStatRefMacro == 0 ) || ( loStatRefMacro == 0 ) )
+  60                             		.loc 1 146 0
+  61 0049 5B 3E                   		movu.B	r3, r14
+  62 004b 61 0E                   		cmp	#0, r14
+  63 004d 20 5A                   		beq	.L7
+  64                             		.loc 1 146 0 is_stmt 0 discriminator 1
+  65 004f 5B AE                   		movu.B	r10, r14
+  66 0051 61 0E                   		cmp	#0, r14
+  67 0053 20 54                   		beq	.L7
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return LDR_ERR_MACRO_NULL;
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	result = MSettingBasicLoader( mSetting, APP_PTR_HI_STATEMENTS, (uint8_t)(hiStatRefMacro - 1), &ldD
+  68                             		.loc 1 151 0 is_stmt 1
+  69 0055 60 13                   		sub	#1, r3
+  70                             	.LVL10:
+  71 0057 5B 33                   		movu.B	r3, r3
+  72                             	.LVL11:
+  73 0059 CF B1                   		mov.B	r11, r1
+  74                             	.LVL12:
+  75 005b 66 C2                   		mov	#12, r2
+  76 005d EF 04                   		mov.L	r0, r4
+  77 005f 05 00 00 00             		bsr	_MSettingBasicLoader
+  78                             	.LVL13:
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	if( result != S_OK )
+  79                             		.loc 1 153 0
+  80 0063 5B 1E                   		movu.B	r1, r14
+  81 0065 61 0E                   		cmp	#0, r14
+  82 0067 21 47                   		bne	.L2
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return result;
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	/*
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	Se gli statements reali sono dispari l'editor deve provvedere
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	ad aggiungere un ultimo statement a '0' (NOP).
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	*/
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	pDataOut->nPhaseStatements = (uint8_t)(2 * ldData.DataLenght);
+  83                             		.loc 1 162 0
+  84 0069 CD 0E 05                		mov.B	5[r0], r14
+  85 006c 4B EE                   		add	r14, r14
+  86 006e C7 7E 01                		mov.B	r14, 1[r7]
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	pDataOut->pHiStat = ldData.Data;
+  87                             		.loc 1 163 0
+  88 0071 E4 07 01                		mov.L	[r0], 4[r7]
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	result = MSettingBasicLoader( mSetting, APP_PTR_LO_STATEMENTS, (uint8_t)(loStatRefMacro - 1), &ldD
+  89                             		.loc 1 165 0
+  90 0074 60 1A                   		sub	#1, r10
+  91                             	.LVL14:
+  92 0076 5B A3                   		movu.B	r10, r3
+  93 0078 CF B1                   		mov.B	r11, r1
+  94                             	.LVL15:
+  95 007a 66 D2                   		mov	#13, r2
+  96 007c EF 04                   		mov.L	r0, r4
+  97 007e 05 00 00 00             		bsr	_MSettingBasicLoader
+  98                             	.LVL16:
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	if( result != S_OK )
+  99                             		.loc 1 167 0
+ 100 0082 5B 1A                   		movu.B	r1, r10
+ 101                             	.LVL17:
+ 102 0084 61 0A                   		cmp	#0, r10
+ 103 0086 21 28                   		bne	.L2
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return result;
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	if (pDataOut->nPhaseStatements != (2 * ldData.DataLenght))
+ 104                             		.loc 1 172 0
+ 105 0088 59 7B 01                		movu.B	1[r7], r11
+ 106                             	.LVL18:
+ 107 008b 5D 0A 02                		movu.W	4[r0], r10
+ 108 008e 4B AA                   		add	r10, r10
+ 109 0090 47 AB                   		cmp	r10, r11
+ 110 0092 21 19                   		bne	.L8
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return LDR_ERR_STATEMENT_MISMATCH;
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	pDataOut->pLoStat = ldData.Data;
+ 111                             		.loc 1 177 0
+ 112 0094 E4 07 02                		mov.L	[r0], 8[r7]
+ 113 0097 2E 17                   		bra	.L2
+ 114                             	.LVL19:
+ 115                             	.L3:
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return LDR_ERR_OVFL_CYCLES;
+ 116                             		.loc 1 121 0
+ 117 0099 FB 16 83                		mov	#0xffffff83, r1
+ 118                             	.LVL20:
+ 119 009c 2E 12                   		bra	.L2
+ 120                             	.LVL21:
+ 121                             	.L4:
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return LDR_ERR_OVFL_PHASES;
+ 122                             		.loc 1 126 0
+ 123 009e FB 16 84                		mov	#0xffffff84, r1
+ 124                             	.LVL22:
+ 125 00a1 2E 0D                   		bra	.L2
+ 126                             	.LVL23:
+ 127                             	.L5:
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return LDR_ERR_INVALID_PHASE;
+ 128                             		.loc 1 137 0
+ 129 00a3 FB 16 85                		mov	#0xffffff85, r1
+ 130                             	.LVL24:
+ 131 00a6 08                      		bra	.L2
+ 132                             	.LVL25:
+ 133                             	.L7:
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return LDR_ERR_MACRO_NULL;
+ 134                             		.loc 1 148 0
+ 135 00a7 FB 16 86                		mov	#0xffffff86, r1
+ 136                             	.LVL26:
+ 137 00aa 0C                      		bra	.L2
+ 138                             	.LVL27:
+ 139                             	.L8:
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return LDR_ERR_STATEMENT_MISMATCH;
+ 140                             		.loc 1 174 0
+ 141 00ab FB 16 87                		mov	#0xffffff87, r1
+ 142                             	.LVL28:
+ 143                             		.balign 2,3,1
+ 144                             	.L2:
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	return S_OK;
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** } /* END: LDR_phaseLoader */
+ 145                             		.loc 1 180 0
+ 146 00ae 5B 11                   		movu.B	r1, r1
+ 147 00b0 3F 7B 07                		rtsd	#28, r7-r11
+ 148                             	.LFE0:
+ 150 00b3 03                      		.section	.text.MissedLoadShortCheck,"ax",@progbits
+ 151                             		.global	_MissedLoadShortCheck
+ 153                             	_MissedLoadShortCheck:
+ 154                             	.LFB1:
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /**
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** Questa funzione carica un dato (uint16_t) del setting evitando problemi di incompatibilità
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** setting file <--> firmware grazie alla funzione MissedOnlyCheck, in seguito all'introduzione 
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** di nuovi parametri setting;
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** in pratica viene controllato se il dato che si vuole caricare esiste veramente nella tabella,
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** se sì viene caricato, altrimenti viene caricato al suo posto il valore 0;
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** può succedere quando viene introdotta una nuova funzionalità che richiede un nuovo parametro (uint1
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** setting, quando il dato aggiunto comporta l'aggiunta di una word nella tabella, perchè in questo ca
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** la tabella si allunga. Se un nuovo firmware che va a cercare questo dato viene fatto girare con un 
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** setting dove la tabella è più corta (il dato non esiste) senza questo controllo si caricherebbe
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** un dato random, in questo caso invece si verifica che la lunghezza della tabella comprenda il dato 
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** se non è così viene forzato il caricamento del dato a 0
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \param [in]		pointer e' il puntatore del file di setting da cui caricare i dati
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \param [in]		position e' lo spiazzamento relativo al puntatore pointer
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 				del dato da caricare (uint8_t)
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \return			il dato caricato
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \warning		none
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \use			Questa funzione va usata tutte le volte che una tabella setting si allunga con nuovi dati,
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 				mentre non è necessario usarla quando viene aggiunto un nuovo byte ma la lunghezza della
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 				tabella (in word) rimane la stessa.
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \version		1.0.0
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \date 			15/10/2013
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \author			Claudio Fontana
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** */
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** uint16_t MissedLoadShortCheck(Loader_Struct* pointer, uint8_t position)
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** {
+ 155                             		.loc 1 215 0
+ 156                             	.LVL29:
+ 157                             	.LBB8:
+ 158                             	.LBB9:
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** Loader_Struct* pointerToCheck = pointer;
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** uint8_t positionToCheck = position;
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** uint16_t value;
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	if (MissedOnlyCheck(pointerToCheck,positionToCheck))
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		value = (OFFS_B(pointer->Data,position)) * 0x100;
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	else
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return 0;
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	if (MissedOnlyCheck(pointerToCheck,positionToCheck+1))
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		value += (OFFS_B(pointer->Data,position+1));
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	else
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return 0;
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	return value;
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** }
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /**
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** Questa funzione carica un dato (uint8_t) del setting evitando problemi di incompatibilità
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** setting file <--> firmware grazie alla funzione MissedOnlyCheck, in seguito all'introduzione 
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** di nuovi parametri setting;
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** in pratica viene controllato se il dato che si vuole caricare esiste veramente nella tabella,
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** se sì viene caricato, altrimenti viene caricato al suo posto il valore 0;
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** può succedere quando viene introdotta una nuova funzionalità che richiede un nuovo parametro (uint8
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** setting, quando il dato aggiunto comporta l'aggiunta di una word nella tabella, perchè in questo ca
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** la tabella si allunga. Se un nuovo firmware che va a cercare questo dato viene fatto girare con un 
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** setting dove la tabella è più corta (il dato non esiste) senza questo controllo si caricherebbe
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** un dato random, in questo caso invece si verifica che la lunghezza della tabella comprenda il dato 
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** se non è così viene forzato il caricamento del dato a 0
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \param [in]		pointer e' il puntatore del file di setting da cui caricare i dati
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \param [in]		position e' lo spiazzamento relativo al puntatore pointer
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 				del dato da caricare (uint8_t)
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \return			il dato caricato
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \warning		none
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 268:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \use			Questa funzione va usata tutte le volte che una tabella setting si allunga con nuovi dati,
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 				mentre non è necessario usarla quando viene aggiunto un nuovo byte ma la lunghezza della
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 				tabella (in word) rimane la stessa.
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \version		1.0.0
+ 273:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \date 			28/09/2010
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \author			Claudio Fontana
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** */
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** uint8_t MissedLoadCheck(Loader_Struct* pointer, uint8_t position)
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** {
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 280:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** Loader_Struct* pointerToCheck = pointer;
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** uint8_t positionToCheck = position;
+ 282:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	if (MissedOnlyCheck(pointerToCheck,positionToCheck))
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return (OFFS_B(pointer->Data,position));	
+ 286:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	else
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return 0;	
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** }
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /**
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** Questa funzione serve per evitare problemi di incompatibilità setting file <--> firmware
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** in seguito all'introduzione di nuovi parametri setting;
+ 297:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** in pratica viene controllato se il dato che si vuole caricare esiste veramente nella tabella,
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** può succedere quando viene introdotta una nuova funzionalità che richiede un nuovo parametro (uint8
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** setting, quando il dato aggiunto comporta l'aggiunta di una word nella tabella, perchè in questo ca
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** la tabella si allunga. Se un nuovo firmware che va a cercare questo dato viene fatto girare con un 
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** setting dove la tabella è più corta (il dato non esiste) grazie a questo controllo si può evitare
+ 302:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** di caricare un dato random
+ 303:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** la funzionalità completa viene espletata dalla funzione MissedLoadCheck che però dà per scontato
+ 305:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** che il valore 0 del dato da caricare sia quello che disabilita la funzionalità, ma non è sempre cos
+ 306:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** per i casi che questa condizione non è rispettata usare questa funzione prima di caricare il dato
+ 307:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 308:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \param [in]		pointer e' il puntatore del file di setting da cui caricare i dati
+ 309:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \param [in]		position e' lo spiazzamento relativo al puntatore pointer
+ 310:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 				del dato da caricare (uint8_t)
+ 311:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \return			esito del check (TRUE significa che il dato esiste)
+ 313:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 314:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \warning		none
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \use			Questa funzione va usata tutte le volte che una tabella setting si allunga con nuovi dati,
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 				mentre non è necessario usarla quando viene aggiunto un nuovo byte ma la lunghezza della
+ 318:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 				tabella (in word) rimane la stessa.
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 320:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \version		1.0.0
+ 321:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \date 			28/09/2010
+ 322:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \author			Claudio Fontana
+ 323:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** */
+ 324:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 325:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 326:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** bool_t MissedOnlyCheck(const Loader_Struct* pointer, uint8_t position)
+ 327:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** {
+ 328:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 329:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	if (pointer->DataLenght <= (position/2))
+ 159                             		.loc 1 329 0
+ 160 0000 5B 2E                   		movu.B	r2, r14
+ 161 0002 B8 94                   		movu.W	4[r1], r4
+ 162 0004 FD 81 E3                		shlr	#1, r14, r3
+ 163 0007 47 34                   		cmp	r3, r4
+ 164 0009 24 08                   		bgtu	.L11
+ 165                             	.LVL30:
+ 166 000b 03                      		.balign 2,3,1
+ 167                             	.L13:
+ 168                             	.LBE9:
+ 169                             	.LBE8:
+ 170                             	.LBB10:
+ 171                             	.LBB11:
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return 0;
+ 172                             		.loc 1 228 0
+ 173 000c 66 01                   		mov	#0, r1
+ 174                             		.balign 2,3,1
+ 175                             	.L12:
+ 176 000e 5F 11                   		movu.W	r1, r1
+ 177 0010 02                      		rts
+ 178                             	.LVL31:
+ 179                             	.L11:
+ 180                             	.LBE11:
+ 181                             	.LBE10:
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		value = (OFFS_B(pointer->Data,position)) * 0x100;
+ 182                             		.loc 1 224 0
+ 183 0011 EC 13                   		mov.L	[r1], r3
+ 184 0013 4B 3E                   		add	r3, r14
+ 185 0015 CC E1                   		mov.B	[r14], r1
+ 186                             	.LVL32:
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	if (MissedOnlyCheck(pointerToCheck,positionToCheck+1))
+ 187                             		.loc 1 231 0
+ 188 0017 62 12                   		add	#1, r2
+ 189                             	.LVL33:
+ 190                             	.LBB13:
+ 191                             	.LBB12:
+ 192                             		.loc 1 329 0
+ 193 0019 5B 22                   		movu.B	r2, r2
+ 194 001b 68 12                   		shlr	#1, r2
+ 195 001d 47 24                   		cmp	r2, r4
+ 196 001f 25 ED                   		bleu	.L13
+ 197                             	.LBE12:
+ 198                             	.LBE13:
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		value = (OFFS_B(pointer->Data,position)) * 0x100;
+ 199                             		.loc 1 224 0
+ 200 0021 5B 11                   		movu.B	r1, r1
+ 201 0023 6C 81                   		shll	#8, r1
+ 202                             	.LVL34:
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		value += (OFFS_B(pointer->Data,position+1));
+ 203                             		.loc 1 233 0
+ 204 0025 49 E1 01                		add	1[r14].UB, r1
+ 205                             	.LVL35:
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	return value;
+ 206                             		.loc 1 240 0
+ 207 0028 2E E6                   		bra	.L12
+ 208                             	.LFE1:
+ 210                             		.section	.text.MissedLoadCheck,"ax",@progbits
+ 211                             		.global	_MissedLoadCheck
+ 213                             	_MissedLoadCheck:
+ 214                             	.LFB2:
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** {
+ 215                             		.loc 1 278 0
+ 216                             	.LVL36:
+ 217                             	.LBB14:
+ 218                             	.LBB15:
+ 219                             		.loc 1 329 0
+ 220 0000 5B 22                   		movu.B	r2, r2
+ 221 0002 B8 94                   		movu.W	4[r1], r4
+ 222 0004 FD 81 2E                		shlr	#1, r2, r14
+ 223 0007 47 E4                   		cmp	r14, r4
+ 224 0009 24 08                   		bgtu	.L16
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return 0;	
+ 225                             		.loc 1 289 0
+ 226 000b 66 01                   		mov	#0, r1
+ 227                             	.LVL37:
+ 228 000d 03                      		.balign 2,3,1
+ 229                             	.L17:
+ 230 000e 5B 11                   		movu.B	r1, r1
+ 231 0010 02                      		rts
+ 232                             	.LVL38:
+ 233                             	.L16:
+ 234                             	.LBE15:
+ 235                             	.LBE14:
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return (OFFS_B(pointer->Data,position));	
+ 236                             		.loc 1 285 0
+ 237 0011 EC 1E                   		mov.L	[r1], r14
+ 238 0013 FE 42 E1                		mov.B	[r2,r14], r1
+ 239                             	.LVL39:
+ 240 0016 2E F8                   		bra	.L17
+ 241                             	.LFE2:
+ 243                             		.section	.text.MissedOnlyCheck,"ax",@progbits
+ 244                             		.global	_MissedOnlyCheck
+ 246                             	_MissedOnlyCheck:
+ 247                             	.LFB3:
+ 327:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** {
+ 248                             		.loc 1 327 0
+ 249                             	.LVL40:
+ 250                             		.loc 1 329 0
+ 251 0000 5B 22                   		movu.B	r2, r2
+ 252 0002 B8 91                   		movu.W	4[r1], r1
+ 253                             	.LVL41:
+ 254 0004 68 12                   		shlr	#1, r2
+ 255                             	.LVL42:
+ 330:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 331:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return FALSE;
+ 332:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 333:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	else
+ 334:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 335:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return TRUE;
+ 336:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 337:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** }
+ 256                             		.loc 1 337 0
+ 257 0006 47 21                   		cmp	r2, r1
+ 258 0008 FC DB 14                		scgtu.L	r1
+ 259 000b 02                      		rts
+ 260                             	.LFE3:
+ 262                             		.section	.text.SettingDataCompare,"ax",@progbits
+ 263                             		.global	_SettingDataCompare
+ 265                             	_SettingDataCompare:
+ 266                             	.LFB4:
+ 338:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 339:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 340:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /**
+ 341:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** Questa funzione serve per verificare se una variabile ha raggiunto un limite specificato in setting
+ 342:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** tenendo conto che se il limite in setting è 0 significa che il controllo è disabilitato
+ 343:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** questo al fine di gestire la compatibilità, difatti se la funzionalità a cui si riferisce il
+ 344:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** test è una nuova funzionalità non prevista nei vecchi setting, succede che il riferimento in settin
+ 345:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** perchè il dato era fisicamente presente ma non era usato (vale 0) oppure non era proprio presente
+ 346:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** in questo caso diventa 0 grazie alla funzione precedente MissedLoadCheck
+ 347:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 348:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** in sintesi se il riferimento (in setting) è presente (cioè > 0) viene fatto il controllo tra la var
+ 349:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** da testare ed il riferimento stesso, ritornando TRUE o FALSE a seconda dell'esito del test,
+ 350:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** mentre se il riferimento non è presente (cioè = 0) verrà sempre ritornato FALSE
+ 351:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 352:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \param [in]		pointer e' il puntatore del file di setting da cui caricare i dati
+ 353:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \param [in]		position e' lo spiazzamento relativo al puntatore pointer
+ 354:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 				del dato da caricare (uint8_t)
+ 355:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 356:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \return			esito del test
+ 357:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 358:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \warning		none
+ 359:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 360:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \use			Questa funzione va usata tutte le volte che si può avere un problema di compatibilità
+ 361:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 				in seguito all'introduzione di un nuovo dato in setting
+ 362:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 363:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \version		1.0.0
+ 364:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \date 			30/09/2010
+ 365:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \author			Claudio Fontana
+ 366:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** */
+ 367:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** bool_t SettingDataCompare (uint16_t check, uint16_t reference)
+ 368:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** {
+ 267                             		.loc 1 368 0
+ 268                             	.LVL43:
+ 369:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	if ((reference > 0) && (check >= reference))
+ 269                             		.loc 1 369 0
+ 270 0000 5F 22                   		movu.W	r2, r2
+ 271 0002 61 02                   		cmp	#0, r2
+ 272 0004 11                      		beq	.L22
+ 273                             		.loc 1 369 0 is_stmt 0 discriminator 1
+ 274 0005 5F 11                   		movu.W	r1, r1
+ 370:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 371:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return TRUE;
+ 275                             		.loc 1 371 0 is_stmt 1 discriminator 1
+ 276 0007 47 21                   		cmp	r2, r1
+ 277 0009 FC DB 12                		scgeu.L	r1
+ 278                             	.LVL44:
+ 279 000c 02                      		rts
+ 280                             	.LVL45:
+ 281                             	.L22:
+ 372:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 373:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	else
+ 374:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 375:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return FALSE;
+ 282                             		.loc 1 375 0
+ 283 000d EF 21                   		mov.L	r2, r1
+ 284                             	.LVL46:
+ 376:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 377:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** }
+ 285                             		.loc 1 377 0
+ 286 000f 02                      		rts
+ 287                             	.LFE4:
+ 289                             		.section	.text.SettingDataReverseCompare,"ax",@progbits
+ 290                             		.global	_SettingDataReverseCompare
+ 292                             	_SettingDataReverseCompare:
+ 293                             	.LFB5:
+ 378:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 379:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** /*
+ 380:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** Complementare alla precedente funzione 'SettingDtaCompare'
+ 381:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** in pratica il test viene fatto al contarario, sempre tenendo conto che se reference=0 la condizione
+ 382:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 383:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \param [in]		pointer e' il puntatore del file di setting da cui caricare i dati
+ 384:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \param [in]		position e' lo spiazzamento relativo al puntatore pointer
+ 385:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 				del dato da caricare (uint8_t)
+ 386:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 387:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \return			esito del test
+ 388:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 389:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \warning		none
+ 390:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 391:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \use			Questa funzione va usata tutte le volte che si può avere un problema di compatibilità
+ 392:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 				in seguito all'introduzione di un nuovo dato in setting
+ 393:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 
+ 394:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \version		1.0.0
+ 395:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \date 			22/03/2012
+ 396:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** \author			Claudio Fontana
+ 397:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** */
+ 398:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** bool_t SettingDataReverseCompare (uint16_t check, uint16_t reference)
+ 399:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** {
+ 294                             		.loc 1 399 0
+ 295                             	.LVL47:
+ 400:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	if ((reference > 0) && (check < reference))
+ 296                             		.loc 1 400 0
+ 297 0000 5F 22                   		movu.W	r2, r2
+ 298 0002 61 02                   		cmp	#0, r2
+ 299 0004 11                      		beq	.L25
+ 300                             		.loc 1 400 0 is_stmt 0 discriminator 1
+ 301 0005 5F 11                   		movu.W	r1, r1
+ 401:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 402:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return TRUE;
+ 302                             		.loc 1 402 0 is_stmt 1 discriminator 1
+ 303 0007 47 21                   		cmp	r2, r1
+ 304 0009 FC DB 13                		scltu.L	r1
+ 305                             	.LVL48:
+ 306 000c 02                      		rts
+ 307                             	.LVL49:
+ 308                             	.L25:
+ 403:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 404:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	else
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	{
+ 406:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 		return FALSE;
+ 309                             		.loc 1 406 0
+ 310 000d EF 21                   		mov.L	r2, r1
+ 311                             	.LVL50:
+ 407:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** 	}
+ 408:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_Loader.c **** }
+ 312                             		.loc 1 408 0
+ 313 000f 02                      		rts
+ 314                             	.LFE5:
+ 400                             	.Letext0:
+ 401                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 402                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_Library/LIB_Utilities.h"
+ 403                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Application_Platform/APP_Types.h"
+ 404                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_BusCOMM/BCP_General.h"
+ 405                             		.file 6 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_BusCOMM/BCP_BusCommMng.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 APP_Loader.c
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:7      .text.LDR_phaseLoader:00000000 _LDR_phaseLoader
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:12     .text.LDR_phaseLoader:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:153    .text.MissedLoadShortCheck:00000000 _MissedLoadShortCheck
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:160    .text.MissedLoadShortCheck:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:213    .text.MissedLoadCheck:00000000 _MissedLoadCheck
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:220    .text.MissedLoadCheck:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:246    .text.MissedOnlyCheck:00000000 _MissedOnlyCheck
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:251    .text.MissedOnlyCheck:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:265    .text.SettingDataCompare:00000000 _SettingDataCompare
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:270    .text.SettingDataCompare:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:292    .text.SettingDataReverseCompare:00000000 _SettingDataReverseCompare
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:297    .text.SettingDataReverseCompare:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:317    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:8      .text.LDR_phaseLoader:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:154    .text.MissedLoadShortCheck:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:214    .text.MissedLoadCheck:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:247    .text.MissedOnlyCheck:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:266    .text.SettingDataCompare:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:293    .text.SettingDataReverseCompare:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1002   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2035   .debug_str:00000184 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1995   .debug_str:00000022 .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1965   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1987   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2051   .debug_str:000001ee .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2077   .debug_str:0000027d .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2079   .debug_str:00000287 .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2027   .debug_str:00000148 .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2025   .debug_str:00000136 .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2083   .debug_str:000002a3 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2055   .debug_str:00000201 .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2067   .debug_str:00000244 .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2057   .debug_str:00000218 .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2039   .debug_str:000001b0 .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2015   .debug_str:000000fa .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2005   .debug_str:000000ad .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2049   .debug_str:000001e7 .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2043   .debug_str:000001c6 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1989   .debug_str:00000000 .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1997   .debug_str:0000006b .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2065   .debug_str:0000023b .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2069   .debug_str:00000252 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2073   .debug_str:00000266 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2019   .debug_str:0000010e .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2063   .debug_str:0000022e .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2087   .debug_str:000002c1 .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2021   .debug_str:00000122 .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1993   .debug_str:0000001a .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2081   .debug_str:00000290 .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2007   .debug_str:000000b4 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2003   .debug_str:0000009d .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2041   .debug_str:000001be .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2047   .debug_str:000001de .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2013   .debug_str:000000ea .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:148    .text.LDR_phaseLoader:000000b3 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1526   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2089   .debug_str:000002d2 .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1544   .debug_loc:0000002c .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2031   .debug_str:0000016a .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1585   .debug_loc:00000092 .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2075   .debug_str:00000274 .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1618   .debug_loc:000000e2 .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2091   .debug_str:000002d8 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1647   .debug_loc:00000127 .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2023   .debug_str:0000012a .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2061   .debug_str:00000227 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2059   .debug_str:00000220 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1673   .debug_loc:00000169 .LLST5
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2071   .debug_str:00000257 .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1700   .debug_loc:000001b3 .LLST6
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1991   .debug_str:0000000b .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1723   .debug_loc:000001eb .LLST7
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:37     .text.LDR_phaseLoader:0000002c .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:78     .text.LDR_phaseLoader:00000063 .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:98     .text.LDR_phaseLoader:00000082 .LVL16
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2009   .debug_str:000000c5 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:208    .text.MissedLoadShortCheck:0000002a .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1740   .debug_loc:00000216 .LLST8
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1765   .debug_loc:00000250 .LLST9
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2029   .debug_str:0000015b .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2093   .debug_str:000002e1 .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2037   .debug_str:000001aa .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1790   .debug_loc:0000028a .LLST12
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:157    .text.MissedLoadShortCheck:00000000 .LBB8
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:169    .text.MissedLoadShortCheck:0000000c .LBE8
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:170    .text.MissedLoadShortCheck:0000000c .LBB10
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1821   .debug_loc:000002c3 .LLST15
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2011   .debug_str:000000da .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:241    .text.MissedLoadCheck:00000018 .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1839   .debug_loc:000002e8 .LLST16
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:217    .text.MissedLoadCheck:00000000 .LBB14
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:235    .text.MissedLoadCheck:00000011 .LBE14
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:260    .text.MissedOnlyCheck:0000000c .LFE3
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1864   .debug_loc:00000322 .LLST19
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1878   .debug_loc:00000343 .LLST20
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2045   .debug_str:000001cb .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:287    .text.SettingDataCompare:00000010 .LFE4
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2053   .debug_str:000001fb .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1892   .debug_loc:00000364 .LLST21
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1999   .debug_str:00000079 .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2001   .debug_str:00000083 .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:314    .text.SettingDataReverseCompare:00000010 .LFE5
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:1917   .debug_loc:0000039e .LLST22
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2017   .debug_str:00000106 .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2085   .debug_str:000002ac .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:2033   .debug_str:00000170 .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:13     .text.LDR_phaseLoader:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:15     .text.LDR_phaseLoader:00000004 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:11     .text.LDR_phaseLoader:00000000 .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:30     .text.LDR_phaseLoader:0000001e .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:114    .text.LDR_phaseLoader:00000099 .LVL19
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:118    .text.LDR_phaseLoader:0000009c .LVL20
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:120    .text.LDR_phaseLoader:0000009e .LVL21
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:124    .text.LDR_phaseLoader:000000a1 .LVL22
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:126    .text.LDR_phaseLoader:000000a3 .LVL23
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:33     .text.LDR_phaseLoader:00000026 .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:51     .text.LDR_phaseLoader:0000003f .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:132    .text.LDR_phaseLoader:000000a7 .LVL25
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:20     .text.LDR_phaseLoader:00000008 .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:106    .text.LDR_phaseLoader:0000008b .LVL18
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:138    .text.LDR_phaseLoader:000000ab .LVL27
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:35     .text.LDR_phaseLoader:00000028 .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:142    .text.LDR_phaseLoader:000000ae .LVL28
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:74     .text.LDR_phaseLoader:0000005b .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:94     .text.LDR_phaseLoader:0000007a .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:130    .text.LDR_phaseLoader:000000a6 .LVL24
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:136    .text.LDR_phaseLoader:000000aa .LVL26
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:56     .text.LDR_phaseLoader:00000046 .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:70     .text.LDR_phaseLoader:00000057 .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:72     .text.LDR_phaseLoader:00000059 .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:59     .text.LDR_phaseLoader:00000049 .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:91     .text.LDR_phaseLoader:00000076 .LVL14
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:101    .text.LDR_phaseLoader:00000084 .LVL17
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:156    .text.MissedLoadShortCheck:00000000 .LVL29
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:165    .text.MissedLoadShortCheck:0000000b .LVL30
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:178    .text.MissedLoadShortCheck:00000011 .LVL31
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:186    .text.MissedLoadShortCheck:00000017 .LVL32
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:189    .text.MissedLoadShortCheck:00000019 .LVL33
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:202    .text.MissedLoadShortCheck:00000025 .LVL34
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:205    .text.MissedLoadShortCheck:00000028 .LVL35
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:216    .text.MissedLoadCheck:00000000 .LVL36
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:227    .text.MissedLoadCheck:0000000d .LVL37
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:232    .text.MissedLoadCheck:00000011 .LVL38
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:239    .text.MissedLoadCheck:00000016 .LVL39
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:249    .text.MissedOnlyCheck:00000000 .LVL40
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:253    .text.MissedOnlyCheck:00000004 .LVL41
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:255    .text.MissedOnlyCheck:00000006 .LVL42
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:268    .text.SettingDataCompare:00000000 .LVL43
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:278    .text.SettingDataCompare:0000000c .LVL44
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:280    .text.SettingDataCompare:0000000d .LVL45
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:284    .text.SettingDataCompare:0000000f .LVL46
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:295    .text.SettingDataReverseCompare:00000000 .LVL47
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:305    .text.SettingDataReverseCompare:0000000c .LVL48
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:307    .text.SettingDataReverseCompare:0000000d .LVL49
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:311    .text.SettingDataReverseCompare:0000000f .LVL50
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:407    .debug_info:00000000 .Ldebug_info0
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:181    .text.MissedLoadShortCheck:00000011 .LBE10
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:190    .text.MissedLoadShortCheck:00000019 .LBB13
+C:\Users\Andrea\AppData\Local\Temp\ccKLHpDR.s:198    .text.MissedLoadShortCheck:00000021 .LBE13
+
+UNDEFINED SYMBOLS
+_SelectorDataPointers
+_MSettingBasicLoader

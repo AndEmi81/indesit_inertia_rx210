@@ -1,0 +1,2203 @@
+   1                             		.file	"DW_Statistics.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.STC_saveBlackBoxData,"ax",@progbits
+   5                             		.global	_STC_saveBlackBoxData
+   7                             	_STC_saveBlackBoxData:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control/DW_Statistics.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** Copyright (c) 2004-2005, Indesit Company, EDT.
+   3:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \Par	Gestisce le statistiche.
+   8:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \Header file.
+   9:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****  
+  10:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \file    DW_Statistics.c
+  11:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \ingroup DW_Statistics
+  12:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \date    11/09/2008
+  13:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \author  Valeria Catani
+  14:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \version 1.0.0
+  15:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  16:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  17:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \Par		History (titolo)
+  18:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****  	
+  19:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \n		
+  20:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** */
+  21:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  22:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* ******** */
+  23:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* Includes */
+  24:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* ******** */
+  25:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  26:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** #include "CstmHeaders.h"
+  27:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** #include "DigitalInputsExp.h"
+  28:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** #include "AnalogExp.h"
+  29:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** #include "PM_AnalogFeedbackExp.h"
+  30:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** #if defined(PLATFORM2_SUPPORT)
+  31:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** #include "BCP_BusCommMng.h"
+  32:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** #endif /* defined(PLATFORM2_SUPPORT) */
+  33:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  34:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** #ifdef CONFIG_PM_POWER_PROFILE_SUPPORT
+  35:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** #include "PM_PowerProfileExp.h"
+  36:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** #endif
+  37:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  38:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** #ifdef _STATISTICS_ON_			
+  39:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  40:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* ****************** */
+  41:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* Defines and Macros */
+  42:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* ****************** */
+  43:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  44:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* *************************** */
+  45:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* Typedef, Structs and Unions */
+  46:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* *************************** */
+  47:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  48:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* **************************** */
+  49:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* Prototype of local functions */
+  50:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* **************************** */
+  51:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** void STC_OnTimeUpdate(void);
+  52:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  53:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* ****************** */
+  54:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* Exported variables */
+  55:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* ****************** */
+  56:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  57:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* **************** */
+  58:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* Global variables */
+  59:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* **************** */
+  60:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  61:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  62:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* ***************** */
+  63:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* Exported function */
+  64:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* ***************** */
+  65:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  66:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  67:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /**
+  68:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** Salva i dati nella 'Scatola nera' in caso di prefault 
+  69:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** In caso di fault viene semplicemente aggiornato il tipo di evento, ma non i dati
+  70:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** precedentemente salvati nel prefault.
+  71:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  72:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \param [in] 	
+  73:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \param [out]	
+  74:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 
+  75:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \return     	none
+  76:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  77:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \notes:			
+  78:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  79:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \author			Marco Quintini
+  80:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \date   		18/05/2007
+  81:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \version    	1.0.0
+  82:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  83:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** */
+  84:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  85:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  86:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** void STC_saveBlackBoxData(sft_fault_codes_t faultToBeSaved)
+  87:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** {
+  10                             		.loc 1 87 0
+  11                             	.LVL0:
+  12 0000 6E 7D                   		pushm	r7-r13
+  13                             	.LCFI0:
+  14 0002 60 40                   		sub	#4, r0
+  15                             	.LCFI1:
+  16 0004 DD 0B 12                		mov.W	36[r0], r11
+  88:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** uint8_t i, analogFb_bitmap;
+  89:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  90:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/* Il salvataggio avviene in corrispondenza di un prefault */
+  91:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].event = BB_EVENT_PREFAULT;
+  17                             		.loc 1 91 0
+  18 0007 FB 72 00 00 00 00       		mov.L	#_MachineStatistics, r7
+  19 000d FA 74 A6 01 00          		mov.B	#0, 422[r7]
+  92:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+  93:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/* Codici di guasto nel momento del salvataggio */
+  94:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  95:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].faultCodes = faultToBeSaved;
+  20                             		.loc 1 95 0
+  21 0012 FB A2 00 00 00 00       		mov.L	#_MachineStatistics+423, r10
+  22 0018 D3 AB                   		mov.W	r11, [r10]
+  96:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+  97:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/* Ciclo, fase, passo */
+  98:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].cycle = Interpreter_Data[0].cycle;
+  23                             		.loc 1 98 0
+  24 001a FB A2 00 00 00 00       		mov.L	#_Interpreter_Data, r10
+  25 0020 C9 A7 01 A9 01          		mov.B	1[r10], 425[r7]
+  99:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].phase = Interpreter_Data[0].phase;
+  26                             		.loc 1 99 0
+  27 0025 C9 A7 02 AA 01          		mov.B	2[r10], 426[r7]
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].first_statement = Interpreter_Data[0].first_statement;
+  28                             		.loc 1 100 0
+  29 002a C9 A7 03 AB 01          		mov.B	3[r10], 427[r7]
+  30                             	.LVL1:
+  31 002f 66 F7                   		mov.L	#15, r7
+  32 0031 66 0A                   		mov	#0, r10
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/* Carichi attivi */
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].activeLoadsBmp = 0;
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	for(i=BB_VALID_LOADS_NUM;i>0;i--)
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	{
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		if(LoadsStatus[i-1] != 0)
+  33                             		.loc 1 106 0
+  34 0033 FB B2 00 00 00 00       		mov.L	#_LoadsStatus, r11
+  35                             	.LVL2:
+  36 0039 03                      		.balign 2,3,3
+  37                             	.L3:
+  38 003a FE C7 BC                		movu.B	[r7,r11], r12
+  39 003d 61 0C                   		cmp	#0, r12
+  40 003f 15                      		beq	.L2
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		{
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			/*lint -e712  1 <= i <= 16 */
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			SETBIT(MachineStatistics.blackBox_Data[0].activeLoadsBmp, (i-1));
+  41                             		.loc 1 109 0
+  42 0040 FC 63 A7                		bset	r7, r10
+  43 0043 03                      		.balign 2,3,1
+  44                             	.L2:
+  45 0044 60 17                   		sub	#1, r7
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	for(i=BB_VALID_LOADS_NUM;i>0;i--)
+  46                             		.loc 1 104 0
+  47 0046 75 07 FF                		cmp	#-1, r7
+  48 0049 21 F1                   		bne	.L3
+  49 004b FB 72 00 00 00 00       		mov.L	#_MachineStatistics, r7
+  50 0051 D7 7A D6                		mov.W	r10, 428[r7]
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			/*lint +e712 */
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		}
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	}
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** #ifdef CONFIG_LIB_EXTERNAL_BOARD_SUPPORT
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/* velocit� pompa lavaggio */
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	if( ( HWC_Flags.bit.bldc ) || ( HWC_Flags.bit.bldc1 ) )
+  51                             		.loc 1 117 0
+  52 0054 FB A2 00 00 00 00       		mov.L	#_HWC_Flags, r10
+  53 005a DC AA                   		mov.W	[r10], r10
+  54 005c 76 2A 00 60             		and	#0x6000, r10
+  55 0060 20 14                   		beq	.L4
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	{
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		MachineStatistics.blackBox_Data[0].pumpSpeed = ((int16_t)(BLDC_Pump_InfoBuffer[WASH_BLDC_PUMP][BL
+  56                             		.loc 1 119 0
+  57 0062 FB A2 00 00 00 00       		mov.L	#_BLDC_Pump_InfoBuffer, r10
+  58 0068 59 AC 02                		movu.B	2[r10], r12
+  59 006b 6C 8C                   		shll	#8, r12
+  60 006d 59 AB 03                		movu.B	3[r10], r11
+  61 0070 FF 2A BC                		add	r11, r12, r10
+  62 0073 09                      		bra	.L21
+  63                             	.L4:
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	}
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	else 
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	{
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		MachineStatistics.blackBox_Data[0].pumpSpeed = LoadsStatus[LD_WASH_PUMP_IND];
+  64                             		.loc 1 123 0
+  65 0074 FB A2 00 00 00 00       		mov.L	#_LoadsStatus, r10
+  66 007a 58 AA                   		movu.B	[r10], r10
+  67                             		.balign 2,3,5
+  68                             	.L21:
+  69 007c D7 7A D7                		mov.W	r10, 430[r7]
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	}
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** #endif	
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/* Stato input analogici + feedback analogici */
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	analogFb_bitmap = AnalogFeedbackGetMaskAnalogF_Enabled();	
+  70                             		.loc 1 130 0
+  71 007f 05 00 00 00             		bsr	_AnalogFeedbackGetMaskAnalogF_Enabled
+  72                             	.LVL3:
+  73 0083 FB A2 00 00 00 00       		mov.L	#_MachineStatistics+432, r10
+  74 0089 66 07                   		mov.L	#0, r7
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	 
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	for(i=0; i<8; i++)
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	{
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  if ( TESTBIT(analogFb_bitmap,i) )
+  75                             		.loc 1 135 0
+  76 008b 5B 1B                   		movu.B	r1, r11
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  {
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	    MachineStatistics.blackBox_Data[0].analogfeedbackVal = PM_AnalogFeedbackGetValue (i);
+  77                             		.loc 1 137 0
+  78 008d FB C2 00 00 00 00       		mov.L	#_MachineStatistics, r12
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  }
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  MachineStatistics.blackBox_Data[0].analogInputs[i] = 0xFFFF;
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  if (0 != (LIB_ADC_IsApplAnalogReady(1<<i) ))
+  79                             		.loc 1 142 0
+  80 0093 66 1D                   		mov.L	#1, r13
+  81                             	.LVL4:
+  82 0095 03                      		.balign 2,3,1
+  83                             	.L8:
+  84 0096 CF 79                   		mov.B	r7, r9
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  if ( TESTBIT(analogFb_bitmap,i) )
+  85                             		.loc 1 135 0
+  86 0098 FC 6B B7                		btst	r7, r11
+  87 009b 20 0D                   		beq	.L6
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	    MachineStatistics.blackBox_Data[0].analogfeedbackVal = PM_AnalogFeedbackGetValue (i);
+  88                             		.loc 1 137 0
+  89 009d CF 71                   		mov.B	r7, r1
+  90 009f 05 00 00 00             		bsr	_PM_AnalogFeedbackGetValue
+  91                             	.LVL5:
+  92 00a3 CB C1 C0 01             		mov.B	r1, 448[r12]
+  93 00a7 03                      		.balign 2,3,4
+  94                             	.L6:
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  MachineStatistics.blackBox_Data[0].analogInputs[i] = 0xFFFF;
+  95                             		.loc 1 140 0
+  96 00a8 F8 A5 FF                		mov.W	#-1, [r10]
+  97                             		.loc 1 142 0
+  98 00ab EF D1                   		mov.L	r13, r1
+  99 00ad FD 62 71                		shll	r7, r1
+ 100 00b0 05 00 00 00             		bsr	_LIB_ADC_IsApplAnalogReady
+ 101                             	.LVL6:
+ 102 00b4 61 01                   		cmp	#0, r1
+ 103 00b6 12                      		beq	.L7
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  {
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	    MachineStatistics.blackBox_Data[0].analogInputs[i] = LIB_ADC_GetAnalogValue (i);
+ 104                             		.loc 1 144 0
+ 105 00b7 CF 91                   		mov.B	r9, r1
+ 106 00b9 05 00 00 00             		bsr	_LIB_ADC_GetAnalogValue
+ 107                             	.LVL7:
+ 108 00bd D3 A1                   		mov.W	r1, [r10]
+ 109 00bf 03                      		.balign 2,3,1
+ 110                             	.L7:
+ 111 00c0 62 17                   		add	#1, r7
+ 112 00c2 62 2A                   		add	#2, r10
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	for(i=0; i<8; i++)
+ 113                             		.loc 1 132 0
+ 114 00c4 61 87                   		cmp	#8, r7
+ 115 00c6 21 D0                   		bne	.L8
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  }
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	}
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/* Stato input digitali */
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].digInputs = DigInputs;
+ 116                             		.loc 1 150 0
+ 117 00c8 FB E2 00 00 00 00       		mov.L	#_MachineStatistics, r14
+ 118 00ce FB 72 00 00 00 00       		mov.L	#_DigInputs, r7
+ 119 00d4 C8 7E C1 01             		mov.B	[r7], 449[r14]
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/* Generic Input */
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].washTemperature = GITemp;
+ 120                             		.loc 1 153 0
+ 121 00d8 FB 72 00 00 00 00       		mov.L	#_GITemp, r7
+ 122 00de C8 7E C4 01             		mov.B	[r7], 452[r14]
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].waterLoaded = GIWaterLoaded;
+ 123                             		.loc 1 155 0
+ 124 00e2 FB 72 00 00 00 00       		mov.L	#_GIWaterLoaded, r7
+ 125 00e8 D4 7E E1                		mov.W	[r7], 450[r14]
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].turbidity = TurbidityReads.perc;		 /* GITurbidity; */
+ 126                             		.loc 1 157 0
+ 127 00eb FB 72 00 00 00 00       		mov.L	#_TurbidityReads, r7
+ 128 00f1 C9 7E 09 C5 01          		mov.B	9[r7], 453[r14]
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].criteria = GICriteria;
+ 129                             		.loc 1 159 0
+ 130 00f6 FB 72 00 00 00 00       		mov.L	#_GICriteria, r7
+ 131 00fc C8 7E C8 01             		mov.B	[r7], 456[r14]
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].giValid = GIValid;
+ 132                             		.loc 1 161 0
+ 133 0100 FB 72 00 00 00 00       		mov.L	#_GIValid, r7
+ 134 0106 D4 7E E3                		mov.W	[r7], 454[r14]
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/* Reset ed errori I2C */
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].coldResetNum = MachineStatistics.lastCycles[MOST_RECENT_STAT_CY
+ 135                             		.loc 1 165 0
+ 136 0109 C9 EE 7E C9 01          		mov.B	126[r14], 457[r14]
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].warmResetNum = MachineStatistics.lastCycles[MOST_RECENT_STAT_CY
+ 137                             		.loc 1 166 0
+ 138 010e C9 EE 7F CA 01          		mov.B	127[r14], 458[r14]
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	memcpy(&MachineStatistics.blackBox_Data[0].commErr[0][0], &MachineStatistics.testCycleStats.commEr
+ 139                             		.loc 1 169 0
+ 140 0113 FB 12 00 00 00 00       		mov.L	#_MachineStatistics+460, r1
+ 141 0119 FB 22 00 00 00 00       		mov.L	#_MachineStatistics+386, r2
+ 142 011f 75 43 12                		mov.L	#18, r3
+ 143 0122 7F 8F                   		smovf
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].flags_2copy = Flags_2;
+ 144                             		.loc 1 172 0
+ 145 0124 FB 72 00 00 00 00       		mov.L	#_Flags_2, r7
+ 146 012a C8 7E F4 01             		mov.B	[r7], 500[r14]
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].virtual_Sensor[GI_VIRTUAL_SENSOR_WASH] = Virtual_Sensor_Value[G
+ 147                             		.loc 1 173 0
+ 148 012e FB 72 00 00 00 00       		mov.L	#_Virtual_Sensor_Value, r7
+ 149 0134 C8 7E F2 01             		mov.B	[r7], 498[r14]
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].virtual_Sensor[GI_VIRTUAL_SENSOR_DRAIN] = Virtual_Sensor_Value[
+ 150                             		.loc 1 174 0
+ 151 0138 C9 7E 01 F3 01          		mov.B	1[r7], 499[r14]
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].State5_algo = State5.max_speed_value;
+ 152                             		.loc 1 175 0
+ 153 013d FB 72 00 00 00 00       		mov.L	#_State5, r7
+ 154 0143 D4 7E F8                		mov.W	[r7], 496[r14]
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].failnumVs.VScheckinconsistency=FltFlagsVS.VScheckinconsistency;
+ 155                             		.loc 1 176 0
+ 156 0146 FB A2 00 00 00 00       		mov.L	#_FltFlagsVS, r10
+ 157 014c CC AB                   		mov.B	[r10], r11
+ 158                             	.LVL8:
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].failnumVs.warninglostwater =FltFlagsVS.warninglostwater;
+ 159                             		.loc 1 177 0
+ 160 014e 58 A7                   		movu.B	[r10], r7
+ 161 0150 76 27 F0 00             		and #0xf0, r7
+ 162 0154 EF BA                   		mov.L	r11, r10
+ 163 0156 64 FA                   		and #15, r10
+ 164 0158 57 A7                   		or	r10, r7
+ 165 015a CB E7 F5 01             		mov.B	r7, 501[r14]
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.blackBox_Data[0].dirty_foam_state=  *((uint8_t *)(&dirty_foam_Data +1));
+ 166                             		.loc 1 178 0
+ 167 015e FB 72 00 00 00 00       		mov.L	#_dirty_foam_Data, r7
+ 168 0164 C9 7E 0E CB 01          		mov.B	14[r7], 459[r14]
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** }
+ 169                             		.loc 1 182 0
+ 170 0169 3F 7D 08                		rtsd	#32, r7-r13
+ 171                             	.LFE0:
+ 173                             		.section	.text.STC_manageStatResetRequest,"ax",@progbits
+ 174                             		.global	_STC_manageStatResetRequest
+ 176                             	_STC_manageStatResetRequest:
+ 177                             	.LFB1:
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /**
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** Processa la variabile ExternalRequest e a seconda del suo valore effettua delle operazioni
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** di reset sulle statistiche.
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \param [in/out] ExternalRequest (global)	
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \param [out]	MachineStatistics (global)
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \return     	none
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \notes:			
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \author			Marco Quintini
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \date   		02/07/2007
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \version    	1.0.0
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** */
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** void STC_manageStatResetRequest(void)
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** {
+ 178                             		.loc 1 204 0
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	if(ExternalRequest == SYSTEM_NORMAL_RESET_LAST_FAULT)
+ 179                             		.loc 1 205 0
+ 180 0000 FB E2 00 00 00 00       		mov.L	#_ExternalRequest, r14
+ 181 0006 58 EE                   		movu.B	[r14], r14
+ 182 0008 61 4E                   		cmp	#4, r14
+ 183 000a 21 18                   		bne	.L23
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** {
+ 184                             		.loc 1 204 0
+ 185 000c 60 40                   		sub	#4, r0
+ 186                             	.LCFI2:
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	{
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		/* Fa scorrere il buffer dei Last Fault, eliminando il più vecchio
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		   e resettando la locazione del più recente */
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		FLT_lastFaultUpdate(No_Fault, &MachineStatistics.lastFault[0]);
+ 187                             		.loc 1 209 0
+ 188 000e FB E2 00 00 00 00       		mov.L	#_No_Fault, r14
+ 189 0014 D0 E0                   		mov.W	[r14], [r0]
+ 190 0016 FB 22 00 00 00 00       		mov.L	#_MachineStatistics+352, r2
+ 191 001c 05 00 00 00             		bsr	_FLT_lastFaultUpdate
+ 192 0020 2E 1E                   		bra	.L24
+ 193                             	.L23:
+ 194                             	.LCFI3:
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	}
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	else if	(ExternalRequest == SYSTEM_NORMAL_RESET_TO_DEFAULT)
+ 195                             		.loc 1 211 0
+ 196 0022 61 5E                   		cmp	#5, r14
+ 197 0024 21 19                   		bne	.L28
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	{
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		/* Azzera tutte le statistiche permanenti */
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		memset(&MachineStatistics, 0, sizeof(MachineStatistics));
+ 198                             		.loc 1 214 0
+ 199 0026 FB 12 00 00 00 00       		mov.L	#_MachineStatistics, r1
+ 200 002c FB 3A 46 02             		mov.L	#0x246, r3
+ 201 0030 66 02                   		mov	#0, r2
+ 202 0032 7F 88                   		sstr.b
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	}
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	else
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	{
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		return;
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	}
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	ExternalRequest = 0;
+ 203                             		.loc 1 221 0
+ 204 0034 FB E2 00 00 00 00       		mov.L	#_ExternalRequest, r14
+ 205 003a F8 E4 00                		mov.B	#0, [r14]
+ 206                             	.L28:
+ 207 003d 02                      		rts
+ 208                             	.L24:
+ 209                             	.LCFI4:
+ 210 003e FB E2 00 00 00 00       		mov.L	#_ExternalRequest, r14
+ 211 0044 F8 E4 00                		mov.B	#0, [r14]
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** }
+ 212                             		.loc 1 222 0
+ 213 0047 67 01                   		rtsd	#4
+ 214                             	.LFE1:
+ 216                             		.section	.text.STC_LastCycleStat_Init,"ax",@progbits
+ 217                             		.global	_STC_LastCycleStat_Init
+ 219                             	_STC_LastCycleStat_Init:
+ 220                             	.LFB3:
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /**
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** Aggiorna tutte le statistiche che vengono registrate a fine ciclo, 
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** -statistiche generiche globali
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** -statistiche specifiche relative agli ultimi n cicli eseguiti 
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** (eliminando quelle del pi� vecchio e introducendo in testa quelle del pi� recente).
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \param [out]	MachineStatistics (global)
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \return     	none
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \notes:			
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \author			Roberto Fioravanti
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \date   		24/09/2008
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \version    	1.0.0
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** */
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** void STC_updateLastCycleStat_END(uint8_t mode)
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** {
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** SWTC_TimeType cycleDuration;
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/**
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	Aggiornamento statistiche ultimi cicli
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	*/	
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     /* ciclo */
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/*MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].cycle = StartedCycle;*/
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	cycleDuration = SWTC_GetElapsedTime((SWTC_CountersType) STC_TEMP_CYCLE_STATISTIC_M_COUNTER);
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	if( cycleDuration > UINT8_T_MAX )
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	{
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		/* La massima durata memorizzabile è 255 minuti */
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		cycleDuration = UINT8_T_MAX;
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	}
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/*lint -e734 cycleDuration è limitato a 255 */
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].duration= cycleDuration;
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/*lint +e734 */
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	/**
+ 268:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	Aggiornamento statistiche globali 
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	(dopo quelle degli ultimi cicli, utilizzano alcune informazioni
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	che vengono aggiornate nell'array degli ultimi cicli */  
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 273:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/* Cicli eseguiti */
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	if(0 == mode)
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	{
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		if( StartedCycle < SIZE(MachineStatistics.globalStats.executedCycles_Num) )
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		{
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			/* Si potrebbe anche memorizzare il ciclo Interpreter_Data.cycle anzichè StartedCycle */
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			IncWordWithCheck(&MachineStatistics.globalStats.executedCycles_Num[StartedCycle]);
+ 280:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		}
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	}
+ 282:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/* Numero cicli in cui è avvenuta almeno una condizione di KO Restore */
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   if ( MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].restore_koRestore.b.koRestore != 0 
+ 286:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   {
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  MachineStatistics.globalStats.KORestoreCycles_Num++;
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   }
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* Connectivity stat */
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	  /* UPDATE WATER LOADED/WEIGHT ESTIMATION */
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	  MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].waterxcycle = cycle_loaded_water;
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	  /*Turbidity*/
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	  MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].turbidity = TurbidityReads.perc;		 /*
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	  /* UPDATE ENERGY STATISTCS */
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	  MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].energyCycleConsumption = ((b_ui32Ener
+ 297:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	 /* APP Statistics */
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	  MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].APPEnergyConsumption = TempCycle_Stat
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	  MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].APPTotalDuration = TempCycle_Stats.AP
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	  /* Update cicli schedulati */
+ 302:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  
+ 303:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  if (MachineStatistics.globalStats.water_loaded + cycle_loaded_water < UINT32_T_MAX )
+ 305:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  {
+ 306:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		  MachineStatistics.globalStats.water_loaded += cycle_loaded_water;
+ 307:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  }
+ 308:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  else
+ 309:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  {
+ 310:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		  MachineStatistics.globalStats.water_loaded = UINT32_T_MAX;
+ 311:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  }
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  cycle_loaded_water = 0;
+ 313:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /*end connectivity stat*/
+ 314:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			   /**/
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	  /* ON Time : tempo di Run */
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	  STC_OnTimeUpdate();
+ 318:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** }
+ 320:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /**
+ 321:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** Inizializza tutte le variabili temporanee per le statistiche relative all'ultimo ciclo eseguito.
+ 322:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 323:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \param [out]	TempCycle_Stats (global)
+ 324:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 
+ 325:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \return     	none
+ 326:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 327:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \notes:			
+ 328:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 329:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \author			Roberto Fioravanti
+ 330:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \date   		24/09/2008
+ 331:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \version    	1.0.0
+ 332:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 333:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** */
+ 334:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** void STC_LastCycleStat_Init(void)
+ 335:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** {    
+ 221                             		.loc 1 335 0
+ 336:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 337:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     /* reset var temporanea per statistiche */
+ 338:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     TempCycle_Stats.turbindex=0;
+ 222                             		.loc 1 338 0
+ 223 0000 FB E2 00 00 00 00       		mov.L	#_TempCycle_Stats, r14
+ 224 0006 F8 E4 00                		mov.B	#0, [r14]
+ 339:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     TempCycle_Stats.flags.flags=0;
+ 225                             		.loc 1 339 0
+ 226 0009 F9 E4 02 00             		mov.B	#0, 2[r14]
+ 340:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     /* reset statistiche last cycle */
+ 341:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   /*  memset(&MachineStatistics.lastCycles, 0, sizeof(MachineStatistics.lastCycles));*/
+ 342:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     /* imposta propriet� timer */
+ 343:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	(void)Set_MediumCounter((SWTC_CountersType)STC_TEMP_CYCLE_STATISTIC_M_COUNTER, (SWTC_PrescalerType
+ 227                             		.loc 1 343 0
+ 228 000d 75 41 29                		mov	#41, r1
+ 229 0010 66 62                   		mov	#6, r2
+ 230 0012 FB 3A FF 7F             		mov	#0x7fff, r3
+ 231 0016 04 00 00 00             		bra	_Set_MediumCounter
+ 232                             	.LVL9:
+ 233                             	.LFE3:
+ 235                             		.section	.text.STC_LastCyclesArray_Init,"ax",@progbits
+ 236                             		.global	_STC_LastCyclesArray_Init
+ 238                             	_STC_LastCyclesArray_Init:
+ 239                             	.LFB4:
+ 344:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****  /* Saving regulation for hour and minute di quando il ciclo va in run  */	
+ 345:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 346:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** }
+ 347:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 348:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 349:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /**
+ 350:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** Fa scorrere la lista fifo degli ultimi cicli (viene chiamata ad inizio ciclo)
+ 351:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 352:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \param [out]	
+ 353:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 
+ 354:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \return     	none
+ 355:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 356:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \notes:			
+ 357:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 358:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \author		Valeria Catani
+ 359:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \date   		17/10/2008
+ 360:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \version    	1.0.0
+ 361:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 362:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** */
+ 363:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** void STC_LastCyclesArray_Init(void)
+ 364:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** {
+ 240                             		.loc 1 364 0
+ 241                             	.LVL10:
+ 242                             		.loc 1 364 0
+ 243 0000 66 0E                   		mov.L	#0, r14
+ 244                             	.LVL11:
+ 245                             		.balign 2,3,5
+ 246                             	.L31:
+ 365:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** uint8_t i;
+ 366:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 367:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   /** 
+ 368:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	Aggiorna lista delle statistiche degli ultimi cicli. Fa scorrere la lista fifo.
+ 369:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	*/
+ 370:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	for(i=(SIZE(MachineStatistics.lastCycles) - 1);i>0;i--)
+ 371:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	{
+ 372:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		MachineStatistics.lastCycles[i] = MachineStatistics.lastCycles[i - 1];
+ 247                             		.loc 1 372 0 discriminator 2
+ 248 0002 70 E1 00 00 00 00       		add	#_MachineStatistics+312, r14, r1
+ 249 0008 70 E2 00 00 00 00       		add	#_MachineStatistics+272, r14, r2
+ 250 000e 75 43 28                		mov.L	#40, r3
+ 251 0011 7F 8F                   		smovf
+ 252 0013 71 EE D8                		add	#-40, r14
+ 370:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	for(i=(SIZE(MachineStatistics.lastCycles) - 1);i>0;i--)
+ 253                             		.loc 1 370 0 discriminator 2
+ 254 0016 76 0E 38 FF             		cmp	#0xffffff38, r14
+ 255 001a 21 E8                   		bne	.L31
+ 373:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		
+ 374:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	}  
+ 375:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 376:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   /*_memset_clear_8bitCount( &MachineStatistics.lastCyclesStats[MOST_RECENT_STAT_CYCLE_POS], sizeof
+ 377:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	memset(&MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS], 0, sizeof(MachineStatistics.last
+ 256                             		.loc 1 377 0
+ 257 001c FB 12 00 00 00 00       		mov.L	#_MachineStatistics+112, r1
+ 258 0022 75 43 28                		mov.L	#40, r3
+ 259 0025 66 02                   		mov	#0, r2
+ 260 0027 7F 88                   		sstr.b
+ 378:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 379:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/* ciclo */
+ 380:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].cycle = StartedCycle;
+ 261                             		.loc 1 380 0
+ 262 0029 FB 42 00 00 00 00       		mov.L	#_StartedCycle, r4
+ 263 002f FB E2 00 00 00 00       		mov.L	#_MachineStatistics, r14
+ 264 0035 C4 4E 70                		mov.B	[r4], 112[r14]
+ 265 0038 02                      		rts
+ 266                             	.LFE4:
+ 268 0039 03                      		.section	.text.STC_superVisorUpdateStatistics,"ax",@progbits
+ 269                             		.global	_STC_superVisorUpdateStatistics
+ 271                             	_STC_superVisorUpdateStatistics:
+ 272                             	.LFB5:
+ 381:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 382:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** }
+ 383:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 384:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /**/
+ 385:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 386:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /**
+ 387:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** Aggiornamento statistiche nel Supervisor
+ 388:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** -Abilitazione del contatore della durata di un ciclo e
+ 389:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 390:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \param [in]     Interpreter_Data[0].completeLabel
+ 391:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \param [out] 	TempCycle_Stats.duration_timer (global)
+ 392:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 
+ 393:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \return     	none
+ 394:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 395:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \notes:			
+ 396:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 397:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \author			Roberto Fioravanti
+ 398:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \date   		24/09/2008
+ 399:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \version    	1.1.0
+ 400:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 401:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** */
+ 402:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 403:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** CM_Err_ClassType PrevCommErrCounters[sizeof(CommErr)/sizeof(CommErr[0])][sizeof(CommErr[0])/sizeof(
+ 404:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** void STC_superVisorUpdateStatistics(void)
+ 406:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** {
+ 273                             		.loc 1 406 0
+ 274 0000 6E 7D                   		pushm	r7-r13
+ 275                             	.LCFI5:
+ 276 0002 60 40                   		sub	#4, r0
+ 277                             	.LCFI6:
+ 407:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 408:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** uint8_t channelCnt, errTypeCnt;
+ 409:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** CM_Err_ClassType newCommErrCounters;
+ 410:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** CM_Err_ClassType deltaCommErr;
+ 411:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** LIB_Fixed_ValueType dummy;
+ 412:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 413:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 414:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 415:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/* Contatore durata ciclo */
+ 416:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	if(Interpreter_Data[0].completeLabel.s.label == LBL_RUN)
+ 278                             		.loc 1 416 0
+ 279 0004 FB 72 00 00 00 00       		mov.L	#_Interpreter_Data, r7
+ 280 000a CC 77                   		mov.B	[r7], r7
+ 281 000c 64 F7                   		and #15, r7
+ 417:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	{
+ 418:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		/* Abilita contatore (solo in RUN) */
+ 419:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		(void)SWTC_Run((SWTC_CountersType)STC_TEMP_CYCLE_STATISTIC_M_COUNTER);
+ 282                             		.loc 1 419 0
+ 283 000e 75 41 29                		mov	#41, r1
+ 416:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	if(Interpreter_Data[0].completeLabel.s.label == LBL_RUN)
+ 284                             		.loc 1 416 0
+ 285 0011 61 17                   		cmp	#1, r7
+ 286 0013 1E                      		bne	.L34
+ 287                             		.loc 1 419 0
+ 288 0014 05 00 00 00             		bsr	_SWTC_Run
+ 289                             	.LVL12:
+ 290 0018 0E                      		bra	.L35
+ 291                             	.L34:
+ 420:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	}
+ 421:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	else
+ 422:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	{
+ 423:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		/* Disabilita contatore nei cicli diversi da RUN */
+ 424:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		(void)SWTC_Stop((SWTC_CountersType)STC_TEMP_CYCLE_STATISTIC_M_COUNTER);
+ 292                             		.loc 1 424 0
+ 293 0019 05 00 00 00             		bsr	_SWTC_Stop
+ 294                             	.LVL13:
+ 295 001d 03                      		.balign 2,3,5
+ 296                             	.L35:
+ 425:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	}
+ 426:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 427:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/* Update rejoin counter */
+ 428:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	if (( Join_Leave_Reg != oldJoinValue )  && (Join_Leave_Reg == RE_JOIN_ERC))
+ 297                             		.loc 1 428 0
+ 298 001e FB 72 00 00 00 00       		mov.L	#_Join_Leave_Reg, r7
+ 299 0024 58 77                   		movu.B	[r7], r7
+ 300 0026 FB A2 00 00 00 00       		mov.L	#_oldJoinValue, r10
+ 301 002c 44 A7                   		cmp	[r10].UB, r7
+ 302 002e 20 22                   		beq	.L36
+ 303                             		.loc 1 428 0 is_stmt 0 discriminator 1
+ 304 0030 61 47                   		cmp	#4, r7
+ 305 0032 21 1E                   		bne	.L36
+ 429:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	{
+ 430:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		if( SPV_isCycleRunning() == TRUE )
+ 306                             		.loc 1 430 0 is_stmt 1
+ 307 0034 05 00 00 00             		bsr	_SPV_isCycleRunning
+ 308                             	.LVL14:
+ 309 0038 61 11                   		cmp	#1, r1
+ 310 003a 21 0C                   		bne	.L37
+ 431:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		{
+ 432:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			IncByteWithCheck(&MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].numRejoin);
+ 311                             		.loc 1 432 0
+ 312 003c FB 12 00 00 00 00       		mov.L	#_MachineStatistics+140, r1
+ 313 0042 05 00 00 00             		bsr	_IncByteWithCheck
+ 314                             	.LVL15:
+ 315                             		.balign 2,3,5
+ 316                             	.L37:
+ 433:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		}
+ 434:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		IncWordWithCheck(&MachineStatistics.globalStats.numReJoin);
+ 317                             		.loc 1 434 0
+ 318 0046 FB 12 00 00 00 00       		mov.L	#_MachineStatistics+98, r1
+ 319 004c 05 00 00 00             		bsr	_IncWordWithCheck
+ 320                             	.LVL16:
+ 321                             		.balign 2,3,5
+ 322                             	.L36:
+ 435:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		
+ 436:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	}
+ 437:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	oldJoinValue = Join_Leave_Reg;	
+ 323                             		.loc 1 437 0
+ 324 0050 FB A2 00 00 00 00       		mov.L	#_Join_Leave_Reg, r10
+ 325 0056 FB 72 00 00 00 00       		mov.L	#_oldJoinValue, r7
+ 326 005c C0 A7                   		mov.B	[r10], [r7]
+ 327                             	.LVL17:
+ 328 005e FB B2 00 00 00 00       		mov.L	#_MachineStatistics, r11
+ 329 0064 66 0A                   		mov.L	#0, r10
+ 438:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 439:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			
+ 440:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 441:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/* Statistica intervento routine di sblocco I2C */
+ 442:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	for(channelCnt = 0; channelCnt < (sizeof(CommErr)/sizeof(CommErr[0])) ; channelCnt++)
+ 443:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	{
+ 444:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			for(errTypeCnt = 0; errTypeCnt < (sizeof(CommErr[0])/sizeof(CommErr[0][0])); errTypeCnt++)
+ 445:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			{
+ 446:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 				/* Statistica errori di comunicazione */
+ 447:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 				newCommErrCounters = CommErr[channelCnt][errTypeCnt];
+ 448:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 449:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 				if( SPV_isCycleRunning() == TRUE )
+ 450:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 				{
+ 451:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 					/* Statistica aggiornata in RUN, DELAY e PAUSE */
+ 452:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 					deltaCommErr = newCommErrCounters - PrevCommErrCounters[channelCnt][errTypeCnt];
+ 453:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 454:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 					if( (UINT16_T_MAX - MachineStatistics.testCycleStats.commErr[channelCnt][errTypeCnt]) >= delta
+ 330                             		.loc 1 454 0
+ 331 0066 FB 8E FF FF 00          		mov.L	#0xffff, r8
+ 332 006b 2E 4B                   		bra	.L38
+ 333                             	.LVL18:
+ 334                             	.L41:
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** void STC_superVisorUpdateStatistics(void)
+ 335                             		.loc 1 405 0
+ 336 006d FF 2D 79                		add	r7, r9, r13
+ 447:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 				newCommErrCounters = CommErr[channelCnt][errTypeCnt];
+ 337                             		.loc 1 447 0
+ 338 0070 DC DD                   		mov.W	[r13], r13
+ 339                             	.LVL19:
+ 449:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 				if( SPV_isCycleRunning() == TRUE )
+ 340                             		.loc 1 449 0
+ 341 0072 05 00 00 00             		bsr	_SPV_isCycleRunning
+ 342                             	.LVL20:
+ 343 0076 61 11                   		cmp	#1, r1
+ 344 0078 21 26                   		bne	.L39
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** void STC_superVisorUpdateStatistics(void)
+ 345                             		.loc 1 405 0
+ 346 007a FF 2E 7C                		add	r7, r12, r14
+ 452:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 					deltaCommErr = newCommErrCounters - PrevCommErrCounters[channelCnt][errTypeCnt];
+ 347                             		.loc 1 452 0
+ 348 007d DC E4                   		mov.W	[r14], r4
+ 349 007f FF 04 4D                		sub	r4, r13, r4
+ 350                             	.LVL21:
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** void STC_superVisorUpdateStatistics(void)
+ 351                             		.loc 1 405 0
+ 352 0082 FF 2E 7B                		add	r7, r11, r14
+ 353                             		.loc 1 454 0
+ 354 0085 DD E3 C1                		mov.W	386[r14], r3
+ 355 0088 EF 81                   		mov.L	r8, r1
+ 356 008a 06 C1 E1 C1             		sub	386[r14].UW, r1
+ 357 008e 5F 42                   		movu.W	r4, r2
+ 358 0090 47 21                   		cmp	r2, r1
+ 359 0092 29 08                   		blt	.L40
+ 455:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 					{
+ 456:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 						/* C'è ancora posto */
+ 457:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 						MachineStatistics.testCycleStats.commErr[channelCnt][errTypeCnt] += deltaCommErr;
+ 360                             		.loc 1 457 0
+ 361 0094 4B 34                   		add	r3, r4
+ 362                             	.LVL22:
+ 363 0096 D7 E4 C1                		mov.W	r4, 386[r14]
+ 364 0099 0D                      		bra	.L39
+ 365                             	.LVL23:
+ 366                             	.L40:
+ 458:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 					}
+ 459:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 					else
+ 460:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 					{
+ 461:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 						/* Non c'è abbastanza posto, la statistica viene limitata a 65535 */
+ 462:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 						MachineStatistics.testCycleStats.commErr[channelCnt][errTypeCnt] = UINT16_T_MAX;
+ 367                             		.loc 1 462 0
+ 368 009a F9 E5 C1 FF             		mov.W	#-1, 386[r14]
+ 369                             	.LVL24:
+ 370                             		.balign 2,3,2
+ 371                             	.L39:
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** void STC_superVisorUpdateStatistics(void)
+ 372                             		.loc 1 405 0
+ 373 009e FF 2E 7C                		add	r7, r12, r14
+ 463:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 					}
+ 464:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		    	}
+ 465:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 466:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			    PrevCommErrCounters[channelCnt][errTypeCnt] = newCommErrCounters;
+ 374                             		.loc 1 466 0
+ 375 00a1 D3 ED                   		mov.W	r13, [r14]
+ 376                             	.LVL25:
+ 377 00a3 62 27                   		add	#2, r7
+ 444:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			for(errTypeCnt = 0; errTypeCnt < (sizeof(CommErr[0])/sizeof(CommErr[0][0])); errTypeCnt++)
+ 378                             		.loc 1 444 0
+ 379 00a5 75 57 12                		cmp	#18, r7
+ 380 00a8 21 C5                   		bne	.L41
+ 381 00aa 71 AA 12                		add	#18, r10
+ 382 00ad 71 BB 12                		add	#18, r11
+ 442:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	for(channelCnt = 0; channelCnt < (sizeof(CommErr)/sizeof(CommErr[0])) ; channelCnt++)
+ 383                             		.loc 1 442 0
+ 384 00b0 75 5A 24                		cmp	#36, r10
+ 385 00b3 20 13                   		beq	.L42
+ 386                             	.LVL26:
+ 387 00b5 03                      		.balign 2,3,1
+ 388                             	.L38:
+ 406:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** {
+ 389                             		.loc 1 406 0 discriminator 1
+ 390 00b6 66 07                   		mov.L	#0, r7
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** void STC_superVisorUpdateStatistics(void)
+ 391                             		.loc 1 405 0 discriminator 1
+ 392 00b8 70 A9 00 00 00 00       		add	#_CommErr, r10, r9
+ 393 00be 70 AC 00 00 00 00       		add	#_PrevCommErrCounters, r10, r12
+ 394 00c4 2E A9                   		bra	.L41
+ 395                             	.LVL27:
+ 396                             	.L42:
+ 467:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			}
+ 468:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		}
+ 469:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 470:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		/*gestisce le statistiche globale energia consumata*/
+ 471:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		if(b_ui32EnergyCounterWh > MachineStatistics.globalStats.energyConsumption)
+ 397                             		.loc 1 471 0
+ 398 00c6 FB 72 00 00 00 00       		mov.L	#_b_ui32EnergyCounterWh, r7
+ 399 00cc EC 7A                   		mov.L	[r7], r10
+ 400 00ce FB 72 00 00 00 00       		mov.L	#_MachineStatistics, r7
+ 401 00d4 06 85 7A 1B             		cmp	108[r7].L, r10
+ 402 00d8 25 06                   		bleu	.L43
+ 472:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		{
+ 473:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			MachineStatistics.globalStats.energyConsumption = b_ui32EnergyCounterWh;
+ 403                             		.loc 1 473 0
+ 404 00da E7 7A 1B                		mov.L	r10, 108[r7]
+ 405 00dd 03                      		.balign 2,3,3
+ 406                             	.L43:
+ 474:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		}
+ 475:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 476:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		 /*LastCycle vline*/
+ 477:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		  if( MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].Vline == 0 &&  ExtMotor_DataBuffer
+ 407                             		.loc 1 477 0
+ 408 00de 59 77 97                		movu.B	151[r7], r7
+ 409 00e1 61 07                   		cmp	#0, r7
+ 410 00e3 21 1D                   		bne	.L33
+ 411                             		.loc 1 477 0 is_stmt 0 discriminator 1
+ 412 00e5 FB 72 00 00 00 00       		mov.L	#_ExtMotor_DataBuffer, r7
+ 413 00eb B0 7F                   		movu.B	1[r7], r7
+ 414 00ed 61 07                   		cmp	#0, r7
+ 415 00ef 20 11                   		beq	.L33
+ 478:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		  {
+ 479:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			  MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].Vline = VlineCalcolusFromDSP(&dummy);
+ 416                             		.loc 1 479 0 is_stmt 1
+ 417 00f1 EF 01                   		mov.L	r0, r1
+ 418 00f3 05 00 00 00             		bsr	_VlineCalcolusFromDSP
+ 419                             	.LVL28:
+ 420 00f7 FB 72 00 00 00 00       		mov.L	#_MachineStatistics, r7
+ 421 00fd C7 71 97                		mov.B	r1, 151[r7]
+ 422                             		.balign 2,3,2
+ 423                             	.L33:
+ 480:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		  }
+ 481:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** }
+ 424                             		.loc 1 481 0
+ 425 0100 3F 7D 08                		rtsd	#32, r7-r13
+ 426                             	.LFE5:
+ 428 0103 03                      		.section	.text.STC_functionValueUpdateStatistics,"ax",@progbits
+ 429                             		.global	_STC_functionValueUpdateStatistics
+ 431                             	_STC_functionValueUpdateStatistics:
+ 432                             	.LFB6:
+ 482:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 483:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** void STC_functionValueUpdateStatistics(void) 
+ 484:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** {
+ 433                             		.loc 1 484 0
+ 434 0000 6E 7D                   		pushm	r7-r13
+ 435                             	.LCFI7:
+ 436 0002 60 40                   		sub	#4, r0
+ 437                             	.LCFI8:
+ 485:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     uint8_t i;
+ 486:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     const uint8_t *ptrUIFunctionsTab;
+ 487:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     uint16_t bufferStartIndex;
+ 488:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     uint16_t tempWordVar;
+ 489:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     uint8_t funcRegNum;
+ 490:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     uint8_t funcIndex;
+ 491:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     uint16_t funcValue = 0;
+ 438                             		.loc 1 491 0
+ 439 0004 3D 01 00                		mov.W	#0, 2[r0]
+ 440                             	.LVL29:
+ 492:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     uint16_t funcValueAux=0;
+ 441                             		.loc 1 492 0
+ 442 0007 3D 00 00                		mov.W	#0, [r0]
+ 443                             	.LVL30:
+ 493:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     uint8_t retCode;
+ 494:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 495:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 496:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     /* Valori funzioni */
+ 497:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 498:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/* Bitmap delle funzioni On-Off attive nell'ultimo ciclo */	
+ 499:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].on_off_functions = 0;
+ 444                             		.loc 1 499 0
+ 445 000a FB 72 00 00 00 00       		mov.L	#_MachineStatistics, r7
+ 446 0010 F9 74 73 00             		mov.B	#0, 115[r7]
+ 500:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 501:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	ptrUIFunctionsTab = Tab_FunctionsStatistics.Data;
+ 447                             		.loc 1 501 0
+ 448 0014 FB D2 00 00 00 00       		mov.L	#_Tab_FunctionsStatistics, r13
+ 449 001a EC DA                   		mov.L	[r13], r10
+ 450                             	.LVL31:
+ 502:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	bufferStartIndex = 0;
+ 451                             		.loc 1 502 0
+ 452 001c 66 07                   		mov	#0, r7
+ 503:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	
+ 504:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	for(i=0; i<Tab_FunctionsStatistics.DataLenght;i++)
+ 453                             		.loc 1 504 0
+ 454 001e CF 7C                   		mov.B	r7, r12
+ 505:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/* NOTA: se nel setting non � stata inserita la tabella necessaria, 
+ 506:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	   Tab_FunctionsStatistics.DataLenght viene inizializzata a 0 in HND_wmConfigInit(), per cui
+ 507:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	   il ciclo for non viene eseguito affatto e Tab_FunctionsStatistics.Data non � utilizzato */
+ 508:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	{
+ 509:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		funcRegNum = OFFS_B(ptrUIFunctionsTab, 1);
+ 510:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		/* Controllo se la posizione della funzione � coerente con la dimensione di BufNewReg[] */
+ 511:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		if( (*ptrUIFunctionsTab) < SIZE(BufNewReg) )
+ 512:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		{
+ 513:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			funcIndex = BufNewReg[*ptrUIFunctionsTab] - 1;
+ 455                             		.loc 1 513 0
+ 456 0020 FB 92 00 00 00 00       		mov.L	#_BufNewReg, r9
+ 504:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	for(i=0; i<Tab_FunctionsStatistics.DataLenght;i++)
+ 457                             		.loc 1 504 0
+ 458 0026 2E 62                   		bra	.L51
+ 459                             	.LVL32:
+ 460                             	.L55:
+ 509:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		funcRegNum = OFFS_B(ptrUIFunctionsTab, 1);
+ 461                             		.loc 1 509 0
+ 462 0028 CD AB 01                		mov.B	1[r10], r11
+ 463                             	.LVL33:
+ 511:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		if( (*ptrUIFunctionsTab) < SIZE(BufNewReg) )
+ 464                             		.loc 1 511 0
+ 465 002b 58 AE                   		movu.B	[r10], r14
+ 466 002d 75 5E 27                		cmp	#39, r14
+ 467 0030 24 50                   		bgtu	.L52
+ 468                             		.loc 1 513 0
+ 469 0032 FE 4E 9E                		mov.B	[r14,r9], r14
+ 470 0035 60 1E                   		sub	#1, r14
+ 471                             	.LVL34:
+ 514:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			if(funcIndex < funcRegNum)	/* Rende superfluo il controllo funcIndex != 0xFF */
+ 472                             		.loc 1 514 0
+ 473 0037 5B EE                   		movu.B	r14, r14
+ 474 0039 5B B3                   		movu.B	r11, r3
+ 475 003b 47 3E                   		cmp	r3, r14
+ 476 003d 22 43                   		bgeu	.L52
+ 515:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			{
+ 516:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		        if(funcRegNum == ON_OFF_FUNC_REG_NUM) 
+ 477                             		.loc 1 516 0
+ 478 003f 61 23                   		cmp	#2, r3
+ 479 0041 21 29                   		bne	.L53
+ 517:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		        {/* E ' una funzione On - Off */                    
+ 518:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		    		  
+ 519:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 					if ( funcIndex == (INDEX_ON_VALUE-1)  )
+ 480                             		.loc 1 519 0
+ 481 0043 61 1E                   		cmp	#1, r14
+ 482 0045 21 39                   		bne	.L58
+ 520:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 					{/* E' una funzione ON - Off attiva */
+ 521:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 522:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 						if( i< BYTE_SIZE )
+ 483                             		.loc 1 522 0
+ 484 0047 61 74                   		cmp	#7, r4
+ 485 0049 24 13                   		bgtu	.L54
+ 523:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 						{/* C'� ancora spazio nella bitmap -> aggiorno stat ultimo ciclo */
+ 524:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 525:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 							SETBIT(MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].on_off_functions, i);
+ 486                             		.loc 1 525 0
+ 487 004b FB B2 00 00 00 00       		mov.L	#_MachineStatistics, r11
+ 488                             	.LVL35:
+ 489 0051 FD 62 4E                		shll	r4, r14
+ 490                             	.LVL36:
+ 491 0054 06 15 BE 73             		or	115[r11].B, r14
+ 492 0058 C7 BE 73                		mov.B	r14, 115[r11]
+ 493 005b 03                      		.balign 2,3,1
+ 494                             	.L54:
+ 526:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 						}
+ 527:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 528:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 						/* Aggiornamento stat globali funzione on off*/
+ 529:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 						IncByteWithCheck(&MachineStatistics.globalStats.functionsValues_Buffer[bufferStartIndex]);
+ 495                             		.loc 1 529 0
+ 496 005c 5F 71                   		movu.W	r7, r1
+ 497 005e 70 11 00 00 00 00       		add	#_MachineStatistics+70, r1
+ 498 0064 05 00 00 00             		bsr	_IncByteWithCheck
+ 499                             	.LVL37:
+ 500 0068 2E 16                   		bra	.L58
+ 501                             	.LVL38:
+ 502                             	.L53:
+ 530:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 531:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 					}
+ 532:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 533:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 					funcRegNum=1;   /* si incrementa l'indice di una sola unit� per le stat globali */
+ 534:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		        } 
+ 535:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		        else 
+ 536:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		        {
+ 537:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		          tempWordVar = funcIndex + bufferStartIndex;
+ 503                             		.loc 1 537 0
+ 504 006a 4B 7E                   		add	r7, r14
+ 505                             	.LVL39:
+ 538:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		                  
+ 539:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		          if( tempWordVar < SIZE(MachineStatistics.globalStats.functionsValues_Buffer) )
+ 506                             		.loc 1 539 0
+ 507 006c 5F E1                   		movu.W	r14, r1
+ 508 006e 75 51 13                		cmp	#19, r1
+ 509 0071 24 0F                   		bgtu	.L52
+ 540:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		  				{
+ 541:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		  				    /* statistiche globali funzione multi-regolazione*/
+ 542:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		  					/* Numero di volte che una funzione ha assunto un dato valore */
+ 543:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		  					IncByteWithCheck(&MachineStatistics.globalStats.functionsValues_Buffer[tempWordVar]);
+ 510                             		.loc 1 543 0
+ 511 0073 70 11 00 00 00 00       		add	#_MachineStatistics+70, r1
+ 512 0079 05 00 00 00             		bsr	_IncByteWithCheck
+ 513                             	.LVL40:
+ 514 007d 0B                      		bra	.L52
+ 515                             	.LVL41:
+ 516                             	.L58:
+ 533:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 					funcRegNum=1;   /* si incrementa l'indice di una sola unit� per le stat globali */
+ 517                             		.loc 1 533 0
+ 518 007e 66 1B                   		mov	#1, r11
+ 519                             		.balign 2,3,1
+ 520                             	.L52:
+ 521                             	.LVL42:
+ 544:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		  				}
+ 545:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		        }
+ 546:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			}
+ 547:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		}
+ 548:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 549:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		bufferStartIndex += funcRegNum;
+ 522                             		.loc 1 549 0
+ 523 0080 5B BB                   		movu.B	r11, r11
+ 524 0082 4B B7                   		add	r11, r7
+ 525                             	.LVL43:
+ 550:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		ptrUIFunctionsTab += 2;	
+ 526                             		.loc 1 550 0
+ 527 0084 62 2A                   		add	#2, r10
+ 528                             	.LVL44:
+ 504:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	for(i=0; i<Tab_FunctionsStatistics.DataLenght;i++)
+ 529                             		.loc 1 504 0
+ 530 0086 62 1C                   		add	#1, r12
+ 531                             	.LVL45:
+ 532                             		.balign 2,3,1
+ 533                             	.L51:
+ 504:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	for(i=0; i<Tab_FunctionsStatistics.DataLenght;i++)
+ 534                             		.loc 1 504 0 is_stmt 0 discriminator 1
+ 535 0088 5B C4                   		movu.B	r12, r4
+ 536 008a 06 C5 D4 02             		cmp	4[r13].UW, r4
+ 537 008e 23 9A                   		bltu	.L55
+ 551:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	}
+ 552:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 553:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].clockHH = TempCycle_Stats.clockHH;
+ 538                             		.loc 1 553 0 is_stmt 1
+ 539 0090 FB 72 00 00 00 00       		mov.L	#_MachineStatistics, r7
+ 540                             	.LVL46:
+ 541 0096 FB A2 00 00 00 00       		mov.L	#_TempCycle_Stats, r10
+ 542                             	.LVL47:
+ 543 009c C5 A7 06 86             		mov.B	6[r10], 134[r7]
+ 554:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].clockMM= TempCycle_Stats.clockMM;
+ 544                             		.loc 1 554 0
+ 545 00a0 C5 A7 07 87             		mov.B	7[r10], 135[r7]
+ 555:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].schedule_mode = Join_Leave_Reg;
+ 546                             		.loc 1 555 0
+ 547 00a4 FB A2 00 00 00 00       		mov.L	#_Join_Leave_Reg, r10
+ 548 00aa CC AA                   		mov.B	[r10], r10
+ 549                             	.LVL48:
+ 550 00ac C7 7A 85                		mov.B	r10, 133[r7]
+ 556:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		oldJoinValue = Join_Leave_Reg;
+ 551                             		.loc 1 556 0
+ 552 00af FB B2 00 00 00 00       		mov.L	#_oldJoinValue, r11
+ 553 00b5 C3 BA                   		mov.B	r10, [r11]
+ 557:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 558:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	/*  Saving schedule regulation */
+ 559:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 560:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 	  if (( Join_Leave_Reg == ON_ERC_ECO ) ||
+ 554                             		.loc 1 560 0
+ 555 00b7 60 6A                   		sub	#6, r10
+ 556                             	.LVL49:
+ 557 00b9 5B AA                   		movu.B	r10, r10
+ 558 00bb 61 1A                   		cmp	#1, r10
+ 559 00bd 24 3B                   		bgtu	.L56
+ 561:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 	      ( Join_Leave_Reg == ON_ERC_SMART ))
+ 562:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 	  {
+ 563:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 	  	IncWordWithCheck(&MachineStatistics.globalStats.executedschedulCycles);
+ 560                             		.loc 1 563 0
+ 561 00bf FB 12 00 00 00 00       		mov.L	#_MachineStatistics+100, r1
+ 562 00c5 05 00 00 00             		bsr	_IncWordWithCheck
+ 563                             	.LVL50:
+ 564:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 565:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			/* Saving time constraint regulation */
+ 566:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 		  retCode = REG_getFunctionValueByID((uint8_t)(FUNC_ID_END_PROGRAM_HH), &funcValue);
+ 564                             		.loc 1 566 0
+ 565 00c9 66 81                   		mov	#8, r1
+ 566 00cb 71 02 02                		add	#2, r0, r2
+ 567 00ce 05 00 00 00             		bsr	_REG_getFunctionValueByID
+ 568                             	.LVL51:
+ 569 00d2 EF 1A                   		mov.L	r1, r10
+ 570                             	.LVL52:
+ 567:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 		  retCode |= REG_getFunctionValueByID((uint8_t)(FUNC_ID_END_PROGRAM_MM), &funcValueAux);
+ 571                             		.loc 1 567 0
+ 572 00d4 66 91                   		mov	#9, r1
+ 573                             	.LVL53:
+ 574 00d6 EF 02                   		mov.L	r0, r2
+ 575 00d8 05 00 00 00             		bsr	_REG_getFunctionValueByID
+ 576                             	.LVL54:
+ 568:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 		  if (( retCode == S_OK ) && ((retCode & REG_NOT_EXIST)==0))
+ 577                             		.loc 1 568 0
+ 578 00dc 57 A1                   		or	r10, r1
+ 579                             	.LVL55:
+ 580 00de 5B 1A                   		movu.B	r1, r10
+ 581 00e0 61 0A                   		cmp	#0, r10
+ 582 00e2 21 0D                   		bne	.L57
+ 569:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 		  {
+ 570:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 			  MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].delayConstrHH = (uint8_t)funcValue;
+ 583                             		.loc 1 570 0
+ 584 00e4 DD 0A 01                		mov.W	2[r0], r10
+ 585 00e7 C7 7A 8A                		mov.B	r10, 138[r7]
+ 571:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 			  MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].delayConstrMM = (uint8_t)funcValueA
+ 586                             		.loc 1 571 0
+ 587 00ea C5 07 01 8B             		mov.B	1[r0], 139[r7]
+ 588 00ee 0A                      		bra	.L56
+ 589                             	.L57:
+ 572:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 		  }
+ 573:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 		  else
+ 574:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 		  {
+ 575:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 			  /* Update clock information with dummy value if the clock regulation are not present*/
+ 576:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 			  MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].delayConstrHH = DUMMY_CLOCK_VALUE;
+ 590                             		.loc 1 576 0
+ 591 00ef F9 74 8A 00             		mov.B	#0, 138[r7]
+ 577:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 			  MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].delayConstrMM = DUMMY_CLOCK_VALUE;
+ 592                             		.loc 1 577 0
+ 593 00f3 F9 74 8B 00             		mov.B	#0, 139[r7]
+ 594 00f7 03                      		.balign 2,3,5
+ 595                             	.L56:
+ 578:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 		  }
+ 579:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 	  }
+ 580:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 	  /* **** Save Initial Water **** */
+ 581:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 	  	 PrevWaterCount = TempCycle_Stats.loaded_water;
+ 596                             		.loc 1 581 0
+ 597 00f8 FB A2 00 00 00 00       		mov.L	#_TempCycle_Stats, r10
+ 598 00fe FB 72 00 00 00 00       		mov.L	#_PrevWaterCount, r7
+ 599 0104 D1 A7 06                		mov.W	12[r10], [r7]
+ 582:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 	 	 /* **** Saving energy information **** */
+ 583:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 	   PrevEnergyCount = (b_ui32EnergyCounterWh * 3600) +  b_ui16EnergyCounterWhAcc;
+ 600                             		.loc 1 583 0
+ 601 0107 FB 72 00 00 00 00       		mov.L	#_b_ui16EnergyCounterWhAcc, r7
+ 602 010d 5C 7A                   		movu.W	[r7], r10
+ 603 010f FB 72 00 00 00 00       		mov.L	#_b_ui32EnergyCounterWh, r7
+ 604 0115 EC 77                   		mov.L	[r7], r7
+ 605 0117 76 17 10 0E             		mul	#0xe10, r7
+ 606 011b 4B A7                   		add	r10, r7
+ 607 011d FB A2 00 00 00 00       		mov.L	#_PrevEnergyCount, r10
+ 608 0123 E3 A7                   		mov.L	r7, [r10]
+ 584:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 	   /* **** Saving APP data **** */
+ 585:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 	   PM_PowerProfile_TotalProfileEnergy(1, &TempCycle_Stats.APPEnergyConsumption);
+ 609                             		.loc 1 585 0
+ 610 0125 66 11                   		mov	#1, r1
+ 611 0127 FB 22 00 00 00 00       		mov.L	#_TempCycle_Stats+8, r2
+ 612 012d 05 00 00 00             		bsr	_PM_PowerProfile_TotalProfileEnergy
+ 613                             	.LVL56:
+ 586:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 587:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 	   PM_PowerProfile_TotalProfileDuration(1, &TempCycle_Stats.APPTotalDuration);
+ 614                             		.loc 1 587 0
+ 615 0131 66 11                   		mov	#1, r1
+ 616 0133 FB 22 00 00 00 00       		mov.L	#_TempCycle_Stats+10, r2
+ 617 0139 05 00 00 00             		bsr	_PM_PowerProfile_TotalProfileDuration
+ 618                             	.LVL57:
+ 588:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** }
+ 619                             		.loc 1 588 0
+ 620 013d 3F 7D 08                		rtsd	#32, r7-r13
+ 621                             	.LFE6:
+ 623                             		.section	.text.STC_userDishRack_H2oHardness_Update,"ax",@progbits
+ 624                             		.global	_STC_userDishRack_H2oHardness_Update
+ 626                             	_STC_userDishRack_H2oHardness_Update:
+ 627                             	.LFB7:
+ 589:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 590:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** void STC_userDishRack_H2oHardness_Update(void)
+ 591:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** {
+ 628                             		.loc 1 591 0
+ 592:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].userH2oHardness=WaterForRegenerate;
+ 629                             		.loc 1 592 0
+ 630 0000 FB E2 00 00 00 00       		mov.L	#_MachineStatistics, r14
+ 631 0006 FB 42 00 00 00 00       		mov.L	#_WaterForRegenerate, r4
+ 632 000c C4 4E 71                		mov.B	[r4], 113[r14]
+ 593:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 594:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].dishRack_regenerate_spaklingAid.b.dish
+ 633                             		.loc 1 594 0
+ 634 000f FB 42 00 00 00 00       		mov.L	#_DishRackFunctionValue, r4
+ 635 0015 CC 43                   		mov.B	[r4], r3
+ 636 0017 64 33                   		and #3, r3
+ 637 0019 6C 53                   		shll	#5, r3
+ 638 001b CD E4 72                		mov.B	114[r14], r4
+ 639 001e 75 24 9F                		and #0xffffff9f, r4
+ 640 0021 57 34                   		or	r3, r4
+ 641 0023 C7 E4 72                		mov.B	r4, 114[r14]
+ 595:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].washzone_reg=ZoneWashFunctionValue;
+ 642                             		.loc 1 595 0
+ 643 0026 FB 42 00 00 00 00       		mov.L	#_ZoneWashFunctionValue, r4
+ 644 002c CC 43                   		mov.B	[r4], r3
+ 645 002e 6C 43                   		shll	#4, r3
+ 646 0030 CD E4 81                		mov.B	129[r14], r4
+ 647 0033 64 F4                   		and #15, r4
+ 648 0035 57 34                   		or	r3, r4
+ 649 0037 C7 E4 81                		mov.B	r4, 129[r14]
+ 650 003a 02                      		rts
+ 651                             	.LFE7:
+ 653                             		.section	.text.STC_regenerate_spaklingAid_Update,"ax",@progbits
+ 654                             		.global	_STC_regenerate_spaklingAid_Update
+ 656                             	_STC_regenerate_spaklingAid_Update:
+ 657                             	.LFB8:
+ 596:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** }
+ 597:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 598:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** void STC_regenerate_spaklingAid_Update(void)
+ 599:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** {
+ 658                             		.loc 1 599 0
+ 600:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     if(TESTBIT(ApplicationFlags, AF_NO_SALT_BIT)==0)
+ 659                             		.loc 1 600 0
+ 660 0000 FB E2 00 00 00 00       		mov.L	#_ApplicationFlags, r14
+ 661 0006 CC E4                   		mov.B	[r14], r4
+ 662 0008 FB E2 00 00 00 00       		mov.L	#_MachineStatistics, r14
+ 663 000e FD 74 C4 01             		tst	#1, r4
+ 664 0012 21 0D                   		bne	.L62
+ 601:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     {
+ 602:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****         /* Sale presente */
+ 603:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****         MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].dishRack_regenerate_spaklingAid.b.
+ 665                             		.loc 1 603 0
+ 666 0014 CD E4 72                		mov.B	114[r14], r4
+ 667 0017 75 24 E0                		and #-32, r4
+ 668 001a C7 E4 72                		mov.B	r4, 114[r14]
+ 669 001d 2E 25                   		bra	.L63
+ 670                             	.L62:
+ 604:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     } 
+ 605:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     else 
+ 606:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     {        
+ 607:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****         /* Sale assente */
+ 608:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****         MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].dishRack_regenerate_spaklingAid.b.
+ 671                             		.loc 1 608 0
+ 672 001f EF E4                   		mov.L	r14, r4
+ 673 0021 FB E2 00 00 00 00       		mov.L	#_uP_Regenerate_Data, r14
+ 674 0027 CD EE 07                		mov.B	7[r14], r14
+ 675 002a 5B E3                   		movu.B	r14, r3
+ 676 002c 75 53 1F                		cmp	#31, r3
+ 677 002f 25 05                   		bleu	.L64
+ 678 0031 75 4E 1F                		mov	#31, r14
+ 679                             		.balign 2,3,2
+ 680                             	.L64:
+ 681 0034 75 2E 1F                		and #31, r14
+ 682 0037 CD 43 72                		mov.B	114[r4], r3
+ 683 003a 75 23 E0                		and #-32, r3
+ 684 003d 57 3E                   		or	r3, r14
+ 685 003f C7 4E 72                		mov.B	r14, 114[r4]
+ 686                             		.balign 2,3,5
+ 687                             	.L63:
+ 609:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     }
+ 610:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].dishRack_regenerate_spaklingAid.b.spar
+ 688                             		.loc 1 610 0
+ 689 0042 FB E2 00 00 00 00       		mov.L	#_MachineStatistics, r14
+ 690 0048 FB 42 00 00 00 00       		mov.L	#_Flags_2, r4
+ 691 004e CC 43                   		mov.B	[r4], r3
+ 692 0050 64 33                   		and	#3, r3
+ 693 0052 CD E4 72                		mov.B	114[r14], r4
+ 694 0055 FD E7 14                		bmne	#7, r4
+ 695 0058 C7 E4 72                		mov.B	r4, 114[r14]
+ 611:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].rinse_aid=RinseAidFunctionValue;
+ 696                             		.loc 1 611 0
+ 697 005b FB 42 00 00 00 00       		mov.L	#_RinseAidFunctionValue, r4
+ 698 0061 CC 43                   		mov.B	[r4], r3
+ 699 0063 64 F3                   		and #15, r3
+ 700 0065 CD E4 81                		mov.B	129[r14], r4
+ 701 0068 75 24 F0                		and #-16, r4
+ 702 006b 57 34                   		or	r3, r4
+ 703 006d C7 E4 81                		mov.B	r4, 129[r14]
+ 704 0070 02                      		rts
+ 705                             	.LFE8:
+ 707 0071 03                      		.section	.text.STC_Add_LastCycle_turbPerc_turbCalType,"ax",@progbits
+ 708                             		.global	_STC_Add_LastCycle_turbPerc_turbCalType
+ 710                             	_STC_Add_LastCycle_turbPerc_turbCalType:
+ 711                             	.LFB9:
+ 612:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** }
+ 613:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 614:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** void STC_Add_LastCycle_turbPerc_turbCalType(void)
+ 615:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** {
+ 712                             		.loc 1 615 0
+ 616:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     if(TempCycle_Stats.turbindex<STAT_SAVED_CYCLES_TURB_READS_NUM) 
+ 713                             		.loc 1 616 0
+ 714 0000 FB 42 00 00 00 00       		mov.L	#_TempCycle_Stats, r4
+ 715 0006 CC 43                   		mov.B	[r4], r3
+ 716 0008 5B 3E                   		movu.B	r3, r14
+ 717 000a 61 3E                   		cmp	#3, r14
+ 718 000c 24 3C                   		bgtu	.L65
+ 617:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     {        
+ 618:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****         MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].turbPerc_turbCalType.b[TempCycle_S
+ 719                             		.loc 1 618 0
+ 720 000e 70 EE 00 00 00 00       		add	#_MachineStatistics, r14
+ 721 0014 FB 22 00 00 00 00       		mov.L	#_TurbidityReads, r2
+ 722 001a 8A 29                   		mov.B	9[r2], r1
+ 723 001c 75 21 7F                		and #0x7f, r1
+ 724 001f CD E2 74                		mov.B	116[r14], r2
+ 725 0022 75 22 80                		and #0xffffff80, r2
+ 726 0025 57 12                   		or	r1, r2
+ 727 0027 C7 E2 74                		mov.B	r2, 116[r14]
+ 619:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****         MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].turbPerc_turbCalType.b[TempCycle_S
+ 728                             		.loc 1 619 0
+ 729 002a FB 12 00 00 00 00       		mov.L	#_Tab_HWCTurbidity, r1
+ 730 0030 EC 11                   		mov.L	[r1], r1
+ 731 0032 FB 52 00 00 00 00       		mov.L	#_TurbiditySensorCal, r5
+ 732 0038 5C 55                   		movu.W	[r5], r5
+ 733 003a 06 C5 15 05             		cmp	10[r1].UW, r5
+ 734 003e FD E7 02                		bmeq	#7, r2
+ 735 0041 C7 E2 74                		mov.B	r2, 116[r14]
+ 620:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****         TempCycle_Stats.turbindex++;
+ 736                             		.loc 1 620 0
+ 737 0044 62 13                   		add	#1, r3
+ 738 0046 C3 43                   		mov.B	r3, [r4]
+ 739                             	.L65:
+ 740 0048 02                      		rts
+ 741                             	.LFE9:
+ 743                             		.section	.text.STC_OnTimeUpdate,"ax",@progbits
+ 744                             		.global	_STC_OnTimeUpdate
+ 746                             	_STC_OnTimeUpdate:
+ 747                             	.LFB10:
+ 621:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****     }
+ 622:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** }
+ 623:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 624:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 625:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* ************** */
+ 626:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* Local Function */
+ 627:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /* ************** */
+ 628:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 629:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 630:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** /**
+ 631:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 632:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** Calcola il tempo di ON (Statistiche globali) inteso come tempo di RUN espresso in ore
+ 633:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 634:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \param [out]	MachineStatistics.globalStats.OnTime (global)
+ 635:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	 
+ 636:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \return     	none
+ 637:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 638:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \notes:			
+ 639:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 640:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \author			Valeria Catani
+ 641:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \date   		15/10/2008
+ 642:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** \version    1.0.0
+ 643:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 644:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** */
+ 645:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** void STC_OnTimeUpdate(void)
+ 646:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** {
+ 748                             		.loc 1 646 0
+ 647:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** uint32_t time_tmp;
+ 648:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 649:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 
+ 650:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   time_tmp = (uint32_t)( ((uint32_t)(MachineStatistics.globalStats.OnTime * 60)) + 
+ 651:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****                 (MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].duration) +
+ 652:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****                 (TempCycle_Stats.ONTime_Minutes) );
+ 749                             		.loc 1 652 0
+ 750 0000 FB 32 00 00 00 00       		mov.L	#_TempCycle_Stats, r3
+ 650:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   time_tmp = (uint32_t)( ((uint32_t)(MachineStatistics.globalStats.OnTime * 60)) + 
+ 751                             		.loc 1 650 0
+ 752 0006 B0 3A                   		movu.B	1[r3], r2
+ 651:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****                 (MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].duration) +
+ 753                             		.loc 1 651 0
+ 754 0008 FB E2 00 00 00 00       		mov.L	#_MachineStatistics, r14
+ 650:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   time_tmp = (uint32_t)( ((uint32_t)(MachineStatistics.globalStats.OnTime * 60)) + 
+ 755                             		.loc 1 650 0
+ 756 000e 49 E2 79                		add	121[r14].UB, r2
+ 757 0011 5D E4 22                		movu.W	68[r14], r4
+ 758 0014 75 14 3C                		mul	#60, r4
+ 759 0017 4B 24                   		add	r2, r4
+ 760                             	.LVL58:
+ 653:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   
+ 654:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   MachineStatistics.globalStats.OnTime = (time_tmp / 60);
+ 761                             		.loc 1 654 0
+ 762 0019 EF 42                   		mov.L	r4, r2
+ 763 001b FD 74 92 3C             		divu	#60, r2
+ 764 001f D7 E2 22                		mov.W	r2, 68[r14]
+ 655:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   
+ 656:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   TempCycle_Stats.ONTime_Minutes = ( time_tmp - (MachineStatistics.globalStats.OnTime * 60) );
+ 765                             		.loc 1 656 0
+ 766 0022 75 12 C4                		mul	#-60, r2
+ 767 0025 4B 24                   		add	r2, r4
+ 768                             	.LVL59:
+ 769 0027 80 3C                   		mov.B	r4, 1[r3]
+ 770 0029 02                      		rts
+ 771                             	.LFE10:
+ 773                             		.section	.text.STC_updateLastCycleStat_END,"ax",@progbits
+ 774                             		.global	_STC_updateLastCycleStat_END
+ 776                             	_STC_updateLastCycleStat_END:
+ 777                             	.LFB2:
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** {
+ 778                             		.loc 1 242 0
+ 779                             	.LVL60:
+ 780 0000 7E A7                   		push.l	r7
+ 781                             	.LCFI9:
+ 782 0002 CF 17                   		mov.B	r1, r7
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	cycleDuration = SWTC_GetElapsedTime((SWTC_CountersType) STC_TEMP_CYCLE_STATISTIC_M_COUNTER);
+ 783                             		.loc 1 254 0
+ 784 0004 75 41 29                		mov	#41, r1
+ 785                             	.LVL61:
+ 786 0007 05 00 00 00             		bsr	_SWTC_GetElapsedTime
+ 787                             	.LVL62:
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].duration= cycleDuration;
+ 788                             		.loc 1 263 0
+ 789 000b FD 78 51 FF 00          		min	#0xff, r1
+ 790                             	.LVL63:
+ 791 0010 FB E2 00 00 00 00       		mov.L	#_MachineStatistics, r14
+ 792 0016 C7 E1 79                		mov.B	r1, 121[r14]
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	if(0 == mode)
+ 793                             		.loc 1 274 0
+ 794 0019 76 27 FF 00             		and #0xff, r7
+ 795                             	.LVL64:
+ 796 001d 21 17                   		bne	.L69
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		if( StartedCycle < SIZE(MachineStatistics.globalStats.executedCycles_Num) )
+ 797                             		.loc 1 276 0
+ 798 001f FB 72 00 00 00 00       		mov.L	#_StartedCycle, r7
+ 799 0025 58 71                   		movu.B	[r7], r1
+ 800                             	.LVL65:
+ 801 0027 75 51 1F                		cmp	#31, r1
+ 802 002a 24 0A                   		bgtu	.L69
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 			IncWordWithCheck(&MachineStatistics.globalStats.executedCycles_Num[StartedCycle]);
+ 803                             		.loc 1 279 0
+ 804 002c 4B 11                   		add	r1, r1
+ 805 002e 4B E1                   		add	r14, r1
+ 806 0030 05 00 00 00             		bsr	_IncWordWithCheck
+ 807                             	.LVL66:
+ 808                             		.balign 2,3,5
+ 809                             	.L69:
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   if ( MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].restore_koRestore.b.koRestore != 0 
+ 810                             		.loc 1 285 0
+ 811 0034 FB E2 00 00 00 00       		mov.L	#_MachineStatistics, r14
+ 812 003a CD E7 78                		mov.B	120[r14], r7
+ 813 003d 76 27 F0 00             		and	#0xf0, r7
+ 814 0041 11                      		beq	.L70
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  MachineStatistics.globalStats.KORestoreCycles_Num++;
+ 815                             		.loc 1 287 0
+ 816 0042 DD E7 20                		mov.W	64[r14], r7
+ 817 0045 62 17                   		add	#1, r7
+ 818 0047 D7 E7 20                		mov.W	r7, 64[r14]
+ 819                             		.balign 2,3,5
+ 820                             	.L70:
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	  MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].waterxcycle = cycle_loaded_water;
+ 821                             		.loc 1 292 0
+ 822 004a FB 32 00 00 00 00       		mov.L	#_cycle_loaded_water, r3
+ 823 0050 EC 32                   		mov.L	[r3], r2
+ 824 0052 FB E2 00 00 00 00       		mov.L	#_MachineStatistics, r14
+ 825 0058 C7 E2 8D                		mov.B	r2, 141[r14]
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	  MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].turbidity = TurbidityReads.perc;		 /*
+ 826                             		.loc 1 294 0
+ 827 005b FB 72 00 00 00 00       		mov.L	#_TurbidityReads, r7
+ 828 0061 C5 7E 09 8E             		mov.B	9[r7], 142[r14]
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	  MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].energyCycleConsumption = ((b_ui32Ener
+ 829                             		.loc 1 296 0
+ 830 0065 FB 72 00 00 00 00       		mov.L	#_b_ui16EnergyCounterWhAcc, r7
+ 831 006b 5C 77                   		movu.W	[r7], r7
+ 832 006d FB 42 00 00 00 00       		mov.L	#_b_ui32EnergyCounterWh, r4
+ 833 0073 EC 44                   		mov.L	[r4], r4
+ 834 0075 76 14 10 0E             		mul	#0xe10, r4
+ 835 0079 4B 74                   		add	r7, r4
+ 836 007b FB 72 00 00 00 00       		mov.L	#_PrevEnergyCount, r7
+ 837 0081 06 80 74                		sub	[r7].L, r4
+ 838 0084 FB 72 00 00 00 00       		mov.L	#_MachineStatistics+143, r7
+ 839 008a E3 74                   		mov.L	r4, [r7]
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	  MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].APPEnergyConsumption = TempCycle_Stat
+ 840                             		.loc 1 298 0
+ 841 008c FB 42 00 00 00 00       		mov.L	#_TempCycle_Stats, r4
+ 842 0092 FB 72 00 00 00 00       		mov.L	#_MachineStatistics+147, r7
+ 843 0098 D1 47 04                		mov.W	8[r4], [r7]
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	  MachineStatistics.lastCycles[MOST_RECENT_STAT_CYCLE_POS].APPTotalDuration = TempCycle_Stats.AP
+ 844                             		.loc 1 299 0
+ 845 009b FB 72 00 00 00 00       		mov.L	#_MachineStatistics+149, r7
+ 846 00a1 D1 47 05                		mov.W	10[r4], [r7]
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  if (MachineStatistics.globalStats.water_loaded + cycle_loaded_water < UINT32_T_MAX )
+ 847                             		.loc 1 304 0
+ 848 00a4 06 89 E2 1A             		add	104[r14].L, r2
+ 306:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 		  MachineStatistics.globalStats.water_loaded += cycle_loaded_water;
+ 849                             		.loc 1 306 0
+ 850 00a8 E7 E2 1A                		mov.L	r2, 104[r14]
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** 	  cycle_loaded_water = 0;
+ 851                             		.loc 1 312 0
+ 852 00ab 3E 30 00                		mov.L	#0, [r3]
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c **** }
+ 853                             		.loc 1 319 0
+ 854 00ae 7E B7                   		pop	r7
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Inertia/Control\DW_Statistics.c ****   	  STC_OnTimeUpdate();
+ 855                             		.loc 1 317 0
+ 856 00b0 04 00 00 00             		bra	_STC_OnTimeUpdate
+ 857                             	.LVL67:
+ 858                             	.LFE2:
+ 860                             		.comm	_PrevCommErrCounters,36,2
+ 1051                             	.Letext0:
+ 1052                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 1053                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\CFG_DishWasher\\CFG_Inertia/DIO_cfg.h"
+ 1054                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_SwTimersCounters/SwTimersCo
+ 1055                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_Fixed/LIB_FixedExp.h"
+ 1056                             		.file 6 "C:\\Workspace\\FW_Inertia\\branch_indesit\\CFG_DishWasher\\CFG_Inertia/ProductSafety_cfg.
+ 1057                             		.file 7 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Inertia\\General/CstmDefines.h"
+ 1058                             		.file 8 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Application_Platform/APP_Types.h"
+ 1059                             		.file 9 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_BusCOMM/BCP_General.h"
+ 1060                             		.file 10 "C:\\Workspace\\FW_Inertia\\branch_indesit\\CFG_DishWasher\\CFG_Inertia/BusCommPltf_cfg.h
+ 1061                             		.file 11 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Inertia\\General/CstmTypes.h"
+ 1062                             		.file 12 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Inertia\\General/CstmGlobal.h"
+ 1063                             		.file 13 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Drivers\\OCADC/OCADC_drv.h"
+ 1064                             		.file 14 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_AnalogFeedbacks/PM_AnalogF
+ 1065                             		.file 15 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_PowerProfile/PM_PowerProfi
+ 1066                             		.file 16 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_EnergyMeterSw/PM_EnergyMet
+ 1067                             		.file 17 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_BusCOMM/BCP_BusCommMng.h"
+ 1068                             		.file 18 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_IOManager/OutputManagerE
+ 1069                             		.file 19 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Application_Platform/APP_Global.h"
+ 1070                             		.file 20 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_DigitalIO/DigitalInputsE
+ 1071                             		.file 21 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_Analog/AnalogExp.h"
+ 1072                             		.file 22 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Application_Platform/APP_FuncLib.h"
+ 1073                             		.file 23 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Inertia\\Control/DW_Supervisor.h"
+ 1074                             		.file 24 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Inertia\\General/CstmFuncLib.h"
+ 1075                             		.file 25 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Inertia\\UserInterface/DW_Regulations.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 DW_Statistics.c
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:7      .text.STC_saveBlackBoxData:00000000 _STC_saveBlackBoxData
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:12     .text.STC_saveBlackBoxData:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:176    .text.STC_manageStatResetRequest:00000000 _STC_manageStatResetRequest
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:180    .text.STC_manageStatResetRequest:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:219    .text.STC_LastCycleStat_Init:00000000 _STC_LastCycleStat_Init
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:223    .text.STC_LastCycleStat_Init:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:238    .text.STC_LastCyclesArray_Init:00000000 _STC_LastCyclesArray_Init
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:243    .text.STC_LastCyclesArray_Init:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:271    .text.STC_superVisorUpdateStatistics:00000000 _STC_superVisorUpdateStatistics
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:274    .text.STC_superVisorUpdateStatistics:00000000 L0
+                            *COM*:00000024 _PrevCommErrCounters
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:431    .text.STC_functionValueUpdateStatistics:00000000 _STC_functionValueUpdateStatistics
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:434    .text.STC_functionValueUpdateStatistics:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:626    .text.STC_userDishRack_H2oHardness_Update:00000000 _STC_userDishRack_H2oHardness_Update
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:630    .text.STC_userDishRack_H2oHardness_Update:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:656    .text.STC_regenerate_spaklingAid_Update:00000000 _STC_regenerate_spaklingAid_Update
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:660    .text.STC_regenerate_spaklingAid_Update:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:710    .text.STC_Add_LastCycle_turbPerc_turbCalType:00000000 _STC_Add_LastCycle_turbPerc_turbCalType
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:714    .text.STC_Add_LastCycle_turbPerc_turbCalType:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:746    .text.STC_OnTimeUpdate:00000000 _STC_OnTimeUpdate
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:750    .text.STC_OnTimeUpdate:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:776    .text.STC_updateLastCycleStat_END:00000000 _STC_updateLastCycleStat_END
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:780    .text.STC_updateLastCycleStat_END:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:862    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:8      .text.STC_saveBlackBoxData:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:177    .text.STC_manageStatResetRequest:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:220    .text.STC_LastCycleStat_Init:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:239    .text.STC_LastCyclesArray_Init:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:272    .text.STC_superVisorUpdateStatistics:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:432    .text.STC_functionValueUpdateStatistics:00000000 .LFB6
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:627    .text.STC_userDishRack_H2oHardness_Update:00000000 .LFB7
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:657    .text.STC_regenerate_spaklingAid_Update:00000000 .LFB8
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:711    .text.STC_Add_LastCycle_turbPerc_turbCalType:00000000 .LFB9
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:747    .text.STC_OnTimeUpdate:00000000 .LFB10
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:777    .text.STC_updateLastCycleStat_END:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:4746   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6261   .debug_str:000005b7 .LASF435
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6953   .debug_str:00001d36 .LASF436
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6065   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6091   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6149   .debug_str:000001c7 .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6707   .debug_str:000014be .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6679   .debug_str:000013d3 .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6807   .debug_str:0000185c .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6891   .debug_str:00001b0e .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6253   .debug_str:0000057b .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6773   .debug_str:00001701 .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6781   .debug_str:0000174f .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6691   .debug_str:0000142d .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6303   .debug_str:00000744 .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6537   .debug_str:00000e9e .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6477   .debug_str:00000cd1 .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6809   .debug_str:00001865 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6459   .debug_str:00000c34 .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6887   .debug_str:00001aef .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6395   .debug_str:00000a2a .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6227   .debug_str:000004a2 .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6945   .debug_str:00001d11 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6545   .debug_str:00000ef7 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6521   .debug_str:00000e0b .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6771   .debug_str:000016f8 .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6647   .debug_str:000012bd .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6439   .debug_str:00000bb4 .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6109   .debug_str:0000008e .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6649   .debug_str:000012cf .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6175   .debug_str:000002a7 .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6425   .debug_str:00000b25 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6623   .debug_str:000011e7 .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6529   .debug_str:00000e59 .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6559   .debug_str:00000f62 .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6353   .debug_str:000008c0 .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6745   .debug_str:000015f1 .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6407   .debug_str:00000a8d .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6117   .debug_str:000000e5 .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6441   .debug_str:00000bb9 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6889   .debug_str:00001afb .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6727   .debug_str:00001555 .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6377   .debug_str:0000099b .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6703   .debug_str:000014a0 .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6321   .debug_str:000007de .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6373   .debug_str:00000984 .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6867   .debug_str:00001a35 .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6197   .debug_str:00000363 .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6643   .debug_str:00001291 .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6361   .debug_str:00000926 .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6207   .debug_str:000003d1 .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6569   .debug_str:00000fd8 .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6363   .debug_str:0000093f .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6673   .debug_str:000013a2 .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6513   .debug_str:00000dc3 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6737   .debug_str:000015b1 .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6549   .debug_str:00000f12 .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6219   .debug_str:0000045b .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6443   .debug_str:00000bc5 .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6669   .debug_str:00001382 .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6827   .debug_str:0000190d .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6941   .debug_str:00001ce8 .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6875   .debug_str:00001a81 .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6103   .debug_str:0000005d .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6853   .debug_str:000019d9 .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6551   .debug_str:00000f28 .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6725   .debug_str:00001542 .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6389   .debug_str:000009f3 .LASF62
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6297   .debug_str:0000071b .LASF63
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6523   .debug_str:00000e19 .LASF64
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6205   .debug_str:000003ba .LASF65
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6105   .debug_str:0000006c .LASF66
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6165   .debug_str:0000023a .LASF67
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6245   .debug_str:00000529 .LASF68
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6225   .debug_str:00000491 .LASF69
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6307   .debug_str:00000775 .LASF70
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6095   .debug_str:00000011 .LASF71
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6607   .debug_str:0000114a .LASF72
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6281   .debug_str:00000696 .LASF73
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6579   .debug_str:0000102b .LASF74
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6613   .debug_str:0000118f .LASF75
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6775   .debug_str:00001713 .LASF76
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6317   .debug_str:000007c3 .LASF77
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6403   .debug_str:00000a61 .LASF78
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6323   .debug_str:000007f1 .LASF79
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6107   .debug_str:0000007f .LASF80
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6329   .debug_str:00000815 .LASF81
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6481   .debug_str:00000ce7 .LASF82
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6759   .debug_str:00001695 .LASF83
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6845   .debug_str:000019b2 .LASF84
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6357   .debug_str:000008ef .LASF85
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6391   .debug_str:00000a0a .LASF86
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6785   .debug_str:00001765 .LASF87
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6211   .debug_str:000003f4 .LASF88
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6171   .debug_str:0000027c .LASF89
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6359   .debug_str:0000090a .LASF90
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6717   .debug_str:000014fd .LASF91
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6749   .debug_str:0000161c .LASF92
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6865   .debug_str:00001a26 .LASF93
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6385   .debug_str:000009d6 .LASF94
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6299   .debug_str:0000072f .LASF95
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6173   .debug_str:00000297 .LASF96
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6375   .debug_str:0000098c .LASF97
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6743   .debug_str:000015e2 .LASF98
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6863   .debug_str:00001a1d .LASF99
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6855   .debug_str:000019f1 .LASF100
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6943   .debug_str:00001cfd .LASF101
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6497   .debug_str:00000d57 .LASF102
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6711   .debug_str:000014cf .LASF103
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6447   .debug_str:00000be5 .LASF104
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6911   .debug_str:00001bfc .LASF105
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6387   .debug_str:000009e7 .LASF106
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6573   .debug_str:00000ff8 .LASF107
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6237   .debug_str:000004ec .LASF108
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6575   .debug_str:0000100e .LASF109
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6733   .debug_str:00001584 .LASF110
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6509   .debug_str:00000da6 .LASF111
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6881   .debug_str:00001ac4 .LASF112
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6147   .debug_str:000001be .LASF113
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6625   .debug_str:000011fd .LASF114
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6247   .debug_str:00000539 .LASF115
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6409   .debug_str:00000aa4 .LASF116
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6223   .debug_str:00000480 .LASF117
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6723   .debug_str:00001531 .LASF118
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6183   .debug_str:000002df .LASF119
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6097   .debug_str:00000029 .LASF120
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6239   .debug_str:000004f8 .LASF121
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6905   .debug_str:00001bb4 .LASF122
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6611   .debug_str:00001174 .LASF123
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6393   .debug_str:00000a1d .LASF124
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6667   .debug_str:00001375 .LASF125
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6369   .debug_str:00000968 .LASF126
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6933   .debug_str:00001cb3 .LASF127
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6619   .debug_str:000011ca .LASF128
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6631   .debug_str:0000122a .LASF129
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6501   .debug_str:00000d6e .LASF130
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6457   .debug_str:00000c26 .LASF131
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6203   .debug_str:000003ad .LASF132
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6413   .debug_str:00000ac3 .LASF133
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6135   .debug_str:0000015d .LASF134
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6957   .debug_str:00001d98 .LASF135
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6907   .debug_str:00001bd1 .LASF136
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6505   .debug_str:00000d8f .LASF137
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6325   .debug_str:000007fe .LASF138
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6789   .debug_str:00001792 .LASF139
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6507   .debug_str:00000d9f .LASF140
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6269   .debug_str:0000061a .LASF141
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6339   .debug_str:0000085f .LASF142
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6483   .debug_str:00000cf6 .LASF143
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6629   .debug_str:00001219 .LASF144
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6735   .debug_str:0000159c .LASF145
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6331   .debug_str:00000823 .LASF146
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6885   .debug_str:00001ae1 .LASF147
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6645   .debug_str:000012af .LASF148
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6641   .debug_str:00001282 .LASF149
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6263   .debug_str:000005dd .LASF150
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6765   .debug_str:000016d3 .LASF151
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6401   .debug_str:00000a48 .LASF152
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6233   .debug_str:000004cf .LASF153
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6289   .debug_str:000006d7 .LASF154
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6603   .debug_str:00001132 .LASF155
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6343   .debug_str:00000875 .LASF156
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6467   .debug_str:00000c83 .LASF157
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6419   .debug_str:00000af0 .LASF158
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6663   .debug_str:0000134d .LASF159
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6609   .debug_str:00001160 .LASF160
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6427   .debug_str:00000b36 .LASF161
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6937   .debug_str:00001cc7 .LASF162
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6235   .debug_str:000004e5 .LASF197
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6133   .debug_str:00000157 .LASF163
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6465   .debug_str:00000c68 .LASF164
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6449   .debug_str:00000beb .LASF165
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6847   .debug_str:000019be .LASF166
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6119   .debug_str:000000ea .LASF167
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6327   .debug_str:00000807 .LASF168
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6801   .debug_str:000017fc .LASF169
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6163   .debug_str:0000022b .LASF170
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6495   .debug_str:00000d47 .LASF171
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6229   .debug_str:000004a9 .LASF172
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6779   .debug_str:00001748 .LASF173
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6729   .debug_str:00001567 .LASF174
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6179   .debug_str:000002bc .LASF175
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6595   .debug_str:000010c5 .LASF176
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6295   .debug_str:00000704 .LASF177
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6473   .debug_str:00000cbf .LASF178
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6635   .debug_str:0000124c .LASF179
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6461   .debug_str:00000c3b .LASF180
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6843   .debug_str:000019ad .LASF181
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6285   .debug_str:000006ba .LASF182
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6719   .debug_str:00001511 .LASF183
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6311   .debug_str:000007a6 .LASF184
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6915   .debug_str:00001c16 .LASF185
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6849   .debug_str:000019c4 .LASF186
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6825   .debug_str:00001903 .LASF187
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6571   .debug_str:00000fec .LASF188
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6675   .debug_str:000013ab .LASF189
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6839   .debug_str:00001984 .LASF190
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6797   .debug_str:000017e2 .LASF191
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6423   .debug_str:00000b14 .LASF192
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6493   .debug_str:00000d3d .LASF193
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6949   .debug_str:00001d1e .LASF194
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6709   .debug_str:000014c6 .LASF195
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6499   .debug_str:00000d65 .LASF196
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6421   .debug_str:00000b07 .LASF198
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6791   .debug_str:000017a0 .LASF199
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6689   .debug_str:0000141a .LASF200
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6651   .debug_str:000012e1 .LASF201
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6767   .debug_str:000016d8 .LASF202
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6121   .debug_str:000000f1 .LASF203
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6925   .debug_str:00001c67 .LASF204
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6189   .debug_str:0000030f .LASF205
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6429   .debug_str:00000b3b .LASF206
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6927   .debug_str:00001c80 .LASF207
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6381   .debug_str:000009b7 .LASF208
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6125   .debug_str:0000010d .LASF209
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6671   .debug_str:00001397 .LASF210
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6195   .debug_str:00000353 .LASF211
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6341   .debug_str:00000864 .LASF212
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6955   .debug_str:00001d7d .LASF213
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6101   .debug_str:00000053 .LASF214
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6159   .debug_str:0000020d .LASF215
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6921   .debug_str:00001c3c .LASF216
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6931   .debug_str:00001ca6 .LASF217
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6761   .debug_str:000016a6 .LASF218
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6231   .debug_str:000004b7 .LASF219
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6293   .debug_str:000006ec .LASF220
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6367   .debug_str:00000954 .LASF221
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6155   .debug_str:000001fc .LASF222
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6813   .debug_str:00001885 .LASF223
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6753   .debug_str:00001654 .LASF224
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6795   .debug_str:000017b9 .LASF225
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6901   .debug_str:00001b6e .LASF226
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6209   .debug_str:000003e8 .LASF227
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6485   .debug_str:00000d07 .LASF228
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6517   .debug_str:00000ddf .LASF229
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6145   .debug_str:000001a9 .LASF230
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6541   .debug_str:00000ecb .LASF231
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6365   .debug_str:0000094a .LASF232
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6793   .debug_str:000017b1 .LASF233
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6677   .debug_str:000013b9 .LASF234
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6715   .debug_str:000014eb .LASF235
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6527   .debug_str:00000e3f .LASF236
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6301   .debug_str:0000073c .LASF237
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6127   .debug_str:00000124 .LASF238
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6347   .debug_str:00000895 .LASF239
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6693   .debug_str:00001436 .LASF240
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6961   .debug_str:00001db7 .LASF241
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6535   .debug_str:00000e8f .LASF242
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6099   .debug_str:00000040 .LASF243
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6721   .debug_str:00001522 .LASF244
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6161   .debug_str:00000223 .LASF245
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6143   .debug_str:000001a1 .LASF246
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6141   .debug_str:0000018c .LASF247
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6633   .debug_str:0000123b .LASF248
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6755   .debug_str:0000167f .LASF249
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6583   .debug_str:00001050 .LASF250
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6909   .debug_str:00001be4 .LASF251
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6665   .debug_str:00001365 .LASF252
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6533   .debug_str:00000e6f .LASF253
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6349   .debug_str:0000089f .LASF254
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6291   .debug_str:000006e3 .LASF255
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6479   .debug_str:00000cd9 .LASF256
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6243   .debug_str:0000051c .LASF257
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6681   .debug_str:000013dd .LASF258
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6591   .debug_str:000010a1 .LASF259
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6593   .debug_str:000010b8 .LASF260
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6873   .debug_str:00001a77 .LASF261
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6503   .debug_str:00000d7f .LASF262
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6555   .debug_str:00000f40 .LASF263
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6661   .debug_str:00001345 .LASF264
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6783   .debug_str:00001757 .LASF265
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6531   .debug_str:00000e67 .LASF266
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6799   .debug_str:000017f4 .LASF267
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6859   .debug_str:00001a03 .LASF268
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6273   .debug_str:00000644 .LASF269
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6515   .debug_str:00000dd5 .LASF270
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6257   .debug_str:0000059b .LASF271
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6701   .debug_str:00001489 .LASF272
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6315   .debug_str:000007bd .LASF273
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6811   .debug_str:00001873 .LASF274
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6525   .debug_str:00000e2e .LASF275
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6277   .debug_str:0000066e .LASF276
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6193   .debug_str:00000344 .LASF277
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6913   .debug_str:00001c0c .LASF278
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6511   .debug_str:00000db6 .LASF279
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6399   .debug_str:00000a36 .LASF280
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6897   .debug_str:00001b4e .LASF281
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6451   .debug_str:00000bf4 .LASF282
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6259   .debug_str:000005a7 .LASF283
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6553   .debug_str:00000f38 .LASF284
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6627   .debug_str:00001210 .LASF285
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6557   .debug_str:00000f51 .LASF286
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6947   .debug_str:00001d16 .LASF287
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6815   .debug_str:00001894 .LASF288
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6371   .debug_str:00000975 .LASF289
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6319   .debug_str:000007d2 .LASF290
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6879   .debug_str:00001aba .LASF291
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6851   .debug_str:000019c9 .LASF292
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6903   .debug_str:00001b98 .LASF293
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6491   .debug_str:00000d22 .LASF294
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6685   .debug_str:000013fd .LASF295
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6741   .debug_str:000015d6 .LASF296
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6241   .debug_str:00000511 .LASF297
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6821   .debug_str:000018d5 .LASF298
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6561   .debug_str:00000f74 .LASF299
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6659   .debug_str:00001336 .LASF300
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6871   .debug_str:00001a69 .LASF301
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6939   .debug_str:00001cd6 .LASF302
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6919   .debug_str:00001c2e .LASF303
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6637   .debug_str:00001255 .LASF304
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6469   .debug_str:00000c8b .LASF305
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6471   .debug_str:00000ca5 .LASF306
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6139   .debug_str:00000179 .LASF307
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6823   .debug_str:000018df .LASF308
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6411   .debug_str:00000aaf .LASF309
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6787   .debug_str:0000177d .LASF310
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6279   .debug_str:00000674 .LASF311
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6817   .debug_str:000018a0 .LASF312
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6923   .debug_str:00001c47 .LASF313
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6763   .debug_str:000016b8 .LASF314
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6181   .debug_str:000002c7 .LASF315
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6345   .debug_str:0000087a .LASF316
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6309   .debug_str:0000078c .LASF317
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6271   .debug_str:00000627 .LASF318
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6305   .debug_str:0000075b .LASF319
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6463   .debug_str:00000c43 .LASF320
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6697   .debug_str:00001465 .LASF321
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6657   .debug_str:0000131d .LASF322
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6803   .debug_str:0000181e .LASF323
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6433   .debug_str:00000b65 .LASF324
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6841   .debug_str:0000198f .LASF325
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6587   .debug_str:0000107b .LASF326
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6383   .debug_str:000009be .LASF327
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6621   .debug_str:000011d7 .LASF328
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6217   .debug_str:00000443 .LASF329
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6899   .debug_str:00001b58 .LASF330
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6653   .debug_str:000012f2 .LASF331
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6639   .debug_str:0000126b .LASF332
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6249   .debug_str:0000054b .LASF333
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6275   .debug_str:00000652 .LASF334
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6431   .debug_str:00000b4f .LASF335
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6187   .debug_str:000002f9 .LASF336
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6543   .debug_str:00000ee2 .LASF337
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6111   .debug_str:00000096 .LASF338
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6215   .debug_str:0000041f .LASF339
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6191   .debug_str:00000322 .LASF340
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6601   .debug_str:0000110f .LASF341
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6805   .debug_str:0000183e .LASF342
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6169   .debug_str:0000025f .LASF343
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6355   .debug_str:000008d6 .LASF344
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6115   .debug_str:000000be .LASF345
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6589   .debug_str:00001093 .LASF346
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6265   .debug_str:000005e9 .LASF347
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6167   .debug_str:00000249 .LASF348
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6405   .debug_str:00000a72 .LASF349
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6617   .debug_str:000011ac .LASF350
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6893   .debug_str:00001b21 .LASF352
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:171    .text.STC_saveBlackBoxData:0000016c .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5644   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6337   .debug_str:00000850 .LASF377
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5662   .debug_loc:0000002c .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6351   .debug_str:000008b0 .LASF351
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5675   .debug_loc:0000004c .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:72     .text.STC_saveBlackBoxData:00000083 .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:91     .text.STC_saveBlackBoxData:000000a3 .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:101    .text.STC_saveBlackBoxData:000000b4 .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:107    .text.STC_saveBlackBoxData:000000bd .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6199   .debug_str:0000037d .LASF370
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:214    .text.STC_manageStatResetRequest:00000049 .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5686   .debug_loc:0000006a .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6151   .debug_str:000001d4 .LASF353
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:233    .text.STC_LastCycleStat_Init:0000001a .LFE3
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:232    .text.STC_LastCycleStat_Init:0000001a .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6453   .debug_str:00000c00 .LASF354
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:266    .text.STC_LastCyclesArray_Init:00000039 .LFE4
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5709   .debug_loc:000000a2 .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6539   .debug_str:00000eac .LASF355
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:426    .text.STC_superVisorUpdateStatistics:00000103 .LFE5
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5717   .debug_loc:000000b6 .LLST5
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6705   .debug_str:000014b3 .LASF356
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5735   .debug_loc:000000e2 .LLST6
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6577   .debug_str:00001020 .LASF357
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5743   .debug_loc:000000f6 .LLST7
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6283   .debug_str:000006a7 .LASF358
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5751   .debug_loc:0000010a .LLST8
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6417   .debug_str:00000ae3 .LASF359
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5762   .debug_loc:00000128 .LLST9
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6177   .debug_str:000002b6 .LASF360
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:289    .text.STC_superVisorUpdateStatistics:00000018 .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:294    .text.STC_superVisorUpdateStatistics:0000001d .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:308    .text.STC_superVisorUpdateStatistics:00000038 .LVL14
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:314    .text.STC_superVisorUpdateStatistics:00000046 .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:320    .text.STC_superVisorUpdateStatistics:00000050 .LVL16
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:342    .text.STC_superVisorUpdateStatistics:00000076 .LVL20
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:419    .text.STC_superVisorUpdateStatistics:000000f7 .LVL28
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6835   .debug_str:0000194c .LASF361
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:621    .text.STC_functionValueUpdateStatistics:00000140 .LFE6
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5791   .debug_loc:0000015f .LLST10
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5809   .debug_loc:0000018b .LLST11
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6731   .debug_str:00001572 .LASF362
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5821   .debug_loc:000001aa .LLST12
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6251   .debug_str:0000056a .LASF363
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5828   .debug_loc:000001bd .LLST13
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6861   .debug_str:00001a11 .LASF364
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5840   .debug_loc:000001dc .LLST14
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6769   .debug_str:000016ed .LASF365
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5847   .debug_loc:000001ef .LLST15
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6951   .debug_str:00001d2c .LASF366
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5866   .debug_loc:00000223 .LLST16
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6699   .debug_str:0000147f .LASF367
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6963   .debug_str:00001dc1 .LASF368
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6157   .debug_str:00000205 .LASF369
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5921   .debug_loc:0000027b .LLST17
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:499    .text.STC_functionValueUpdateStatistics:00000068 .LVL37
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:513    .text.STC_functionValueUpdateStatistics:0000007d .LVL40
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:563    .text.STC_functionValueUpdateStatistics:000000c9 .LVL50
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:568    .text.STC_functionValueUpdateStatistics:000000d2 .LVL51
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:576    .text.STC_functionValueUpdateStatistics:000000dc .LVL54
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:613    .text.STC_functionValueUpdateStatistics:00000131 .LVL56
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:618    .text.STC_functionValueUpdateStatistics:0000013d .LVL57
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6565   .debug_str:00000f92 .LASF371
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:651    .text.STC_userDishRack_H2oHardness_Update:0000003b .LFE7
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6567   .debug_str:00000fb6 .LASF372
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:705    .text.STC_regenerate_spaklingAid_Update:00000071 .LFE8
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6751   .debug_str:0000162d .LASF373
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:741    .text.STC_Add_LastCycle_turbPerc_turbCalType:00000049 .LFE9
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6415   .debug_str:00000ad2 .LASF374
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:771    .text.STC_OnTimeUpdate:0000002a .LFE10
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6959   .debug_str:00001dae .LASF375
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5941   .debug_loc:000002a9 .LLST18
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6435   .debug_str:00000b84 .LASF376
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:858    .text.STC_updateLastCycleStat_END:000000b4 .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5978   .debug_loc:000002e4 .LLST19
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6397   .debug_str:00000a31 .LASF378
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:5991   .debug_loc:00000304 .LLST20
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6379   .debug_str:000009a9 .LASF379
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6009   .debug_loc:00000330 .LLST21
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:787    .text.STC_updateLastCycleStat_END:0000000b .LVL62
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:807    .text.STC_updateLastCycleStat_END:00000034 .LVL66
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:857    .text.STC_updateLastCycleStat_END:000000b4 .LVL67
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6837   .debug_str:0000196e .LASF380
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6267   .debug_str:00000601 .LASF381
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6883   .debug_str:00001ad9 .LASF382
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6857   .debug_str:000019f7 .LASF383
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6153   .debug_str:000001eb .LASF384
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6487   .debug_str:00000d11 .LASF385
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6917   .debug_str:00001c1c .LASF386
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6113   .debug_str:000000ad .LASF387
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6655   .debug_str:0000130a .LASF388
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6713   .debug_str:000014d5 .LASF389
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6747   .debug_str:00001606 .LASF390
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6131   .debug_str:00000141 .LASF391
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6581   .debug_str:0000103d .LASF392
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6965   .debug_str:00001dce .LASF393
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6829   .debug_str:00001923 .LASF394
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6585   .debug_str:00001066 .LASF395
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6605   .debug_str:0000113f .LASF396
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6831   .debug_str:00001930 .LASF397
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6333   .debug_str:00000838 .LASF398
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6185   .debug_str:000002f1 .LASF399
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6201   .debug_str:00000398 .LASF400
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6563   .debug_str:00000f81 .LASF401
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6683   .debug_str:000013ea .LASF402
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6739   .debug_str:000015c6 .LASF403
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6935   .debug_str:00001cc0 .LASF404
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6475   .debug_str:00000cc7 .LASF405
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6445   .debug_str:00000bda .LASF406
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6287   .debug_str:000006c4 .LASF407
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6335   .debug_str:00000846 .LASF408
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6221   .debug_str:00000471 .LASF409
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6129   .debug_str:00000131 .LASF410
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6895   .debug_str:00001b36 .LASF411
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6455   .debug_str:00000c19 .LASF412
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6213   .debug_str:0000040f .LASF413
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6615   .debug_str:0000119d .LASF414
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6547   .debug_str:00000f02 .LASF415
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6489   .debug_str:00000d1a .LASF416
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6437   .debug_str:00000ba0 .LASF417
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6687   .debug_str:00001410 .LASF418
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6929   .debug_str:00001c92 .LASF419
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6777   .debug_str:00001723 .LASF426
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6869   .debug_str:00001a4f .LASF420
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6597   .debug_str:000010d0 .LASF421
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6255   .debug_str:00000584 .LASF422
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6313   .debug_str:000007ab .LASF423
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6757   .debug_str:0000168c .LASF424
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6123   .debug_str:00000103 .LASF425
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6695   .debug_str:00001452 .LASF427
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6137   .debug_str:00000168 .LASF428
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6093   .debug_str:00000000 .LASF429
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6833   .debug_str:00001937 .LASF430
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6819   .debug_str:000018bc .LASF431
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6877   .debug_str:00001a97 .LASF432
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6599   .debug_str:000010ea .LASF433
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:6519   .debug_str:00000df7 .LASF434
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:13     .text.STC_saveBlackBoxData:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:15     .text.STC_saveBlackBoxData:00000004 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:30     .text.STC_saveBlackBoxData:0000002f .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:35     .text.STC_saveBlackBoxData:00000039 .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:81     .text.STC_saveBlackBoxData:00000095 .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:158    .text.STC_saveBlackBoxData:0000014e .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:186    .text.STC_manageStatResetRequest:0000000e .LCFI2
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:194    .text.STC_manageStatResetRequest:00000022 .LCFI3
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:209    .text.STC_manageStatResetRequest:0000003e .LCFI4
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:241    .text.STC_LastCyclesArray_Init:00000000 .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:244    .text.STC_LastCyclesArray_Init:00000002 .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:275    .text.STC_superVisorUpdateStatistics:00000002 .LCFI5
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:277    .text.STC_superVisorUpdateStatistics:00000004 .LCFI6
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:327    .text.STC_superVisorUpdateStatistics:0000005e .LVL17
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:333    .text.STC_superVisorUpdateStatistics:0000006d .LVL18
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:386    .text.STC_superVisorUpdateStatistics:000000b5 .LVL26
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:395    .text.STC_superVisorUpdateStatistics:000000c6 .LVL27
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:339    .text.STC_superVisorUpdateStatistics:00000072 .LVL19
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:350    .text.STC_superVisorUpdateStatistics:00000082 .LVL21
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:362    .text.STC_superVisorUpdateStatistics:00000096 .LVL22
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:365    .text.STC_superVisorUpdateStatistics:0000009a .LVL23
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:369    .text.STC_superVisorUpdateStatistics:0000009e .LVL24
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:435    .text.STC_functionValueUpdateStatistics:00000002 .LCFI7
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:437    .text.STC_functionValueUpdateStatistics:00000004 .LCFI8
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:450    .text.STC_functionValueUpdateStatistics:0000001c .LVL31
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:459    .text.STC_functionValueUpdateStatistics:00000028 .LVL32
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:542    .text.STC_functionValueUpdateStatistics:0000009c .LVL47
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:540    .text.STC_functionValueUpdateStatistics:00000096 .LVL46
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:505    .text.STC_functionValueUpdateStatistics:0000006c .LVL39
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:463    .text.STC_functionValueUpdateStatistics:0000002b .LVL33
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:488    .text.STC_functionValueUpdateStatistics:00000051 .LVL35
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:501    .text.STC_functionValueUpdateStatistics:0000006a .LVL38
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:515    .text.STC_functionValueUpdateStatistics:0000007e .LVL41
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:521    .text.STC_functionValueUpdateStatistics:00000080 .LVL42
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:531    .text.STC_functionValueUpdateStatistics:00000088 .LVL45
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:471    .text.STC_functionValueUpdateStatistics:00000037 .LVL34
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:490    .text.STC_functionValueUpdateStatistics:00000054 .LVL36
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:570    .text.STC_functionValueUpdateStatistics:000000d4 .LVL52
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:573    .text.STC_functionValueUpdateStatistics:000000d6 .LVL53
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:579    .text.STC_functionValueUpdateStatistics:000000de .LVL55
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:760    .text.STC_OnTimeUpdate:00000019 .LVL58
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:768    .text.STC_OnTimeUpdate:00000027 .LVL59
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:781    .text.STC_updateLastCycleStat_END:00000002 .LCFI9
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:779    .text.STC_updateLastCycleStat_END:00000000 .LVL60
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:785    .text.STC_updateLastCycleStat_END:00000007 .LVL61
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:795    .text.STC_updateLastCycleStat_END:0000001d .LVL64
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:790    .text.STC_updateLastCycleStat_END:00000010 .LVL63
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:800    .text.STC_updateLastCycleStat_END:00000027 .LVL65
+C:\Users\Andrea\AppData\Local\Temp\ccRKPco2.s:1077   .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_MachineStatistics
+_Interpreter_Data
+_LoadsStatus
+_HWC_Flags
+_BLDC_Pump_InfoBuffer
+_AnalogFeedbackGetMaskAnalogF_Enabled
+_PM_AnalogFeedbackGetValue
+_LIB_ADC_IsApplAnalogReady
+_LIB_ADC_GetAnalogValue
+_DigInputs
+_GITemp
+_GIWaterLoaded
+_TurbidityReads
+_GICriteria
+_GIValid
+_Flags_2
+_Virtual_Sensor_Value
+_State5
+_FltFlagsVS
+_dirty_foam_Data
+_ExternalRequest
+_No_Fault
+_FLT_lastFaultUpdate
+_TempCycle_Stats
+_Set_MediumCounter
+_StartedCycle
+_SWTC_Run
+_SWTC_Stop
+_Join_Leave_Reg
+_oldJoinValue
+_SPV_isCycleRunning
+_IncByteWithCheck
+_IncWordWithCheck
+_CommErr
+_b_ui32EnergyCounterWh
+_ExtMotor_DataBuffer
+_VlineCalcolusFromDSP
+_Tab_FunctionsStatistics
+_BufNewReg
+_REG_getFunctionValueByID
+_PrevWaterCount
+_b_ui16EnergyCounterWhAcc
+_PrevEnergyCount
+_PM_PowerProfile_TotalProfileEnergy
+_PM_PowerProfile_TotalProfileDuration
+_WaterForRegenerate
+_DishRackFunctionValue
+_ZoneWashFunctionValue
+_ApplicationFlags
+_uP_Regenerate_Data
+_RinseAidFunctionValue
+_Tab_HWCTurbidity
+_TurbiditySensorCal
+_SWTC_GetElapsedTime
+_cycle_loaded_water

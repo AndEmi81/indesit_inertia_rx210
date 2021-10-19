@@ -1,0 +1,129 @@
+/**
+\defgroup	OCI2C OCI2C (I2C)
+@{
+\n		On chip I2C driver. It contains:
+			- structures and methods for master and slave mode.
+			- methods for I2C bus unblocking and monitoring .
+			- OC/SW DMA support
+		Access to the Peripheral is based on I2C HAL functions.
+		Application interface is based on callbacks.
+\par Configuration:
+\n		The communication buffer must be provided by application (e.g. Communication Platform configuration files).
+
+\section 	OCI2CHALanddriverconfig	I2C HAL and driver configuration
+ 		This section describes the configuration parameters. Some paramenters may require additional setting at HAL level: see the
+ 		MCU-specific HAL reference documentation. E.g. \b BUS_FREQUENCY_Hz
+ 		
+\section    OCI2CHALanddrivermethods Methods 
+    See \ref OCI2C_Class 		
+
+\subsection OCI2CHALanddriverconfig_configh Config.h
+
+\subsubsection OCI2CHALanddriverconfig_configh_hal I2C HAL Support
+
+\code
+#define HAL_I2C_SUPPORT // requires I2C HAL support
+\endcode
+
+
+
+\subsubsection OCI2CHALanddriverconfig_configh_ms Master and Slave support
+\b I2C_SLAVE_SUPPORT
+-	TRUE: slave support implemented
+-	FALSE: slave support not implemented
+
+\b I2C_MASTER_SUPPORT
+-	TRUE: master support implemented
+-	FALSE: master support not implemented
+
+\subsubsection OCI2CHALanddriverconfig_configh_periph I2C peripheral settings
+\b I2C_CLOCKRATE_kbps and \b I2C_SLAVEADDRESS are mandatory.
+I2C_CLOCKRATE_kbps specifies the clock rate in Kbit/s.
+I2C_SLAVEADDRESS is the slave address for the access to the peripheral.
+
+\code
+#define I2C_CLOCKRATE_kbps  200		//200 Kbit/s
+
+#define I2C_SLAVEADDRESS    0x90
+\endcode
+
+\subsubsection OCI2CHALanddriverconfig_configh_dma DMA
+If SW DMA is used define \b SWDMA_CH_NUM
+\code
+#define SWDMA_CH_NUM      1
+\endcode
+
+If OC DMA is used
+\code
+#define I2C_OCDMA_SUPPORT
+\endcode
+
+
+
+\subsubsection OCI2CHALanddriverconfig_configh_unblock Unblock Routines
+\b PERIPHERAL_MONITOR_POLL
+The value is the period of the monitoring in ms.
+
+\b I2CMONITOR_NOACTIVITY_TIMEOUT
+Peripheral reset after no activity on the bus in ms
+
+\b I2C_BUS_MONITOR_SDA:
+- TRUE: SDA monitored by unblock routines
+-	FALSE: monitoring not enabled.
+
+\b I2CMONITOR_BUSY_BLOCK_TIME_LEV1:
+Timeout for 'Level 1' unblock in ms.
+
+\b I2CMONITOR_LEV1_LOCAL_OCCURS
+Number of attempts of 'Level 1' unblock. (Typ: 5)
+
+\b I2C_BUS_STATUS_UPDATE_AND_MONITOR_IN_SYNC
+-	TRUE: unblocking routines updates the bus status in sync with monitoring
+-	FALSE: no sync
+
+\par Example
+  \code
+  #define PERIPHERAL_MONITOR_POLL                 	10                                // monitor each 10 ms
+  #define I2CMONITOR_BUSY_BLOCK_TIME_LEV1         	50      													//  Level 1 timeout
+  #define I2CMONITOR_BUSY_BLOCK_TIME_LEV2         	500		     												//  Level 2 timeout
+  #define I2CMONITOR_LEV1_LOCAL_OCCURS            	5                                 // attempts on block 1 condtition detected
+  #define I2CMONITOR_NOACTIVITY_TIMEOUT           	5000												      // no activity timeout (5s)
+	#define I2C_BUS_STATUS_UPDATE_AND_MONITOR_IN_SYNC TRUE
+  \endcode
+
+\subsubsection OCI2CHALanddriverconfig_configh_isr ISR
+\b I2C_NESTING_ISR_ENABLE
+- TRUE: nested ISRs allowed if supported by hal (supported only by QE128)
+-	FALSE: nested ISRs not allowed
+
+\b I2C_ISR_CALLBACK
+This define allows the definition of a callback executed inside ISR
+
+Config.h
+\code
+#define I2C_ISR_CALLBACK    I2C_IsrCallback
+...
+extern void I2C_ISR_CALLBACK (void);
+\endcode
+
+Config.c
+\code
+#include "..."
+
+void I2C_IsrCallback(void)
+{
+	... //write your code here
+}
+\endcode
+
+\subsection OCI2CHALanddriverconfig_configc Config.c
+No settings in this file.
+\n
+\par Exported Functions:
+\todo
+
+		
+\n
+@}
+\ingroup        Drivers
+*/

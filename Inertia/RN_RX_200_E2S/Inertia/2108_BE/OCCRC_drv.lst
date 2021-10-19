@@ -1,0 +1,576 @@
+   1                             		.file	"OCCRC_drv.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.OCCRC_InitSync,"ax",@progbits
+   5                             		.global	_OCCRC_InitSync
+   7                             	_OCCRC_InitSync:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC/OCCRC_drv.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \n
+   8:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \par		OCCRC_drv.c
+   9:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \n			Implementation of all functions necessary to achieve the aim.
+  10:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \n
+  11:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \file		OCCRC_drv.c
+  12:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \ingroup	OCCRC
+  13:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \date		Feb 11, 2011
+  14:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \version	01.00.01
+  15:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \author		stefano.ughi
+  16:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \n
+  17:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \n
+  18:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \par	History:
+  19:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \n
+  20:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \n 		01.00.00
+  21:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \n		Apr 07,2011
+  22:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \n		Stefano Ughi
+  23:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \n		First Insertion
+  24:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \n
+  25:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \n 		01.00.01
+  26:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \n		Apr 07,2011
+  27:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \n		Stefano Ughi
+  28:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \n		- Added IO_ErrorType CRC_InitSync(void)
+  29:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \n      - Added IO_ErrorType CRC_DeInitSync(void)
+  30:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \n
+  31:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** */
+  32:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  33:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* ******** */
+  34:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* Includes */
+  35:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* ******** */
+  36:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** #include "OCCRC_drv.h"
+  37:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  38:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* ****************** */
+  39:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* Defines and Macros */
+  40:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* ****************** */
+  41:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  42:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  43:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* *************************** */
+  44:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* Typedef, Structs and Unions */
+  45:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* *************************** */
+  46:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  47:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  48:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* ********* */
+  49:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* Variables */
+  50:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* ********* */
+  51:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  52:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* Global */
+  53:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  54:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* Static */
+  55:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  56:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* ******************* */
+  57:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* Functions Prototype */
+  58:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* ******************* */
+  59:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  60:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* Exported function */
+  61:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  62:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* Local Function */
+  63:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  64:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* *************** */
+  65:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* Function Bodies */
+  66:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* *************** */
+  67:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** #if defined (CONFIG_PL_DRV_OCCRC)
+  68:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** #if defined (CRC_HW_SUPPORTED)
+  69:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  70:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /* Exported function */
+  71:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /**
+  72:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** Module's init.
+  73:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  74:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \return 	IO_ErrorType
+  75:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  76:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \retval		IO_E_OK
+  77:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  78:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvCRC_2
+  79:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** */
+  80:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** IO_ErrorType OCCRC_InitSync(void)
+  81:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** {
+  10                             		.loc 1 81 0
+  82:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	InitCRCmodule();
+  11                             		.loc 1 82 0
+  12 0000 FB EE 00 00 08          		mov.L	#0x80000, r14
+  13 0005 FA E9 FF 01 0F A5       		mov.W	#0xffffa50f, 1022[r14]
+  14 000b ED E4 05                		mov.L	20[r14], r4
+  15 000e 7B 74                   		bclr #23, r4
+  16 0010 E7 E4 05                		mov.L	r4, 20[r14]
+  17 0013 FA E9 FF 01 00 A5       		mov.W	#0xffffa500, 1022[r14]
+  18 0019 FB EE 80 82 08          		mov.L	#0x88280, r14
+  19 001e CC E4                   		mov.B	[r14], r4
+  20 0020 65 34                   		or	#3, r4
+  21 0022 C3 E4                   		mov.B	r4, [r14]
+  22 0024 F0 E2                   		bset #2, [r14].B
+  23 0026 CC E4                   		mov.B	[r14], r4
+  24 0028 75 34 80                		or	#0xffffff80, r4
+  25 002b C3 E4                   		mov.B	r4, [r14]
+  26 002d F9 E5 01 00             		mov.W	#0, 2[r14]
+  83:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+  84:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** }
+  27                             		.loc 1 84 0
+  28 0031 66 01                   		mov.L	#0, r1
+  29 0033 02                      		rts
+  30                             	.LFE0:
+  32                             		.section	.text.OCCRC_DeInitSync,"ax",@progbits
+  33                             		.global	_OCCRC_DeInitSync
+  35                             	_OCCRC_DeInitSync:
+  36                             	.LFB1:
+  85:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /**
+  86:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** Deinit CRC module, M.C.U. reset state.
+  87:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  88:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \return 	IO_ErrorType
+  89:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  90:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \retval		IO_E_OK
+  91:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+  92:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \note		After an CRC_DeInitSync call it's mandatory to call a CRC_InitSync
+  93:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 			if you want use the driver.
+  94:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvCRC_2
+  95:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** */
+  96:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** IO_ErrorType OCCRC_DeInitSync(void)
+  97:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** {
+  37                             		.loc 1 97 0
+  98:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	DeInitCRCmodule();
+  38                             		.loc 1 98 0
+  39 0000 FB EE 80 82 08          		mov.L	#0x88280, r14
+  40 0005 CC E4                   		mov.B	[r14], r4
+  41 0007 F8 E4 00                		mov.B	#0, [r14]
+  42 000a CC E4                   		mov.B	[r14], r4
+  43 000c F8 E4 00                		mov.B	#0, [r14]
+  99:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** }
+  44                             		.loc 1 100 0
+  45 000f 66 01                   		mov.L	#0, r1
+  46 0011 02                      		rts
+  47                             	.LFE1:
+  49                             		.section	.text.OCCRC_Calculate,"ax",@progbits
+  50                             		.global	_OCCRC_Calculate
+  52                             	_OCCRC_Calculate:
+  53                             	.LFB2:
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** /**
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** Crc CCITT hardware computation.
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** Polynomial: x^16+x^12+x^5+1
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \param  [in]		len number of bytes on which CRC is calculated
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \param  [in]		pSource point to the first byte of the array on which CRC is calculated
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \param  [in]		seed is the initial value for CRC computation, typically 0xFFFF but\n
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c ****                     if you have some fixed bytes you may precompute CRC and pass it as seed.\n
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c ****                     (E.g. Master Mode Tx)
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \return 	uint16_t
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \retval		crc
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** \todo       Insert WatchDog Refresh
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** */
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** uint16_t OCCRC_Calculate (IO_BufferSizeType len, uint8_t *pSource, uint16_t seed)
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** {
+  54                             		.loc 1 118 0
+  55                             	.LVL0:
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	IO_BufferSizeType i;
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	uint16_t orig_crc;
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	uint16_t crc;
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	uint8_t	*pData=pSource;
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	orig_crc = (uint16_t) GetFinalCRC();
+  56                             		.loc 1 124 0
+  57 0000 FB EE 80 82 08          		mov.L	#0x88280, r14
+  58 0005 DD EF 01                		mov.W	2[r14], r15
+  59                             	.LVL1:
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	InitCRC(seed);
+  60                             		.loc 1 126 0
+  61 0008 FB 4E 00 00 08          		mov.L	#0x80000, r4
+  62 000d FA 49 FF 01 0F A5       		mov.W	#0xffffa50f, 1022[r4]
+  63 0013 A9 4D                   		mov.L	20[r4], r5
+  64 0015 7B 75                   		bclr #23, r5
+  65 0017 A1 4D                   		mov.L	r5, 20[r4]
+  66 0019 FA 49 FF 01 00 A5       		mov.W	#0xffffa500, 1022[r4]
+  67 001f CC E4                   		mov.B	[r14], r4
+  68 0021 65 34                   		or	#3, r4
+  69 0023 C3 E4                   		mov.B	r4, [r14]
+  70 0025 F0 E2                   		bset #2, [r14].B
+  71 0027 CC E4                   		mov.B	[r14], r4
+  72 0029 75 34 80                		or	#0xffffff80, r4
+  73 002c C3 E4                   		mov.B	r4, [r14]
+  74 002e D7 E3 01                		mov.W	r3, 2[r14]
+  75                             	.LVL2:
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	uint8_t	*pData=pSource;
+  76                             		.loc 1 122 0
+  77 0031 EF 23                   		mov.L	r2, r3
+  78                             	.LVL3:
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	for(i=0; i<len; i++)
+  79                             		.loc 1 128 0
+  80 0033 5F 11                   		movu.W	r1, r1
+  81 0035 0F                      		bra	.L4
+  82                             	.LVL4:
+  83                             	.L5:
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	{
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 		ComputeCRC(*pData);
+  84                             		.loc 1 131 0 discriminator 2
+  85 0036 FD 28 34                		mov.B	[r3+], r4
+  86                             	.LVL5:
+  87 0039 C7 E4 01                		mov.B	r4, 1[r14]
+  88                             	.LVL6:
+  89                             		.balign 2,3,2
+  90                             	.L4:
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	for(i=0; i<len; i++)
+  91                             		.loc 1 128 0 discriminator 1
+  92 003c FF 05 23                		sub	r2, r3, r5
+  93 003f 5F 55                   		movu.W	r5, r5
+  94 0041 FB 4E 80 82 08          		mov.L	#0x88280, r4
+  95 0046 47 51                   		cmp	r5, r1
+  96 0048 24 EE                   		bgtu	.L5
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 		pData++;
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	}
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	crc = (uint16_t) GetFinalCRC();
+  97                             		.loc 1 135 0
+  98 004a 98 49                   		mov.W	2[r4], r1
+  99                             	.LVL7:
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	InitCRC(orig_crc);
+ 100                             		.loc 1 136 0
+ 101 004c FB EE 00 00 08          		mov.L	#0x80000, r14
+ 102                             	.LVL8:
+ 103 0051 FA E9 FF 01 0F A5       		mov.W	#0xffffa50f, 1022[r14]
+ 104 0057 ED E3 05                		mov.L	20[r14], r3
+ 105                             	.LVL9:
+ 106 005a 7B 73                   		bclr #23, r3
+ 107 005c E7 E3 05                		mov.L	r3, 20[r14]
+ 108 005f FA E9 FF 01 00 A5       		mov.W	#0xffffa500, 1022[r14]
+ 109 0065 CC 4E                   		mov.B	[r4], r14
+ 110 0067 65 3E                   		or	#3, r14
+ 111 0069 C3 4E                   		mov.B	r14, [r4]
+ 112 006b F0 42                   		bset #2, [r4].B
+ 113 006d CC 4E                   		mov.B	[r4], r14
+ 114 006f 75 3E 80                		or	#0xffffff80, r14
+ 115 0072 C3 4E                   		mov.B	r14, [r4]
+ 116 0074 D7 4F 01                		mov.W	r15, 2[r4]
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 	return crc;
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** 
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCRC\OCCRC_drv.c **** }
+ 117                             		.loc 1 139 0
+ 118 0077 5F 11                   		movu.W	r1, r1
+ 119 0079 02                      		rts
+ 120                             	.LFE2:
+ 164                             	.Letext0:
+ 165                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 166                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\RN_RX200/RN_RX200_reg.h"
+ 167                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Drivers/IO_driver.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 OCCRC_drv.c
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:7      .text.OCCRC_InitSync:00000000 _OCCRC_InitSync
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:12     .text.OCCRC_InitSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:35     .text.OCCRC_DeInitSync:00000000 _OCCRC_DeInitSync
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:39     .text.OCCRC_DeInitSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:52     .text.OCCRC_Calculate:00000000 _OCCRC_Calculate
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:57     .text.OCCRC_Calculate:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:123    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:8      .text.OCCRC_InitSync:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:36     .text.OCCRC_DeInitSync:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:53     .text.OCCRC_Calculate:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4098   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5165   .debug_str:000008ff .LASF278
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4705   .debug_str:00000120 .LASF279
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4625   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4635   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5011   .debug_str:00000662 .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4971   .debug_str:000005c8 .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5163   .debug_str:000008ec .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5075   .debug_str:00000774 .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5017   .debug_str:00000678 .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4773   .debug_str:00000291 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4909   .debug_str:000004d0 .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4887   .debug_str:00000471 .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5113   .debug_str:00000803 .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4737   .debug_str:000001f9 .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5059   .debug_str:0000072e .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5073   .debug_str:0000076b .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4645   .debug_str:00000029 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4759   .debug_str:0000025b .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4921   .debug_str:00000504 .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4825   .debug_str:00000382 .LASF173
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4801   .debug_str:00000329 .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5189   .debug_str:00000982 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4843   .debug_str:000003c7 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4709   .debug_str:00000167 .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4847   .debug_str:000003d6 .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4939   .debug_str:00000546 .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4893   .debug_str:0000048b .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5015   .debug_str:00000673 .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4817   .debug_str:00000368 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5065   .debug_str:00000750 .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5077   .debug_str:00000786 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4723   .debug_str:000001bb .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4995   .debug_str:00000622 .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4993   .debug_str:0000061a .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4849   .debug_str:000003db .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4989   .debug_str:0000060c .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4947   .debug_str:00000563 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4945   .debug_str:0000055b .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4943   .debug_str:00000553 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4941   .debug_str:0000054b .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5041   .debug_str:000006f1 .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5037   .debug_str:000006e0 .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4913   .debug_str:000004e3 .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5169   .debug_str:0000092d .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4685   .debug_str:000000c2 .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4683   .debug_str:000000ba .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4655   .debug_str:0000004d .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4653   .debug_str:00000045 .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4651   .debug_str:0000003d .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4649   .debug_str:00000035 .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5185   .debug_str:00000973 .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5179   .debug_str:0000095b .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5071   .debug_str:00000764 .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5069   .debug_str:0000075d .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4915   .debug_str:000004ea .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4987   .debug_str:00000605 .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4883   .debug_str:00000460 .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4881   .debug_str:00000458 .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4845   .debug_str:000003ce .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5117   .debug_str:00000817 .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4693   .debug_str:000000f6 .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4791   .debug_str:000002fa .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4795   .debug_str:00000306 .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4861   .debug_str:0000040a .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4873   .debug_str:0000043d .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5007   .debug_str:0000064e .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4907   .debug_str:000004c8 .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4751   .debug_str:00000234 .LASF62
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4703   .debug_str:0000011a .LASF63
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4977   .debug_str:000005de .LASF64
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4835   .debug_str:000003a9 .LASF65
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4643   .debug_str:00000023 .LASF66
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5049   .debug_str:0000070d .LASF67
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4719   .debug_str:000001af .LASF68
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5005   .debug_str:00000647 .LASF69
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4721   .debug_str:000001b5 .LASF70
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5135   .debug_str:00000888 .LASF71
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4827   .debug_str:00000389 .LASF72
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4745   .debug_str:0000021b .LASF73
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5091   .debug_str:000007c8 .LASF74
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4911   .debug_str:000004de .LASF75
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5177   .debug_str:00000956 .LASF76
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4765   .debug_str:00000272 .LASF77
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4729   .debug_str:000001dd .LASF78
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4937   .debug_str:00000540 .LASF79
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4865   .debug_str:00000416 .LASF80
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4973   .debug_str:000005d1 .LASF81
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4833   .debug_str:000003a2 .LASF82
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5119   .debug_str:0000081e .LASF83
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4889   .debug_str:00000479 .LASF84
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4787   .debug_str:000002e1 .LASF85
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4667   .debug_str:0000007a .LASF86
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4917   .debug_str:000004f1 .LASF87
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4641   .debug_str:00000018 .LASF88
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5167   .debug_str:00000925 .LASF89
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4871   .debug_str:00000435 .LASF90
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5051   .debug_str:00000713 .LASF91
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5025   .debug_str:00000698 .LASF92
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4869   .debug_str:00000430 .LASF93
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5021   .debug_str:00000689 .LASF94
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5053   .debug_str:00000719 .LASF95
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4857   .debug_str:000003f9 .LASF96
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4923   .debug_str:00000509 .LASF97
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4841   .debug_str:000003c0 .LASF98
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4807   .debug_str:0000033d .LASF99
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4769   .debug_str:00000283 .LASF100
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4731   .debug_str:000001e3 .LASF101
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4699   .debug_str:0000010c .LASF102
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4657   .debug_str:00000055 .LASF103
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5187   .debug_str:0000097b .LASF104
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5159   .debug_str:000008de .LASF105
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4783   .debug_str:000002d0 .LASF106
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4997   .debug_str:0000062a .LASF107
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4999   .debug_str:00000632 .LASF108
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4673   .debug_str:00000094 .LASF109
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4761   .debug_str:00000262 .LASF110
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4837   .debug_str:000003b0 .LASF111
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5181   .debug_str:00000963 .LASF112
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4853   .debug_str:000003eb .LASF113
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4809   .debug_str:00000344 .LASF114
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4771   .debug_str:0000028a .LASF115
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4733   .debug_str:000001ea .LASF116
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4701   .debug_str:00000113 .LASF117
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4659   .debug_str:0000005c .LASF118
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4681   .debug_str:000000b3 .LASF119
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5161   .debug_str:000008e5 .LASF120
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5085   .debug_str:000007aa .LASF121
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4743   .debug_str:00000212 .LASF122
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5001   .debug_str:00000638 .LASF123
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4675   .debug_str:0000009c .LASF124
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4763   .debug_str:0000026a .LASF125
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4839   .debug_str:000003b8 .LASF126
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5183   .debug_str:0000096b .LASF127
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4823   .debug_str:0000037a .LASF128
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5067   .debug_str:00000755 .LASF129
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4851   .debug_str:000003e3 .LASF130
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5193   .debug_str:00000991 .LASF131
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4953   .debug_str:0000057c .LASF132
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4741   .debug_str:0000020a .LASF133
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5081   .debug_str:0000079a .LASF134
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5047   .debug_str:00000705 .LASF135
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4929   .debug_str:0000051f .LASF136
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5173   .debug_str:00000938 .LASF137
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4905   .debug_str:000004c1 .LASF138
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4697   .debug_str:00000104 .LASF139
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5035   .debug_str:000006d8 .LASF140
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5151   .debug_str:000008b5 .LASF141
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5055   .debug_str:0000071f .LASF142
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4803   .debug_str:0000032f .LASF143
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4975   .debug_str:000005d7 .LASF144
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4891   .debug_str:00000484 .LASF145
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4639   .debug_str:00000013 .LASF146
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4775   .debug_str:000002a8 .LASF147
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4755   .debug_str:0000024d .LASF148
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4661   .debug_str:00000063 .LASF149
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4707   .debug_str:00000161 .LASF150
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5057   .debug_str:00000727 .LASF151
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4981   .debug_str:000005eb .LASF152
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4863   .debug_str:00000410 .LASF153
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4821   .debug_str:00000374 .LASF154
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4831   .debug_str:00000398 .LASF155
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4961   .debug_str:000005a0 .LASF156
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4829   .debug_str:0000038e .LASF157
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4959   .debug_str:00000595 .LASF158
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5157   .debug_str:000008d6 .LASF159
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4811   .debug_str:0000034b .LASF160
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4985   .debug_str:000005fe .LASF161
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4979   .debug_str:000005e4 .LASF162
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4691   .debug_str:000000ec .LASF163
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5003   .debug_str:0000063e .LASF164
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4901   .debug_str:000004b2 .LASF165
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5123   .debug_str:0000083b .LASF166
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4895   .debug_str:00000490 .LASF167
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4647   .debug_str:0000002e .LASF168
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4983   .debug_str:000005f4 .LASF169
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4749   .debug_str:0000022b .LASF170
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5061   .debug_str:0000073b .LASF171
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4879   .debug_str:00000450 .LASF172
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5023   .debug_str:0000068e .LASF174
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4855   .debug_str:000003f2 .LASF175
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4903   .debug_str:000004bc .LASF176
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4963   .debug_str:000005ab .LASF177
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4965   .debug_str:000005b2 .LASF178
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4991   .debug_str:00000614 .LASF179
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4931   .debug_str:00000528 .LASF180
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4933   .debug_str:00000530 .LASF181
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4935   .debug_str:00000538 .LASF182
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5153   .debug_str:000008bd .LASF183
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5013   .debug_str:0000066c .LASF184
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4927   .debug_str:00000519 .LASF185
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4805   .debug_str:00000336 .LASF186
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5115   .debug_str:00000811 .LASF187
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4925   .debug_str:00000512 .LASF188
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4717   .debug_str:000001a8 .LASF189
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4877   .debug_str:00000449 .LASF190
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4747   .debug_str:00000223 .LASF191
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4679   .debug_str:000000ac .LASF192
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5043   .debug_str:000006f8 .LASF193
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4793   .debug_str:000002ff .LASF194
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4819   .debug_str:0000036d .LASF195
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4969   .debug_str:000005c2 .LASF196
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4677   .debug_str:000000a4 .LASF197
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4885   .debug_str:00000468 .LASF198
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4951   .debug_str:00000573 .LASF199
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4949   .debug_str:0000056b .LASF200
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5093   .debug_str:000007d1 .LASF201
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5129   .debug_str:00000853 .LASF202
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5039   .debug_str:000006e7 .LASF203
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5095   .debug_str:000007d6 .LASF204
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5199   .debug_str:000009a7 .LASF205
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5097   .debug_str:000007db .LASF206
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4875   .debug_str:00000444 .LASF207
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5099   .debug_str:000007e0 .LASF208
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4919   .debug_str:000004fc .LASF209
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5033   .debug_str:000006d1 .LASF210
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4665   .debug_str:00000072 .LASF211
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4695   .debug_str:000000fd .LASF212
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5101   .debug_str:000007e5 .LASF213
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5045   .debug_str:00000700 .LASF214
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5103   .debug_str:000007ea .LASF215
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5083   .debug_str:000007a2 .LASF216
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5105   .debug_str:000007ef .LASF217
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5125   .debug_str:00000843 .LASF218
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5107   .debug_str:000007f4 .LASF219
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5127   .debug_str:0000084b .LASF220
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5109   .debug_str:000007f9 .LASF221
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4779   .debug_str:000002c0 .LASF222
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5111   .debug_str:000007fe .LASF223
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4781   .debug_str:000002c8 .LASF224
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5139   .debug_str:00000897 .LASF225
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4669   .debug_str:00000082 .LASF226
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5141   .debug_str:0000089c .LASF227
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4671   .debug_str:0000008b .LASF228
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5143   .debug_str:000008a1 .LASF229
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4785   .debug_str:000002d8 .LASF230
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5195   .debug_str:00000999 .LASF231
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5197   .debug_str:000009a0 .LASF232
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5145   .debug_str:000008a6 .LASF233
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5171   .debug_str:00000932 .LASF234
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5191   .debug_str:00000989 .LASF235
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5147   .debug_str:000008ab .LASF236
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4735   .debug_str:000001f1 .LASF237
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4757   .debug_str:00000253 .LASF238
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5149   .debug_str:000008b0 .LASF239
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4897   .debug_str:00000497 .LASF240
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4663   .debug_str:0000006a .LASF241
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4739   .debug_str:00000205 .LASF242
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5137   .debug_str:00000890 .LASF243
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4715   .debug_str:0000019e .LASF280
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5019   .debug_str:00000681 .LASF244
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5027   .debug_str:0000069d .LASF245
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4725   .debug_str:000001c0 .LASF246
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5121   .debug_str:00000829 .LASF247
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4753   .debug_str:0000023a .LASF248
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4899   .debug_str:0000049f .LASF249
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4713   .debug_str:00000186 .LASF250
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4777   .debug_str:000002ad .LASF251
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4687   .debug_str:000000ca .LASF252
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5133   .debug_str:00000872 .LASF253
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5029   .debug_str:000006a7 .LASF254
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4711   .debug_str:0000016c .LASF255
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5131   .debug_str:0000085d .LASF256
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4689   .debug_str:000000dc .LASF257
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4859   .debug_str:00000400 .LASF258
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4867   .debug_str:0000041b .LASF259
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5009   .debug_str:00000654 .LASF260
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4957   .debug_str:00000589 .LASF261
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4797   .debug_str:0000030b .LASF262
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5063   .debug_str:00000745 .LASF263
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5155   .debug_str:000008c3 .LASF264
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4637   .debug_str:00000000 .LASF265
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4813   .debug_str:00000353 .LASF266
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4789   .debug_str:000002e9 .LASF267
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4767   .debug_str:00000277 .LASF268
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5175   .debug_str:00000941 .LASF269
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5087   .debug_str:000007b3 .LASF270
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5031   .debug_str:000006bf .LASF271
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5079   .debug_str:0000078b .LASF272
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:30     .text.OCCRC_InitSync:00000034 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4799   .debug_str:00000318 .LASF273
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:47     .text.OCCRC_DeInitSync:00000012 .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4727   .debug_str:000001cd .LASF281
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:120    .text.OCCRC_Calculate:0000007a .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4538   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:5089   .debug_str:000007c0 .LASF274
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4955   .debug_str:00000584 .LASF275
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4552   .debug_loc:00000021 .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4579   .debug_loc:00000064 .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4967   .debug_str:000005b9 .LASF276
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4815   .debug_str:00000362 .LASF277
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:4587   .debug_loc:00000078 .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:55     .text.OCCRC_Calculate:00000000 .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:99     .text.OCCRC_Calculate:0000004c .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:78     .text.OCCRC_Calculate:00000033 .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:82     .text.OCCRC_Calculate:00000036 .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:86     .text.OCCRC_Calculate:00000039 .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:102    .text.OCCRC_Calculate:00000051 .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:75     .text.OCCRC_Calculate:00000031 .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:88     .text.OCCRC_Calculate:0000003c .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:105    .text.OCCRC_Calculate:0000005a .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccAfDR9x.s:169    .debug_info:00000000 .Ldebug_info0
+
+NO UNDEFINED SYMBOLS

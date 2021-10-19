@@ -1,0 +1,516 @@
+Index: LIB_UTilities.c
+===================================================================
+--- LIB_UTilities.c	(revision 4371)
++++ LIB_UTilities.c	(working copy)
+@@ -105,11 +105,8 @@
+ /* **************************** */
+ /* Prototype of local functions */
+ /* **************************** */
+-static uint8_t GetSettingStartAddress (uint16_t* pdataStartAddr, uint8_t SFIndex, uint16_t** pmSettingAddr);
+-static uint8_t ExtendedBasicLoader(uint16_t* dataStartAddr, settingPntr_t pointer, uint8_t displacement, Loader_Struct* pDataOut);
+-#ifdef CONFIG_PM_POWER_PROFILE_SUPPORT
+-static uint8_t Extended16BasicLoader(uint16_t* dataStartAddr, settingPntr_t pointer, uint16_t displacement, ExLoader_Struct* pDataOut);
+-#endif
++
++
+ /* ****************** */
+ /* Exported variables */
+ /* ****************** */
+@@ -588,207 +585,237 @@
+ */
+ #if defined (IO_MANAGER_BASICLOADER_CSTM) 
+ #if ( IO_MANAGER_BASICLOADER_CSTM == FALSE )
+-uint8_t BasicLoader(settingPntr_t pointer, uint8_t displacement, Loader_Struct* pDataOut)
++
++uint8_t BasicLoader(settingPntr_t pointer, uint16_t displacement, Loader_Struct* pDataOut)
+ {
+-	uint16_t* dataStartAddr = (uint16_t*)GetDefaultSettingStartAddress();
++	uint8_t retVal = BSLDR_ERR_INVALID_POINTER;
+ 
+-	return ExtendedBasicLoader(dataStartAddr, pointer, displacement, pDataOut);
++	uint16_t* dataStartAddr = GetDefaultSettingStartAddress();
++	dataStartAddr = LIB_SEF_GetBEWrdRelShort_Ptr(dataStartAddr, pointer);
++	if (dataStartAddr != NULL)
++	{
++		retVal = LIB_SEF_GetDisplData(dataStartAddr, displacement, pDataOut);
++	}
++
++	return retVal;
+ }
+ 
+-#ifdef CONFIG_PM_POWER_PROFILE_SUPPORT
+-uint8_t PP_Modifiers_BasicLoader(uint8_t SFIndex, uint16_t displacement, ExLoader_Struct* pDataOut)
+-{
+-  uint16_t * pmSetting; /**< Pointer to mSetting */
+-  uint8_t errorSFCode;  /**< Error code for SFBasicLoader and SFmSettingPointerSearch */
+-  uint16_t* pdataStartAddr = (uint16_t*)GetDefaultSettingStartAddress();
++/**
++This routine give absolute address in a big endian 16-bit pointers table
+ 
+-  errorSFCode = GetSettingStartAddress(pdataStartAddr, SFIndex, &pmSetting);
++\param  [in]    pDataStartAddr		Pointer of pointers table
++\param  [in]	pointer				Pointer item to read
+ 
+-  if (SF_OK == errorSFCode)
+-  {
+-    errorSFCode = Extended16BasicLoader(pmSetting, SF_PTR_APP_MODIFIERS, displacement, pDataOut);
+-  }
+ 
+-  return errorSFCode;
++\return 	uint16_t *	- Absolute address of pointer desired
++ 	 	 	 NULL if starting address or pointer is invalid
+ 
+-}
++\author 	Alessandro Sabbatini
++\date		19/06/2014
++\version	1.0.0
+ 
+-/**
+- * E' stata pensata per leggere i nuovi modificatori per il Power Profile, coi puntatori del displacement
+- * estesi a 16 bit e la pagina di dimensioni maggiori.
+- *
+- * Restituisce la struttura dati ExLoader_Struct, con pagina estesa fino a 2^16 words.
+- *
+- * NOTA: Questa funzione e' generale; il chiamante deve sincerarsi che pointer valga sempre SF_PTR_PP_MODIFIERS
+- * poiche' questo e' l'unico che per ora supporta il nuovo formato.
+- *
+- */
+-uint8_t Extended16BasicLoader(uint16_t* dataStartAddr, settingPntr_t pointer, uint16_t displacement, ExLoader_Struct* pDataOut)
++
++\note		\par \b Note 1:
++			documentation by Alessandro Sabbatini
++
++*/
++uint16_t *LIB_SEF_GetBEWrdRelShort_Ptr(uint16_t *pDataStartAddr, settingPntr_t pointer)
+ {
+-  uint32_t nPage;
+-  uint16_t nExtraPointerWords;
+-  uint16_t i;
++	uint16_t *tmpAddr = NULL;
+ 
+-#ifdef _BSLDR_ENABLE_ERROR_MNG_
++	if ((pointer != INVALID_POINTER) && (pDataStartAddr != NULL))
++	{
++		uint16_t pointerVal = EndianU16_BToN((pDataStartAddr[pointer]));
+ 
+-  if ( 0xFFFF == displacement )
+-  {
+-    /**
+-    0xFF e' l'ultimo indice consentito per un displacement tuttavia, essendo dispari,
+-    e' anche l'ultimo displacement in assoluto quindi non e' uno spiazzamento valido
+-    in quanto non e' possibile specificare la sua lunghezza.
+-    */
+-    return BSLDR_ERR_INVALID_DISPL;
+-  }
++		if ((NULL_POINTER != pointerVal) && (INVALID_POINTER != pointerVal))
++		{
++			tmpAddr = pDataStartAddr + pointerVal;
++		}
+ 
+-#endif
++	}
+ 
+-  if ( pointer != INVALID_POINTER )
+-  {
+-    uint16_t pointerVal = EndianU16_BToN(dataStartAddr[pointer]);
++	return tmpAddr;
++}
+ 
+-  #ifdef _BSLDR_ENABLE_ERROR_MNG_
++uint16_t *LIB_SEF_GetMsettingStartAddr(uint8_t SFIndex)
++{
++	uint16_t *tmpAddr = GetDefaultSettingStartAddress();	/**< Pointer to mSetting */
++	uint16_t pMapNul = EndianU16_BToN(*(tmpAddr+SF_PTR_MAP_LENGTH));
++	uint16_t *pMappIndex;
++	uint16_t pMapIdx;
+ 
+-    if ( (NULL_POINTER == pointerVal) || (INVALID_POINTER == pointerVal) )
+-    {
+-      return BSLDR_ERR_INVALID_POINTER;
+-    }
++	if ( SFIndex != 0 )
++	{
++		pMappIndex= LIB_SEF_GetBEWrdRelShort_Ptr(tmpAddr, SF_PTR_MAP_LENGTH);
++		pMapIdx = EndianU16_BToN(*pMappIndex);
+ 
+-  #endif
++		if ( (INVALID_POINTER != pMapNul ) && (NULL_POINTER != pMapNul)
++				&& (SFIndex < (pMapIdx - pMapNul)))
++		{
++			pMapIdx = EndianU16_BToN(*(pMappIndex+(SFIndex - 1)));
++			tmpAddr += pMapIdx;
++		}
++		else
++		{
++			tmpAddr = NULL;
++		}
++	}
+ 
+-    dataStartAddr += pointerVal;
+-  }
++	return tmpAddr;
+ 
+-  nExtraPointerWords = (*dataStartAddr) & 0x7FFF;  /* Rimozione bit di formato a 16 bit (bit 15) */
++}
+ 
+-#ifdef _BSLDR_ENABLE_ERROR_MNG_
++uint8_t LIB_SEF_GetMaxMsettings(void)
++{
++	uint16_t *tmpAddr = GetDefaultSettingStartAddress();	/**< Pointer to mSetting */
++	uint16_t *pMappIndex= LIB_SEF_GetBEWrdRelShort_Ptr(tmpAddr, SF_PTR_MAP_LENGTH);
++	uint16_t pMapNul = EndianU16_BToN(*pMappIndex);
++	uint8_t retVal = 0;
+ 
+-  if ( nExtraPointerWords > N_MAX_EXTRAPTR16_WORDS )
+-  {
+-    return BSLDR_ERR_OVFL_EXTRAPTR;
+-  }
+-#endif
++	if ( (INVALID_POINTER != pMapNul) && (NULL_POINTER != pMapNul))
++	{
++		uint16_t pMapIdx = EndianU16_BToN(*(tmpAddr+SF_PTR_MAP_LENGTH));
+ 
+-  /* Controlla gli ExtraPointer e imposta la pagina di conseguenza */
+-  nPage = 0;
+-  for ( i = 1; i < nExtraPointerWords; i++ )
+-  {
+-    if ( displacement >= EndianU16_BToN(dataStartAddr[i]) )
+-    {
+-      nPage += 0x100U;
+-    }
+-  }
++		retVal = pMapNul - pMapIdx - 1;
++	}
+ 
+-  /* dataStartAddr punta all'inizio dell'array dei displacement */
+-  dataStartAddr += nExtraPointerWords;
++	return retVal;
++}
+ 
+-#ifdef _BSLDR_ENABLE_ERROR_MNG_
++bool_t LIB_SEF_IsExtdDisplPtr(uint8_t SFIndex, settingPntr_t pointer )
++{
++	bool_t retVal = FALSE;
++#if defined(CONFIG_LIB_SETTING_EXTD_DISPL)
++	uint16_t *tmpAddr = LIB_SEF_GetMsettingStartAddr(SFIndex);
+ 
+-  if ( displacement > EndianU16_BToN(*dataStartAddr) )
+-  {
+-    return BSLDR_ERR_INVALID_DISPL;
+-  }
++	tmpAddr = LIB_SEF_GetBEWrdRelShort_Ptr(tmpAddr, pointer);
+ 
++	if (tmpAddr != NULL)
++	{
++		retVal = (*((uint8_t *)tmpAddr) & 0x80) != 0;
++	}
+ #endif
+-
+-  /*
+-  Il calcolo e' valido anche nel caso in cui  *( EepData + Displacement + 1 ) < *( EepData + Displacement )
+-  a causa di un'overflow page
+-  */
+-  pDataOut->DataLenght = EndianU16_BToN(dataStartAddr[displacement + 1]) - EndianU16_BToN(dataStartAddr[displacement]);
+-  pDataOut->Data = (uint8_t *)&dataStartAddr[EndianU16_BToN(dataStartAddr[displacement]) + nPage];
+-
+-  if ( 0 == pDataOut->DataLenght )
+-  {
+-    return BSLDR_WRN_LENGHT;
+-  }
+-  return BSLDR_OK;
++	return retVal;
+ }
+-#endif /* CONFIG_PM_POWER_PROFILE_SUPPORT */
+ 
+ 
+-uint8_t ExtendedBasicLoader(uint16_t* dataStartAddr, settingPntr_t pointer, uint8_t displacement, Loader_Struct* pDataOut)
++uint8_t LIB_SEF_GetDisplData(uint16_t* dataStartAddr, uint16_t displacement, Loader_Struct* pDataOut)
+ {
+-uint16_t nPage;
+-uint8_t* pData;
+-uint8_t nExtraPointerWords;
+-uint8_t i;
++#if defined(CONFIG_LIB_SETTING_EXTD_DISPL)
++	bool_t isExtDispl = FALSE;
++#endif
++	uint16_t maxDispl = 0xFF;
++	uint16_t nMaxExtraPointerWords = N_MAX_EXTRAPTR_WORDS;
++	uint16_t nPage;
++	uint16_t nExtraPointerWords;
++	uint8_t i;
+ 
++#if defined(CONFIG_LIB_SETTING_EXTD_DISPL)
++	isExtDispl = (*((uint8_t *)dataStartAddr) & 0x80) != 0;
++
++	if (isExtDispl)
++	{
++		/* Extended Displacement => 16 bit */
++		maxDispl = 0xFFFF;
++		nMaxExtraPointerWords = N_MAX_EXTRAPTR16_WORDS;
++		nExtraPointerWords = (*dataStartAddr) & 0x7FFF;  /* Rimozione bit di formato a 16 bit (bit 15) */
++	}
++	else
++#endif /* defined(CONFIG_LIB_SETTING_EXTD_DISPL) */
++	{
++		nExtraPointerWords =(uint16_t) *(uint8_t*)(dataStartAddr);
++	}
++
+ #ifdef _BSLDR_ENABLE_ERROR_MNG_
+ 
+-	if (0xFF == displacement)
++	if (maxDispl == displacement)
+ 	{
+ 		/**
+-		0xFF e' l'ultimo indice consentito per un displacement tuttavia, essendo dispari,
++		0xFF / 0xFFFF e' l'ultimo indice consentito per un displacement tuttavia, essendo dispari,
+ 	  e' anche l'ultimo displacement in assoluto quindi non e' uno spiazzamento valido
+ 		in quanto non e' possibile specificare la sua lunghezza.
+-		*/ 
++		*/
+ 		return BSLDR_ERR_INVALID_DISPL;
+ 	}
+ 
+ #endif
+ 
+-	if (pointer != INVALID_POINTER)
++#ifdef _BSLDR_ENABLE_ERROR_MNG_
++
++	if (nExtraPointerWords > nMaxExtraPointerWords)
+ 	{
+-		uint16_t pointerVal = EndianU16_BToN(*(dataStartAddr + pointer));
++		return BSLDR_ERR_OVFL_EXTRAPTR;
++	}
++#endif
+ 
+-#ifdef _BSLDR_ENABLE_ERROR_MNG_
++	/* Controlla gli ExtraPointer e imposta la pagina di conseguenza */
++	nPage = 0;
+ 
+-		if ((NULL_POINTER == pointerVal) || (INVALID_POINTER == pointerVal))
+-		{
+-			return BSLDR_ERR_INVALID_POINTER;
+-		}
++#if defined(CONFIG_LIB_SETTING_EXTD_DISPL)
++	if (isExtDispl)
++	{
++		  for ( i = 1; i < nExtraPointerWords; i++ )
++		  {
++		    if ( displacement >= EndianU16_BToN(dataStartAddr[i]) )
++		    {
++		      nPage += 0x100U;
++		    }
++		  }
+ 
+-#endif
++		  /* dataStartAddr punta all'inizio dell'array dei displacement */
++		  dataStartAddr += nExtraPointerWords;
+ 
+-		dataStartAddr += pointerVal;
++		#ifdef _BSLDR_ENABLE_ERROR_MNG_
+ 
+-	}
++		  if ( (displacement + 2) > EndianU16_BToN(*dataStartAddr) )
++		  {
++		    return BSLDR_ERR_INVALID_DISPL;
++		  }
+ 
+-	pData = (uint8_t*)(dataStartAddr);
++		#endif
+ 
+-	nExtraPointerWords = *pData;
+-		
+-#ifdef _BSLDR_ENABLE_ERROR_MNG_
++		  /*
++		  Il calcolo e' valido anche nel caso in cui  *( EepData + Displacement + 1 ) < *( EepData + Displacement )
++		  a causa di un'overflow page
++		  */
++		  pDataOut->DataLenght = EndianU16_BToN(dataStartAddr[displacement + 1]) - EndianU16_BToN(dataStartAddr[displacement]);
++		  pDataOut->Data = (uint8_t *)&dataStartAddr[EndianU16_BToN(dataStartAddr[displacement]) + nPage];
+ 
+-	if (nExtraPointerWords > N_MAX_EXTRAPTR_WORDS)
+-	{
+-		return BSLDR_ERR_OVFL_EXTRAPTR;
+ 	}
++	else
+ #endif
++	{
++		uint8_t* pData = (uint8_t *)(dataStartAddr);
+ 
+-	/* Controlla gli ExtraPointer e imposta la pagina di conseguenza */
+-	nPage = 0;
+-	
+-	for (i = 1; i < (2 * nExtraPointerWords); i++)
+-	{
+-		/* displacement < 0xFF */
+-		if (displacement >= OFFS_B(pData, i))
++		for (i = 1; i < (2 * nExtraPointerWords); i++)
+ 		{
+-			nPage += 0x0100U;
++			/* displacement < 0xFF */
++			if (displacement >= OFFS_B(pData, i))
++			{
++				nPage += 0x0100U;
++			}
++
+ 		}
+-	
+-	}
+-	
+-	pData += (2 * nExtraPointerWords);		/* pData points to the begin of displacement */
+ 
+-#ifdef _BSLDR_ENABLE_ERROR_MNG_
++		pData += (2 * nExtraPointerWords);		/* pData points to the begin of displacement */
+ 
+-	if (displacement >= ((2 * (*pData)) - 1))
+-	{
+-		return BSLDR_ERR_INVALID_DISPL;
+-	}
++	#ifdef _BSLDR_ENABLE_ERROR_MNG_
+ 
+-#endif	 
+-	 
+-	/*
+-	Il calcolo è valido anche nel caso in cui  *( EepData + Displacement + 1 ) < *( EepData + Displacement )
+-	a causa di un'overflow page
+-	*/
+-    pDataOut->DataLenght = (uint8_t)( *( pData + displacement + 1 ) - *( pData + displacement ) );
++		if (displacement >= ((2 * (*pData)) - 1))
++		{
++			return BSLDR_ERR_INVALID_DISPL;
++		}
+ 
+-	pDataOut->Data = pData + (2 * (*(pData + displacement) + nPage));
++	#endif
+ 
++		/*
++		Il calcolo è valido anche nel caso in cui  *( EepData + Displacement + 1 ) < *( EepData + Displacement )
++		a causa di un'overflow page
++		*/
++		pDataOut->DataLenght = (uint8_t)( *( pData + displacement + 1 ) - *( pData + displacement ) );
++		pDataOut->Data = pData + (2 * (*(pData + displacement) + nPage));
++	}
++
+ 	if (0 == pDataOut->DataLenght)
+     {
+ 		return BSLDR_WRN_LENGHT;
+@@ -810,18 +837,16 @@
+ \attention
+ \warning
+ */
+-uint8_t MSettingBasicLoader( uint8_t SFIndex, settingPntr_t pointer, uint8_t displacement,  Loader_Struct* pDataOut)
++uint8_t MSettingBasicLoader( uint8_t SFIndex, settingPntr_t pointer, uint16_t displacement,  Loader_Struct* pDataOut)
+ {
++	uint16_t *pmSetting = LIB_SEF_GetMsettingStartAddr(SFIndex);	/**< Pointer to mSetting */
++	uint8_t errorSFCode = BSLDR_ERR_INVALID_POINTER;	/**< Error code for SFBasicLoader and SFmSettingPointerSearch */
+ 
+-	uint16_t * pmSetting;	/**< Pointer to mSetting */
+-	uint8_t errorSFCode;	/**< Error code for SFBasicLoader and SFmSettingPointerSearch */
+-	uint16_t* pdataStartAddr = GetDefaultSettingStartAddress();
++	pmSetting = LIB_SEF_GetBEWrdRelShort_Ptr(pmSetting, pointer);
+ 
+-	errorSFCode = GetSettingStartAddress(pdataStartAddr, SFIndex, &pmSetting);
+-
+-	if (SF_OK == errorSFCode)
++	if (pmSetting != NULL)
+ 	{
+-		errorSFCode = ExtendedBasicLoader ( pmSetting , pointer, displacement, pDataOut);
++		errorSFCode = LIB_SEF_GetDisplData(pmSetting, displacement, pDataOut);
+ 	}
+ 
+ 	return errorSFCode;
+@@ -880,7 +905,7 @@
+ #if defined(CONFIG_LIB_SETTING_CALIBRATION_ON_WBOX)
+ 	pdataStartAddr = (uint16_t *) WBOXData;
+ #else
+-	pdataStartAddr = GetDefaultSettingStartAddress();
++	pdataStartAddr = LIB_SEF_GetBEWrdRelShort_Ptr(GetDefaultSettingStartAddress(), CONFIG_LIB_SETTING_CALIB_PTR);
+ #endif
+ 
+ 	switch (caliBoxID)
+@@ -902,8 +927,10 @@
+ 	break;
+ 	}
+ 
+-	retVal = ExtendedBasicLoader(pdataStartAddr, CONFIG_LIB_SETTING_CALIB_PTR, tmpDspl, pDataOut);
++	retVal = LIB_SEF_GetDisplData(pdataStartAddr, tmpDspl, pDataOut);
++	/* retVal = ExtendedBasicLoader(pdataStartAddr, CONFIG_LIB_SETTING_CALIB_PTR, tmpDspl, pDataOut); */
+ 
++
+ #if defined(CONFIG_LIB_SETTING_CALIBRATION_ON_WBOX)
+ 
+ 	if (retVal == BSLDR_OK)
+@@ -1320,47 +1347,6 @@
+ 	return resVal;
+ }
+ 
+-/* Local functions */
+-/*!
+-
+-\brief mSetting Search Function
+-\param[in,out]
+-\return
+-\date
+-\author
+-\version
+-\ingroup
+-\attention
+-\warning
+-*/
+-static uint8_t GetSettingStartAddress (uint16_t* pdataStartAddr, uint8_t SFIndex, uint16_t** pmSettingAddr)
+-{
+-	uint16_t * pmSettingAddr2=0; /* mSetting-i pointer */
+-	uint16_t * pMappIndex=0;
+-	if ( SFIndex == 0 )
+-	{
+-		/* Main SF selected. */
+-		*pmSettingAddr = pdataStartAddr;
+-	}
+-	else
+-	{
+-		/* get mSetting1 pointer field */
+-		pMappIndex = (uint16_t *)(*(SF_PTR_MAP_LENGTH + pdataStartAddr) + pdataStartAddr);
+-		/* get mSetting-i pointer field */
+-		pMappIndex += (SFIndex - 1);
+-
+-		/* test mSetting pointer field   */
+-		if(*pMappIndex == 0xFFFF)
+-		{
+-			return SF_LDR_ERR_NO_MAPPINDEX;
+-		}
+-
+-		/* mSetting ponter */
+-		*pmSettingAddr = (uint16_t *) (*pMappIndex + pdataStartAddr);
+-	}
+-	return SF_OK;
+-}
+-
+ /* *********** */
+ /* End of file */
+ /* *********** */
+Index: LIB_UTilities.h
+===================================================================
+--- LIB_UTilities.h	(revision 4371)
++++ LIB_UTilities.h	(working copy)
+@@ -259,14 +259,17 @@
+ 
+ #if defined (IO_MANAGER_BASICLOADER_CSTM) 
+ #if ( IO_MANAGER_BASICLOADER_CSTM == FALSE )
+-uint8_t BasicLoader(settingPntr_t pointer, uint8_t displacement, Loader_Struct* pDataOut);
+-uint8_t MSettingBasicLoader(uint8_t SFIndex, settingPntr_t pointer, uint8_t displacement,  Loader_Struct* pDataOut);
+-#ifdef CONFIG_PM_POWER_PROFILE_SUPPORT
+-uint8_t PP_Modifiers_BasicLoader(uint8_t SFIndex, uint16_t displacement, ExLoader_Struct* pDataOut);
+-#endif /* #ifdef CONFIG_PM_POWER_PROFILE_SUPPORT */
++uint8_t BasicLoader(settingPntr_t pointer, uint16_t displacement, Loader_Struct* pDataOut);
++uint8_t MSettingBasicLoader(uint8_t SFIndex, settingPntr_t pointer, uint16_t displacement,  Loader_Struct* pDataOut);
+ #endif /* #if defined (IO_MANAGER_BASICLOADER_CSTM == FALSE)  */
+ #endif /* #if ( IO_MANAGER_BASICLOADER_CSTM )*/
+ 
++uint8_t LIB_SEF_GetMaxMsettings(void);
++uint16_t *LIB_SEF_GetMsettingStartAddr(uint8_t SFIndex);
++uint16_t *LIB_SEF_GetBEWrdRelShort_Ptr(uint16_t *pDataStartAddr, settingPntr_t pointer);
++bool_t LIB_SEF_IsExtdDisplPtr(uint8_t SFIndex, settingPntr_t pointer );
++uint8_t LIB_SEF_GetDisplData(uint16_t* dataStartAddr, uint16_t displacement, Loader_Struct* pDataOut);
++
+ uint8_t LIB_SEF_GetFaultPriority(bool_t getApplTable, uint8_t fltCode, uint8_t fltSubCode, uint8_t *fltPrio);
+ uint8_t LIB_SEF_FaultPriorityField(uint8_t faultPrio);
+ bool_t LIB_SEF_IsFaultToDisplayON(uint8_t faultPrio);

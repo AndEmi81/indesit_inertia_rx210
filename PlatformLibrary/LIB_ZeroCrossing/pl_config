@@ -1,0 +1,82 @@
+#############################################################################
+#
+#	Platform 2 library configuration
+#
+#############################################################################
+
+menu "LIB_ZeroCrossing Configuration"
+
+
+config LIB_ZC_ON_ICU
+	bool "Zero Crossing use ICU Interrupt instead of IRQ"
+	default n
+	help
+		If enabled, IRQ is disabled, using an ICU instead.
+		ICU to use may be pre-defined in compile time or defined in setting file
+		by pin defined in ZeroCrossing input (valid only if pin selected is a TMR)
+
+config LIB_ZC_ICU_REFERENCE
+	bool "Zero Crossing use ICU Reference instead of default HW Timer"
+	depends on !LIB_ZC_ON_ICU
+	default n
+	help
+		If enabled it uses an ICU pre-defined in compile time or defined in setting file,
+		pin defined in ZeroCrossing input (valid only if pin selected is a TMR)
+
+config LIB_ZC_ICU_OVR_SETTING
+	bool "Zero Crossing ICU timer override by setting"
+	depends on LIB_ZC_ON_ICU || LIB_ZC_ICU_REFERENCE
+	default n
+	help
+		If enabled, ICU timer to be used for ZC (interrupt / time reference) can be
+		set in setting file by pin defined in ZeroCrossing input (valid only if pin selected is a TMR)
+        
+config LIB_ZC_CUSTOM_THRES
+	bool "Zero Crossing custom thresholds"
+	default n
+	help
+		Use custom thresholds for Zero Crossing validation; if not set
+		values used are -9.0% - +7.0%
+
+config LIB_ZC_CSTM_POS_THRES
+    depends on LIB_ZC_CUSTOM_THRES
+	int "Positive threshold (in thousandths) "
+	range 1 1000
+	default 70
+	help
+		Positive custom threshold (in thousandths) for Zero Corssing validation
+
+config LIB_ZC_CSTM_NEG_THRES
+    depends on LIB_ZC_CUSTOM_THRES
+	int "Negative threshold (in thousandths) "
+	range 1 1000
+	default 90
+	help
+		Negative custom threshold (in thousandths) for Zero Corssing validation
+
+config LIB_ZC_CUSTOM_SYNC_THRES
+	depends on LIB_ZC_CUSTOM_THRES
+	bool "Zero Crossing sync custom thresholds"
+	default n
+	help
+		Use double custom thresholds for Zero Crossing validation after synchronization
+
+config LIB_ZC_CSTM_SYNC_POS_THRES
+    depends on LIB_ZC_CUSTOM_SYNC_THRES
+	int "Positive threshold (in thousandths) "
+	range 1 1000
+	default 70
+	help
+		Positive custom sync threshold (in thousandths) for Zero Corssing validation
+
+config LIB_ZC_CSTM_SYNC_NEG_THRES
+    depends on LIB_ZC_CUSTOM_SYNC_THRES
+	int "Negative threshold (in thousandths) "
+	range 1 1000
+	default 90
+	help
+		Negative custom sync threshold (in thousandths) for Zero Corssing validation
+		
+endmenu
+
+#############################################################################

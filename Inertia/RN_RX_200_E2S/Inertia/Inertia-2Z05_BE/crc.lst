@@ -1,0 +1,273 @@
+   1                             		.file	"crc.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.CRC_Init,"ax",@progbits
+   5                             		.global	_CRC_Init
+   7                             	_CRC_Init:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM/crc.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** /*******************************************************************************
+   2:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * DISCLAIMER
+   3:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * This software is supplied by Renesas Electronics Corporation and is only
+   4:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * intended for use with Renesas products. No other uses are authorized. This
+   5:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * software is owned by Renesas Electronics Corporation and is protected under
+   6:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * all applicable laws, including copyright laws.
+   7:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING
+   8:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT
+   9:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
+  10:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * AND NON-INFRINGEMENT. ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED.
+  11:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * TO THE MAXIMUM EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS
+  12:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES SHALL BE LIABLE
+  13:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR
+  14:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * ANY REASON RELATED TO THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE
+  15:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+  16:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * Renesas reserves the right, without notice, to make changes to this software
+  17:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * and to discontinue the availability of this software. By using this software,
+  18:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * you agree to the additional terms and conditions found by accessing the
+  19:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * following link:
+  20:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * http://www.renesas.com/disclaimer
+  21:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** *******************************************************************************/
+  22:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** /* Copyright (C) 2010 Renesas Electronics Corporation. All rights reserved. */
+  23:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** /**********************************************************************
+  24:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * File Name : CRC.c
+  25:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * Version : 1.00
+  26:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * Device : RX210
+  27:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * Tool Chain :
+  28:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * H/W Platform : 
+  29:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** * Description : Functions for calculating CRC for a range or ranges of memory.
+  30:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** *
+  31:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** *	Calculates the CRC of a specified memory area or memory areas.
+  32:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** *	NOTE:
+  33:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** *	This produces same CRC-CCITT result as Renesas RX Toolchain does
+  34:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** *	using -crc option.  (Initial Value = 0xFFFF, Final XOR with 0xFFFF.)
+  35:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** **********************************************************************/
+  36:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 
+  37:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** /**********************************************************************************
+  38:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Revision History
+  39:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** DD-MMM-YYYY OSO-UID Description
+  40:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 20-Jan-2011 RTE-PJI First Release
+  41:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 03-Feb-2011 VDE (Version 1.0) (RX62T)
+  42:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 15-Nov-2011 VDE (Version 1.1) (RX210)
+  43:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** ***********************************************************************************/
+  44:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 
+  45:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** /**********************************************************************
+  46:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Includes
+  47:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** **********************************************************************/
+  48:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** #include "RN_RX200_reg.h"
+  49:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** #include "CRC.h"
+  50:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 
+  51:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 
+  52:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** /**********************************************************************
+  53:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Functions
+  54:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** **********************************************************************/
+  55:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 
+  56:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** /***********************************************************************************
+  57:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Function Name : CRC_Init
+  58:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Description   : Initialise the CRC module for CRC-CCITT
+  59:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 				This function must be used before any other function in this module.
+  60:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 				
+  61:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Parameters    :
+  62:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Return value  : 
+  63:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** ***********************************************************************************/
+  64:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** void CRC_Init(void)
+  65:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** {
+  10                             		.loc 1 65 0
+  66:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	/*Disable register protection (PRC1)*/
+  67:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	SYSTEM.PRCR.WORD = 0xA502;	
+  11                             		.loc 1 67 0
+  12 0000 FB EE 00 00 08          		mov.L	#0x80000, r14
+  13 0005 FA E9 FF 01 02 A5       		mov.W	#0xffffa502, 1022[r14]
+  68:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	/*Enable CRC module*/
+  69:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	SYSTEM.MSTPCRB.BIT.MSTPB23 = 0;
+  14                             		.loc 1 69 0
+  15 000b ED E4 05                		mov.L	20[r14], r4
+  16 000e 7B 74                   		bclr	#23, r4
+  17 0010 E7 E4 05                		mov.L	r4, 20[r14]
+  70:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	/*Re-Enable register protection*/
+  71:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	SYSTEM.PRCR.WORD = 0xA500;
+  18                             		.loc 1 71 0
+  19 0013 FA E9 FF 01 00 A5       		mov.W	#0xffffa500, 1022[r14]
+  72:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	
+  73:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	/*Configure CRC Control Register:
+  74:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	1.Set Polynomial to CRC-CCITT XModem (h'1021)
+  75:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 		(p(x) = x ** 16 + x ** 12 + x ** 5 + 1)
+  76:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	2.Set MSB First. (This makes result agree with online CRC calculators.)
+  77:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	3.Clear CRCDOR register*/	
+  78:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	CRC.CRCCR.BYTE = 0x87;
+  20                             		.loc 1 78 0
+  21 0019 FB EE 80 82 08          		mov.L	#0x88280, r14
+  22 001e F8 E4 87                		mov.B	#0xffffff87, [r14]
+  23 0021 02                      		rts
+  24                             	.LFE0:
+  26                             		.section	.text.CRC_Start,"ax",@progbits
+  27                             		.global	_CRC_Start
+  29                             	_CRC_Start:
+  30                             	.LFB2:
+  79:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** }
+  80:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 
+  81:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** /***********************************************************************************
+  82:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Function Name : CRC_Calculate
+  83:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Description   : Calculate CRC on supplied data. (Single address range)
+  84:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 				
+  85:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Parameters    : pui8_Data: Start address of dta
+  86:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 			    ui32_Length : Number of bytes of data.
+  87:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 				
+  88:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Return value  : Calculated CRC
+  89:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** ***********************************************************************************/
+  90:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** uint16_t CRC_Calculate(const uint8_t* pui8_Data,
+  91:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 					   uint32_t ui32_Length)
+  92:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** {
+  93:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	CRC_Start();
+  94:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	
+  95:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	CRC_AddRange(pui8_Data, ui32_Length);
+  96:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	
+  97:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	return CRC_Result();
+  98:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** }
+  99:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 
+ 100:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** /***********************************************************************************
+ 101:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Function Name : CRC_Start
+ 102:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Description   : Call this function before using the CRC_AddRange function to
+ 103:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 				add the first address range.
+ 104:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 				Re-sets the CRC module to a start condition.
+ 105:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 				
+ 106:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Parameters    :
+ 107:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Return value  : 
+ 108:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** ***********************************************************************************/
+ 109:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** void CRC_Start(void)
+ 110:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** {
+  31                             		.loc 1 110 0
+ 111:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	/*Clear any previous result.*/
+ 112:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	CRC.CRCCR.BIT.DORCLR = 1;
+  32                             		.loc 1 112 0
+  33 0000 FB EE 80 82 08          		mov.L	#0x88280, r14
+  34 0005 CC E4                   		mov.B	[r14], r4
+  35 0007 78 74                   		bset	#7, r4
+  36 0009 C3 E4                   		mov.B	r4, [r14]
+ 113:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	
+ 114:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	/*Initial value */
+ 115:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	CRC.CRCDOR = 0xFFFF;
+  37                             		.loc 1 115 0
+  38 000b F9 E5 01 FF             		mov.W	#-1, 2[r14]
+  39 000f 02                      		rts
+  40                             	.LFE2:
+  42                             		.section	.text.CRC_AddRange,"ax",@progbits
+  43                             		.global	_CRC_AddRange
+  45                             	_CRC_AddRange:
+  46                             	.LFB3:
+ 116:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** }
+ 117:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 
+ 118:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** /***********************************************************************************
+ 119:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Function Name : CRC_AddRange
+ 120:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Description   : Use this function rather than CRC_Calculate if wanting
+ 121:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 				to calculate the CRC on data made up of more than one address range.
+ 122:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 				Call CRC_Start first then CRC_AddRange for each address range
+ 123:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 				required and then call CRC_Result to get the CRC value.
+ 124:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 				
+ 125:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Parameters    : pui8_Data: Start address of dta
+ 126:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 			    ui32_Length : Number of bytes of data.
+ 127:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Return value  : 
+ 128:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** ***********************************************************************************/					  
+ 129:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** void CRC_AddRange(const uint8_t* pui8_Data,
+ 130:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 					  uint32_t ui32_Length)
+ 131:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** {
+  47                             		.loc 1 131 0
+  48                             	.LVL0:
+ 129:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** void CRC_AddRange(const uint8_t* pui8_Data,
+  49                             		.loc 1 129 0
+  50 0000 4B 12                   		add	r1, r2
+  51                             	.LVL1:
+ 132:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	/*Write the data a byte at a time to the CRC Data Input register.*/
+ 133:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	while(0 != ui32_Length)
+ 134:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	{	
+ 135:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 		CRC.CRCDIR = *pui8_Data;
+  52                             		.loc 1 135 0
+  53 0002 FB EE 80 82 08          		mov.L	#0x88280, r14
+ 133:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	while(0 != ui32_Length)
+  54                             		.loc 1 133 0
+  55 0007 2E 09                   		bra	.L4
+  56                             	.LVL2:
+  57                             	.L5:
+  58                             		.loc 1 135 0
+  59 0009 FD 28 14                		mov.B	[r1+], r4
+  60                             	.LVL3:
+  61 000c C7 E4 01                		mov.B	r4, 1[r14]
+  62                             	.LVL4:
+  63 000f 03                      		.balign 2,3,1
+  64                             	.L4:
+ 133:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	while(0 != ui32_Length)
+  65                             		.loc 1 133 0 discriminator 1
+  66 0010 47 21                   		cmp	r2, r1
+  67 0012 21 F7                   		bne	.L5
+ 136:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 		/*Onto the next byte*/
+ 137:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 		pui8_Data++;
+ 138:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 		ui32_Length--;
+ 139:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	}
+ 140:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** }
+  68                             		.loc 1 140 0
+  69 0014 02                      		rts
+  70                             	.LFE3:
+  72 0015 03                      		.section	.text.CRC_Calculate,"ax",@progbits
+  73                             		.global	_CRC_Calculate
+  75                             	_CRC_Calculate:
+  76                             	.LFB1:
+  92:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** {
+  77                             		.loc 1 92 0
+  78                             	.LVL5:
+  79 0000 60 80                   		sub	#8, r0
+  80                             	.LCFI0:
+  93:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	CRC_Start();
+  81                             		.loc 1 93 0
+  82 0002 E3 01                   		mov.L	r1, [r0]
+  83 0004 A0 0A                   		mov.L	r2, 4[r0]
+  84 0006 05 00 00 00             		bsr	_CRC_Start
+  85                             	.LVL6:
+  95:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	CRC_AddRange(pui8_Data, ui32_Length);
+  86                             		.loc 1 95 0
+  87 000a EC 01                   		mov.L	[r0], r1
+  88 000c A8 0A                   		mov.L	4[r0], r2
+  89 000e 05 00 00 00             		bsr	_CRC_AddRange
+  90                             	.LVL7:
+  91                             	.LBB4:
+  92                             	.LBB5:
+ 141:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 
+ 142:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** /***********************************************************************************
+ 143:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Function Name : CRC_Result
+ 144:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Description   : use this function to get a CRC result after adding supplying data
+ 145:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 				using CRC_AddRange function.			
+ 146:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Parameters    :
+ 147:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** Return value  : CRC value
+ 148:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** ***********************************************************************************/
+ 149:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** uint16_t CRC_Result(void)
+ 150:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** {
+ 151:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	/*Return the CRC result.
+ 152:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	This is as read from CRC Data Ouput register and bit inversed*/
+ 153:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** 	return (uint16_t)~CRC.CRCDOR;
+  93                             		.loc 1 153 0
+  94 0012 FB EE 80 82 08          		mov.L	#0x88280, r14
+  95 0017 DD E1 01                		mov.W	2[r14], r1
+  96 001a 7E 01                   		not	r1
+  97                             	.LBE5:
+  98                             	.LBE4:
+  98:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** }
+  99                             		.loc 1 98 0
+ 100 001c 5F 11                   		movu.W	r1, r1
+ 101 001e 67 02                   		rtsd	#8
+ 102                             	.LFE1:
+ 104                             		.section	.text.CRC_Result,"ax",@progbits
+ 105                             		.global	_CRC_Result
+ 107                             	_CRC_Result:
+ 108                             	.LFB4:
+ 150:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** {
+ 109                             		.loc 1 150 0
+ 110                             		.loc 1 153 0
+ 111 0000 FB EE 80 82 08          		mov.L	#0x88280, r14
+ 112 0005 DD E1 01                		mov.W	2[r14], r1
+ 113 0008 7E 01                   		not	r1
+ 154:C:/Workspace/FW_Platform2_5/trunk/HAL/RN_RX200/IEC60335_B_libs/src/ROM\crc.c **** }
+ 114                             		.loc 1 154 0
+ 115 000a 5F 11                   		movu.W	r1, r1
+ 116 000c 02                      		rts
+ 117                             	.LFE4:
+ 181                             	.Letext0:
+ 182                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_reg.h"
+ 183                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200\\IEC60335_B_libs\\src\\Common/misraty

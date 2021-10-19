@@ -1,0 +1,1688 @@
+   1                             		.file	"LIB_ClassBCheck.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.CheckRAM_Manager,"ax",@progbits
+   6                             	_CheckRAM_Manager:
+   7                             	.LFB12:
+   8                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck/LIB_ClassBCheck.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** Copyright (c) 2004-2005, Indesit Company, EDT.
+   3:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /**
+   7:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n	Il file contiene le funzioni per il drive del bloccoporta ad impulsi
+   8:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n
+   9:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \file		LIB_ClassBCheck.c
+  10:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \ingroup    LIB_ClassB
+  11:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \date	    20/09/2011
+  12:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \version	01.00.00
+  13:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \author		 Marco Sperandini
+  14:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n
+  15:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n
+  16:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \par	History:
+  17:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n
+  18:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n 		01.00.00
+  19:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n		20/09/2011
+  20:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n		marco.sperandini
+  21:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n		changes
+  22:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n 			Creation
+  23:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n
+  24:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** */
+  25:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #define MODULE_BODY_CLASSBCHECK
+  26:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* ******** */
+  27:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* Includes */
+  28:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* ******** */
+  29:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+  30:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "Config.h"
+  31:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "LIB_ClassBCheck.h"
+  32:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "LIB_Error.h"
+  33:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "LIB_Trace.h"
+  34:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "LIB_Setting.h"
+  35:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+  36:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+  37:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #if   defined(NXP_LPC12xx_1227)
+  38:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "IEC60335_B_CPUregTests.h"
+  39:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "IEC60335_B_RAMTestBIST.h"
+  40:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "IEC60335_B_WDTest.h"
+  41:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+  42:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #elif defined(FREESCALE_MCF51_AG128)
+  43:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "IEC60335.h"
+  44:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "IEC60335_B_CPUregTests.h"
+  45:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "IEC60335_B_RAMTestBIST.h"
+  46:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "IEC60335_B_WDTest.h"
+  47:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+  48:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #elif defined(RN_RX200)
+  49:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	#include "IEC60335.h"
+  50:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	/*#include "iwdt.h"*/
+  51:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif
+  52:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+  53:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #if defined(CONFIG_LIB_CLASS_B_USE_OCCRC)
+  54:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "OCCRC_drv.h"
+  55:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #define LIB_ClassBChk_CRC_calculate OCCRC_Calculate
+  56:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #else
+  57:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "SWCRC_drv.h"
+  58:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #define LIB_ClassBChk_CRC_calculate SWCRC_Calculate
+  59:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif
+  60:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "OCWDT_drv.h"
+  61:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "LIB_Reset.h"
+  62:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "LIB_ClassBVar.h"
+  63:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* ****************** */
+  64:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* Defines and Macros */
+  65:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* ****************** */
+  66:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #define CHECKRAM_AREA_NUM		(sizeof(RamAreaTestTable)/sizeof(ClassB_RamTestDescriptorType))
+  67:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+  68:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #if defined(CONFIG_ERROR_HANDLING)
+  69:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #define CLASSB_FATAL(err)		PLT_ERROR_FATAL(err)
+  70:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #else
+  71:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #define CLASSB_FATAL(err) 		LIB_Reset_ForceColdReset()
+  72:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif
+  73:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+  74:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** typedef struct ClassB_CheckRamTestState_s
+  75:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+  76:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	uint8_t		AreaIndex;
+  77:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	uint32_t	StartAddress;
+  78:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	uint32_t	RemainingBytes;
+  79:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }ClassB_CheckRamTestStateType;
+  80:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* **************************** */
+  81:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* Prototype of local functions */
+  82:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* **************************** */
+  83:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #if defined (CONFIG_LIB_CLASS_B_FLASH)
+  84:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** static void CheckFlash_SetBlock(uint8_t newBlock);
+  85:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif
+  86:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+  87:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #if defined(CONFIG_LIB_CLASS_B_RAM)
+  88:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** static uint8_t CheckRAM_Manager(bool_t useCriticalSection);
+  89:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** static void CheckRAM_Init(void);
+  90:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif
+  91:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+  92:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+  93:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* ****************** */
+  94:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* Exported variables */
+  95:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* ****************** */
+  96:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+  97:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+  98:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* **************** */
+  99:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* Global variables */
+ 100:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* **************** */
+ 101:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /*
+ 102:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** .CLASS_B_temp must be an area with no destructive test
+ 103:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** */
+ 104:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** static volatile ClassB_CheckRamTestStateType ClassB_CheckRamTestState __attribute__ ((section (".CL
+ 105:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 106:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #ifdef CONFIG_LIB_CLASS_B_FLASH
+ 107:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** uint16_t flashChkCodeEval;
+ 108:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif
+ 109:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 110:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #ifdef CONFIG_LIB_CLASS_B_ADC
+ 111:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /** AD Check failure filter counter */
+ 112:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** uint16_t	ADC_CheckFilter;
+ 113:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif
+ 114:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 115:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* ***************** */
+ 116:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* Exported function */
+ 117:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* ***************** */
+ 118:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #ifdef CONFIG_LIB_CLASS_B_CPU
+ 119:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** uint8_t RegCheck(void)
+ 120:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 121:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	uint8_t retVal = CHECK_FAILED;
+ 122:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	TRACE_CPU_CHECK_START();
+ 123:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     if( IEC60335_CPUregTest_BIST() == IEC60335_testPassed )
+ 124:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	retVal = CHECK_PASSED;
+ 125:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	TRACE_CPU_CHECK_END();
+ 126:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	return retVal;
+ 127:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 128:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif /* CONFIG_LIB_CLASS_B_CPU*/
+ 129:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 130:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #ifdef CONFIG_LIB_CLASS_B_FLASH
+ 131:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** typedef struct
+ 132:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 133:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     uint8_t* curAddr;
+ 134:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     uint8_t* endAddr;
+ 135:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     uint16_t partialChecksum;
+ 136:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     uint8_t  currBankIdx;
+ 137:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** } FlashTestStatus_t;
+ 138:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 139:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** static FlashTestStatus_t flashTestStatus;
+ 140:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** typedef enum {  FLASH_TEST_NONE,
+ 141:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 FLASH_TEST_SETTING_RUNNING,
+ 142:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 FLASH_TEST_COMPLETE
+ 143:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 144:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** FlashTestStatusStep_t;
+ 145:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 146:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 147:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** static void CheckFlash_SetBlock(uint8_t newBlock)
+ 148:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 149:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 150:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	uint16_t len;
+ 151:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	if (newBlock == FLASH_BLOCK_SETTING_FILE)
+ 152:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	{
+ 153:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		LIB_SettingBIST_StartSync(&len, &(flashTestStatus.curAddr),&(flashTestStatus.partialChecksum));
+ 154:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		flashTestStatus.endAddr = flashTestStatus.curAddr+len;
+ 155:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	}
+ 156:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	else
+ 157:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	{
+ 158:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		if ((flashTestStatus.currBankIdx == FLASH_BLOCK_SETTING_FILE) ||
+ 159:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		(newBlock != (flashTestStatus.currBankIdx + 1)) ||
+ 160:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		( newBlock >= NUM_FLASH_CBOARD_TEST_BLOCKS ))
+ 161:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		{
+ 162:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			newBlock = 0;
+ 163:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			flashTestStatus.partialChecksum = 0xffff;
+ 164:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		}
+ 165:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 166:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		flashTestStatus.curAddr = (uint8_t *)AreaFlashCheckTable[newBlock].startAddr;
+ 167:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		flashTestStatus.endAddr = (uint8_t *)AreaFlashCheckTable[newBlock].endAddr;
+ 168:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	}
+ 169:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 170:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	flashTestStatus.currBankIdx = newBlock;
+ 171:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 172:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 173:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void CheckFlash_Init(bool_t isBIST)
+ 174:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 175:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	if (isBIST)
+ 176:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	{
+ 177:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	    SAFETY_REGION_START();
+ 178:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	}
+ 179:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 180:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     CheckFlash_SetBlock(0);
+ 181:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     SAFETY_DATA_UPDATE(flashTestStatus);
+ 182:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 183:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     if (isBIST)
+ 184:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	{
+ 185:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	SAFETY_REGION_END();
+ 186:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	}
+ 187:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 188:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 189:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** uint8_t CheckFlash_Manager(uint16_t byte_to_check, bool_t skipSettingFile)
+ 190:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 191:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     uint8_t* tmpEndAddr;
+ 192:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     uint32_t lenght;
+ 193:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     uint8_t retValue=CHECK_RUNNING;
+ 194:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 195:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     TRACE_FLASH_CHECK_START();
+ 196:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 197:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     if (!skipSettingFile)
+ 198:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     {
+ 199:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         SAFETY_REGION_START();
+ 200:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     }
+ 201:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 202:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     SAFETY_DATA_CHECK(flashTestStatus);
+ 203:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 204:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     tmpEndAddr = flashTestStatus.curAddr + byte_to_check;
+ 205:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 206:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     if( tmpEndAddr > flashTestStatus.endAddr)
+ 207:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     {
+ 208:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         tmpEndAddr = flashTestStatus.endAddr;
+ 209:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     }
+ 210:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 211:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     lenght = tmpEndAddr - flashTestStatus.curAddr;
+ 212:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 213:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     if( flashTestStatus.currBankIdx == FLASH_BLOCK_SETTING_FILE )  /* per il segmento del file dei 
+ 214:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     {
+ 215:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         flashTestStatus.partialChecksum = LIB_SettingBIST_StepSync( lenght, flashTestStatus.curAddr
+ 216:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     }
+ 217:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     else
+ 218:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     {
+ 219:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         flashTestStatus.partialChecksum = LIB_ClassBChk_CRC_calculate( lenght, flashTestStatus.curA
+ 220:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     }
+ 221:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 222:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     flashTestStatus.curAddr = tmpEndAddr;
+ 223:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 224:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     if (tmpEndAddr >= flashTestStatus.endAddr)
+ 225:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     {
+ 226:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         if (flashTestStatus.currBankIdx < (NUM_FLASH_CBOARD_TEST_BLOCKS-1))
+ 227:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         {
+ 228:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****             CheckFlash_SetBlock(flashTestStatus.currBankIdx+1);
+ 229:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         }
+ 230:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         else
+ 231:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         {
+ 232:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****             if( flashTestStatus.currBankIdx == FLASH_BLOCK_SETTING_FILE )  /* per il segmento del f
+ 233:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****             {
+ 234:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 if ( LIB_SettingBIST_EndSync(flashTestStatus.partialChecksum)  )
+ 235:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 {
+ 236:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                     retValue = CHECK_PASSED;
+ 237:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 }
+ 238:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 else
+ 239:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 {
+ 240:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 	retValue = CHECK_FAILED;
+ 241:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 }
+ 242:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****             }
+ 243:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****             else {
+ 244:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****             	flashChkCodeEval = flashTestStatus.partialChecksum;
+ 245:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 246:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****             	/* FlashCheckCode can be == 0 to disable test; production firwmare cannot have FlashCh
+ 247:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 if (FlashCheckCode && (flashTestStatus.partialChecksum != FlashCheckCode))
+ 248:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 {
+ 249:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 	retValue = CHECK_FAILED;
+ 250:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 }else if (skipSettingFile)
+ 251:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 {
+ 252:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                     retValue = CHECK_PASSED;
+ 253:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 }
+ 254:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 else
+ 255:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 {
+ 256:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                     CheckFlash_SetBlock(FLASH_BLOCK_SETTING_FILE);
+ 257:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                 }
+ 258:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 259:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****             }
+ 260:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         }
+ 261:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     }
+ 262:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 263:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     SAFETY_DATA_UPDATE(flashTestStatus);
+ 264:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 265:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     if (!skipSettingFile)
+ 266:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     {
+ 267:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	SAFETY_REGION_END();
+ 268:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     }
+ 269:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 270:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     TRACE_FLASH_CHECK_END();
+ 271:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 272:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     switch( retValue )
+ 273:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	{
+ 274:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	case CHECK_FAILED:
+ 275:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_FLASH);
+ 276:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		break;
+ 277:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	case CHECK_PASSED:
+ 278:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		CheckFlash_Init(!skipSettingFile);
+ 279:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		break;
+ 280:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	}
+ 281:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 282:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     return retValue;
+ 283:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 284:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif /* CONFIG_LIB_CLASS_B_FLASH*/
+ 285:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 286:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #ifdef CONFIG_LIB_CLASS_B_RAM
+ 287:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #if defined(__ICCARM__)     /* EWARM */
+ 288:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #pragma location = ".noinit"
+ 289:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** static uint8_t tempRam[CONFIG_LIB_CLASS_B_RAM_CHUNKSIZE];
+ 290:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #elif defined(__CWCC__)       /* Codewarrior */
+ 291:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 292:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #pragma define_section noinit ".noinit" far_absolute
+ 293:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #if _lint
+ 294:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #define NO_INIT_VAR
+ 295:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #else   /* _lint */
+ 296:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #define NO_INIT_VAR __declspec(noinit)
+ 297:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif  /* _lint */
+ 298:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 299:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** NO_INIT_VAR uint8_t tempRam[CONFIG_LIB_CLASS_B_RAM_CHUNKSIZE];
+ 300:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif
+ 301:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 302:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 303:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /**
+ 304:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** This API implements keywords BIST (Built-In Self Test)
+ 305:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** */
+ 306:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void LIB_ClassB_Keywords_BIST(void)
+ 307:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 308:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	if( TRUE != LIB_CheckKeywordsRam())
+ 309:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	{
+ 310:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		LIB_Reset_ForceColdReset();
+ 311:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	}
+ 312:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 313:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 314:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /**
+ 315:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****  This API implements the state machine of a non destructive RAM BIST (Built-In Self Test) to be per
+ 316:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****  on an area of RAM or stack (nIterrupt or User).
+ 317:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****  */
+ 318:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void LIB_ClassB_RAM_BIST(void)
+ 319:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 320:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	switch (CheckRAM_Manager(TRUE))
+ 321:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	{
+ 322:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	case CHECK_FAILED:
+ 323:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_RAM);
+ 324:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		break;
+ 325:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	case CHECK_PASSED:
+ 326:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	default:
+ 327:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		;
+ 328:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	}
+ 329:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 330:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 331:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif /* CONFIG_LIB_CLASS_B_RAM*/
+ 332:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 333:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #ifdef CONFIG_LIB_CLASS_B_CLOCK
+ 334:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 335:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #if defined(CONFIG_LIB_CLASS_B_CLOCK_MS)
+ 336:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "OCRTC_drv.h"
+ 337:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /**
+ 338:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** LA sorgente esterna deve essere piu lenta,
+ 339:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** ad ogni interrupt della sorgente esterna
+ 340:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** va verificato che
+ 341:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** */
+ 342:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** typedef struct
+ 343:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 344:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     int32_t beginSysCnt;
+ 345:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     int32_t endSysCnt;
+ 346:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     int32_t beginExtCnt;
+ 347:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     int32_t endExtCnt;
+ 348:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     int8_t nFailedCheck;
+ 349:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     int8_t failed;
+ 350:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** } ClockTestStatus_t;
+ 351:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 352:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** ClockTestStatus_t clockTestStatus;
+ 353:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** //! Fattore di scala tra rtc e tempo di sistema (1ms)
+ 354:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #if defined(FREESCALE_MCF51_AG128)
+ 355:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #define EXT_CLOCK_SCALE	1
+ 356:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #else if   defined(NXP_LPC12xx_1227)
+ 357:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** //MS TODO: fix the RTC HW problem
+ 358:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #define EXT_CLOCK_SCALE	10
+ 359:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif
+ 360:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 361:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** //! Tolleranza in percentuale
+ 362:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #define MAX_CLOCK_TOLLERANCE_PERC 10
+ 363:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** //! Numero di fallimenti consecutivi per dichiare test fallito
+ 364:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #define MAX_CLOCK_FAILURE 3
+ 365:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void check( uint32_t time );
+ 366:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 367:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /**
+ 368:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** Inizializza le risorse necessareper il test sulla frequenza della cpu.
+ 369:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** Confronta la sorgente di clock da cui dipende quella della cpu e una
+ 370:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** sorgente esterna, come RTC.
+ 371:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** */
+ 372:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void CheckClock_Init(void)
+ 373:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 374:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     clockTestStatus.nFailedCheck = 0;
+ 375:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     clockTestStatus.endExtCnt=0;
+ 376:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 377:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     clockTestStatus.beginSysCnt = OS_GetTime32();
+ 378:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     clockTestStatus.beginExtCnt = OCRTC_getTimeSync();
+ 379:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 380:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     OCRTC_setAlarmSync(clockTestStatus.beginExtCnt+100, check);
+ 381:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 382:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 383:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void check( uint32_t time )
+ 384:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 385:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     //clockTestStatus.failed   = 1;
+ 386:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     uint32_t beginSysCnt;
+ 387:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     uint32_t beginExtCnt;
+ 388:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 389:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     beginSysCnt = OS_GetTime32();
+ 390:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     beginExtCnt = OCRTC_getTimeSync();
+ 391:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 392:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     OCRTC_setAlarmSync(clockTestStatus.beginExtCnt+100, check);
+ 393:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 394:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 395:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void CheckClock_Manager(uint16_t cmd)
+ 396:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 397:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     int32_t sysLen;
+ 398:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     int32_t sysDiff;
+ 399:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     int32_t extDiff;
+ 400:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     int32_t bound;
+ 401:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 402:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     TRACE_CLOCK_CHECK_START();
+ 403:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 404:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     clockTestStatus.endSysCnt = OS_GetTime32();
+ 405:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     clockTestStatus.endExtCnt = OCRTC_getTimeSync();
+ 406:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 407:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     sysDiff = clockTestStatus.endSysCnt - clockTestStatus.beginSysCnt;
+ 408:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     extDiff = (clockTestStatus.endExtCnt - clockTestStatus.beginExtCnt)* EXT_CLOCK_SCALE;
+ 409:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 410:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     clockTestStatus.beginSysCnt = clockTestStatus.endSysCnt;
+ 411:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     clockTestStatus.beginExtCnt = clockTestStatus.endExtCnt;
+ 412:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 413:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     bound = (sysDiff/100)*MAX_CLOCK_TOLLERANCE_PERC;
+ 414:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     if(   ((sysDiff - extDiff) > bound)
+ 415:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****             || ((extDiff - sysDiff) > bound) )
+ 416:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     {
+ 417:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         clockTestStatus.nFailedCheck++;
+ 418:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         if( clockTestStatus.nFailedCheck > MAX_CLOCK_FAILURE )
+ 419:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         {
+ 420:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         	CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_CLOCK);
+ 421:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         }
+ 422:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     }
+ 423:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     clockTestStatus.nFailedCheck = 0;
+ 424:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     TRACE_CLOCK_CHECK_END();
+ 425:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 426:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 427:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #elif  defined(LIB_CLASS_B_CLOCK_NPX)
+ 428:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 429:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "OCRTC_drv.h"
+ 430:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /**
+ 431:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** NPX Implementation
+ 432:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** */
+ 433:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #include "IEC60335_B_ClockTest.h"
+ 434:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void check( uint32_t time );
+ 435:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void check( uint32_t time )
+ 436:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 437:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 438:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     IEC60335_Clocktest_RTCHandler();  /* agganciato al timer dell'rtc, indipendente da quello di cp
+ 439:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 440:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     OCRTC_setAlarmSync( OCRTC_getTimeSync()+1, check);
+ 441:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 442:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 443:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /**
+ 444:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** Inizializza le risorse necessareper il test sulla frequenza della cpu.
+ 445:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** Confronta la sorgente di clock da cui dipende quella della cpu e una
+ 446:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** sorgente esterna, come RTC.
+ 447:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** */
+ 448:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void CheckClock_Init(void)
+ 449:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 450:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     IEC60335_initClockTest(  1 // timerOccThreshold
+ 451:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                              , 1 // rtcOccThreshold
+ 452:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                              , 0 // timerLowerBound
+ 453:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                              , 1 // timerUpperBound
+ 454:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****                           );
+ 455:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     OCRTC_setAlarmSync( OCRTC_getTimeSync()+1, check);
+ 456:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 457:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /**
+ 458:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** Verifica che le due sorgenti di clock utilzzate per il test non
+ 459:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** si discostino troppo.
+ 460:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** */
+ 461:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 462:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void CheckClock_Manager(uint16_t cmd)
+ 463:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 464:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     type_testResult res;
+ 465:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 466:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     res = IEC60335_Clocktest_MainLoopHandler();
+ 467:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 468:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     if ( IEC60335_testPassed != res )
+ 469:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     {
+ 470:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_CLOCK);
+ 471:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     }
+ 472:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 473:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #elif defined(RN_RX200) && defined(CONFIG_LIB_CLASS_B_CLOCK_HW)
+ 474:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 475:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void CheckClock_Init(void)
+ 476:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 477:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	IEC60335_initClockTestHW();
+ 478:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 479:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 480:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /**
+ 481:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** Verifica che le due sorgenti di clock utilzzate per il test non
+ 482:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** si discostino troppo.
+ 483:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** */
+ 484:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 485:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void CheckClock_Manager(uint16_t cmd)
+ 486:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 487:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     type_testResult res;
+ 488:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 489:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     res = IEC60335_Clocktest_MainLoopHandler();
+ 490:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 491:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     if ( IEC60335_testPassed != res )
+ 492:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     {
+ 493:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_CLOCK);
+ 494:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     }
+ 495:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 496:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif /* else CONFIG_LIB_CLASS_B_CLOCK_MS*/
+ 497:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif /* CONFIG_LIB_CLASS_B_CLOCK*/
+ 498:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 499:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #if defined(CONFIG_LIB_CLASS_B_WDTEST) && defined(CONFIG_PL_DRV_OCWDT)
+ 500:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** typedef enum {
+ 501:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	WDTCHECK_START=0,
+ 502:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	WDTCHECK_T1,
+ 503:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	WDTCHECK_T2,
+ 504:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	WDTCHECK_END,
+ 505:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	WDTCHECK_ERROR,
+ 506:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	WDT_TIMEOUT_RESET,
+ 507:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 508:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** WDTCheckStepType;
+ 509:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 510:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #define ISTEST_KEY	0x01
+ 511:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** static volatile WDTCheckStepType WDTCheckStep;
+ 512:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** static bool_t WDCheck(void);
+ 513:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 514:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void LIB_ClassB_WDTCheckInit(void)
+ 515:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 516:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	WDTCheckStep = WDTCHECK_START;
+ 517:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	WDT_ClearTimeoutExpired();
+ 518:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	WDT_ClearUntimelyResetOccurred();
+ 519:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 520:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 521:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /**
+ 522:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	WDT POST tests.
+ 523:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	WDT allows recovering from error situations such as runaway or deadlocked code.
+ 524:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 525:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	Test is performed on the same configuration of the final application,
+ 526:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	no custom configuration are adopted  (due because IWDT register can be written
+ 527:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	once after reset).
+ 528:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 529:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	preconditions:
+ 530:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	-	Windowed WDT whose timer is clocked independently from the CPU (IWDT);
+ 531:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	-	WDT configured with a predefined timeout and window.
+ 532:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	-	Refresh-permitted range (or window) is end-aligned.
+ 533:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	-	bootloader doesn't affect WDT registers
+ 534:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 535:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	It's better if WDT counter not started, but start is issued only if Counter is not running
+ 536:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	to avoid reset by untimely refresh. (In some MCUs it could happen that test is started but WDT is 
+ 537:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	running, like RX200 after sw reset )
+ 538:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 539:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	The self-diagnostic routine basically makes sure that:
+ 540:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	-	system reset is issued after WDT timeout
+ 541:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	-	device is reset upon untimely WDT refresh in window mode
+ 542:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	-	WDT can be refreshed TODO?
+ 543:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 544:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	At each reset caused by WDT, state machine increments its state. Any other reset
+ 545:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	reinitializes the state machine.
+ 546:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 547:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	The device is reset a number of times during the WDT test, original cause of reset
+ 548:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	is overwritten. Therefore, a SRAM variables WDTCheckStep and bkpResetSrc are used
+ 549:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	by the self-diagnostic routine to keep track of the test phase and original reset
+ 550:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	before the test.
+ 551:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 552:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	WDTCHECK_START: this step starts the WDT and waits for the timeout to check whether WDT
+ 553:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	is able to issue a reset.
+ 554:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	WDTCHECK_T1: if reset by WDT occurred starts the WDT again and refreshes the WDT untimely,
+ 555:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	that is Refresh-prohibited period (Refresh-permitted window is end-aligned).
+ 556:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	WDTCHECK_T2: if reset by WDT occurred it means that untimely refresh causes a reset.  The
+ 557:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	state machine is re-initilized.
+ 558:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	TODO: avoid WDT reset is a wanted reset occurs? Does WDTCheckStep need to be protected by DataCare
+ 559:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	Only WDTCHECK_T2 returns IEC60335_testPassed.
+ 560:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 561:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** */
+ 562:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** static bool_t WDCheck(void)
+ 563:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 564:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	static volatile resetSource_t bkpResetSrc;
+ 565:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	bool_t ret = IEC60335_testFailed;
+ 566:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	RST_Type resetSrc;
+ 567:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 568:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	TRACE_WD_CHECK_START();
+ 569:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 570:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	/* get the reset source */
+ 571:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	resetSrc = OCRST_GetResetSourceSync();
+ 572:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 573:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	/* catch any source of reset or WDT reset by timeout and reset the state machine*/
+ 574:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	if((RST_BY_WATCHDOG != resetSrc))
+ 575:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	{
+ 576:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		LIB_ClassB_WDTCheckInit();
+ 577:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	}
+ 578:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 579:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	switch(WDTCheckStep)
+ 580:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	{
+ 581:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		case WDT_TIMEOUT_RESET:
+ 582:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		case WDTCHECK_START:
+ 583:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			/*save original reset source*/
+ 584:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			bkpResetSrc = OCRST_SaveResetValue();
+ 585:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 586:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			/* test whether WDT timeout is able to issue system reset */
+ 587:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			if( !WDT_IsRunning() )
+ 588:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			{
+ 589:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				OCWDT_StartSync();	/*start WDT without refreshing*/
+ 590:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			}
+ 591:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 592:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			while(1)
+ 593:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			{
+ 594:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #if (WDT_WINDOWED_MODE == 1)
+ 595:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				WDTCheckStep=WDTCHECK_T1;
+ 596:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #else
+ 597:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				WDTCheckStep=WDTCHECK_T2;
+ 598:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif
+ 599:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			}
+ 600:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			/*break;*/ /*  lint -e527 (Unreachable code at token 'break') keep break */
+ 601:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 602:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #if (WDT_WINDOWED_MODE == 1)
+ 603:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		case WDTCHECK_T1:
+ 604:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			if(WDT_TimeoutExpired())
+ 605:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			{
+ 606:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				/*ok, WDT is able to issue system reset by timeout*/
+ 607:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				WDT_ClearTimeoutExpired();
+ 608:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 609:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				/* test whether untimely refresh causes a reset */
+ 610:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				OCWDT_StartSync();	/*start WDT*/
+ 611:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				WDTCheckStep=WDTCHECK_T2;
+ 612:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 613:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				while(1)
+ 614:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				{
+ 615:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 					WDT_Refresh();
+ 616:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				}
+ 617:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			}
+ 618:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			else
+ 619:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			{
+ 620:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				/* error */
+ 621:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				WDTCheckStep=WDTCHECK_ERROR;
+ 622:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			}
+ 623:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			break;
+ 624:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif
+ 625:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 626:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		case WDTCHECK_T2:
+ 627:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			if(WDT_UntimelyResetOccurred())
+ 628:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			{
+ 629:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				/*ok, WDT is able to issue system reset by untimely refresh*/
+ 630:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				WDT_ClearUntimelyResetOccurred();
+ 631:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 632:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				OCRST_RestoreResetValue(bkpResetSrc);
+ 633:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				/*ok, untimely refresh causes a reset*/
+ 634:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				OCWDT_StartSync();
+ 635:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				ret=IEC60335_testPassed;
+ 636:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 637:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				/* state for the reset by WDT timeout */
+ 638:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				WDTCheckStep=WDT_TIMEOUT_RESET;
+ 639:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			}
+ 640:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			else
+ 641:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			{
+ 642:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				/* error */
+ 643:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				WDTCheckStep=WDTCHECK_ERROR;
+ 644:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			}
+ 645:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			break;
+ 646:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 647:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		case WDTCHECK_ERROR:
+ 648:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			OCWDT_StartSync();
+ 649:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			ret = IEC60335_testFailed;
+ 650:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		break;
+ 651:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		default:
+ 652:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			OCWDT_StartSync();
+ 653:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			ret = IEC60335_testFailed;
+ 654:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	}
+ 655:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 656:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	TRACE_WD_CHECK_END();
+ 657:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	return ret;
+ 658:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 659:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif
+ 660:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 661:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void InitCheck(void)
+ 662:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 663:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 664:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #ifdef CONFIG_LIB_CLASS_B_WDTEST
+ 665:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	if( WDCheck() != TRUE )
+ 666:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	{
+ 667:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	  LIB_ClassB_WDTCheckInit();
+ 668:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	  CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_WDTEST);
+ 669:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	}
+ 670:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif /* CONFIG_LIB_CLASS_B_WDTEST*/
+ 671:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 672:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #ifdef CONFIG_LIB_CLASS_B_CPU
+ 673:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     if( RegCheck() == CHECK_FAILED ) /* freddo e caldo */
+ 674:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     {
+ 675:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_CPU);
+ 676:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     }
+ 677:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif /* CONFIG_LIB_CLASS_B_CPU*/
+ 678:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 679:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #ifdef CONFIG_LIB_CLASS_B_CLOCK
+ 680:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     CheckClock_Init();
+ 681:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif /* CONFIG_LIB_CLASS_B_CLOCK*/
+ 682:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 683:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #ifdef CONFIG_LIB_CLASS_B_ADC
+ 684:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         if(IEC60335_testFailed == IEC60335_ADCtest_POST())
+ 685:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         {
+ 686:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         	CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_ADC);
+ 687:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         }
+ 688:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 689:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         IEC60335_ADCtest_BITS_start();
+ 690:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 691:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif
+ 692:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 693:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 694:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 695:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void InitMemoryCheck(void)
+ 696:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 697:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	uint8_t checkRes=CHECK_FAILED;
+ 698:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	uint16_t CheckRAM_bytesChecked = 0;
+ 699:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 700:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #ifdef CONFIG_LIB_CLASS_B_FLASH
+ 701:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	/* ROM POST - Pre-Operation Self Test */
+ 702:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	CheckFlash_Init(FALSE);
+ 703:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 704:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	do
+ 705:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	{
+ 706:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		  checkRes = CheckFlash_Manager(CONFIG_LIB_CLASS_B_FLASH_CHUNKSIZE, TRUE);
+ 707:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		  CheckRAM_bytesChecked += CONFIG_LIB_CLASS_B_FLASH_CHUNKSIZE;
+ 708:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		  if( checkRes == CHECK_FAILED )
+ 709:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		  {
+ 710:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			  CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_FLASH);
+ 711:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		  }
+ 712:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		  if (CheckRAM_bytesChecked >= CONFIG_LIB_CLASS_B_FLASH_REFRESH_BYTES)
+ 713:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		  {
+ 714:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			  OCWDT_RefreshSync();
+ 715:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			  CheckRAM_bytesChecked = 0;
+ 716:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		  }
+ 717:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	}
+ 718:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	while( checkRes == CHECK_RUNNING );
+ 719:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif
+ 720:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 721:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 722:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #ifdef CONFIG_LIB_CLASS_B_RAM
+ 723:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 724:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	/* RAM POST - Pre-Operation Self Test*/
+ 725:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	CheckRAM_Init();
+ 726:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	checkRes = CHECK_FAILED;
+ 727:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	CheckRAM_bytesChecked = 0;
+ 728:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 729:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	do
+ 730:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	{
+ 731:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		checkRes = CheckRAM_Manager(FALSE);
+ 732:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 733:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		if(checkRes == CHECK_FAILED)
+ 734:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		{
+ 735:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_RAM);
+ 736:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		}
+ 737:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 738:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		CheckRAM_bytesChecked += CONFIG_LIB_CLASS_B_RAM_CHUNKSIZE;
+ 739:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		if (CheckRAM_bytesChecked >= CONFIG_LIB_CLASS_B_RAM_REFRESH_BYTES)
+ 740:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		{
+ 741:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			OCWDT_RefreshSync();
+ 742:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			CheckRAM_bytesChecked = 0;
+ 743:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		}
+ 744:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 745:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	}while(checkRes == CHECK_RUNNING);
+ 746:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 747:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif /* CONFIG_LIB_CLASS_B_RAM*/
+ 748:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 749:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 750:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 751:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #ifdef CONFIG_LIB_CLASS_B_ADC
+ 752:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 753:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 754:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /**
+ 755:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n	ADC Check Initialization routine
+ 756:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n	This function initializes ADC_CheckFilter and its Data care check
+ 757:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n
+ 758:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \param none
+ 759:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 760:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \return void
+ 761:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \retval	N.A.
+ 762:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 763:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 764:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \par Architecture Requirements ID:
+ 765:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \li
+ 766:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \li
+ 767:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 768:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 769:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** */
+ 770:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void ADC_CheckInit(void)
+ 771:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 772:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	ADC_CheckFilter = 0;
+ 773:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	SAFETY_DATA_UPDATE(ADC_CheckFilter);
+ 774:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 775:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 776:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /**
+ 777:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n	ADC Check Routine
+ 778:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n	This function calls IEC60335_ADCtest_BITS_check and updates ADC_CheckFilter
+ 779:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	depending of test result; on success decrement its value up to 0, otherwise
+ 780:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	it will be incremented by CONFIG_LIB_CLASS_B_ADC_FLTR_INCR, and once
+ 781:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	CONFIG_LIB_CLASS_B_ADC_FLTR_MAXTH value is reached it will raise a
+ 782:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	Platform exception.
+ 783:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n
+ 784:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \param none
+ 785:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 786:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \return none
+ 787:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \retval	N.A.
+ 788:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 789:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 790:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \par Architecture Requirements ID:
+ 791:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \li
+ 792:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \li
+ 793:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 794:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 795:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** */
+ 796:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** void ADC_Check(void)
+ 797:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 798:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	bool_t retVal;
+ 799:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	TRACE_ADC_CHECK_START();
+ 800:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 801:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	retVal = (IEC60335_ADCtest_BITS_check() != IEC60335_testPassed);
+ 802:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 803:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	TRACE_ADC_CHECK_END();
+ 804:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 805:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	SAFETY_REGION_START();
+ 806:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	SAFETY_DATA_CHECK(ADC_CheckFilter);
+ 807:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 808:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	if(retVal)
+ 809:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	{
+ 810:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		ADC_CheckFilter += CONFIG_LIB_CLASS_B_ADC_FLTR_INCR;
+ 811:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		if(ADC_CheckFilter > CONFIG_LIB_CLASS_B_ADC_FLTR_MAXTH)
+ 812:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		{
+ 813:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_ADC);
+ 814:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		}
+ 815:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	}
+ 816:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	else
+ 817:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	{
+ 818:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		if (ADC_CheckFilter > 0)
+ 819:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		{
+ 820:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			ADC_CheckFilter--;
+ 821:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		}
+ 822:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	}
+ 823:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 824:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	SAFETY_DATA_UPDATE(ADC_CheckFilter);
+ 825:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	SAFETY_REGION_END();
+ 826:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 827:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 828:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #endif
+ 829:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 830:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* ************** */
+ 831:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* local function */
+ 832:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /* ************** */
+ 833:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 834:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** #if defined (CONFIG_LIB_CLASS_B_RAM)
+ 835:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 836:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /**
+ 837:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n
+ 838:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n
+ 839:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n
+ 840:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \param [in]
+ 841:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \param [in,out]
+ 842:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \param [in]
+ 843:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 844:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 845:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \return void
+ 846:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \retval	N.A.
+ 847:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 848:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 849:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \par Architecture Requirements ID:
+ 850:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \li
+ 851:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \li
+ 852:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 853:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 854:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** */
+ 855:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** static void CheckRAM_Init(void)
+ 856:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 857:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	/* Test Check RAM status area */
+ 858:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	IEC60335_RamMarchC((const uint32_t) &ClassB_CheckRamTestState, sizeof(ClassB_CheckRamTestState), F
+ 859:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 860:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	/* Init Check RAM Manager */
+ 861:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	ClassB_CheckRamTestState.AreaIndex=CHECKRAM_AREA_NUM;
+ 862:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	ClassB_CheckRamTestState.RemainingBytes=0;
+ 863:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 864:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     SAFETY_DATA_UPDATE(ClassB_CheckRamTestState);
+ 865:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 866:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** /**
+ 867:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n BIST is always non destructive
+ 868:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n POST is always destructive except for the first block in  RamAreaTestTable
+ 869:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n
+ 870:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n
+ 871:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \n
+ 872:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \param [in]
+ 873:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \param [in,out]
+ 874:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \param [in]
+ 875:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 876:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 877:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \return void
+ 878:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \retval	N.A.
+ 879:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 880:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 881:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \par Architecture Requirements ID:
+ 882:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \li
+ 883:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** \li
+ 884:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 885:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 886:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** */
+ 887:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** static uint8_t CheckRAM_Manager(bool_t isBIST)
+ 888:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+   9                             		.loc 1 888 0
+  10                             	.LVL0:
+  11 0000 6E 7B                   		pushm	r7-r11
+  12                             	.LCFI0:
+ 889:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     uint32_t length;
+ 890:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     uint8_t retValue = CHECK_NOT_RUNNING;
+ 891:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     CLASSB_TEST_FUNC pTestFunc=0;
+ 892:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     volatile ClassB_CheckRamTestStateType* pState= &ClassB_CheckRamTestState;
+ 893:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 894:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     TRACE_RAM_CHECK_START();
+ 895:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 896:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     if(isBIST)
+ 897:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     {
+ 898:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	SAFETY_REGION_START();
+ 899:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     }
+ 900:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 901:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     SAFETY_DATA_CHECK(ClassB_CheckRamTestState);
+ 902:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 903:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     if(pState->AreaIndex >= CHECKRAM_AREA_NUM)
+  13                             		.loc 1 903 0
+  14 0002 FB 72 00 00 00 00       		mov.L	#_ClassB_CheckRamTestState, r7
+  15 0008 58 7E                   		movu.B	[r7], r14
+  16 000a 61 4E                   		cmp	#4, r14
+  17 000c 25 49                   		bleu	.L2
+ 904:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     {
+ 905:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	/*	well-initialized state machine start here:
+ 906:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		it's time to apply destructive test to safe ram
+ 907:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	*/
+ 908:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	if(IEC60335_testFailed ==IEC60335_RamMarchC_SafeRam())
+  18                             		.loc 1 908 0
+  19 000e 05 00 00 00             		bsr	_IEC60335_RamMarchC_SafeRam
+  20                             	.LVL1:
+  21 0012 61 01                   		cmp	#0, r1
+  22 0014 21 07                   		bne	.L3
+  23                             	.LVL2:
+  24                             		.balign 2,3,1
+  25                             	.L6:
+ 909:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	{
+ 910:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		retValue = CHECK_FAILED;
+  26                             		.loc 1 910 0
+  27 0016 66 2A                   		mov	#2, r10
+  28 0018 38 26 01                		bra	.L4
+  29                             	.LVL3:
+  30                             	.L3:
+ 911:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	}
+ 912:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	else
+ 913:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	{
+ 914:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		retValue = CHECK_RUNNING;
+ 915:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 916:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			/* update next index */
+ 917:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		pState->AreaIndex=0;
+  31                             		.loc 1 917 0
+  32 001b 3C 70 00                		mov.B	#0, [r7]
+ 918:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		pState->StartAddress = RamAreaTestTable[pState->AreaIndex].startAddr;
+  33                             		.loc 1 918 0
+  34 001e 58 7A                   		movu.B	[r7], r10
+  35 0020 63 CA                   		mul	#12, r10
+  36 0022 70 AA 00 00 00 00       		add	#_RamAreaTestTable, r10
+  37 0028 EC AA                   		mov.L	[r10], r10
+  38 002a E7 7A 01                		mov.L	r10, 4[r7]
+ 919:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		pState->RemainingBytes = (RamAreaTestTable[pState->AreaIndex].endAddr - RamAreaTestTable[pSta
+  39                             		.loc 1 919 0
+  40 002d CC 7A                   		mov.B	[r7], r10
+  41 002f CC 7B                   		mov.B	[r7], r11
+  42 0031 5B AA                   		movu.B	r10, r10
+  43 0033 63 CA                   		mul	#12, r10
+  44 0035 70 AA 00 00 00 00       		add	#_RamAreaTestTable, r10
+  45 003b ED AA 01                		mov.L	4[r10], r10
+  46 003e 5B BB                   		movu.B	r11, r11
+  47 0040 63 CB                   		mul	#12, r11
+  48 0042 62 1A                   		add	#1, r10
+  49 0044 70 BB 00 00 00 00       		add	#_RamAreaTestTable, r11
+  50 004a 06 80 BA                		sub	[r11].L, r10
+  51 004d E7 7A 02                		mov.L	r10, 8[r7]
+ 914:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		retValue = CHECK_RUNNING;
+  52                             		.loc 1 914 0
+  53 0050 66 1A                   		mov	#1, r10
+  54 0052 38 EC 00                		bra	.L4
+  55                             	.LVL4:
+  56                             	.L2:
+  57 0055 EF 7A                   		mov.L	r7, r10
+ 920:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		}
+ 921:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     }
+ 922:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     else
+ 923:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     {
+ 924:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	/* test */
+ 925:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	if(pState->RemainingBytes >= CONFIG_LIB_CLASS_B_RAM_CHUNKSIZE)
+  58                             		.loc 1 925 0
+  59 0057 A8 F7                   		mov.L	8[r7], r7
+  60 0059 EF 1B                   		mov.L	r1, r11
+  61 005b 61 77                   		cmp	#7, r7
+  62 005d 24 07                   		bgtu	.L14
+ 926:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		{
+ 927:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			length  = CONFIG_LIB_CLASS_B_RAM_CHUNKSIZE;
+ 928:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		}
+ 929:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		else
+ 930:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		{
+ 931:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			length = pState->RemainingBytes;
+  63                             		.loc 1 931 0
+  64 005f ED A7 02                		mov.L	8[r10], r7
+  65                             	.LVL5:
+  66 0062 2E 04                   		bra	.L5
+  67                             	.LVL6:
+  68                             	.L14:
+ 927:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			length  = CONFIG_LIB_CLASS_B_RAM_CHUNKSIZE;
+  69                             		.loc 1 927 0
+  70 0064 66 87                   		mov.L	#8, r7
+  71                             		.balign 2,3,1
+  72                             	.L5:
+  73                             	.LVL7:
+ 932:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		}
+ 933:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	pState->RemainingBytes -= length;
+  74                             		.loc 1 933 0
+  75 0066 ED AE 02                		mov.L	8[r10], r14
+  76 0069 43 7E                   		sub	r7, r14
+  77 006b E7 AE 02                		mov.L	r14, 8[r10]
+ 934:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 935:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	pTestFunc = RamAreaTestTable[pState->AreaIndex].fpTest_Func;
+  78                             		.loc 1 935 0
+  79 006e 58 AA                   		movu.B	[r10], r10
+  80 0070 63 CA                   		mul	#12, r10
+  81 0072 70 AA 00 00 00 00       		add	#_RamAreaTestTable, r10
+  82 0078 ED AA 02                		mov.L	8[r10], r10
+  83                             	.LVL8:
+ 936:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	if(pTestFunc && (length))
+  84                             		.loc 1 936 0
+  85 007b 61 0A                   		cmp	#0, r10
+  86 007d 20 99                   		beq	.L6
+  87                             		.loc 1 936 0 is_stmt 0 discriminator 1
+  88 007f 61 07                   		cmp	#0, r7
+  89 0081 20 95                   		beq	.L6
+ 937:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	{
+ 938:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		if(isBIST)
+  90                             		.loc 1 938 0 is_stmt 1
+  91 0083 61 0B                   		cmp	#0, r11
+  92 0085 20 15                   		beq	.L7
+ 939:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		{
+ 940:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     			OS_IncDI();
+  93                             		.loc 1 940 0
+  94 0087 05 00 00 00             		bsr	_OS_DisableInterrupt
+  95                             	.LVL9:
+  96 008b FB E2 00 00 00 00       		mov.L	#_OS_Global, r14
+  97 0091 CD E4 01                		mov.B	1[r14], r4
+  98 0094 62 14                   		add	#1, r4
+  99 0096 C7 E4 01                		mov.B	r4, 1[r14]
+ 100 0099 03                      		.balign 2,3,5
+ 101                             	.L7:
+ 941:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		}
+ 942:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		/* by default the first block is non-destructive test like in BIST */
+ 943:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		if(IEC60335_testFailed == pTestFunc(pState->StartAddress, length, (pState->AreaIndex?isBIST:T
+ 102                             		.loc 1 943 0
+ 103 009a FB E2 00 00 00 00       		mov.L	#_ClassB_CheckRamTestState, r14
+ 104 00a0 ED E1 01                		mov.L	4[r14], r1
+ 105 00a3 58 EE                   		movu.B	[r14], r14
+ 106 00a5 61 0E                   		cmp	#0, r14
+ 107 00a7 21 06                   		bne	.L15
+ 108 00a9 66 13                   		mov.L	#1, r3
+ 109 00ab 2E 05                   		bra	.L8
+ 110                             	.L15:
+ 111 00ad EF B3                   		mov.L	r11, r3
+ 112 00af 03                      		.balign 2,3,1
+ 113                             	.L8:
+ 114                             		.loc 1 943 0 is_stmt 0 discriminator 3
+ 115 00b0 EF 72                   		mov.L	r7, r2
+ 116 00b2 7F 1A                   		jsr	r10
+ 117                             	.LVL10:
+ 944:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		{
+ 945:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     			retValue = CHECK_FAILED;
+ 118                             		.loc 1 945 0 is_stmt 1 discriminator 3
+ 119 00b4 61 01                   		cmp	#0, r1
+ 120 00b6 66 2A                   		mov.L	#2, r10
+ 121                             	.LVL11:
+ 122 00b8 FD 74 FA 01             		stnz	#1, r10
+ 123                             	.LVL12:
+ 946:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		}
+ 947:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		else
+ 948:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		{
+ 949:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     			retValue = CHECK_RUNNING;
+ 950:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		}
+ 951:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		if(isBIST)
+ 124                             		.loc 1 951 0 discriminator 3
+ 125 00bc 61 0B                   		cmp	#0, r11
+ 126 00be 20 1A                   		beq	.L11
+ 952:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			{
+ 953:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     			OS_DecRI();
+ 127                             		.loc 1 953 0
+ 128 00c0 FB E2 00 00 00 00       		mov.L	#_OS_Global, r14
+ 129 00c6 CD EB 01                		mov.B	1[r14], r11
+ 130                             	.LVL13:
+ 131 00c9 60 1B                   		sub	#1, r11
+ 132 00cb C7 EB 01                		mov.B	r11, 1[r14]
+ 133 00ce 5B BB                   		movu.B	r11, r11
+ 134 00d0 61 0B                   		cmp	#0, r11
+ 135 00d2 21 06                   		bne	.L11
+ 136                             		.loc 1 953 0 is_stmt 0 discriminator 1
+ 137 00d4 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 138                             	.LVL14:
+ 139                             		.balign 2,3,1
+ 140                             	.L11:
+ 954:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			}
+ 955:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	}
+ 956:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 957:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	if(retValue == CHECK_RUNNING)
+ 141                             		.loc 1 957 0 is_stmt 1
+ 142 00d8 5B AB                   		movu.B	r10, r11
+ 143 00da 61 1B                   		cmp	#1, r11
+ 144 00dc 3B 3A FF                		bne	.L6
+ 958:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	{
+ 959:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		pState->StartAddress += length;
+ 145                             		.loc 1 959 0
+ 146 00df FB E2 00 00 00 00       		mov.L	#_ClassB_CheckRamTestState, r14
+ 147 00e5 06 89 E7 01             		add	4[r14].L, r7
+ 148                             	.LVL15:
+ 149 00e9 E7 E7 01                		mov.L	r7, 4[r14]
+ 960:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 961:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			if(!pState->RemainingBytes)
+ 150                             		.loc 1 961 0
+ 151 00ec ED E7 02                		mov.L	8[r14], r7
+ 152 00ef 61 07                   		cmp	#0, r7
+ 153 00f1 21 4D                   		bne	.L4
+ 962:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			{
+ 963:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				pState->AreaIndex++;
+ 154                             		.loc 1 963 0
+ 155 00f3 CC E7                   		mov.B	[r14], r7
+ 156 00f5 62 17                   		add	#1, r7
+ 157 00f7 C3 E7                   		mov.B	r7, [r14]
+ 964:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 965:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				if(pState->AreaIndex < CHECKRAM_AREA_NUM)
+ 158                             		.loc 1 965 0
+ 159 00f9 58 E7                   		movu.B	[r14], r7
+ 160 00fb 61 47                   		cmp	#4, r7
+ 161 00fd 24 35                   		bgtu	.L13
+ 966:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				{
+ 967:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 					/* configure state machine to go to the next area */
+ 968:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 					pState->StartAddress = RamAreaTestTable[pState->AreaIndex].startAddr;
+ 162                             		.loc 1 968 0
+ 163 00ff 58 E7                   		movu.B	[r14], r7
+ 164 0101 63 C7                   		mul	#12, r7
+ 165 0103 70 77 00 00 00 00       		add	#_RamAreaTestTable, r7
+ 166 0109 EC 77                   		mov.L	[r7], r7
+ 167 010b E7 E7 01                		mov.L	r7, 4[r14]
+ 969:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 					pState->RemainingBytes = (RamAreaTestTable[pState->AreaIndex].endAddr - RamAreaTestTable[pStat
+ 168                             		.loc 1 969 0
+ 169 010e CC E7                   		mov.B	[r14], r7
+ 170 0110 CC EB                   		mov.B	[r14], r11
+ 171 0112 5B 77                   		movu.B	r7, r7
+ 172 0114 63 C7                   		mul	#12, r7
+ 173 0116 70 77 00 00 00 00       		add	#_RamAreaTestTable, r7
+ 174 011c A8 7F                   		mov.L	4[r7], r7
+ 175 011e 5B BB                   		movu.B	r11, r11
+ 176 0120 63 CB                   		mul	#12, r11
+ 177 0122 62 17                   		add	#1, r7
+ 178 0124 70 BB 00 00 00 00       		add	#_RamAreaTestTable, r11
+ 179 012a 06 80 B7                		sub	[r11].L, r7
+ 180 012d E7 E7 02                		mov.L	r7, 8[r14]
+ 181 0130 2E 0E                   		bra	.L4
+ 182                             	.L13:
+ 970:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				}
+ 971:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				else if(pState->AreaIndex == CHECKRAM_AREA_NUM)
+ 183                             		.loc 1 971 0
+ 184 0132 58 EA                   		movu.B	[r14], r10
+ 185                             	.LVL16:
+ 972:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				{
+ 973:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 					retValue = CHECK_PASSED;
+ 186                             		.loc 1 973 0
+ 187 0134 66 37                   		mov.L	#3, r7
+ 188 0136 61 5A                   		cmp	#5, r10
+ 189 0138 FC DB A1                		scne.L	r10
+ 190 013b FF 0A A7                		sub	r10, r7, r10
+ 191                             	.LVL17:
+ 192                             		.balign 2,3,1
+ 193                             	.L4:
+ 974:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 					/* in this branch state machine is already initialized */
+ 975:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				}
+ 976:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				else
+ 977:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				{
+ 978:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 					/* error !!! */
+ 979:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 					retValue = CHECK_FAILED;
+ 980:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				}
+ 981:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			}
+ 982:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	}
+ 983:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	else
+ 984:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	{
+ 985:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		/* error !!! */
+ 986:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     		retValue = CHECK_FAILED;
+ 987:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	}
+ 988:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     }
+ 989:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 990:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     SAFETY_DATA_UPDATE(ClassB_CheckRamTestState);
+ 991:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     if(isBIST)
+ 992:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     {
+ 993:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	SAFETY_REGION_END();
+ 994:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     }
+ 995:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 
+ 996:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     TRACE_RAM_CHECK_END();
+ 997:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     return retValue;
+ 998:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 194                             		.loc 1 998 0
+ 195 013e 5B A1                   		movu.B	r10, r1
+ 196 0140 3F 7B 05                		rtsd	#20, r7-r11
+ 197                             	.LFE12:
+ 199 0143 03                      		.section	.text.RegCheck,"ax",@progbits
+ 200                             		.global	_RegCheck
+ 202                             	_RegCheck:
+ 203                             	.LFB0:
+ 120:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 204                             		.loc 1 120 0
+ 205                             	.LVL18:
+ 123:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     if( IEC60335_CPUregTest_BIST() == IEC60335_testPassed )
+ 206                             		.loc 1 123 0
+ 207 0000 05 00 00 00             		bsr	_IEC60335_CPUregTest_BIST
+ 208                             	.LVL19:
+ 127:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 209                             		.loc 1 127 0
+ 210 0004 61 11                   		cmp	#1, r1
+ 211 0006 66 21                   		mov.L	#2, r1
+ 212                             	.LVL20:
+ 213 0008 FD 74 E1 03             		stz	#3, r1
+ 214 000c 02                      		rts
+ 215                             	.LFE0:
+ 217                             		.section	.text.LIB_ClassB_Keywords_BIST,"ax",@progbits
+ 218                             		.global	_LIB_ClassB_Keywords_BIST
+ 220                             	_LIB_ClassB_Keywords_BIST:
+ 221                             	.LFB1:
+ 307:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 222                             		.loc 1 307 0
+ 308:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	if( TRUE != LIB_CheckKeywordsRam())
+ 223                             		.loc 1 308 0
+ 224 0000 05 00 00 00             		bsr	_LIB_CheckKeywordsRam
+ 225                             	.LVL21:
+ 226 0004 61 11                   		cmp	#1, r1
+ 227 0006 20 06                   		beq	.L31
+ 310:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		LIB_Reset_ForceColdReset();
+ 228                             		.loc 1 310 0
+ 229 0008 04 00 00 00             		bra	_LIB_Reset_ForceColdReset
+ 230                             	.LVL22:
+ 231                             	.L31:
+ 232 000c 02                      		rts
+ 233                             	.LFE1:
+ 235                             		.section	.text.LIB_ClassB_RAM_BIST,"ax",@progbits
+ 236                             		.global	_LIB_ClassB_RAM_BIST
+ 238                             	_LIB_ClassB_RAM_BIST:
+ 239                             	.LFB2:
+ 319:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 240                             		.loc 1 319 0
+ 320:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	switch (CheckRAM_Manager(TRUE))
+ 241                             		.loc 1 320 0
+ 242 0000 66 11                   		mov.L	#1, r1
+ 243 0002 05 00 00 00             		bsr	_CheckRAM_Manager
+ 244                             	.LVL23:
+ 245 0006 5B 11                   		movu.B	r1, r1
+ 246 0008 61 21                   		cmp	#2, r1
+ 247 000a 21 09                   		bne	.L36
+ 323:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_RAM);
+ 248                             		.loc 1 323 0
+ 249 000c 75 41 33                		mov.L	#51, r1
+ 250 000f 04 00 00 00             		bra	_LIB_Error_Fatal_Handler
+ 251                             	.LVL24:
+ 252                             	.L36:
+ 253 0013 02                      		rts
+ 254                             	.LFE2:
+ 256                             		.section	.text.CheckClock_Init,"ax",@progbits
+ 257                             		.global	_CheckClock_Init
+ 259                             	_CheckClock_Init:
+ 260                             	.LFB3:
+ 476:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 261                             		.loc 1 476 0
+ 477:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	IEC60335_initClockTestHW();
+ 262                             		.loc 1 477 0
+ 263 0000 04 00 00 00             		bra	_IEC60335_initClockTestHW
+ 264                             	.LVL25:
+ 265                             	.LFE3:
+ 267                             		.section	.text.CheckClock_Manager,"ax",@progbits
+ 268                             		.global	_CheckClock_Manager
+ 270                             	_CheckClock_Manager:
+ 271                             	.LFB4:
+ 486:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 272                             		.loc 1 486 0
+ 273                             	.LVL26:
+ 489:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     res = IEC60335_Clocktest_MainLoopHandler();
+ 274                             		.loc 1 489 0
+ 275 0000 05 00 00 00             		bsr	_IEC60335_Clocktest_MainLoopHandler
+ 276                             	.LVL27:
+ 491:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     if ( IEC60335_testPassed != res )
+ 277                             		.loc 1 491 0
+ 278 0004 61 11                   		cmp	#1, r1
+ 279 0006 20 09                   		beq	.L38
+ 493:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_CLOCK);
+ 280                             		.loc 1 493 0
+ 281 0008 75 41 37                		mov.L	#55, r1
+ 282                             	.LVL28:
+ 283 000b 04 00 00 00             		bra	_LIB_Error_Fatal_Handler
+ 284                             	.LVL29:
+ 285                             	.L38:
+ 286 000f 02                      		rts
+ 287                             	.LFE4:
+ 289                             		.section	.text.LIB_ClassB_WDTCheckInit,"ax",@progbits
+ 290                             		.global	_LIB_ClassB_WDTCheckInit
+ 292                             	_LIB_ClassB_WDTCheckInit:
+ 293                             	.LFB5:
+ 515:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 294                             		.loc 1 515 0
+ 516:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	WDTCheckStep = WDTCHECK_START;
+ 295                             		.loc 1 516 0
+ 296 0000 FB E2 00 00 00 00       		mov.L	#_WDTCheckStep, r14
+ 297 0006 F8 E6 00                		mov.L	#0, [r14]
+ 517:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	WDT_ClearTimeoutExpired();
+ 298                             		.loc 1 517 0
+ 299 0009 05 00 00 00             		bsr	_WDT_ClearTimeoutExpired
+ 300                             	.LVL30:
+ 518:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	WDT_ClearUntimelyResetOccurred();
+ 301                             		.loc 1 518 0
+ 302 000d 04 00 00 00             		bra	_WDT_ClearUntimelyResetOccurred
+ 303                             	.LVL31:
+ 304                             	.LFE5:
+ 306                             		.section	.text.InitCheck,"ax",@progbits
+ 307                             		.global	_InitCheck
+ 309                             	_InitCheck:
+ 310                             	.LFB7:
+ 662:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 311                             		.loc 1 662 0
+ 312                             	.LVL32:
+ 313 0000 7E A7                   		push.l	r7
+ 314                             	.LCFI1:
+ 315                             	.LBB8:
+ 316                             	.LBB9:
+ 571:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	resetSrc = OCRST_GetResetSourceSync();
+ 317                             		.loc 1 571 0
+ 318 0002 05 00 00 00             		bsr	_OCRST_GetResetSourceSync
+ 319                             	.LVL33:
+ 574:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	if((RST_BY_WATCHDOG != resetSrc))
+ 320                             		.loc 1 574 0
+ 321 0006 5B 11                   		movu.B	r1, r1
+ 322 0008 61 31                   		cmp	#3, r1
+ 323 000a 20 06                   		beq	.L42
+ 576:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		LIB_ClassB_WDTCheckInit();
+ 324                             		.loc 1 576 0
+ 325 000c 05 00 00 00             		bsr	_LIB_ClassB_WDTCheckInit
+ 326                             	.LVL34:
+ 327                             		.balign 2,3,5
+ 328                             	.L42:
+ 579:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	switch(WDTCheckStep)
+ 329                             		.loc 1 579 0
+ 330 0010 FB 72 00 00 00 00       		mov.L	#_WDTCheckStep, r7
+ 331 0016 EC 77                   		mov.L	[r7], r7
+ 332 0018 61 57                   		cmp	#5, r7
+ 333 001a 25 05 38 85 00          		bgtu	.L43
+ 334 001f FB E2 00 00 00 00       		mov.L	#.L48, r14
+ 335 0025 FE 67 E7                		mov.L	[r7,r14], r7
+ 336                             		
+ 337 0028 7F 07                   	1:jmp	r7
+ 338                             		.section	.rodata.InitCheck,"a",@progbits
+ 339                             		.balign 4
+ 340                             		.balign 4
+ 341                             	.L48:
+ 342 0000 00 00 00 00             		.long .L44
+ 343 0004 00 00 00 00             		.long .L45
+ 344 0008 00 00 00 00             		.long .L46
+ 345 000c 00 00 00 00             		.long .L43
+ 346 0010 00 00 00 00             		.long .L43
+ 347 0014 00 00 00 00             		.long .L44
+ 348                             		.section	.text.InitCheck
+ 349                             	.L44:
+ 584:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			bkpResetSrc = OCRST_SaveResetValue();
+ 350                             		.loc 1 584 0
+ 351 002a 05 00 00 00             		bsr	_OCRST_SaveResetValue
+ 352                             	.LVL35:
+ 353 002e FB 72 00 00 00 00       		mov.L	#_bkpResetSrc.10317, r7
+ 354 0034 E3 71                   		mov.L	r1, [r7]
+ 587:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			if( !WDT_IsRunning() )
+ 355                             		.loc 1 587 0
+ 356 0036 05 00 00 00             		bsr	_WDT_IsRunning
+ 357                             	.LVL36:
+ 358 003a 5B 11                   		movu.B	r1, r1
+ 359 003c 61 01                   		cmp	#0, r1
+ 360 003e 21 06                   		bne	.L50
+ 589:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				OCWDT_StartSync();	/*start WDT without refreshing*/
+ 361                             		.loc 1 589 0
+ 362 0040 05 00 00 00             		bsr	_OCWDT_StartSync
+ 363                             	.LVL37:
+ 364                             		.balign 2,3,5
+ 365                             	.L50:
+ 595:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				WDTCheckStep=WDTCHECK_T1;
+ 366                             		.loc 1 595 0
+ 367 0044 FB 72 00 00 00 00       		mov.L	#_WDTCheckStep, r7
+ 368                             		.balign 2,3,4
+ 369                             	.L61:
+ 370 004a 3E 70 01                		mov.L	#1, [r7]
+ 371 004d 2E FD                   		bra	.L61
+ 372                             	.L45:
+ 604:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			if(WDT_TimeoutExpired())
+ 373                             		.loc 1 604 0
+ 374 004f 05 00 00 00             		bsr	_WDT_TimeoutExpired
+ 375                             	.LVL38:
+ 376 0053 61 01                   		cmp	#0, r1
+ 377 0055 FB 72 00 00 00 00       		mov.L	#_WDTCheckStep, r7
+ 378 005b 20 41                   		beq	.L63
+ 607:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				WDT_ClearTimeoutExpired();
+ 379                             		.loc 1 607 0
+ 380 005d 05 00 00 00             		bsr	_WDT_ClearTimeoutExpired
+ 381                             	.LVL39:
+ 610:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				OCWDT_StartSync();	/*start WDT*/
+ 382                             		.loc 1 610 0
+ 383 0061 05 00 00 00             		bsr	_OCWDT_StartSync
+ 384                             	.LVL40:
+ 611:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				WDTCheckStep=WDTCHECK_T2;
+ 385                             		.loc 1 611 0
+ 386 0065 3E 70 02                		mov.L	#2, [r7]
+ 387                             		.balign 2,3,3
+ 388                             	.L52:
+ 615:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 					WDT_Refresh();
+ 389                             		.loc 1 615 0
+ 390 0068 05 00 00 00             		bsr	_WDT_Refresh
+ 391                             	.LVL41:
+ 392 006c 2E FC                   		bra	.L52
+ 393                             	.L46:
+ 627:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			if(WDT_UntimelyResetOccurred())
+ 394                             		.loc 1 627 0
+ 395 006e 05 00 00 00             		bsr	_WDT_UntimelyResetOccurred
+ 396                             	.LVL42:
+ 397 0072 61 01                   		cmp	#0, r1
+ 398 0074 20 21                   		beq	.L54
+ 630:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				WDT_ClearUntimelyResetOccurred();
+ 399                             		.loc 1 630 0
+ 400 0076 05 00 00 00             		bsr	_WDT_ClearUntimelyResetOccurred
+ 401                             	.LVL43:
+ 632:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				OCRST_RestoreResetValue(bkpResetSrc);
+ 402                             		.loc 1 632 0
+ 403 007a FB 72 00 00 00 00       		mov.L	#_bkpResetSrc.10317, r7
+ 404 0080 EC 71                   		mov.L	[r7], r1
+ 638:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				WDTCheckStep=WDT_TIMEOUT_RESET;
+ 405                             		.loc 1 638 0
+ 406 0082 FB 72 00 00 00 00       		mov.L	#_WDTCheckStep, r7
+ 632:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				OCRST_RestoreResetValue(bkpResetSrc);
+ 407                             		.loc 1 632 0
+ 408 0088 05 00 00 00             		bsr	_OCRST_RestoreResetValue
+ 409                             	.LVL44:
+ 634:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				OCWDT_StartSync();
+ 410                             		.loc 1 634 0
+ 411 008c 05 00 00 00             		bsr	_OCWDT_StartSync
+ 412                             	.LVL45:
+ 638:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				WDTCheckStep=WDT_TIMEOUT_RESET;
+ 413                             		.loc 1 638 0
+ 414 0090 3E 70 05                		mov.L	#5, [r7]
+ 415 0093 2E 14                   		bra	.L55
+ 416                             	.LVL46:
+ 417                             	.L54:
+ 643:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 				WDTCheckStep=WDTCHECK_ERROR;
+ 418                             		.loc 1 643 0
+ 419 0095 FB 72 00 00 00 00       		mov.L	#_WDTCheckStep, r7
+ 420 009b 03                      		.balign 2,3,4
+ 421                             	.L63:
+ 422 009c 3E 70 04                		mov.L	#4, [r7]
+ 423 009f 2E 33                   		bra	.L53
+ 424                             	.L43:
+ 652:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			OCWDT_StartSync();
+ 425                             		.loc 1 652 0
+ 426 00a1 05 00 00 00             		bsr	_OCWDT_StartSync
+ 427                             	.LVL47:
+ 428 00a5 2E 2D                   		bra	.L53
+ 429                             	.LVL48:
+ 430                             	.L55:
+ 431                             	.LBE9:
+ 432                             	.LBE8:
+ 673:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     if( RegCheck() == CHECK_FAILED ) /* freddo e caldo */
+ 433                             		.loc 1 673 0
+ 434 00a7 05 00 00 00             		bsr	_RegCheck
+ 435                             	.LVL49:
+ 436 00ab 5B 11                   		movu.B	r1, r1
+ 437 00ad 61 21                   		cmp	#2, r1
+ 438 00af 21 09                   		bne	.L56
+ 675:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****     	CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_CPU);
+ 439                             		.loc 1 675 0
+ 440 00b1 75 41 38                		mov.L	#56, r1
+ 441 00b4 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+ 442                             	.LVL50:
+ 443                             		.balign 2,3,3
+ 444                             	.L56:
+ 445                             	.LBB10:
+ 446                             	.LBB11:
+ 477:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	IEC60335_initClockTestHW();
+ 447                             		.loc 1 477 0
+ 448 00b8 05 00 00 00             		bsr	_IEC60335_initClockTestHW
+ 449                             	.LVL51:
+ 450                             	.LBE11:
+ 451                             	.LBE10:
+ 684:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         if(IEC60335_testFailed == IEC60335_ADCtest_POST())
+ 452                             		.loc 1 684 0
+ 453 00bc 05 00 00 00             		bsr	_IEC60335_ADCtest_POST
+ 454                             	.LVL52:
+ 455 00c0 61 01                   		cmp	#0, r1
+ 456 00c2 21 0A                   		bne	.L57
+ 686:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         	CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_ADC);
+ 457                             		.loc 1 686 0
+ 458 00c4 75 41 35                		mov.L	#53, r1
+ 459 00c7 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+ 460                             	.LVL53:
+ 461 00cb 03                      		.balign 2,3,1
+ 462                             	.L57:
+ 693:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 463                             		.loc 1 693 0
+ 464 00cc 7E B7                   		pop	r7
+ 689:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c ****         IEC60335_ADCtest_BITS_start();
+ 465                             		.loc 1 689 0
+ 466 00ce 04 00 00 00             		bra	_IEC60335_ADCtest_BITS_start
+ 467                             	.LVL54:
+ 468                             	.L53:
+ 667:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	  LIB_ClassB_WDTCheckInit();
+ 469                             		.loc 1 667 0
+ 470 00d2 05 00 00 00             		bsr	_LIB_ClassB_WDTCheckInit
+ 471                             	.LVL55:
+ 668:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	  CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_WDTEST);
+ 472                             		.loc 1 668 0
+ 473 00d6 75 41 32                		mov.L	#50, r1
+ 474 00d9 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+ 475                             	.LVL56:
+ 476 00dd 2E CA                   		bra	.L55
+ 477                             	.LFE7:
+ 479 00df 03                      		.section	.text.InitMemoryCheck,"ax",@progbits
+ 480                             		.global	_InitMemoryCheck
+ 482                             	_InitMemoryCheck:
+ 483                             	.LFB8:
+ 696:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 484                             		.loc 1 696 0
+ 485                             	.LVL57:
+ 486 0000 6E 7A                   		pushm	r7-r10
+ 487                             	.LCFI2:
+ 488                             	.LBB14:
+ 489                             	.LBB15:
+ 858:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	IEC60335_RamMarchC((const uint32_t) &ClassB_CheckRamTestState, sizeof(ClassB_CheckRamTestState), F
+ 490                             		.loc 1 858 0
+ 491 0002 FB 12 00 00 00 00       		mov.L	#_ClassB_CheckRamTestState, r1
+ 861:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	ClassB_CheckRamTestState.AreaIndex=CHECKRAM_AREA_NUM;
+ 492                             		.loc 1 861 0
+ 493 0008 FB 72 00 00 00 00       		mov.L	#_ClassB_CheckRamTestState, r7
+ 858:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	IEC60335_RamMarchC((const uint32_t) &ClassB_CheckRamTestState, sizeof(ClassB_CheckRamTestState), F
+ 494                             		.loc 1 858 0
+ 495 000e 66 C2                   		mov.L	#12, r2
+ 496 0010 66 03                   		mov.L	#0, r3
+ 497 0012 05 00 00 00             		bsr	_IEC60335_RamMarchC
+ 498                             	.LVL58:
+ 861:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	ClassB_CheckRamTestState.AreaIndex=CHECKRAM_AREA_NUM;
+ 499                             		.loc 1 861 0
+ 500 0016 3C 70 05                		mov.B	#5, [r7]
+ 862:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	ClassB_CheckRamTestState.RemainingBytes=0;
+ 501                             		.loc 1 862 0
+ 502 0019 3E 72 00                		mov.L	#0, 8[r7]
+ 727:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	CheckRAM_bytesChecked = 0;
+ 503                             		.loc 1 727 0
+ 504 001c 66 07                   		mov	#0, r7
+ 505                             	.LVL59:
+ 506                             		.balign 2,3,1
+ 507                             	.L67:
+ 508                             	.LBE15:
+ 509                             	.LBE14:
+ 731:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		checkRes = CheckRAM_Manager(FALSE);
+ 510                             		.loc 1 731 0
+ 511 001e 66 01                   		mov.L	#0, r1
+ 512 0020 05 00 00 00             		bsr	_CheckRAM_Manager
+ 513                             	.LVL60:
+ 733:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		if(checkRes == CHECK_FAILED)
+ 514                             		.loc 1 733 0
+ 515 0024 5B 1E                   		movu.B	r1, r14
+ 516 0026 61 2E                   		cmp	#2, r14
+ 731:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		checkRes = CheckRAM_Manager(FALSE);
+ 517                             		.loc 1 731 0
+ 518 0028 CF 1A                   		mov.B	r1, r10
+ 519                             	.LVL61:
+ 733:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		if(checkRes == CHECK_FAILED)
+ 520                             		.loc 1 733 0
+ 521 002a 21 0A                   		bne	.L65
+ 735:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_RAM);
+ 522                             		.loc 1 735 0
+ 523 002c 75 41 33                		mov.L	#51, r1
+ 524                             	.LVL62:
+ 525 002f 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+ 526                             	.LVL63:
+ 527 0033 03                      		.balign 2,3,1
+ 528                             	.L65:
+ 738:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		CheckRAM_bytesChecked += CONFIG_LIB_CLASS_B_RAM_CHUNKSIZE;
+ 529                             		.loc 1 738 0
+ 530 0034 62 87                   		add	#8, r7
+ 531                             	.LVL64:
+ 739:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		if (CheckRAM_bytesChecked >= CONFIG_LIB_CLASS_B_RAM_REFRESH_BYTES)
+ 532                             		.loc 1 739 0
+ 533 0036 5F 7E                   		movu.W	r7, r14
+ 534 0038 76 0E FF 07             		cmp	#0x7ff, r14
+ 535 003c 25 08                   		bleu	.L66
+ 741:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			OCWDT_RefreshSync();
+ 536                             		.loc 1 741 0
+ 537 003e 05 00 00 00             		bsr	_OCWDT_RefreshSync
+ 538                             	.LVL65:
+ 742:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			CheckRAM_bytesChecked = 0;
+ 539                             		.loc 1 742 0
+ 540 0042 66 07                   		mov	#0, r7
+ 541                             	.LVL66:
+ 542                             		.balign 2,3,1
+ 543                             	.L66:
+ 745:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	}while(checkRes == CHECK_RUNNING);
+ 544                             		.loc 1 745 0
+ 545 0044 5B AA                   		movu.B	r10, r10
+ 546 0046 61 1A                   		cmp	#1, r10
+ 547 0048 20 D6                   		beq	.L67
+ 749:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** }
+ 548                             		.loc 1 749 0
+ 549 004a 3F 7A 04                		rtsd	#16, r7-r10
+ 550                             	.LFE8:
+ 552 004d 03                      		.section	.text.ADC_CheckInit,"ax",@progbits
+ 553                             		.global	_ADC_CheckInit
+ 555                             	_ADC_CheckInit:
+ 556                             	.LFB9:
+ 771:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 557                             		.loc 1 771 0
+ 772:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	ADC_CheckFilter = 0;
+ 558                             		.loc 1 772 0
+ 559 0000 FB E2 00 00 00 00       		mov.L	#_ADC_CheckFilter, r14
+ 560 0006 F8 E5 00                		mov.W	#0, [r14]
+ 561 0009 02                      		rts
+ 562                             	.LFE9:
+ 564                             		.section	.text.ADC_Check,"ax",@progbits
+ 565                             		.global	_ADC_Check
+ 567                             	_ADC_Check:
+ 568                             	.LFB10:
+ 797:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** {
+ 569                             		.loc 1 797 0
+ 801:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	retVal = (IEC60335_ADCtest_BITS_check() != IEC60335_testPassed);
+ 570                             		.loc 1 801 0
+ 571 0000 05 00 00 00             		bsr	_IEC60335_ADCtest_BITS_check
+ 572                             	.LVL67:
+ 573 0004 FB E2 00 00 00 00       		mov.L	#_ADC_CheckFilter, r14
+ 808:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	if(retVal)
+ 574                             		.loc 1 808 0
+ 575 000a 61 11                   		cmp	#1, r1
+ 810:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		ADC_CheckFilter += CONFIG_LIB_CLASS_B_ADC_FLTR_INCR;
+ 576                             		.loc 1 810 0
+ 577 000c DC E4                   		mov.W	[r14], r4
+ 808:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 	if(retVal)
+ 578                             		.loc 1 808 0
+ 579 000e 20 17                   		beq	.L75
+ 810:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		ADC_CheckFilter += CONFIG_LIB_CLASS_B_ADC_FLTR_INCR;
+ 580                             		.loc 1 810 0
+ 581 0010 72 44 E8 03             		add	#0x3e8, r4
+ 582 0014 D3 E4                   		mov.W	r4, [r14]
+ 811:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		if(ADC_CheckFilter > CONFIG_LIB_CLASS_B_ADC_FLTR_MAXTH)
+ 583                             		.loc 1 811 0
+ 584 0016 5F 44                   		movu.W	r4, r4
+ 585 0018 76 04 88 13             		cmp	#0x1388, r4
+ 586 001c 25 13                   		bleu	.L74
+ 813:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			CLASSB_FATAL(PLT_ERROR_CLASSBCHECK_ADC);
+ 587                             		.loc 1 813 0
+ 588 001e 75 41 35                		mov.L	#53, r1
+ 589                             	.LVL68:
+ 590 0021 04 00 00 00             		bra	_LIB_Error_Fatal_Handler
+ 591                             	.LVL69:
+ 592                             	.L75:
+ 818:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 		if (ADC_CheckFilter > 0)
+ 593                             		.loc 1 818 0
+ 594 0025 5F 43                   		movu.W	r4, r3
+ 595 0027 61 03                   		cmp	#0, r3
+ 596 0029 20 06                   		beq	.L74
+ 820:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ClassBCheck.c **** 			ADC_CheckFilter--;
+ 597                             		.loc 1 820 0
+ 598 002b 60 14                   		sub	#1, r4
+ 599 002d D3 E4                   		mov.W	r4, [r14]
+ 600                             	.L74:
+ 601 002f 02                      		rts
+ 602                             	.LFE10:
+ 604                             		.section	.bss.bkpResetSrc.10317,"aw",@nobits
+ 605                             		.balign 4
+ 608                             	_bkpResetSrc.10317:
+ 609 0000 00 00 00 00             		.zero	4
+ 610                             		.section	.bss.WDTCheckStep,"aw",@nobits
+ 611                             		.balign 4
+ 614                             	_WDTCheckStep:
+ 615 0000 00 00 00 00             		.zero	4
+ 616                             		.comm	_ADC_CheckFilter,2,2
+ 617                             		.section	.CLASS_B_temp,"aw",@progbits
+ 618                             		.balign 4
+ 621                             	_ClassB_CheckRamTestState:
+ 622 0000 00 00 00 00 00 00 00 00 		.zero	12
+ 622      00 00 00 00 
+ 761                             	.Letext0:
+ 762                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 763                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 764                             		.file 4 "C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck/LIB_ClassBCheck.h"
+ 765                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Error/LIB_Error.h"
+ 766                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200\\IEC60335_B_libs\\inc/IEC60335.h"
+ 767                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers/IO_driver.h"
+ 768                             		.file 8 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_hal.h"
+ 769                             		.file 9 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Reset/LIB_Reset.h"
+ 770                             		.file 10 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Reset/LIB_ResetExp.h"
+ 771                             		.file 11 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCRST/OCRST_drv.h"
+ 772                             		.file 12 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCWDT/OCWDT_drv.h"

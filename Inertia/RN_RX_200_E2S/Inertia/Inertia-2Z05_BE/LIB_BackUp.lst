@@ -1,0 +1,1025 @@
+   1                             		.file	"LIB_BackUp.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.LIB_Backup_CheckIfIsTimeToBackup,"ax",@progbits
+   5                             		.global	_LIB_Backup_CheckIfIsTimeToBackup
+   7                             	_LIB_Backup_CheckIfIsTimeToBackup:
+   8                             	.LFB1:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp/LIB_BackUp.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /**
+   7:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c ****  *\page pageLibBackup
+   8:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c ****  *\ingroup LIB_BackUp
+   9:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c ****  */
+  10:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /**
+  11:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n
+  12:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \par		LIB_BackUp.c
+  13:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n			Implementation of all functions necessary to achieve the aim.
+  14:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n
+  15:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \file		LIB_BackUp.c
+  16:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \ingroup	LIB_BackUp
+  17:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \date		Feb 07, 2011
+  18:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \version	01.00.00
+  19:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \author		stefano.ughi
+  20:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n
+  21:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n
+  22:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \par\b	History:
+  23:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n 		01.00.01
+  24:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n		Apr 14, 2011
+  25:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n		stefano.ughi
+  26:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n		changes
+  27:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n 		    - added  LIB_Backup_SetBackupControlMonitor(BACKUP_NO_SOURCE) inside void Task_Backup(void
+  28:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n 		01.00.00
+  29:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n		Feb 07, 2011
+  30:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n		stefano.ughi
+  31:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n		changes
+  32:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n 			Creation
+  33:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n
+  34:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n
+  35:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** */
+  36:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #define MODULE_BODY_LIB_BACKUP
+  37:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* ******** */
+  38:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* Includes */
+  39:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* ******** */
+  40:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #include "callback.h"
+  41:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /*MS prova #include "BackupAddress.h" */
+  42:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #include "LIB_BackUp.h"
+  43:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #include "LIB_Error.h"
+  44:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /*lint -e537 Repeated include file*/
+  45:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #include "LIB_BackupExp.h"
+  46:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /*lint +e537*/
+  47:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #include "Analog.h"
+  48:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #include "OCRST_drv.h"
+  49:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #include "OCDIO_drv.h"
+  50:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #include "OCFLS_drv.h"
+  51:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #include "OCIRQ_drv.h"
+  52:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+  53:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #include "OCTPM_drv.h"
+  54:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #if defined (CONFIG_PL_DRV_OCCRC)
+  55:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #include "OCCRC_drv.h"
+  56:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #else
+  57:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #include "SWCRC_drv.h"
+  58:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #endif
+  59:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #include "OutputManager.h"
+  60:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #include "LIB_ZeroCrossing.h"
+  61:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #if defined (RTN_CHECK_WITH_SW_ALARM)
+  62:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #include "PM_SWalarms.h"
+  63:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #endif
+  64:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #if defined(CONFIG_PM_MOTORGATE) /* ex __UNIVERSAL_MOTOR_H */
+  65:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #include "PM_UM_UniversalMotor.h"
+  66:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #endif
+  67:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #if defined(CONFIG_CLASS_B_DATA_INTEGRITY) && defined(CONFIG_CLASS_B_DATA_BACKUP)
+  68:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #include "LIB_ClassBVarBck.h"
+  69:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #endif
+  70:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+  71:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* ****************** */
+  72:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* Defines and Macros */
+  73:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* ****************** */
+  74:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+  75:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+  76:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #if defined(CONFIG_LIB_BACKUP_CHECK_BOTH_TH)
+  77:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #define RTN_RANGE(x)	(((x) < REF_MIN_ADC_UNITS) || ((x) > REF_MAX_ADC_UNITS))
+  78:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+  79:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #else
+  80:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #define RTN_RANGE(x)	((x) < REF_MIN_ADC_UNITS)
+  81:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #endif
+  82:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+  83:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* *************************** */
+  84:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* Typedef, Structs and Unions */
+  85:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* *************************** */
+  86:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+  87:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+  88:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* ********* */
+  89:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* Variables */
+  90:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* ********* */
+  91:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+  92:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* Global */
+  93:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /** This variable must be the first data of backup block */
+  94:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** uint8_t Backup_Source;
+  95:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* Static */
+  96:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+  97:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /** Used to check if backup monitoring is active */
+  98:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** static uint8_t BackupCntrlSource;
+  99:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* ******************* */
+ 100:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* Functions Prototype */
+ 101:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* ******************* */
+ 102:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 103:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* Exported function */
+ 104:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 105:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* Local Function */
+ 106:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** static bool_t LIB_Backup_IsTimeToBackup(void);
+ 107:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** static void DeinitAllPeripherals(void);
+ 108:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* *************** */
+ 109:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* Function Bodies */
+ 110:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* *************** */
+ 111:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 112:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* Exported function */
+ 113:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /**
+ 114:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** Performs all actions necessaries to backup.
+ 115:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 116:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \author 	stefano.ughi
+ 117:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \date		Feb 14, 2011
+ 118:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \version	1.0.0
+ 119:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 120:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \note		\par \b Note 1:
+ 121:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			documentation by stefano.ughi
+ 122:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 123:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** */
+ 124:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** void Task_Backup(void)
+ 125:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+ 126:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	/* Application's service */
+ 127:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	CBF_notifyBackupAlarm();
+ 128:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	/* Switch off loads to save power */
+ 129:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	LIB_IOM_SetAllLoadsOff ( SOURCE_SALO_PLATFORM );
+ 130:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	/* Checks if is time to backup  */
+ 131:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	if ( LIB_Backup_IsTimeToBackup() == TRUE )
+ 132:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	{
+ 133:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		/* Interrupts are harmful in this phase */
+ 134:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		EnterCriticalSection();
+ 135:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		/* To save M.C.U. current */
+ 136:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		DeinitAllPeripherals();
+ 137:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #if defined(CONFIG_CLASS_B_DATA_INTEGRITY) && defined(CONFIG_CLASS_B_DATA_BACKUP)
+ 138:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	Sec_Backup_SecDataSave();
+ 139:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #endif
+ 140:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		(void)LIB_Backup_DataSave();
+ 141:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		LIB_ZC_ResetSyncPhase();
+ 142:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		SetgoodZCSignalTo(FALSE);
+ 143:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		/* Disables further backups */
+ 144:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		LIB_Backup_SetBackupControlMonitor(BACKUP_NO_SOURCE);
+ 145:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		/* bye, bye */
+ 146:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		OCRST_GenerateUserResetSync();
+ 147:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	}
+ 148:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** }
+ 149:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /**
+ 150:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** Checks conditions for backup.
+ 151:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 152:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \param  [in]		systemMode system mode
+ 153:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 154:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \return 	bool_t
+ 155:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 156:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \retval		TRUE it's time to call backup task
+ 157:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \retval		FALSE there is at least one condition not satisfied to call backup task
+ 158:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 159:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 160:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \author 	stefano.ughi
+ 161:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \date		Feb 15, 2011
+ 162:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \version	1.0.0
+ 163:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 164:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \note		\par \b Note 1:
+ 165:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			documentation by stefano.ughi
+ 166:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 167:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** */
+ 168:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** bool_t LIB_Backup_CheckIfIsTimeToBackup(uint8_t systemMode)
+ 169:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+  10                             		.loc 1 169 0
+  11                             	.LVL0:
+ 170:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	bool_t isTime;
+ 171:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 172:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	isTime = FALSE;
+ 173:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	if ( SYSTEM_NORMAL_MODE == systemMode )
+  12                             		.loc 1 173 0
+  13 0000 5B 11                   		movu.B	r1, r1
+  14 0002 61 11                   		cmp	#1, r1
+  15 0004 20 05                   		beq	.L2
+  16                             	.LVL1:
+  17                             		.balign 2,3,1
+  18                             	.L4:
+ 172:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	isTime = FALSE;
+  19                             		.loc 1 172 0
+  20 0006 66 01                   		mov.L	#0, r1
+  21 0008 02                      		rts
+  22                             	.L2:
+ 174:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	{
+ 175:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		if ( LIB_ADC_CheckRef() == TRUE )
+  23                             		.loc 1 175 0
+  24 0009 05 00 00 00             		bsr	_LIB_ADC_CheckRef
+  25                             	.LVL2:
+  26 000d 61 11                   		cmp	#1, r1
+  27 000f 21 F7                   		bne	.L4
+ 176:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		{
+ 177:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			if ( BACKUP_ON_RTN == LIB_Backup_GetBackupControlMonitor() )
+  28                             		.loc 1 177 0
+  29 0011 FB E2 00 00 00 00       		mov.L	#_BackupCntrlSource, r14
+  30 0017 58 EE                   		movu.B	[r14], r14
+  31 0019 61 1E                   		cmp	#1, r14
+  32 001b 21 EB                   		bne	.L4
+ 178:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			{
+ 179:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 				if ( FALSE == LIB_ADC_Is_Ref_Good() )
+  33                             		.loc 1 179 0
+  34 001d 05 00 00 00             		bsr	_LIB_ADC_Is_Ref_Good
+  35                             	.LVL3:
+ 172:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	isTime = FALSE;
+  36                             		.loc 1 172 0
+  37 0021 61 01                   		cmp	#0, r1
+  38 0023 FC DB 10                		sceq.L	r1
+  39                             	.LVL4:
+ 180:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 				{
+ 181:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 					isTime = TRUE;
+ 182:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 				}
+ 183:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			}
+ 184:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		}
+ 185:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	}
+ 186:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	return (isTime);
+ 187:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** }
+  40                             		.loc 1 187 0
+  41 0026 02                      		rts
+  42                             	.LFE1:
+  44 0027 03                      		.section	.text.LIB_Backup_ForceBackup,"ax",@progbits
+  45                             		.global	_LIB_Backup_ForceBackup
+  47                             	_LIB_Backup_ForceBackup:
+  48                             	.LFB2:
+ 188:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 189:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /**
+ 190:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** Forces backup.
+ 191:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 192:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \author 	stefano.ughi
+ 193:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \date		Feb 15, 2011
+ 194:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \version	1.0.0
+ 195:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 196:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \note		\par \b Note 1:
+ 197:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			documentation by stefano.ughi
+ 198:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 199:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** */
+ 200:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** void LIB_Backup_ForceBackup(void)
+ 201:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+  49                             		.loc 1 201 0
+  50 0000 7E A7                   		push.l	r7
+  51                             	.LCFI0:
+ 202:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	EnterCriticalSection();
+  52                             		.loc 1 202 0
+  53 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+  54 0006 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+  55 000c CD 7E 01                		mov.B	1[r7], r14
+  56 000f 62 1E                   		add	#1, r14
+  57 0011 C7 7E 01                		mov.B	r14, 1[r7]
+ 203:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #if defined(CONFIG_CLASS_B_DATA_INTEGRITY) && defined(CONFIG_CLASS_B_DATA_BACKUP)
+ 204:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	Sec_Backup_SecDataSave();
+ 205:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #endif
+ 206:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	(void)LIB_Backup_DataSave();
+  58                             		.loc 1 206 0
+  59 0014 05 00 00 00             		bsr	_LIB_Backup_DataSave
+ 207:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	ExitCriticalSection();
+  60                             		.loc 1 207 0
+  61 0018 CD 7E 01                		mov.B	1[r7], r14
+  62 001b 60 1E                   		sub	#1, r14
+  63 001d C7 7E 01                		mov.B	r14, 1[r7]
+  64 0020 5B EE                   		movu.B	r14, r14
+  65 0022 61 0E                   		cmp	#0, r14
+  66 0024 21 08                   		bne	.L5
+ 208:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** }
+  67                             		.loc 1 208 0 discriminator 1
+  68 0026 7E B7                   		pop	r7
+ 207:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	ExitCriticalSection();
+  69                             		.loc 1 207 0 discriminator 1
+  70 0028 04 00 00 00             		bra	_OS_EnableInterrupt
+  71                             	.L5:
+  72                             		.loc 1 208 0
+  73 002c 3F 77 01                		rtsd	#4, r7-r7
+  74                             	.LFE2:
+  76                             		.section	.text.LIB_Backup_RestoreManager,"ax",@progbits
+  77                             		.global	_LIB_Backup_RestoreManager
+  79                             	_LIB_Backup_RestoreManager:
+  80                             	.LFB3:
+ 209:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 210:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 211:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 212:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /**
+ 213:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n Checks if backup checksum is O.K.
+ 214:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n if checksum is O.K. performs backup data restore and returns TRUE otherwise FALSE.
+ 215:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 216:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 217:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \return 	bool_t
+ 218:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 219:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \retval		TRUE backup data restored
+ 220:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \retval		FALSE backup data not restored because checksum K.O.
+ 221:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 222:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \author 	stefano.ughi
+ 223:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \date		Feb 14, 2011
+ 224:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \version	1.0.0
+ 225:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 226:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 227:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \note		\par \b Note 1:
+ 228:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			documentation by stefano.ughi
+ 229:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 230:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** */
+ 231:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** bool_t LIB_Backup_RestoreManager(void)
+ 232:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+  81                             		.loc 1 232 0
+  82 0000 7E A7                   		push.l	r7
+  83                             	.LCFI1:
+ 233:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	if ( LIB_Backup_ChecksumVerify() == TRUE )
+  84                             		.loc 1 233 0
+  85 0002 05 00 00 00             		bsr	_LIB_Backup_ChecksumVerify
+  86                             	.LVL5:
+  87 0006 61 11                   		cmp	#1, r1
+  88 0008 EF 17                   		mov.L	r1, r7
+  89 000a 21 0A                   		bne	.L10
+ 234:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	{
+ 235:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #if defined(CONFIG_CLASS_B_DATA_INTEGRITY) && defined(CONFIG_CLASS_B_DATA_BACKUP)
+ 236:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		Sec_Backup_SecDataRestore();
+ 237:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #endif
+ 238:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		LIB_Backup_DataRestore();
+  90                             		.loc 1 238 0
+  91 000c 05 00 00 00             		bsr	_LIB_Backup_DataRestore
+  92                             	.LVL6:
+ 239:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		return TRUE;
+  93                             		.loc 1 239 0
+  94 0010 EF 71                   		mov.L	r7, r1
+  95 0012 2E 04                   		bra	.L9
+  96                             	.L10:
+ 240:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	}
+ 241:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	else
+ 242:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	{
+ 243:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		return FALSE;
+  97                             		.loc 1 243 0
+  98 0014 66 01                   		mov.L	#0, r1
+  99                             		.balign 2,3,2
+ 100                             	.L9:
+ 244:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	}
+ 245:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** }
+ 101                             		.loc 1 245 0
+ 102 0016 3F 77 01                		rtsd	#4, r7-r7
+ 103                             	.LFE3:
+ 105 0019 03                      		.section	.text.LIB_Backup_RefCheck,"ax",@progbits
+ 106                             		.global	_LIB_Backup_RefCheck
+ 108                             	_LIB_Backup_RefCheck:
+ 109                             	.LFB4:
+ 246:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 247:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 248:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 249:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #if defined (RTN_CHECK_WITH_COUNTER)
+ 250:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** uint8_t LIB_Backup_RefCheck(void)
+ 251:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+ 252:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	static uint8_t NumOfReadings;
+ 253:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	static struct
+ 254:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	{
+ 255:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		bool_t NumOfReadingsOutOfRangeSetup:1;
+ 256:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		bool_t NumOfReadingsInRangeSetup:1;
+ 257:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		bool_t Free:6;
+ 258:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	} Flags= {0,0,0};
+ 259:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #if defined (DEBUG_BACKUP_MANAGER)
+ 260:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	static ADC_ValueType rtnADvalue;
+ 261:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #else
+ 262:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	ADC_ValueType rtnADvalue;
+ 263:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #endif
+ 264:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	uint8_t posAnalogInputParam;
+ 265:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 266:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 267:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	posAnalogInputParam = LIB_ADC_AnalogChRamPos(Ch_Comp);
+ 268:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 269:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	if ( AD_POS_NOT_FOUND == posAnalogInputParam )
+ 270:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	{
+ 271:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		/* Serious error Ch_Comp not defined */
+ 272:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		PLT_ERROR_WARNING(PLT_ERROR_BACKUP_1);
+ 273:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 274:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		return BACKUP_RTN_CH_NOT_FOUND;
+ 275:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	}
+ 276:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	/* Performs read on RTN */
+ 277:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	rtnADvalue = LIB_ADC_Conv_F (posAnalogInputParam, AD_LOCAL_SAMPLES_POWER_OF_TWO, AD_LOCAL_SAMPLES_
+ 278:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 279:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	if (RTN_RANGE(rtnADvalue))
+ 280:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	{
+ 281:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		/* Measure lower than minimum  */
+ 282:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		Flags.NumOfReadingsInRangeSetup = 0;
+ 283:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		if ( 0 == Flags.NumOfReadingsOutOfRangeSetup )
+ 284:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		{
+ 285:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			NumOfReadings = NUM_READ_RTN_OUT_OF_RANGE;
+ 286:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			Flags.NumOfReadingsOutOfRangeSetup = 1;
+ 287:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		}
+ 288:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		NumOfReadings --;
+ 289:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		if ( 0 == NumOfReadings )
+ 290:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		{
+ 291:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			/* For the next time but perhaps not necessary if after backup a cold reset is performed */
+ 292:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			Flags.NumOfReadingsOutOfRangeSetup = 0;
+ 293:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			/* It's time to perform backup ! */
+ 294:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			return BACKUP_NOW;
+ 295:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		}
+ 296:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		else
+ 297:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		{
+ 298:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			return BACKUP_WAIT;
+ 299:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		}
+ 300:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	}
+ 301:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	else
+ 302:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	{
+ 303:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		/* Measure in range */
+ 304:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		Flags.NumOfReadingsOutOfRangeSetup = 0;
+ 305:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		if ( 0 == Flags.NumOfReadingsInRangeSetup )
+ 306:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		{
+ 307:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			NumOfReadings = NUM_READ_RTN_IN_RANGE;
+ 308:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			Flags.NumOfReadingsInRangeSetup = 1;
+ 309:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		}
+ 310:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		NumOfReadings --;
+ 311:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		if ( 0 == NumOfReadings )
+ 312:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		{
+ 313:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			/* For the next time */
+ 314:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			Flags.NumOfReadingsInRangeSetup = 0;
+ 315:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			/* False Alarm Exit From Task Backup  */
+ 316:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			return BACKUP_EXIT;
+ 317:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		}
+ 318:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		else
+ 319:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		{
+ 320:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			return BACKUP_WAIT;
+ 321:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		}
+ 322:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	}
+ 323:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** }
+ 324:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /**
+ 325:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n This function monitors the RTN in order to establish if a backup must be performed.
+ 326:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n If RTN value is out of range for RTN_OUT_OF_RANGE_TOUT_NSEC
+ 327:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n we assume that a backup must be performed.
+ 328:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n If RTN value is in range for RTN_IN_RANGE_TOUT_NSEC
+ 329:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \n we assume that it was a false backup alarm.
+ 330:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 331:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \attention \b   Ch_Comp is A/D channel where we read RTN value, used as Input.
+ 332:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 333:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \return 	uint8_t
+ 334:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 335:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \retval		BACKUP_NOW  perform backup
+ 336:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \retval		BACKUP_WAIT  decision pending
+ 337:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \retval     BACKUP_EXIT no backup
+ 338:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \retval     BACKUP_RTN_CH_NOT_FOUND rtn A/D channel not found, check setting file.
+ 339:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 340:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 341:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \author 	stefano.ughi
+ 342:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \date		Feb 8, 2011
+ 343:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \version	1.0.0
+ 344:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 345:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \note		\par \b Note 1:
+ 346:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			documentation by stefano.ughi
+ 347:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 348:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** */
+ 349:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #elif defined(RTN_CHECK_WITH_SW_ALARM)
+ 350:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** uint8_t LIB_Backup_RefCheck(void)
+ 351:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+ 110                             		.loc 1 351 0
+ 111 0000 6E 7A                   		pushm	r7-r10
+ 112                             	.LCFI2:
+ 352:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	static struct
+ 353:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	{
+ 354:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		bool_t AlarmOutOfRangeSetup:1;
+ 355:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		bool_t AlarmInRangeSetup:1;
+ 356:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		bool_t Free:6;
+ 357:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	} Flags= {0,0,0};
+ 358:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	IO_HwTimerType alarmInTicks;
+ 359:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #if defined (DEBUG_BACKUP_MANAGER)
+ 360:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	static ADC_ValueType rtnADvalue;
+ 361:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #else
+ 362:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	ADC_ValueType rtnADvalue;
+ 363:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #endif
+ 364:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	uint8_t posAnalogInputParam;
+ 365:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 366:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 367:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	posAnalogInputParam = LIB_ADC_ADChVsAnalogInputParamIndex(Ch_Comp);
+ 113                             		.loc 1 367 0
+ 114 0002 FB 72 00 00 00 00       		mov.L	#_Ch_Comp, r7
+ 115 0008 CC 71                   		mov.B	[r7], r1
+ 116 000a 05 00 00 00             		bsr	_LIB_ADC_ADChVsAnalogInputParamIndex
+ 117                             	.LVL7:
+ 368:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 369:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	if ( AD_POS_NOT_FOUND == posAnalogInputParam )
+ 118                             		.loc 1 369 0
+ 119 000e 75 51 FF                		cmp	#0xff, r1
+ 120 0011 21 0D                   		bne	.L13
+ 370:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	{
+ 371:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		/* Serious error Ch_Comp not defined */
+ 372:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		PLT_ERROR_WARNING(PLT_ERROR_BACKUP_2);
+ 121                             		.loc 1 372 0
+ 122 0013 66 41                   		mov.L	#4, r1
+ 123                             	.LVL8:
+ 124 0015 05 00 00 00             		bsr	_LIB_Error_Warning_Handler
+ 125                             	.LVL9:
+ 373:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 374:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		return BACKUP_RTN_CH_NOT_FOUND;
+ 126                             		.loc 1 374 0
+ 127 0019 66 31                   		mov	#3, r1
+ 128 001b 38 A7 00                		bra	.L14
+ 129                             	.LVL10:
+ 130                             	.L13:
+ 375:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	}
+ 376:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	/* Performs read on RTN */
+ 377:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	rtnADvalue = LIB_ADC_Conv_F (posAnalogInputParam, AD_LOCAL_SAMPLES_POWER_OF_TWO, AD_LOCAL_SAMPLES_
+ 131                             		.loc 1 377 0
+ 132 001e 66 22                   		mov	#2, r2
+ 133 0020 66 03                   		mov	#0, r3
+ 134 0022 05 00 00 00             		bsr	_LIB_ADC_Conv_F
+ 135                             	.LVL11:
+ 378:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 379:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	if ( RTN_RANGE(rtnADvalue) )
+ 136                             		.loc 1 379 0
+ 137 0026 5F 11                   		movu.W	r1, r1
+ 138 0028 FB 72 00 00 00 00       		mov.L	#_Flags.10712, r7
+ 139 002e 76 01 8D 01             		cmp	#0x18d, r1
+ 380:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	{
+ 381:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		/* Measure lower than minimum  */
+ 382:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		Flags.AlarmInRangeSetup = 0;
+ 140                             		.loc 1 382 0
+ 141 0032 CC 7A                   		mov.B	[r7], r10
+ 379:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	if ( RTN_RANGE(rtnADvalue) )
+ 142                             		.loc 1 379 0
+ 143 0034 24 4A                   		bgtu	.L15
+ 144                             		.loc 1 382 0
+ 145 0036 7A 6A                   		bclr	#6, r10
+ 146 0038 C3 7A                   		mov.B	r10, [r7]
+ 383:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		if ( 0 == Flags.AlarmOutOfRangeSetup )
+ 147                             		.loc 1 383 0
+ 148 003a EC 7A                   		mov.L	[r7], r10
+ 149 003c 74 2A 00 00 00 80       		and	#0x80000000, r10
+ 150 0042 21 1A                   		bne	.L16
+ 384:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		{
+ 385:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			alarmInTicks = PM_SWalarmsConvNsecInTicks(RTN_OUT_OF_RANGE_TOUT_NSEC);
+ 151                             		.loc 1 385 0
+ 152 0044 FB 1E 40 4B 4C          		mov.L	#0x4c4b40, r1
+ 153                             	.LVL12:
+ 154 0049 05 00 00 00             		bsr	_PM_SWalarmsConvNsecInTicks
+ 155                             	.LVL13:
+ 156 004d EF 12                   		mov.L	r1, r2
+ 386:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			PM_SWalarmsSet(ID_SW_ALARM, alarmInTicks);
+ 157                             		.loc 1 386 0
+ 158 004f CF A1                   		mov.B	r10, r1
+ 159 0051 05 00 00 00             		bsr	_PM_SWalarmsSet
+ 160                             	.LVL14:
+ 387:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 388:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			/* BACKUP_SET_LED_1(0); */
+ 389:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			/* BACKUP_SET_LED_2(0); */
+ 390:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 391:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			Flags.AlarmOutOfRangeSetup = 1;
+ 161                             		.loc 1 391 0
+ 162 0055 CC 7A                   		mov.B	[r7], r10
+ 163 0057 78 7A                   		bset	#7, r10
+ 164 0059 C3 7A                   		mov.B	r10, [r7]
+ 165 005b 03                      		.balign 2,3,1
+ 166                             	.L16:
+ 392:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		}
+ 393:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		/* BACKUP_SET_LED_2(1); */
+ 394:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		PM_SWalarmsCheck(ID_SW_ALARM);
+ 167                             		.loc 1 394 0
+ 168 005c 66 01                   		mov	#0, r1
+ 169 005e 05 00 00 00             		bsr	_PM_SWalarmsCheck
+ 170                             	.LVL15:
+ 395:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		if ( PM_SWalarms_IsAlarmExpired(ID_SW_ALARM) == TRUE )
+ 171                             		.loc 1 395 0
+ 172 0062 66 01                   		mov	#0, r1
+ 173 0064 05 00 00 00             		bsr	_PM_SWalarms_IsAlarmExpired
+ 174                             	.LVL16:
+ 175 0068 61 11                   		cmp	#1, r1
+ 176 006a 20 06                   		beq	.L17
+ 177                             		.balign 2,3,1
+ 178                             	.L19:
+ 396:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		{
+ 397:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			/* For the next time but perhaps not necessary if after backup a cold reset is performed */
+ 398:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			Flags.AlarmOutOfRangeSetup = 0;
+ 399:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 400:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			/* BACKUP_SET_LED_1(1); */
+ 401:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 402:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			/* It's time to perform backup ! */
+ 403:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			return BACKUP_NOW;
+ 404:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		}
+ 405:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		else
+ 406:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		{
+ 407:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			return BACKUP_WAIT;
+ 179                             		.loc 1 407 0
+ 180 006c 66 01                   		mov	#0, r1
+ 181 006e 2E 54                   		bra	.L14
+ 182                             	.L17:
+ 398:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			Flags.AlarmOutOfRangeSetup = 0;
+ 183                             		.loc 1 398 0
+ 184 0070 FB 72 00 00 00 00       		mov.L	#_Flags.10712, r7
+ 185 0076 CC 7A                   		mov.B	[r7], r10
+ 186 0078 7A 7A                   		bclr	#7, r10
+ 187 007a C3 7A                   		mov.B	r10, [r7]
+ 403:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			return BACKUP_NOW;
+ 188                             		.loc 1 403 0
+ 189 007c 2E 46                   		bra	.L14
+ 190                             	.LVL17:
+ 191                             	.L15:
+ 408:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		}
+ 409:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	}
+ 410:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	else
+ 411:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	{
+ 412:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		/* Measure in range */
+ 413:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		Flags.AlarmOutOfRangeSetup = 0;
+ 192                             		.loc 1 413 0
+ 193 007e 7A 7A                   		bclr	#7, r10
+ 194 0080 C3 7A                   		mov.B	r10, [r7]
+ 414:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		if ( 0 == Flags.AlarmInRangeSetup )
+ 195                             		.loc 1 414 0
+ 196 0082 EC 7A                   		mov.L	[r7], r10
+ 197 0084 74 2A 00 00 00 40       		and	#0x40000000, r10
+ 198 008a 21 1A                   		bne	.L18
+ 415:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		{
+ 416:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			alarmInTicks = PM_SWalarmsConvNsecInTicks(RTN_IN_RANGE_TOUT_NSEC);
+ 199                             		.loc 1 416 0
+ 200 008c FB 1E 40 4B 4C          		mov.L	#0x4c4b40, r1
+ 201                             	.LVL18:
+ 202 0091 05 00 00 00             		bsr	_PM_SWalarmsConvNsecInTicks
+ 203                             	.LVL19:
+ 204 0095 EF 12                   		mov.L	r1, r2
+ 417:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			PM_SWalarmsSet(ID_SW_ALARM, alarmInTicks);
+ 205                             		.loc 1 417 0
+ 206 0097 CF A1                   		mov.B	r10, r1
+ 207 0099 05 00 00 00             		bsr	_PM_SWalarmsSet
+ 208                             	.LVL20:
+ 418:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			Flags.AlarmInRangeSetup = 1;
+ 209                             		.loc 1 418 0
+ 210 009d CC 7A                   		mov.B	[r7], r10
+ 211 009f 78 6A                   		bset	#6, r10
+ 212 00a1 C3 7A                   		mov.B	r10, [r7]
+ 213 00a3 03                      		.balign 2,3,1
+ 214                             	.L18:
+ 419:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		}
+ 420:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 421:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		PM_SWalarmsCheck(ID_SW_ALARM);
+ 215                             		.loc 1 421 0
+ 216 00a4 66 01                   		mov	#0, r1
+ 217 00a6 05 00 00 00             		bsr	_PM_SWalarmsCheck
+ 218                             	.LVL21:
+ 422:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		if ( PM_SWalarms_IsAlarmExpired(ID_SW_ALARM) == TRUE )
+ 219                             		.loc 1 422 0
+ 220 00aa 66 01                   		mov	#0, r1
+ 221 00ac 05 00 00 00             		bsr	_PM_SWalarms_IsAlarmExpired
+ 222                             	.LVL22:
+ 223 00b0 61 11                   		cmp	#1, r1
+ 224 00b2 21 BA                   		bne	.L19
+ 423:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		{
+ 424:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			/* For the next time */
+ 425:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			Flags.AlarmInRangeSetup = 0;
+ 225                             		.loc 1 425 0
+ 226 00b4 FB 72 00 00 00 00       		mov.L	#_Flags.10712, r7
+ 227 00ba CC 7A                   		mov.B	[r7], r10
+ 426:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			/* False Alarm Exit From Task Backup  */
+ 427:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			return BACKUP_EXIT;
+ 228                             		.loc 1 427 0
+ 229 00bc 66 21                   		mov	#2, r1
+ 425:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			Flags.AlarmInRangeSetup = 0;
+ 230                             		.loc 1 425 0
+ 231 00be 7A 6A                   		bclr	#6, r10
+ 232 00c0 C3 7A                   		mov.B	r10, [r7]
+ 233                             		.balign 2,3,1
+ 234                             	.L14:
+ 428:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		}
+ 429:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		else
+ 430:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		{
+ 431:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			return BACKUP_WAIT;
+ 432:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		}
+ 433:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	}
+ 434:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** }
+ 235                             		.loc 1 434 0
+ 236 00c2 5B 11                   		movu.B	r1, r1
+ 237 00c4 3F 7A 04                		rtsd	#16, r7-r10
+ 238                             	.LFE4:
+ 240 00c7 03                      		.section	.text.Task_Backup,"ax",@progbits
+ 241                             		.global	_Task_Backup
+ 243                             	_Task_Backup:
+ 244                             	.LFB0:
+ 125:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+ 245                             		.loc 1 125 0
+ 246 0000 7E A7                   		push.l	r7
+ 247                             	.LCFI3:
+ 127:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	CBF_notifyBackupAlarm();
+ 248                             		.loc 1 127 0
+ 249 0002 05 00 00 00             		bsr	_CBF_notifyBackupAlarm
+ 129:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	LIB_IOM_SetAllLoadsOff ( SOURCE_SALO_PLATFORM );
+ 250                             		.loc 1 129 0
+ 251 0006 66 11                   		mov	#1, r1
+ 252 0008 05 00 00 00             		bsr	_LIB_IOM_SetAllLoadsOff
+ 253                             		.balign 2,3,3
+ 254                             	.L23:
+ 255                             	.LBB12:
+ 256                             	.LBB13:
+ 435:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #else
+ 436:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #error "Backup RTN Check Mode not defined"
+ 437:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #endif
+ 438:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /**
+ 439:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** Enables/Disables Backup Control on...
+ 440:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 441:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \param  [in]    backupSource event to monitor in order to enter in backup
+ 442:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 443:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \author 	stefano.ughi
+ 444:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \date		Feb 9, 2011
+ 445:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \version	1.0.0
+ 446:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 447:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 448:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \note		\par \b Note 1:
+ 449:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			documentation by stefano.ughi
+ 450:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 451:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** */
+ 452:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** void LIB_Backup_SetBackupControlMonitor(uint8_t backupSource)
+ 453:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+ 454:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	BackupCntrlSource = backupSource;
+ 455:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** }
+ 456:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /**
+ 457:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** Returns Backup Control Monitor source.
+ 458:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 459:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \return 	uint8_t
+ 460:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 461:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \retval		BACKUP_NO_SOURCE    Backup'monitoring off so no backup is performed.
+ 462:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \retval     BACKUP_ON_RTN       Backup'monitoring on RTN active.
+ 463:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 464:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \author 	stefano.ughi
+ 465:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \date		Feb 9, 2011
+ 466:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \version	1.0.0
+ 467:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 468:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \note		\par \b Note 1:
+ 469:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			documentation by stefano.ughi
+ 470:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 471:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** */
+ 472:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** uint8_t LIB_Backup_GetBackupControlMonitor(void)
+ 473:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+ 474:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	return BackupCntrlSource;
+ 475:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** }
+ 476:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /**
+ 477:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** Returns the value of Backup_Source that must be the first variable of backup data.
+ 478:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 479:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \return 	uint8_t
+ 480:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 481:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \retval		PARTIAL_BACKUP_KEYWORD partial backup data restore was performed
+ 482:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \retval		not PARTIAL_BACKUP_KEYWORD full backup data restore was performed
+ 483:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 484:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \author 	stefano.ughi
+ 485:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \date		Feb 01, 2011
+ 486:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \version	1.0.0
+ 487:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 488:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \note		\par \b Note 1:
+ 489:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			documentation by stefano.ughi
+ 490:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			\par \b Note 2:
+ 491:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			This routine must be called after LIB_Backup_DataRestore()
+ 492:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 493:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** */
+ 494:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** uint8_t LIB_Backup_GetBackupSource(void)
+ 495:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+ 496:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	return Backup_Source;
+ 497:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** }
+ 498:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /**
+ 499:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** Sets Backup_Source variable with the keyword for partial backup.
+ 500:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 501:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \author 	stefano.ughi
+ 502:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \date		Feb 01, 2011
+ 503:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \version	1.0.0
+ 504:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 505:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 506:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \note		\par \b Note 1:
+ 507:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			documentation by stefano.ughi
+ 508:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			\par \b Note 2:
+ 509:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			This routine must be invoked before performing backup if you want\n
+ 510:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			partial restore.
+ 511:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 512:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** */
+ 513:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** void LIB_Backup_SetBackupSource(void)
+ 514:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+ 515:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	Backup_Source = PARTIAL_BACKUP_KEYWORD;
+ 516:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** }
+ 517:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 518:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /**
+ 519:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** Resets Backup_Source variable.
+ 520:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 521:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \author 	stefano.ughi
+ 522:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \date		Feb 01, 2011
+ 523:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \version	1.0.0
+ 524:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 525:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 526:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \note		\par \b Note 1:
+ 527:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			documentation by stefano.ughi
+ 528:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			\par \b Note 2:
+ 529:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			This routine must be invoked before performing backup if you want\n
+ 530:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			full restore.
+ 531:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 532:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** */
+ 533:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** void LIB_Backup_ResetBackupSource(void)
+ 534:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+ 535:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	Backup_Source = 0;
+ 536:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** }
+ 537:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 538:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /* Local Function */
+ 539:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /**
+ 540:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** Checks if it's time to perform backup.
+ 541:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 542:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \return 	bool_t
+ 543:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 544:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \retval		TRUE it's time to perform backup
+ 545:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \retval		FALSE it was a false alarm.
+ 546:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 547:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \author 	stefano.ughi
+ 548:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \date		Feb 14, 2011
+ 549:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \version	1.0.0
+ 550:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 551:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 552:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \note		\par \b Note 1:
+ 553:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			documentation by stefano.ughi
+ 554:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 555:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** */
+ 556:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** static bool_t LIB_Backup_IsTimeToBackup(void)
+ 557:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+ 558:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	uint8_t refCheckResult;
+ 559:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	bool_t endLessLoop;
+ 560:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	/*lint -esym(644,backup) backup is always initialized */
+ 561:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	bool_t backup;
+ 562:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 563:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	endLessLoop = TRUE;
+ 564:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	while ( TRUE == endLessLoop )
+ 565:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	{
+ 566:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		refCheckResult = LIB_Backup_RefCheck();
+ 257                             		.loc 1 566 0
+ 258 000c 05 00 00 00             		bsr	_LIB_Backup_RefCheck
+ 567:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		if ( BACKUP_NOW == refCheckResult )
+ 259                             		.loc 1 567 0
+ 260 0010 5B 17                   		movu.B	r1, r7
+ 261 0012 61 17                   		cmp	#1, r7
+ 262 0014 20 08                   		beq	.L22
+ 568:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		{
+ 569:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			backup = TRUE;
+ 570:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			endLessLoop = FALSE;
+ 571:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		}
+ 572:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		else if ( BACKUP_EXIT == refCheckResult )
+ 263                             		.loc 1 572 0
+ 264 0016 61 27                   		cmp	#2, r7
+ 265 0018 21 F4                   		bne	.L23
+ 266 001a 2E 5B                   		bra	.L25
+ 267                             	.L22:
+ 268                             	.LBE13:
+ 269                             	.LBE12:
+ 134:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		EnterCriticalSection();
+ 270                             		.loc 1 134 0
+ 271 001c 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 272 0020 FB E2 00 00 00 00       		mov.L	#_OS_Global, r14
+ 273 0026 CD E4 01                		mov.B	1[r14], r4
+ 274 0029 62 14                   		add	#1, r4
+ 275 002b C7 E4 01                		mov.B	r4, 1[r14]
+ 276                             	.LBB14:
+ 277                             	.LBB15:
+ 573:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		{
+ 574:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			backup = FALSE;
+ 575:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			endLessLoop = FALSE;
+ 576:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		}
+ 577:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		else
+ 578:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		{
+ 579:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			/* Wait for response */
+ 580:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		}
+ 581:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	}
+ 582:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	return backup;
+ 583:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** }
+ 584:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** /**
+ 585:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** Peripherals's deinitialization.
+ 586:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 587:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \author 	stefano.ughi
+ 588:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \date		Feb 15, 2011
+ 589:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \version	1.0.0
+ 590:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 591:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 592:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \todo		OCDMA_DeinitSync()
+ 593:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \todo       OCI2C_DeInitSync()
+ 594:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \todo       OCUART_DeInitSync()
+ 595:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 596:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** \note		\par \b Note 1:
+ 597:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 			documentation by stefano.ughi
+ 598:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 599:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** */
+ 600:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** static void DeinitAllPeripherals(void)
+ 601:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+ 602:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	IO_ChannelType tmrId;
+ 603:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 
+ 604:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	(void)OCDIO_DeInitSync();
+ 278                             		.loc 1 604 0
+ 279 002e 05 00 00 00             		bsr	_OCDIO_DeInitSync
+ 605:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	(void)OCIRQ_DeInitSync();
+ 280                             		.loc 1 605 0
+ 281 0032 05 00 00 00             		bsr	_OCIRQ_DeInitSync
+ 606:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	(void)OCADC_DeInitSync();
+ 282                             		.loc 1 606 0
+ 283 0036 05 00 00 00             		bsr	_OCADC_DeInitSync
+ 607:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #ifdef OCCRC_DRV_ENABLE
+ 608:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	(void)OCCRC_DeInitSync();
+ 609:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** #endif
+ 610:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	for ( tmrId = 0; tmrId < NUM_HW_CNTR; tmrId++ )
+ 611:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	{
+ 612:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		(void)OCHWCNTR_DeInitSync(tmrId);
+ 284                             		.loc 1 612 0
+ 285 003a 66 01                   		mov	#0, r1
+ 286 003c 05 00 00 00             		bsr	_OCHWCNTR_DeInitSync
+ 287 0040 CF 71                   		mov.B	r7, r1
+ 288 0042 05 00 00 00             		bsr	_OCHWCNTR_DeInitSync
+ 289 0046 66 21                   		mov	#2, r1
+ 290 0048 05 00 00 00             		bsr	_OCHWCNTR_DeInitSync
+ 291 004c 66 31                   		mov	#3, r1
+ 292 004e 05 00 00 00             		bsr	_OCHWCNTR_DeInitSync
+ 293 0052 66 41                   		mov	#4, r1
+ 294 0054 05 00 00 00             		bsr	_OCHWCNTR_DeInitSync
+ 295                             	.LBE15:
+ 296                             	.LBE14:
+ 140:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		(void)LIB_Backup_DataSave();
+ 297                             		.loc 1 140 0
+ 298 0058 05 00 00 00             		bsr	_LIB_Backup_DataSave
+ 141:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		LIB_ZC_ResetSyncPhase();
+ 299                             		.loc 1 141 0
+ 300 005c 05 00 00 00             		bsr	_LIB_ZC_ResetSyncPhase
+ 301                             	.LBB16:
+ 302                             	.LBB17:
+ 454:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	BackupCntrlSource = backupSource;
+ 303                             		.loc 1 454 0
+ 304 0060 FB 72 00 00 00 00       		mov.L	#_BackupCntrlSource, r7
+ 305                             	.LBE17:
+ 306                             	.LBE16:
+ 142:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		SetgoodZCSignalTo(FALSE);
+ 307                             		.loc 1 142 0
+ 308 0066 66 01                   		mov.L	#0, r1
+ 309 0068 05 00 00 00             		bsr	_SetgoodZCSignalTo
+ 310                             	.LBB19:
+ 311                             	.LBB18:
+ 454:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	BackupCntrlSource = backupSource;
+ 312                             		.loc 1 454 0
+ 313 006c 3C 70 00                		mov.B	#0, [r7]
+ 314                             	.LBE18:
+ 315                             	.LBE19:
+ 148:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** }
+ 316                             		.loc 1 148 0
+ 317 006f 7E B7                   		pop	r7
+ 146:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 		OCRST_GenerateUserResetSync();
+ 318                             		.loc 1 146 0
+ 319 0071 04 00 00 00             		bra	_OCRST_GenerateUserResetSync
+ 320                             	.L25:
+ 148:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** }
+ 321                             		.loc 1 148 0
+ 322 0075 3F 77 01                		rtsd	#4, r7-r7
+ 323                             	.LFE0:
+ 325                             		.section	.text.LIB_Backup_SetBackupControlMonitor,"ax",@progbits
+ 326                             		.global	_LIB_Backup_SetBackupControlMonitor
+ 328                             	_LIB_Backup_SetBackupControlMonitor:
+ 329                             	.LFB5:
+ 453:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+ 330                             		.loc 1 453 0
+ 331                             	.LVL23:
+ 454:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	BackupCntrlSource = backupSource;
+ 332                             		.loc 1 454 0
+ 333 0000 FB E2 00 00 00 00       		mov.L	#_BackupCntrlSource, r14
+ 334 0006 C3 E1                   		mov.B	r1, [r14]
+ 335 0008 02                      		rts
+ 336                             	.LFE5:
+ 338                             		.section	.text.LIB_Backup_GetBackupControlMonitor,"ax",@progbits
+ 339                             		.global	_LIB_Backup_GetBackupControlMonitor
+ 341                             	_LIB_Backup_GetBackupControlMonitor:
+ 342                             	.LFB6:
+ 473:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+ 343                             		.loc 1 473 0
+ 475:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** }
+ 344                             		.loc 1 475 0
+ 345 0000 FB E2 00 00 00 00       		mov.L	#_BackupCntrlSource, r14
+ 346 0006 58 E1                   		movu.B	[r14], r1
+ 347 0008 02                      		rts
+ 348                             	.LFE6:
+ 350                             		.section	.text.LIB_Backup_GetBackupSource,"ax",@progbits
+ 351                             		.global	_LIB_Backup_GetBackupSource
+ 353                             	_LIB_Backup_GetBackupSource:
+ 354                             	.LFB7:
+ 495:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+ 355                             		.loc 1 495 0
+ 497:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** }
+ 356                             		.loc 1 497 0
+ 357 0000 FB E2 00 00 00 00       		mov.L	#_Backup_Source, r14
+ 358 0006 58 E1                   		movu.B	[r14], r1
+ 359 0008 02                      		rts
+ 360                             	.LFE7:
+ 362                             		.section	.text.LIB_Backup_SetBackupSource,"ax",@progbits
+ 363                             		.global	_LIB_Backup_SetBackupSource
+ 365                             	_LIB_Backup_SetBackupSource:
+ 366                             	.LFB8:
+ 514:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+ 367                             		.loc 1 514 0
+ 515:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	Backup_Source = PARTIAL_BACKUP_KEYWORD;
+ 368                             		.loc 1 515 0
+ 369 0000 FB E2 00 00 00 00       		mov.L	#_Backup_Source, r14
+ 370 0006 F8 E4 5A                		mov.B	#0x5a, [r14]
+ 371 0009 02                      		rts
+ 372                             	.LFE8:
+ 374                             		.section	.text.LIB_Backup_ResetBackupSource,"ax",@progbits
+ 375                             		.global	_LIB_Backup_ResetBackupSource
+ 377                             	_LIB_Backup_ResetBackupSource:
+ 378                             	.LFB9:
+ 534:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** {
+ 379                             		.loc 1 534 0
+ 535:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp\LIB_BackUp.c **** 	Backup_Source = 0;
+ 380                             		.loc 1 535 0
+ 381 0000 FB E2 00 00 00 00       		mov.L	#_Backup_Source, r14
+ 382 0006 F8 E4 00                		mov.B	#0, [r14]
+ 383 0009 02                      		rts
+ 384                             	.LFE9:
+ 386                             		.comm	_Backup_Source,1,1
+ 387                             		.section	.bss.BackupCntrlSource,"aw",@nobits
+ 390                             	_BackupCntrlSource:
+ 391 0000 00                      		.zero	1
+ 392                             		.section	.bss.Flags.10712,"aw",@nobits
+ 393                             		.balign 4
+ 396                             	_Flags.10712:
+ 397 0000 00 00 00 00             		.zero	4
+ 526                             	.Letext0:
+ 527                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 528                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 529                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Error/LIB_Error.h"
+ 530                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_cfg.h"
+ 531                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers/IO_driver.h"
+ 532                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCADC/OCADC_drv.h"
+ 533                             		.file 8 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_SWalarms/PM_SWalarms.h"
+ 534                             		.file 9 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Analog/Analog.h"
+ 535                             		.file 10 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Analog/AnalogExp.h"
+ 536                             		.file 11 "C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_BackUp/LIB_BackUp.h"

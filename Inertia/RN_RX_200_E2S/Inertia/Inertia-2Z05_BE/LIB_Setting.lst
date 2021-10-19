@@ -1,0 +1,399 @@
+   1                             		.file	"LIB_Setting.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.LIB_SettingBIST_StartSync,"ax",@progbits
+   5                             		.global	_LIB_SettingBIST_StartSync
+   7                             	_LIB_SettingBIST_StartSync:
+   8                             	.LFB1:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting/LIB_Setting.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /**
+   7:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n
+   8:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \par		LIB_Setting
+   9:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n\li		General Purpose
+  10:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			GetDefaultSettingStartAddress()
+  11:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n\li		Test of setting file
+  12:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n\lo		POST - LIB_SettingPOST_Sync() tests the whole setting
+  13:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n\lo		BIST - test made by chunks, no internal state is kept or managed by this library.
+  14:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			methods: LIB_SettingBIST_StartSync(), LIB_SettingBIST_StepSync(), LIB_SettingBIST_EndSync()
+  15:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n
+  16:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \par		Methods
+  17:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n			Depending on the CONFIG_LIB_SETTING_CHECK_TYPE_CRC two methods are available:
+  18:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n\li		modified CHK
+  19:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n\li		CRC16 CCITT(FFFF)
+  20:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n			the method must be choosen accoding to the application
+  21:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n
+  22:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \file		LIB_Setting.c
+  23:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \ingroup	LIB_Setting
+  24:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \date		Apr 18, 2013
+  25:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \version	01.00.00
+  26:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \author		Roberto Fioravanti
+  27:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** */
+  28:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  29:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* ******** */
+  30:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* Includes */
+  31:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* ******** */
+  32:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #include "Config.h"
+  33:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #include "LIB_Setting.h"
+  34:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #include "LIB_Utilities.h"
+  35:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #include "LIB_Generic.h"
+  36:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #include "LIB_crcExp.h"
+  37:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* ****************** */
+  38:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* Defines and Macros */
+  39:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* ****************** */
+  40:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  41:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  42:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  43:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* *************************** */
+  44:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* Typedef, Structs and Unions */
+  45:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* *************************** */
+  46:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  47:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  48:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* **************************** */
+  49:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* Prototype of local functions */
+  50:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* **************************** */
+  51:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  52:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* ****************** */
+  53:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* Exported variables */
+  54:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* ****************** */
+  55:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  56:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* **************** */
+  57:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* Global variables */
+  58:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* **************** */
+  59:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  60:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* ********* */
+  61:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* Functions */
+  62:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* ********* */
+  63:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  64:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /**
+  65:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** Synchrounous implementation of POST (Pre-Operation Self Test) to verify the integrity
+  66:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** of the whole setting file checking if the signature matches.
+  67:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  68:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \return 	bool_t
+  69:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  70:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \retval		TRUE 	test passed
+  71:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \retval		FALSE	test not passed
+  72:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  73:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \author 	Roberto Fioravanti
+  74:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \date		Apr 18,2013
+  75:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \version	1.0.0
+  76:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** */
+  77:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** bool_t LIB_SettingPOST_Sync(void)
+  78:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** {
+  79:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	bool_t res=FALSE;
+  80:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	LIB_SettingSignatureType sign=0;
+  81:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	uint8_t* pStart=0;
+  82:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	uint16_t len=0;
+  83:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  84:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	if (LIB_SettingBIST_StartSync(&len, &pStart, &sign))
+  85:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	{
+  86:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		if (len)
+  87:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		{
+  88:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			sign=LIB_SettingBIST_StepSync(len, pStart, sign);
+  89:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			res=LIB_SettingBIST_EndSync(sign);
+  90:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		}
+  91:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	}
+  92:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	return res;
+  93:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** }
+  94:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  95:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  96:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /*
+  97:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** Allows setting BIST initialization.
+  98:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** This method provides start address, number of bytes, and the initial seed
+  99:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \param [out]	pLen	pointer to len in bytes
+ 100:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \param [out]	ppStart	pointer to start address pointer
+ 101:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \param [out]	pInitSeed	initial seed to be used to test setting. It is affected by CONFIG_LIB_SETTIN
+ 102:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** if defined CONFIG_LIB_SETTING_CHECK_TYPE_CRC checking is CRC else CHK
+ 103:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 104:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \return 	bool_t
+ 105:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 106:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \retval		TRUE 	test inizialized
+ 107:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \retval		FALSE	test not inizialized
+ 108:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 109:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \author 	Roberto Fioravanti
+ 110:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \date		Apr 18,2013
+ 111:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \version	1.0.0
+ 112:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** */
+ 113:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** bool_t	LIB_SettingBIST_StartSync(uint16_t* pLen, uint8_t** ppStart, LIB_SettingSignatureType* pInit
+ 114:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** {
+  10                             		.loc 1 114 0
+  11                             	.LVL0:
+  12 0000 6E 7B                   		pushm	r7-r11
+  13                             	.LCFI0:
+  14                             		.loc 1 114 0
+  15 0002 EF 17                   		mov.L	r1, r7
+  16 0004 EF 2B                   		mov.L	r2, r11
+  17 0006 EF 3A                   		mov.L	r3, r10
+ 115:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	bool_t res = FALSE;
+ 116:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	uint16_t chkPtrVal = EndianU16_BToN(*(GetDefaultSettingStartAddress() + SF_PTR_CHECKSUM));
+  18                             		.loc 1 116 0
+  19 0008 05 00 00 00             		bsr	_GetDefaultSettingStartAddress
+  20                             	.LVL1:
+ 117:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 118:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	if(pLen && ppStart && pInitSeed)
+  21                             		.loc 1 118 0
+  22 000c 61 07                   		cmp	#0, r7
+ 116:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	uint16_t chkPtrVal = EndianU16_BToN(*(GetDefaultSettingStartAddress() + SF_PTR_CHECKSUM));
+  23                             		.loc 1 116 0
+  24 000e DD 1E 09                		mov.W	18[r1], r14
+  25                             	.LVL2:
+  26                             		.loc 1 118 0
+  27 0011 21 07                   		bne	.L2
+  28 0013 03                      		.balign 2,3,1
+  29                             	.L4:
+ 115:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	bool_t res = FALSE;
+  30                             		.loc 1 115 0
+  31 0014 66 01                   		mov.L	#0, r1
+  32 0016 2E 24                   		bra	.L3
+  33                             	.L2:
+  34                             		.loc 1 118 0 discriminator 1
+  35 0018 61 0B                   		cmp	#0, r11
+  36 001a 20 FA                   		beq	.L4
+  37 001c 61 0A                   		cmp	#0, r10
+  38 001e 20 F6                   		beq	.L4
+ 119:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	{
+ 120:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		*pLen=0;
+ 121:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 122:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		if(chkPtrVal < APPL_SETTING_SIZE_W)
+  39                             		.loc 1 122 0
+  40 0020 5F E4                   		movu.W	r14, r4
+ 120:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		*pLen=0;
+  41                             		.loc 1 120 0
+  42 0022 3D 70 00                		mov.W	#0, [r7]
+  43                             		.loc 1 122 0
+  44 0025 76 04 FF 1F             		cmp	#0x1fff, r4
+  45 0029 24 EB                   		bgtu	.L4
+ 123:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		{
+ 124:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			*pLen=chkPtrVal*2;
+  46                             		.loc 1 124 0
+  47 002b 4B EE                   		add	r14, r14
+  48                             	.LVL3:
+  49 002d D3 7E                   		mov.W	r14, [r7]
+ 125:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 126:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			*ppStart=(uint8_t*)GetDefaultSettingStartAddress();
+  50                             		.loc 1 126 0
+  51 002f 05 00 00 00             		bsr	_GetDefaultSettingStartAddress
+  52                             	.LVL4:
+  53 0033 E3 B1                   		mov.L	r1, [r11]
+ 127:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 128:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #if defined(CONFIG_LIB_SETTING_CHECK_TYPE_CRC)
+ 129:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			*pInitSeed=0xFFFF;
+  54                             		.loc 1 129 0
+  55 0035 F8 A5 FF                		mov.W	#-1, [r10]
+  56                             	.LVL5:
+ 130:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #else
+ 131:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			*pInitSeed=0;
+ 132:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #endif /*defined(CONFIG_LIB_SETTING_CHECK_TYPE_CRC)*/
+ 133:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			res = TRUE;
+  57                             		.loc 1 133 0
+  58 0038 66 11                   		mov.L	#1, r1
+  59                             	.LVL6:
+  60                             		.balign 2,3,2
+  61                             	.L3:
+ 134:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		}
+ 135:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	}
+ 136:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	return res;
+ 137:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** }
+  62                             		.loc 1 137 0
+  63 003a 3F 7B 05                		rtsd	#20, r7-r11
+  64                             	.LFE1:
+  66 003d 03                      		.section	.text.LIB_SettingBIST_StepSync,"ax",@progbits
+  67                             		.global	_LIB_SettingBIST_StepSync
+  69                             	_LIB_SettingBIST_StepSync:
+  70                             	.LFB2:
+ 138:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 139:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 140:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /**
+ 141:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** Setting BIST single step.
+ 142:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 143:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \param  [in]		len number of bytes to test
+ 144:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \param  [in]		ppStart pointer to the start address
+ 145:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \param  [in]		initSeed is the initial seed
+ 146:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 147:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n The applied method is affected by CONFIG_LIB_SETTING_CHECK_TYPE_CRC
+ 148:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** if defined CONFIG_LIB_SETTING_CHECK_TYPE_CRC checking is CRC else CHK
+ 149:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 150:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \return 	LIB_SettingSignatureType
+ 151:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 152:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \retval		partial result taking into account the result of the earlie call to this method
+ 153:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 154:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \author 	Roberto Fioravanti
+ 155:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \date		Apr 18, 2013
+ 156:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \version	1.0.1
+ 157:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 158:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \note		\par \b Note 1:
+ 159:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			documentation by Roberto Fioravanti
+ 160:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c ****  */
+ 161:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** LIB_SettingSignatureType	LIB_SettingBIST_StepSync(uint16_t len, uint8_t* ppStart, LIB_SettingSignat
+ 162:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** {
+  71                             		.loc 1 162 0
+  72                             	.LVL7:
+ 163:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	LIB_SettingSignatureType	sign=0;
+ 164:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	if(ppStart)
+  73                             		.loc 1 164 0
+  74 0000 71 2E 00                		add	#0, r2, r14
+  75 0003 20 06                   		beq	.L13
+ 165:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	{
+ 166:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #if defined(CONFIG_LIB_SETTING_CHECK_TYPE_CRC)
+ 167:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		sign=LIB_crc_partial_calculate(len, ppStart, initSeed);
+  76                             		.loc 1 167 0
+  77 0005 04 00 00 00             		bra	_LIB_crc_partial_calculate
+  78                             	.LVL8:
+  79                             	.L13:
+ 168:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #else
+ 169:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		sign=LIB_ModifiedChk_Computation(len, ppStart, initSeed);
+ 170:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #endif /*defined(CONFIG_LIB_SETTING_CHECK_TYPE_CRC)*/
+ 171:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	}
+ 172:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	return sign;
+ 173:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** }
+  80                             		.loc 1 173 0
+  81 0009 EF E1                   		mov.L	r14, r1
+  82                             	.LVL9:
+  83 000b 02                      		rts
+  84                             	.LFE2:
+  86                             		.section	.text.LIB_SettingBIST_EndSync,"ax",@progbits
+  87                             		.global	_LIB_SettingBIST_EndSync
+  89                             	_LIB_SettingBIST_EndSync:
+  90                             	.LFB3:
+ 174:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 175:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 176:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 177:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 178:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /*
+ 179:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** final step
+ 180:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** if returns if the partial resutll matches the signature of the setting
+ 181:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \param [in]	sign	computed signature
+ 182:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n The applied method is affected by CONFIG_LIB_SETTING_CHECK_TYPE_CRC
+ 183:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** if defined CONFIG_LIB_SETTING_CHECK_TYPE_CRC checking is CRC else CHK
+ 184:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 185:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \return 	bool_t
+ 186:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 187:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \retval		TRUE 	test passed
+ 188:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \retval		FALSE	test not passed
+ 189:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 190:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \author 	Roberto Fioravanti
+ 191:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \date		Apr 18,2013
+ 192:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \version	1.0.0
+ 193:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** */
+ 194:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** bool_t	LIB_SettingBIST_EndSync(LIB_SettingSignatureType sign)
+ 195:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** {
+  91                             		.loc 1 195 0
+  92                             	.LVL10:
+  93 0000 6E 7B                   		pushm	r7-r11
+  94                             	.LCFI1:
+  95                             		.loc 1 195 0
+  96 0002 DF 1B                   		mov.W	r1, r11
+ 196:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	LIB_SettingSignatureType	settingSign=0;
+ 197:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	uint16_t chkPtrVal=0;
+ 198:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 199:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	chkPtrVal = EndianU16_BToN(*(GetDefaultSettingStartAddress() + SF_PTR_CHECKSUM));
+  97                             		.loc 1 199 0
+  98 0004 05 00 00 00             		bsr	_GetDefaultSettingStartAddress
+  99                             	.LVL11:
+ 100 0008 BA 1F                   		movu.W	18[r1], r7
+ 101                             	.LVL12:
+ 200:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 201:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #if defined(CONFIG_LIB_SETTING_CHECK_TYPE_CRC)
+ 202:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	settingSign=STD_SF_PTR_CHECKSUM_CRC_VAL((STD_SettingSignatureType*)(GetDefaultSettingStartAddress(
+ 102                             		.loc 1 202 0
+ 103 000a 05 00 00 00             		bsr	_GetDefaultSettingStartAddress
+ 104                             	.LVL13:
+ 105 000e 4B 77                   		add	r7, r7
+ 106                             	.LVL14:
+ 107 0010 4B 71                   		add	r7, r1
+ 108 0012 59 1A 03                		movu.B	3[r1], r10
+ 109 0015 05 00 00 00             		bsr	_GetDefaultSettingStartAddress
+ 110                             	.LVL15:
+ 111 0019 4B 71                   		add	r7, r1
+ 112                             	.LVL16:
+ 113 001b B0 97                   		movu.B	2[r1], r7
+ 114                             	.LVL17:
+ 203:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #else
+ 204:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	settingSign=STD_SF_PTR_CHECKSUM_CHK_VAL((STD_SettingSignatureType*)(GetDefaultSettingStartAddress(
+ 205:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #endif /*defined(CONFIG_LIB_SETTING_CHECK_TYPE_CRC)*/
+ 206:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	return (sign==settingSign);
+ 115                             		.loc 1 206 0
+ 116 001d 5F BB                   		movu.W	r11, r11
+ 202:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	settingSign=STD_SF_PTR_CHECKSUM_CRC_VAL((STD_SettingSignatureType*)(GetDefaultSettingStartAddress(
+ 117                             		.loc 1 202 0
+ 118 001f 6C 87                   		shll	#8, r7
+ 119                             	.LVL18:
+ 120                             		.loc 1 206 0
+ 121 0021 FF 51 A7                		or	r10, r7, r1
+ 207:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** }
+ 122                             		.loc 1 207 0
+ 123 0024 47 1B                   		cmp	r1, r11
+ 124 0026 FC DB 10                		sceq.L	r1
+ 125 0029 3F 7B 05                		rtsd	#20, r7-r11
+ 126                             	.LFE3:
+ 128                             		.section	.text.LIB_SettingPOST_Sync,"ax",@progbits
+ 129                             		.global	_LIB_SettingPOST_Sync
+ 131                             	_LIB_SettingPOST_Sync:
+ 132                             	.LFB0:
+  78:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** {
+ 133                             		.loc 1 78 0
+ 134                             	.LVL19:
+ 135 0000 60 80                   		sub	#8, r0
+ 136                             	.LCFI2:
+  84:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	if (LIB_SettingBIST_StartSync(&len, &pStart, &sign))
+ 137                             		.loc 1 84 0
+ 138 0002 71 01 04                		add	#4, r0, r1
+ 139 0005 71 03 06                		add	#6, r0, r3
+ 140 0008 EF 02                   		mov.L	r0, r2
+  80:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	LIB_SettingSignatureType sign=0;
+ 141                             		.loc 1 80 0
+ 142 000a 3D 03 00                		mov.W	#0, 6[r0]
+ 143                             	.LVL20:
+  81:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	uint8_t* pStart=0;
+ 144                             		.loc 1 81 0
+ 145 000d 3E 00 00                		mov.L	#0, [r0]
+ 146                             	.LVL21:
+  82:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	uint16_t len=0;
+ 147                             		.loc 1 82 0
+ 148 0010 3D 02 00                		mov.W	#0, 4[r0]
+ 149                             	.LVL22:
+  84:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	if (LIB_SettingBIST_StartSync(&len, &pStart, &sign))
+ 150                             		.loc 1 84 0
+ 151 0013 05 00 00 00             		bsr	_LIB_SettingBIST_StartSync
+ 152                             	.LVL23:
+ 153 0017 61 01                   		cmp	#0, r1
+ 154 0019 20 1D                   		beq	.L17
+  86:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		if (len)
+ 155                             		.loc 1 86 0
+ 156 001b 98 81                   		mov.W	4[r0], r1
+ 157 001d 5F 1E                   		movu.W	r1, r14
+ 158 001f 61 0E                   		cmp	#0, r14
+ 159 0021 20 12                   		beq	.L19
+  88:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			sign=LIB_SettingBIST_StepSync(len, pStart, sign);
+ 160                             		.loc 1 88 0
+ 161 0023 EC 02                   		mov.L	[r0], r2
+ 162 0025 98 8B                   		mov.W	6[r0], r3
+ 163 0027 05 00 00 00             		bsr	_LIB_SettingBIST_StepSync
+ 164                             	.LVL24:
+ 165 002b 90 89                   		mov.W	r1, 6[r0]
+  89:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			res=LIB_SettingBIST_EndSync(sign);
+ 166                             		.loc 1 89 0
+ 167 002d 05 00 00 00             		bsr	_LIB_SettingBIST_EndSync
+ 168                             	.LVL25:
+ 169 0031 2E 05                   		bra	.L17
+ 170                             	.LVL26:
+ 171                             	.L19:
+  79:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	bool_t res=FALSE;
+ 172                             		.loc 1 79 0
+ 173 0033 EF E1                   		mov.L	r14, r1
+ 174                             	.LVL27:
+ 175 0035 03                      		.balign 2,3,1
+ 176                             	.L17:
+  93:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting\LIB_Setting.c **** }
+ 177                             		.loc 1 93 0
+ 178 0036 67 02                   		rtsd	#8
+ 179                             	.LFE0:
+ 263                             	.Letext0:
+ 264                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 265                             		.file 3 "C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Setting/LIB_Setting.h"
+ 266                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_Library/LIB_Utilities.h"
+ 267                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Generic/LIB_crcExp.h"

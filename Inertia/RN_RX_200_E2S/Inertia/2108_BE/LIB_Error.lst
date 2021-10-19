@@ -1,0 +1,282 @@
+   1                             		.file	"LIB_Error.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.LIB_Error_Warning_Handler,"ax",@progbits
+   5                             		.global	_LIB_Error_Warning_Handler
+   7                             	_LIB_Error_Warning_Handler:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error/LIB_Error.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c ****  * LIB_Error.c
+   3:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c ****  *
+   4:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c ****  *  Created on: 18/mar/2013
+   5:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c ****  *      Author: marco
+   6:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c ****  */
+   7:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** #include "LIB_Error.h"
+   8:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** #include "Main.h"
+   9:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** #include "LIB_ResetExp.h"
+  10:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 
+  11:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** #if defined (__CWCC__)
+  12:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** #pragma define_section noinit ".noinit" far_absolute
+  13:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** #if _lint
+  14:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** #define NO_INIT_VAR
+  15:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** #else   /* _lint */
+  16:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** #define NO_INIT_VAR __declspec(noinit)
+  17:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** #endif  /* _lint */
+  18:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** NO_INIT_VAR PltError_t  LIB_Error_lastWarning;
+  19:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** NO_INIT_VAR PltError_t  LIB_Error_lastFatal ;
+  20:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 
+  21:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** #elif defined(__GNUC__)
+  22:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** PltError_t  LIB_Error_lastWarning __attribute__ ((section (".noinit")));
+  23:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** PltError_t  LIB_Error_lastFatal __attribute__ ((section (".noinit")));
+  24:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** #else
+  25:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** PltError_t  LIB_Error_lastWarning ;
+  26:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** PltError_t  LIB_Error_lastFatal ;
+  27:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** #endif
+  28:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 
+  29:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 
+  30:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 
+  31:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** void LIB_Error_Warning_Handler( PltError_t err)
+  32:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** {
+  10                             		.loc 1 32 0
+  11                             	.LVL0:
+  33:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 	LIB_Error_lastWarning = err;
+  12                             		.loc 1 33 0
+  13 0000 FB E2 00 00 00 00       		mov.L	#_LIB_Error_lastWarning, r14
+  14 0006 E3 E1                   		mov.L	r1, [r14]
+  15 0008 02                      		rts
+  16                             	.LFE0:
+  18                             		.section	.text.LIB_Error_Fatal_Handler,"ax",@progbits
+  19                             		.global	_LIB_Error_Fatal_Handler
+  21                             	_LIB_Error_Fatal_Handler:
+  22                             	.LFB1:
+  34:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** }
+  35:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 
+  36:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** void LIB_Error_Fatal_Handler(PltError_t err)
+  37:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** {
+  23                             		.loc 1 37 0
+  24                             	.LVL1:
+  25 0000 7E A7                   		push.l	r7
+  26                             	.LCFI0:
+  27 0002 EF 17                   		mov.L	r1, r7
+  38:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 	LIB_Error_lastFatal = err;
+  28                             		.loc 1 38 0
+  29 0004 FB E2 00 00 00 00       		mov.L	#_LIB_Error_lastFatal, r14
+  30 000a E3 E1                   		mov.L	r1, [r14]
+  39:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 
+  40:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 	if (LIB_Backup_GetBackupControlMonitor() != BACKUP_NO_SOURCE)
+  31                             		.loc 1 40 0
+  32 000c 05 00 00 00             		bsr	_LIB_Backup_GetBackupControlMonitor
+  33                             	.LVL2:
+  34 0010 76 21 FF 00             		and #0xff, r1
+  35 0014 20 14                   		beq	.L3
+  41:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 	{
+  42:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** #if !defined(CONFIG_LIB_BACKUP_DATACARE_SAVE)
+  43:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 		/* Force a cold reset with restore
+  44:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 		 * partial restore only if Data corruption occurs */
+  45:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 		if (err == PLT_ERROR_DATACORRUPTION_1)
+  36                             		.loc 1 45 0
+  37 0016 75 57 2E                		cmp	#46, r7
+  38 0019 1D                      		bne	.L4
+  46:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 		{
+  47:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 			LIB_Backup_SetBackupSource();
+  39                             		.loc 1 47 0
+  40 001a 05 00 00 00             		bsr	_LIB_Backup_SetBackupSource
+  41                             	.LVL3:
+  42                             		.balign 2,3,3
+  43                             	.L4:
+  48:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 		}
+  49:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** #endif
+  50:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 		Backup_SystemBackup(LIB_Reset_GetSystemMode());
+  44                             		.loc 1 50 0
+  45 001e 05 00 00 00             		bsr	_LIB_Reset_GetSystemMode
+  46                             	.LVL4:
+  51:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 	}
+  52:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 	else
+  53:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 	{
+  54:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 		LIB_Reset_ForceColdReset();
+  55:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 	}
+  56:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** }
+  47                             		.loc 1 56 0
+  48 0022 7E B7                   		pop	r7
+  49                             	.LVL5:
+  50:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 		Backup_SystemBackup(LIB_Reset_GetSystemMode());
+  50                             		.loc 1 50 0
+  51 0024 04 00 00 00             		bra	_Backup_SystemBackup
+  52                             	.LVL6:
+  53                             	.L3:
+  54                             		.loc 1 56 0
+  55 0028 7E B7                   		pop	r7
+  56                             	.LVL7:
+  54:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error\LIB_Error.c **** 		LIB_Reset_ForceColdReset();
+  57                             		.loc 1 54 0
+  58 002a 04 00 00 00             		bra	_LIB_Reset_ForceColdReset
+  59                             	.LVL8:
+  60                             	.LFE1:
+  62                             		.global	_LIB_Error_lastFatal
+  63                             		.section	.noinit,"aw",@progbits
+  64                             		.balign 4
+  67                             	_LIB_Error_lastFatal:
+  68 0000 00 00 00 00             		.zero	4
+  69                             		.global	_LIB_Error_lastWarning
+  70                             		.balign 4
+  73                             	_LIB_Error_lastWarning:
+  74 0004 00 00 00 00             		.zero	4
+ 115                             	.Letext0:
+ 116                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 117                             		.file 3 "C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Error/LIB_Error.h"
+ 118                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_BackUp/LIB_BackupExp.h"
+ 119                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_Reset/LIB_ResetExp.h"
+ 120                             		.file 6 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Main\\EmbOS/Main.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 LIB_Error.c
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:7      .text.LIB_Error_Warning_Handler:00000000 _LIB_Error_Warning_Handler
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:13     .text.LIB_Error_Warning_Handler:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:73     .noinit:00000004 _LIB_Error_lastWarning
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:21     .text.LIB_Error_Fatal_Handler:00000000 _LIB_Error_Fatal_Handler
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:25     .text.LIB_Error_Fatal_Handler:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:67     .noinit:00000000 _LIB_Error_lastFatal
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:76     .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:8      .text.LIB_Error_Warning_Handler:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:22     .text.LIB_Error_Fatal_Handler:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:597    .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:940    .debug_str:0000004e .LASF114
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1144   .debug_str:00000b65 .LASF115
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:926    .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:934    .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:970    .debug_str:000001ed .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1084   .debug_str:00000840 .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1028   .debug_str:0000052a .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1024   .debug_str:00000506 .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1064   .debug_str:00000721 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1016   .debug_str:000004b0 .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1128   .debug_str:00000aa7 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1050   .debug_str:00000661 .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1062   .debug_str:00000715 .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1102   .debug_str:0000095c .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:972    .debug_str:000001f7 .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1058   .debug_str:000006cc .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1088   .debug_str:00000871 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1078   .debug_str:000007e3 .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1150   .debug_str:00000be7 .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1152   .debug_str:00000bfa .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1032   .debug_str:00000556 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1034   .debug_str:00000569 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1126   .debug_str:00000a94 .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:948    .debug_str:000000d8 .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1124   .debug_str:00000a7f .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1006   .debug_str:000003f9 .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1098   .debug_str:00000910 .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1060   .debug_str:000006d9 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1154   .debug_str:00000c0d .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1090   .debug_str:00000876 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1110   .debug_str:000009bd .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1036   .debug_str:0000057c .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:938    .debug_str:00000019 .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:990    .debug_str:000002e3 .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1082   .debug_str:0000080c .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1138   .debug_str:00000b23 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:950    .debug_str:000000ec .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:952    .debug_str:00000103 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:954    .debug_str:0000011a .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:956    .debug_str:00000131 .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:958    .debug_str:00000148 .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:960    .debug_str:0000015f .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:962    .debug_str:00000176 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:998    .debug_str:00000378 .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1066   .debug_str:00000738 .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1020   .debug_str:000004ce .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1070   .debug_str:00000773 .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1044   .debug_str:0000061d .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1046   .debug_str:00000635 .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1076   .debug_str:000007cb .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1054   .debug_str:00000689 .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1156   .debug_str:00000c42 .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1158   .debug_str:00000c5b .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1160   .debug_str:00000c74 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1162   .debug_str:00000c8d .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1164   .debug_str:00000ca6 .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:994    .debug_str:00000339 .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1168   .debug_str:00000cd2 .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:936    .debug_str:00000000 .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1040   .debug_str:000005d8 .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1042   .debug_str:000005f8 .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1074   .debug_str:000007a6 .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1122   .debug_str:00000a6a .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:976    .debug_str:00000218 .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1166   .debug_str:00000cbf .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1018   .debug_str:000004be .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1120   .debug_str:00000a5b .LASF62
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1094   .debug_str:000008d8 .LASF63
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:946    .debug_str:000000be .LASF64
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1132   .debug_str:00000ad3 .LASF65
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:982    .debug_str:0000026d .LASF66
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1000   .debug_str:00000390 .LASF67
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1148   .debug_str:00000bcb .LASF68
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1116   .debug_str:00000a1d .LASF69
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1014   .debug_str:0000048c .LASF70
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1022   .debug_str:000004e6 .LASF71
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1080   .debug_str:000007f2 .LASF72
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:984    .debug_str:00000287 .LASF73
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1008   .debug_str:0000040e .LASF74
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1012   .debug_str:00000467 .LASF75
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1038   .debug_str:000005b2 .LASF76
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1130   .debug_str:00000aaf .LASF77
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1118   .debug_str:00000a37 .LASF78
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:988    .debug_str:000002c4 .LASF79
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1052   .debug_str:0000066f .LASF80
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:980    .debug_str:00000256 .LASF81
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:992    .debug_str:00000318 .LASF82
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1106   .debug_str:00000981 .LASF83
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1068   .debug_str:00000750 .LASF84
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1004   .debug_str:000003ca .LASF85
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:968    .debug_str:000001be .LASF86
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1092   .debug_str:000008aa .LASF87
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1056   .debug_str:000006a1 .LASF88
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:942    .debug_str:00000074 .LASF89
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1010   .debug_str:00000439 .LASF90
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1096   .debug_str:000008f5 .LASF91
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1140   .debug_str:00000b3a .LASF92
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1108   .debug_str:000009a3 .LASF93
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:964    .debug_str:0000018d .LASF94
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:986    .debug_str:000002a5 .LASF95
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1086   .debug_str:00000853 .LASF96
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1072   .debug_str:0000078b .LASF97
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1100   .debug_str:0000093f .LASF98
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1002   .debug_str:000003b5 .LASF99
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:966    .debug_str:000001a5 .LASF100
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1134   .debug_str:00000aef .LASF101
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1146   .debug_str:00000bb2 .LASF102
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1026   .debug_str:0000050f .LASF103
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1136   .debug_str:00000b09 .LASF104
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1142   .debug_str:00000b5a .LASF105
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1030   .debug_str:0000053c .LASF106
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:16     .text.LIB_Error_Warning_Handler:00000009 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1104   .debug_str:00000969 .LASF107
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:60     .text.LIB_Error_Fatal_Handler:0000002e .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:869    .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:882    .debug_loc:00000020 .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:33     .text.LIB_Error_Fatal_Handler:00000010 .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:41     .text.LIB_Error_Fatal_Handler:0000001e .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:46     .text.LIB_Error_Fatal_Handler:00000022 .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:52     .text.LIB_Error_Fatal_Handler:00000028 .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:59     .text.LIB_Error_Fatal_Handler:0000002e .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1114   .debug_str:00000a07 .LASF108
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1112   .debug_str:000009f3 .LASF109
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:978    .debug_str:00000233 .LASF110
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:996    .debug_str:0000035d .LASF112
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:974    .debug_str:00000200 .LASF111
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:1048   .debug_str:0000064d .LASF116
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:944    .debug_str:000000a5 .LASF113
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:26     .text.LIB_Error_Fatal_Handler:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:24     .text.LIB_Error_Fatal_Handler:00000000 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:49     .text.LIB_Error_Fatal_Handler:00000024 .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:56     .text.LIB_Error_Fatal_Handler:0000002a .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccXkw5Oe.s:122    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_LIB_Backup_GetBackupControlMonitor
+_LIB_Backup_SetBackupSource
+_LIB_Reset_GetSystemMode
+_Backup_SystemBackup
+_LIB_Reset_ForceColdReset

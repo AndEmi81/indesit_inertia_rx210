@@ -1,0 +1,432 @@
+   1                             		.file	"Main_Backup.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.Main_BackupTask,"ax",@progbits
+   6                             	_Main_BackupTask:
+   7                             	.LFB3:
+   8                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Main_Backup.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /**
+   7:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n
+   8:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \par		Description
+   9:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n			Backup service implementation.
+  10:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n          The following functionalities are available:
+  11:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \li         Initialization
+  12:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \li         backup activation
+  13:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \li         backup data restoring
+  14:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n
+  15:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n          Backup runs on a high priority non-preempatble task
+  16:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n
+  17:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \file		Main_Backup.c
+  18:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \ingroup	Main
+  19:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \date		Feb 7, 2011
+  20:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \version	01.00.00
+  21:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \author		Roberto Fioravanti
+  22:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n
+  23:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n
+  24:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \par\b	History:
+  25:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n
+  26:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n 		01.04.00
+  27:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n		dd/mm/yyyy
+  28:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n		developer
+  29:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n		changes
+  30:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n 		- change 1
+  31:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n		- change 2
+  32:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n
+  33:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n
+  34:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n 		01.03.00
+  35:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n		dd/mm/yyyy
+  36:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n		developer
+  37:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n		changes
+  38:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n 		- change 1
+  39:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n		- change 2
+  40:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n
+  41:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n
+  42:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \n etc.
+  43:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** */
+  44:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* ******** */
+  45:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* Includes */
+  46:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* ******** */
+  47:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #include "Config.h"
+  48:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #include "callback.h"
+  49:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #include "Main.h"
+  50:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #include "LIB_BackupExp.h"
+  51:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #include "LIB_Reset.h"
+  52:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #if defined(CONFIG_LIB_TM_BACKUP)
+  53:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #include "LIB_TaskMonitoringExp.h"
+  54:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #endif /*defined(CONFIG_LIB_TM_BACKUP)*/
+  55:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #include "LIB_Trace.h"
+  56:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+  57:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+  58:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* ****************** */
+  59:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* Defines and Macros */
+  60:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* ****************** */
+  61:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #if !defined(CONFIG_LIB_TM_BACKUP)
+  62:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /** @name Backup task safety
+  63:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+  64:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \par Properties
+  65:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** Not mandatory. If they remain undefined assume by default an empty value.
+  66:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+  67:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** @{
+  68:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** */
+  69:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /** */
+  70:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #define START_BACKUP_TASK_MONITORING()		{}
+  71:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #define MAIN_BACKUP_TASK__MONITOR_IN()		{}
+  72:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #define MAIN_BACKUP_TASK__MONITOR_OUT()		{}
+  73:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /*@}*/
+  74:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #endif
+  75:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+  76:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* Check for definition od security check */
+  77:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #if !defined(START_BACKUP_TASK_MONITORING)
+  78:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #error "START_BACKUP_TASK_MONITORING() missing definition."
+  79:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #endif
+  80:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+  81:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #if !defined(MAIN_BACKUP_TASK__MONITOR_IN)
+  82:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #error "MAIN_BACKUP_TASK__MONITOR_IN() missing definition."
+  83:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #endif
+  84:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+  85:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #if !defined(MAIN_BACKUP_TASK__MONITOR_OUT)
+  86:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #error "MAIN_BACKUP_TASK__MONITOR_OUT() missing definition."
+  87:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #endif
+  88:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+  89:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+  90:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* *************************** */
+  91:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* Typedef, Structs and Unions */
+  92:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* *************************** */
+  93:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+  94:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* **************************** */
+  95:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* Prototype of local functions */
+  96:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* **************************** */
+  97:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+  98:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* ********* */
+  99:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* Variables */
+ 100:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* ********* */
+ 101:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 102:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* Global */
+ 103:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* Static */
+ 104:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /**
+ 105:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** @name Service variables
+ 106:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** @{
+ 107:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** */
+ 108:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /** Task Stack */
+ 109:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** static STACK_SEC OS_STACKPTR int Main_BackupTaskStack[MAIN_BACKUP_TASK_STACK_SIZE];
+ 110:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /**
+ 111:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** Backup task control block
+ 112:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** */
+ 113:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** static OS_TASK Main_BackupTaskTCB;
+ 114:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 115:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /*@}*/
+ 116:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 117:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #if defined(CONFIG_MAIN_BACKUP_STACK_MONITOR)
+ 118:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** static 	TOOLS_STACKUSAGE_MONITOR	Main_BackupStackMonitor;
+ 119:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #endif
+ 120:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 121:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* ******************* */
+ 122:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* Functions Prototype */
+ 123:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* ******************* */
+ 124:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 125:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* Exported function */
+ 126:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 127:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 128:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* Local Function */
+ 129:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** static void Main_BackupTask ( void );
+ 130:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 131:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 132:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* *************** */
+ 133:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* Function Bodies */
+ 134:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* *************** */
+ 135:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 136:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* Exported function */
+ 137:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 138:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /**
+ 139:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** Backup service initialization.
+ 140:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** It creates task Main_BackupTask
+ 141:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** */
+ 142:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** void Main_BackupInit ( void )
+ 143:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** {
+ 144:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	OS_CREATETASK ( &Main_BackupTaskTCB,
+ 145:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 					"BackupTask",
+ 146:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 					Main_BackupTask,
+ 147:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 					( OS_U8 ) MAIN_BACKUP_TASK_PRIORITY,
+ 148:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 					Main_BackupTaskStack );
+ 149:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #if defined(CONFIG_MAIN_BACKUP_STACK_MONITOR)
+ 150:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	Tools_CreateTaskStackMonitor(&Main_BackupTaskTCB, &Main_BackupStackMonitor);
+ 151:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** #endif
+ 152:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** }
+ 153:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 154:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /**
+ 155:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** Backup activation
+ 156:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** Resumes task Main_BackupTask
+ 157:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** */
+ 158:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** void Main_ActivateBackup ( void )
+ 159:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** {
+ 160:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	if ( OS_GetSuspendCnt ( &Main_BackupTaskTCB ) > 0 )
+ 161:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	{
+ 162:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		OS_Resume ( &Main_BackupTaskTCB );
+ 163:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	}
+ 164:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** }
+ 165:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 166:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 167:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /*
+ 168:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** Restores Application data
+ 169:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 170:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 171:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** Calls the following callbacks:
+ 172:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \li CALLBACK_Main_ColdReset_BeforeRestore
+ 173:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \li CALLBACK_Main_ColdReset_OnRestoredData
+ 174:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \li CALLBACK_Main_ColdReset_OnNotRestoredData
+ 175:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \li CALLBACK_Main_ColdReset_AfterRestore
+ 176:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \li CALLBACK_Main_WarmReset
+ 177:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \li CALLBACK_Main_BackupAreaInvalidationRequired
+ 178:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 179:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \warning	none
+ 180:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 181:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \author 	Roberto Fioravanti
+ 182:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \date		30/03/2011
+ 183:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \version	1.0.0
+ 184:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 185:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \note		\par \b Note 1:
+ 186:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 			documentation by Roberto Fioravanti
+ 187:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** */
+ 188:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** void Main_Backup_DoRestore ( void )
+ 189:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** {
+ 190:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	if ( LIB_CheckKeywordsRam() == FALSE )
+ 191:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	{
+ 192:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		CALLBACK_Main_ColdReset_BeforeRestore();
+ 193:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		
+ 194:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		if ( DoRestoreSystem() )
+ 195:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		{
+ 196:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 			CALLBACK_Main_ColdReset_OnRestoredData();
+ 197:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		}
+ 198:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		else
+ 199:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		{
+ 200:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 			CALLBACK_Main_ColdReset_OnNotRestoredData();
+ 201:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		}
+ 202:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		
+ 203:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		CALLBACK_Main_ColdReset_AfterRestore();
+ 204:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		LIB_Backup_ResetBackupSource();
+ 205:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		LIB_SetKeywordsRam();
+ 206:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	}
+ 207:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	else
+ 208:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	{
+ 209:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		CALLBACK_Main_WarmReset();
+ 210:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	}
+ 211:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	
+ 212:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	if ( CALLBACK_Main_BackupAreaInvalidationRequired() == TRUE )
+ 213:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	{
+ 214:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		/* Backup area Invalidation */
+ 215:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		( void ) LIB_Backup_InvalidateBackupArea();
+ 216:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	}
+ 217:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** }
+ 218:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 219:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /* Local Functions */
+ 220:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 221:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** /*
+ 222:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** No-preemptable task for backup. When it starts if goes in 'suspended mode'.
+ 223:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** I can can be resumed calling Main_ActivateBackup() function
+ 224:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 225:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \warning	none
+ 226:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 227:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \author 	Roberto Fioravanti
+ 228:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \date		30/03/2011
+ 229:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \version	1.0.0
+ 230:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 231:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** \note		\par \b Note 1:
+ 232:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 			documentation by Roberto Fioravanti
+ 233:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** */
+ 234:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** static void Main_BackupTask ( void )
+ 235:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** {
+   9                             		.loc 1 235 0
+ 236:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c ****   	START_BACKUP_TASK_MONITORING();
+  10                             		.loc 1 236 0
+  11 0000 66 21                   		mov	#2, r1
+  12 0002 75 42 32                		mov	#50, r2
+  13 0005 66 03                   		mov.L	#0, r3
+  14 0007 05 00 00 00             		bsr	_LIB_TaskMonitoringConfig
+  15                             	.LVL0:
+  16 000b 03                      		.balign 2,3,1
+  17                             	.L2:
+ 237:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	while ( 1 )
+ 238:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	{
+ 239:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		OS_Suspend ( NULL );
+  18                             		.loc 1 239 0 discriminator 1
+  19 000c 66 01                   		mov.L	#0, r1
+  20 000e 05 00 00 00             		bsr	_OS_Suspend
+  21                             	.LVL1:
+ 240:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 241:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		TRACE_CPU_IDLE_END();
+ 242:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 
+ 243:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		OS_EnterRegion();
+  22                             		.loc 1 243 0 discriminator 1
+  23 0012 05 00 00 00             		bsr	_OS_EnterRegionFunc
+  24                             	.LVL2:
+ 244:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		/* here the scheduler is switched off */
+ 245:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		MAIN_BACKUP_TASK__MONITOR_IN();
+  25                             		.loc 1 245 0 discriminator 1
+  26 0016 66 12                   		mov.L	#1, r2
+  27 0018 66 21                   		mov	#2, r1
+  28 001a 05 00 00 00             		bsr	_LIB_SetTask
+  29                             	.LVL3:
+  30 001e 66 21                   		mov	#2, r1
+  31 0020 05 00 00 00             		bsr	_LIB_TaskStartActivity
+  32                             	.LVL4:
+ 246:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		Task_Backup();
+  33                             		.loc 1 246 0 discriminator 1
+  34 0024 05 00 00 00             		bsr	_Task_Backup
+  35                             	.LVL5:
+ 247:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		MAIN_BACKUP_TASK__MONITOR_OUT();
+  36                             		.loc 1 247 0 discriminator 1
+  37 0028 66 21                   		mov	#2, r1
+  38 002a 05 00 00 00             		bsr	_LIB_TaskEndActivity
+  39                             	.LVL6:
+ 248:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		OS_LeaveRegion();
+  40                             		.loc 1 248 0 discriminator 1
+  41 002e 05 00 00 00             		bsr	_OS_LeaveRegion
+  42                             	.LVL7:
+  43 0032 2E DA                   		bra	.L2
+  44                             	.LFE3:
+  46                             		.section	.rodata.str1.1,"aMS",@progbits,1
+  47                             	.LC0:
+  48 0000 42 61 63 6B 75 70 54 61 		.string	"BackupTask"
+  48      73 6B 00 
+  49                             		.section	.text.Main_BackupInit,"ax",@progbits
+  50                             		.global	_Main_BackupInit
+  52                             	_Main_BackupInit:
+  53                             	.LFB0:
+ 143:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** {
+  54                             		.loc 1 143 0
+  55 0000 60 80                   		sub	#8, r0
+  56                             	.LCFI0:
+ 144:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	OS_CREATETASK ( &Main_BackupTaskTCB,
+  57                             		.loc 1 144 0
+  58 0002 F8 02 00 00 00 00       		mov.L	#_Main_BackupTaskStack, [r0]
+  59 0008 F9 0A 01 00 02          		mov.L	#0x200, 4[r0]
+  60 000d FB 12 00 00 00 00       		mov.L	#_Main_BackupTaskTCB, r1
+  61 0013 FB 22 00 00 00 00       		mov.L	#.LC0, r2
+  62 0019 FB 36 A0                		mov	#0xffffffa0, r3
+  63 001c FB 42 00 00 00 00       		mov.L	#_Main_BackupTask, r4
+  64 0022 05 00 00 00             		bsr	_OS_CreateTask_S
+  65                             	.LVL8:
+ 152:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** }
+  66                             		.loc 1 152 0
+  67 0026 67 02                   		rtsd	#8
+  68                             	.LFE0:
+  70                             		.section	.text.Main_ActivateBackup,"ax",@progbits
+  71                             		.global	_Main_ActivateBackup
+  73                             	_Main_ActivateBackup:
+  74                             	.LFB1:
+ 159:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** {
+  75                             		.loc 1 159 0
+ 160:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	if ( OS_GetSuspendCnt ( &Main_BackupTaskTCB ) > 0 )
+  76                             		.loc 1 160 0
+  77 0000 FB 12 00 00 00 00       		mov.L	#_Main_BackupTaskTCB, r1
+  78 0006 05 00 00 00             		bsr	_OS_GetSuspendCnt
+  79                             	.LVL9:
+  80 000a 5B 11                   		movu.B	r1, r1
+  81 000c 61 01                   		cmp	#0, r1
+  82 000e 20 0C                   		beq	.L5
+ 162:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		OS_Resume ( &Main_BackupTaskTCB );
+  83                             		.loc 1 162 0
+  84 0010 FB 12 00 00 00 00       		mov.L	#_Main_BackupTaskTCB, r1
+  85 0016 04 00 00 00             		bra	_OS_Resume
+  86                             	.LVL10:
+  87                             	.L5:
+  88 001a 02                      		rts
+  89                             	.LFE1:
+  91                             		.section	.text.Main_Backup_DoRestore,"ax",@progbits
+  92                             		.global	_Main_Backup_DoRestore
+  94                             	_Main_Backup_DoRestore:
+  95                             	.LFB2:
+ 189:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** {
+  96                             		.loc 1 189 0
+ 190:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	if ( LIB_CheckKeywordsRam() == FALSE )
+  97                             		.loc 1 190 0
+  98 0000 05 00 00 00             		bsr	_LIB_CheckKeywordsRam
+  99                             	.LVL11:
+ 100 0004 61 01                   		cmp	#0, r1
+ 101 0006 21 26                   		bne	.L8
+ 192:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		CALLBACK_Main_ColdReset_BeforeRestore();
+ 102                             		.loc 1 192 0
+ 103 0008 05 00 00 00             		bsr	_CALLBACK_Main_ColdReset_BeforeRestore
+ 104                             	.LVL12:
+ 194:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		if ( DoRestoreSystem() )
+ 105                             		.loc 1 194 0
+ 106 000c 05 00 00 00             		bsr	_DoRestoreSystem
+ 107                             	.LVL13:
+ 108 0010 61 01                   		cmp	#0, r1
+ 109 0012 20 08                   		beq	.L9
+ 196:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 			CALLBACK_Main_ColdReset_OnRestoredData();
+ 110                             		.loc 1 196 0
+ 111 0014 05 00 00 00             		bsr	_CALLBACK_Main_ColdReset_OnRestoredData
+ 112                             	.LVL14:
+ 113 0018 2E 06                   		bra	.L10
+ 114                             	.L9:
+ 200:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 			CALLBACK_Main_ColdReset_OnNotRestoredData();
+ 115                             		.loc 1 200 0
+ 116 001a 05 00 00 00             		bsr	_CALLBACK_Main_ColdReset_OnNotRestoredData
+ 117                             	.LVL15:
+ 118                             		.balign 2,3,3
+ 119                             	.L10:
+ 203:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		CALLBACK_Main_ColdReset_AfterRestore();
+ 120                             		.loc 1 203 0
+ 121 001e 05 00 00 00             		bsr	_CALLBACK_Main_ColdReset_AfterRestore
+ 122                             	.LVL16:
+ 204:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		LIB_Backup_ResetBackupSource();
+ 123                             		.loc 1 204 0
+ 124 0022 05 00 00 00             		bsr	_LIB_Backup_ResetBackupSource
+ 125                             	.LVL17:
+ 205:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		LIB_SetKeywordsRam();
+ 126                             		.loc 1 205 0
+ 127 0026 05 00 00 00             		bsr	_LIB_SetKeywordsRam
+ 128                             	.LVL18:
+ 129 002a 2E 06                   		bra	.L11
+ 130                             	.L8:
+ 209:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		CALLBACK_Main_WarmReset();
+ 131                             		.loc 1 209 0
+ 132 002c 05 00 00 00             		bsr	_CALLBACK_Main_WarmReset
+ 133                             	.LVL19:
+ 134                             		.balign 2,3,3
+ 135                             	.L11:
+ 212:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 	if ( CALLBACK_Main_BackupAreaInvalidationRequired() == TRUE )
+ 136                             		.loc 1 212 0
+ 137 0030 05 00 00 00             		bsr	_CALLBACK_Main_BackupAreaInvalidationRequired
+ 138                             	.LVL20:
+ 139 0034 61 11                   		cmp	#1, r1
+ 140 0036 21 06                   		bne	.L7
+ 215:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Backup.c **** 		( void ) LIB_Backup_InvalidateBackupArea();
+ 141                             		.loc 1 215 0
+ 142 0038 04 00 00 00             		bra	_LIB_Backup_InvalidateBackupArea
+ 143                             	.LVL21:
+ 144                             	.L7:
+ 145 003c 02                      		rts
+ 146                             	.LFE2:
+ 148 003d 03                      		.section	.bss.Main_BackupTaskTCB,"aw",@nobits
+ 149                             		.balign 4
+ 152                             	_Main_BackupTaskTCB:
+ 153 0000 00 00 00 00 00 00 00 00 		.zero	44
+ 153      00 00 00 00 00 00 00 00 
+ 153      00 00 00 00 00 00 00 00 
+ 153      00 00 00 00 00 00 00 00 
+ 153      00 00 00 00 00 00 00 00 
+ 154                             		.section	.bss.Main_BackupTaskStack,"aw",@nobits
+ 155                             		.balign 4
+ 158                             	_Main_BackupTaskStack:
+ 159 0000 00 00 00 00 00 00 00 00 		.zero	512
+ 159      00 00 00 00 00 00 00 00 
+ 159      00 00 00 00 00 00 00 00 
+ 159      00 00 00 00 00 00 00 00 
+ 159      00 00 00 00 00 00 00 00 
+ 214                             	.Letext0:
+ 215                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 216                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 217                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_SecurityCheck/LIB_TaskMonitori
+ 218                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_BackUp/LIB_Backup.h"
+ 219                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary/callback.h"
+ 220                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Reset/LIB_Reset.h"
+ 221                             		.file 8 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Main.h"
+ 222                             		.file 9 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_BackUp/LIB_BackupExp.h"
+ 223                             		.file 10 "C:\\Workspace\\FW_Platform2_5\\trunk\\CFG_DishWasher\\CFG_Inertia/TaskMonitor_Cfg.h"

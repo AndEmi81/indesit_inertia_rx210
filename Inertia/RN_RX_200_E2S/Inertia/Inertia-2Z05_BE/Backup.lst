@@ -1,0 +1,237 @@
+   1                             		.file	"Backup.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.Backup_SystemBackup,"ax",@progbits
+   5                             		.global	_Backup_SystemBackup
+   7                             	_Backup_SystemBackup:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Backup.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** Copyright (c) 2004-2009, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /**
+   6:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \defgroup	BackupLibrary  Backup Library
+   7:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** @{
+   8:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \par Description
+   9:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** Backup Library for \ref MainBackup service.
+  10:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** @}
+  11:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \ingroup        MainLibrary
+  12:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** */
+  13:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /**
+  14:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \n
+  15:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \par		    Description
+  16:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \n			    Backup and Restore based on Platfrom library module.
+  17:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \n
+  18:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \file		    Backup.c
+  19:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \ingroup	    MainLibrary
+  20:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \date		    24/01/2011
+  21:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \version	    00.00.00
+  22:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \author		    Roberto Fioravanti
+  23:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \n
+  24:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \n
+  25:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \par\b	History:
+  26:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \n
+  27:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \n 		        00.00.00
+  28:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \n          	24/01/2011
+  29:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \n          	Roberto Fioravanti
+  30:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \n            - Creation
+  31:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \n
+  32:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** */
+  33:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  34:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  35:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* ******** */
+  36:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* Includes */
+  37:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* ******** */
+  38:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  39:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** #include "Main.h"
+  40:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** #include "LIB_Backup.h"
+  41:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  42:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** #include "LIB_Reset.h"
+  43:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  44:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* ****************** */
+  45:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* Defines and Macros */
+  46:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* ****************** */
+  47:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  48:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** #define Backup_EnterCriticalSection()        EnterCriticalSection()
+  49:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  50:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  51:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** #define Backup_ExitCriticalSection()        ExitCriticalSection()
+  52:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  53:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* *************************** */
+  54:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* Typedef, Structs and Unions */
+  55:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* *************************** */
+  56:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  57:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  58:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* ********* */
+  59:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* Variables */
+  60:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* ********* */
+  61:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  62:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  63:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* Static */
+  64:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  65:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* Global */
+  66:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  67:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* ******************** */
+  68:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* Functions Prototypes */
+  69:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* ******************** */
+  70:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  71:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  72:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* *************** */
+  73:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* Function Bodies */
+  74:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* *************** */
+  75:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  76:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /* Exported function */
+  77:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  78:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /**
+  79:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** If _SystemMode is SYSTEM_NORMAL_MODE forces a backup.
+  80:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** If _SystemMode is SYSTEM_PROGRAMMING_MODE or SYSTEM_SAVEREG_PROG_MODE invalidates backup area if ba
+  81:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** If _SystemMode is SYSTEM_SAVEREG_PROG_MODE forces a backup
+  82:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** At the end forces a cold reset.
+  83:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  84:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \param [in] _SystemMode current SystemMode
+  85:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+  86:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** */
+  87:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** void Backup_SystemBackup ( uint8_t _SystemMode )
+  88:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** {
+  10                             		.loc 1 88 0
+  11                             	.LVL0:
+  12 0000 6E 7A                   		pushm	r7-r10
+  13                             	.LCFI0:
+  89:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 	if ( _SystemMode == SYSTEM_NORMAL_MODE )
+  14                             		.loc 1 89 0
+  15 0002 5B 17                   		movu.B	r1, r7
+  16 0004 61 17                   		cmp	#1, r7
+  88:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** {
+  17                             		.loc 1 88 0
+  18 0006 CF 1A                   		mov.B	r1, r10
+  19                             		.loc 1 89 0
+  20 0008 21 08                   		bne	.L2
+  21                             	.LVL1:
+  22                             		.balign 2,3,3
+  23                             	.L7:
+  90:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 	{
+  91:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 		LIB_Backup_ForceBackup();
+  24                             		.loc 1 91 0
+  25 000a 05 00 00 00             		bsr	_LIB_Backup_ForceBackup
+  26                             	.LVL2:
+  27 000e 2E 42                   		bra	.L3
+  28                             	.LVL3:
+  29                             	.L2:
+  92:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 	}
+  93:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 	else
+  94:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 	{
+  95:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 		/* 	_SystemMode == SYSTEM_PROGRAMMING_MODE or
+  96:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 			_SystemMode == SYSTEM_SAVEREG_PROG_MODE */
+  97:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 		Backup_EnterCriticalSection();
+  30                             		.loc 1 97 0
+  31 0010 05 00 00 00             		bsr	_OS_DisableInterrupt
+  32                             	.LVL4:
+  33 0014 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+  34 001a CD 7E 01                		mov.B	1[r7], r14
+  35 001d 62 1E                   		add	#1, r14
+  36 001f C7 7E 01                		mov.B	r14, 1[r7]
+  98:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 		
+  99:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 		if ( LIB_Backup_ChecksumVerify() == TRUE )
+  37                             		.loc 1 99 0
+  38 0022 05 00 00 00             		bsr	_LIB_Backup_ChecksumVerify
+  39                             	.LVL5:
+  40 0026 61 11                   		cmp	#1, r1
+  41 0028 21 06                   		bne	.L4
+ 100:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 		{
+ 101:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 			/* Backup area Invalidation */
+ 102:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 			(void)LIB_Backup_InvalidateBackupArea();
+  42                             		.loc 1 102 0
+  43 002a 05 00 00 00             		bsr	_LIB_Backup_InvalidateBackupArea
+  44                             	.LVL6:
+  45                             		.balign 2,3,5
+  46                             	.L4:
+ 103:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 		}
+ 104:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 		
+ 105:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 		Backup_ExitCriticalSection();
+  47                             		.loc 1 105 0
+  48 002e CD 7E 01                		mov.B	1[r7], r14
+  49 0031 60 1E                   		sub	#1, r14
+  50 0033 C7 7E 01                		mov.B	r14, 1[r7]
+  51 0036 5B EE                   		movu.B	r14, r14
+  52 0038 61 0E                   		cmp	#0, r14
+  53 003a 21 06                   		bne	.L5
+  54                             		.loc 1 105 0 is_stmt 0 discriminator 1
+  55 003c 05 00 00 00             		bsr	_OS_EnableInterrupt
+  56                             	.LVL7:
+  57                             		.balign 2,3,1
+  58                             	.L5:
+ 106:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 	}
+ 107:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 	
+ 108:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 	if((_SystemMode == SYSTEM_PROGRAMMING_MODE) && (LIB_Reset_GetSystemSubMode() == SYSTEM_PROGRAMMING
+  59                             		.loc 1 108 0 is_stmt 1
+  60 0040 5B AA                   		movu.B	r10, r10
+  61 0042 61 2A                   		cmp	#2, r10
+  62 0044 21 0C                   		bne	.L3
+  63                             		.loc 1 108 0 is_stmt 0 discriminator 1
+  64 0046 05 00 00 00             		bsr	_LIB_Reset_GetSystemSubMode
+  65                             	.LVL8:
+  66 004a 5B 11                   		movu.B	r1, r1
+  67 004c 61 11                   		cmp	#1, r1
+  68 004e 20 BC                   		beq	.L7
+  69                             	.LVL9:
+  70                             		.balign 2,3,1
+  71                             	.L3:
+ 109:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 	{
+ 110:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 		LIB_Backup_ForceBackup();
+ 111:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 	}
+ 112:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+ 113:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 	LIB_Reset_SetNewSystemMode ( (SysMode_Type)SYSTEM_NORMAL_MODE );
+  72                             		.loc 1 113 0 is_stmt 1
+  73 0050 66 11                   		mov	#1, r1
+  74 0052 05 00 00 00             		bsr	_LIB_Reset_SetNewSystemMode
+  75                             	.LVL10:
+ 114:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 	LIB_Reset_ForceColdReset();
+ 115:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** }
+  76                             		.loc 1 115 0
+  77 0056 6F 7A                   		popm	r7-r10
+ 114:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 	LIB_Reset_ForceColdReset();
+  78                             		.loc 1 114 0
+  79 0058 04 00 00 00             		bra	_LIB_Reset_ForceColdReset
+  80                             	.LVL11:
+  81                             	.LFE0:
+  83                             		.section	.text.DoRestoreSystem,"ax",@progbits
+  84                             		.global	_DoRestoreSystem
+  86                             	_DoRestoreSystem:
+  87                             	.LFB1:
+ 116:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+ 117:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+ 118:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** /**
+ 119:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** If _SystemMode is SYSTEM_NORMAL_MODE Forces a backup, else invalidates backup area if backup is val
+ 120:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** At the end forces a cold reset.
+ 121:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+ 122:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** Calls LIB_Backup_RestoreManager().
+ 123:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+ 124:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \return bool_t
+ 125:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+ 126:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \retval		TRUE backup data restored
+ 127:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \retval		FALSE backup data not restored because checksum K.O.
+ 128:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+ 129:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \author 	Roberto Fioravanti
+ 130:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \date		Mar 14, 2011
+ 131:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \version	1.0.0
+ 132:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+ 133:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 
+ 134:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** \note		\par \b Note 1:
+ 135:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 			documentation by Roberto Fioravanti
+ 136:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** */
+ 137:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** bool_t DoRestoreSystem ( void )
+ 138:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** {
+  88                             		.loc 1 138 0
+ 139:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Backup.c **** 	return LIB_Backup_RestoreManager();
+  89                             		.loc 1 139 0
+  90 0000 04 00 00 00             		bra	_LIB_Backup_RestoreManager
+  91                             	.LVL12:
+  92                             	.LFE1:
+ 140                             	.Letext0:
+ 141                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 142                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 143                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_BackUp/LIB_BackupExp.h"
+ 144                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_BackUp/LIB_Backup.h"
+ 145                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Reset/LIB_ResetExp.h"
+ 146                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Reset/LIB_Reset.h"

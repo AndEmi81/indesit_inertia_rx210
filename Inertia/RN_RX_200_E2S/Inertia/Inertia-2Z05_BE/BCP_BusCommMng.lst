@@ -1,0 +1,1728 @@
+   1                             		.file	"BCP_BusCommMng.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.BCP_InitChSync,"ax",@progbits
+   5                             		.global	_BCP_InitChSync
+   7                             	_BCP_InitChSync:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM/BCP_BusCommMng.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Copyright (c) 2004-2009, Indesit Company, I.D.D.
+   3:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /**
+   6:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \defgroup	PM_BusCOMM
+   7:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** @{
+   8:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n	  Communication Platform is a Platform2 component providing a communication framework with multi
+   9:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n    All the relevant structures (buffer dimension, buffer sharing,..), priorities and modules (un
+  10:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****       are parametrized and can be changed from the caller application
+  11:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n    Communication Platform is organized in three separated levels:
+  12:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****       \li Communication Manager,
+  13:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****       \li Platform Protocol,
+  14:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****       \li Driver.
+  15:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+  16:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \link CM Communication Manager \endlink and Platform Protocol are part of the Communication Platfor
+  17:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Drivers is another component of Platform2 containing drivers not only related to the commnunication
+  18:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+  19:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n
+  20:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** The mail goal of this component is:
+  21:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \li Platformize this crucial piece of code among all the applications
+  22:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \li Reduce the communication stress on the bus
+  23:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \li Easy way to build an application in partnership that communicate with Indesit I2C Bus
+  24:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+  25:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n
+  26:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n    Bus Communication Platform needs the following Platform 2 components:
+  27:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \li HAL_General: general Hardware Abstraction Layer support.
+  28:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \li MCU-specific HAL: HAL of the target MCU.
+  29:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \li Drivers: peripheral drivers
+  30:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \li PM_Library, Library
+  31:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+  32:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \par Configuration:
+  33:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n
+  34:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n
+  35:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \par Exported Functions:
+  36:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n
+  37:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n
+  38:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+  39:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** @}
+  40:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \ingroup ProductM
+  41:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+  42:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+  43:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /**
+  44:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \defgroup	CM Communication Manager
+  45:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** @{
+  46:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+  47:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \par		Description
+  48:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n      Communication Manager is the application interface of the Bus Communication Platform.
+  49:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n      It can work in two ways:
+  50:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         \li master mode
+  51:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         \li slave mode
+  52:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+  53:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n      Master mode is described in \link CRM  Communication Request Manager \endlink
+  54:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n      Slave mode is described in \ref CP_CSM
+  55:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+  56:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \link CM More... \endlink
+  57:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** @}
+  58:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \ingroup PM_BusCOMM
+  59:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+  60:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+  61:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /**
+  62:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \defgroup CSM Communication Slave Manager
+  63:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \ingroup  CM
+  64:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+  65:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+  66:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+  67:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \par		Description
+  68:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n    Communication Slave Manager is the application interface of Bus Communication Platform workin
+  69:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Features:
+  70:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	\li \ref CSM_SAM
+  71:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	\li \ref CSM_EOSN
+  72:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+  73:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+  74:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /**
+  75:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     \defgroup CRM  Communication Request Manager
+  76:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     \ingroup CM
+  77:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     Communication Slave Manager is the application interface of Bus Communication Platform working 
+  78:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+  79:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+  80:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+  81:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /**
+  82:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n
+  83:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \par		Description
+  84:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		This file is part of the Communication Request Manager and contains the implementations of the 
+  85:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n
+  86:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \file		BCP_BusCommMng.c
+  87:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \ingroup	CM
+  88:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \date		05/05/2009
+  89:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \version	01.00.00
+  90:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \author		Gabriele Merlonghi
+  91:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n
+  92:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n
+  93:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \par		History
+  94:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n 		00.00.75
+  95:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		28/10/2010
+  96:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		Roberto Fioravanti
+  97:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		changes
+  98:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n 		- deleted obsolete code
+  99:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		- updated documentation
+ 100:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n
+ 101:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n 		00.00.43
+ 102:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		28/04/2010
+ 103:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		Roberto Fioravanti
+ 104:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		changes
+ 105:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n 		- BCM_SetPacketRequest (no more available).
+ 106:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n
+ 107:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n 		00.00.38
+ 108:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		08/03/2010
+ 109:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		Roberto Fioravanti
+ 110:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		changes
+ 111:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n 		- CRM_SetPacketParamSync replaces BCM_SetPacketRequest (deprecated).
+ 112:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n
+ 113:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n 		00.00.26
+ 114:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		08/12/2010
+ 115:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		Roberto Fioravanti
+ 116:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		changes
+ 117:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n 		- Doc updated
+ 118:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n
+ 119:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n 		00.00.26
+ 120:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		08/12/2010
+ 121:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		Roberto Fioravanti
+ 122:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		changes
+ 123:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n 		- Unblock Routines updated
+ 124:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n
+ 125:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n 		00.00.14
+ 126:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		23/10/2009
+ 127:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		Gabriele Merlonghi
+ 128:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		changes
+ 129:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n 		- Requests priority in array COMM_MNG(idChannel).PacketReq refered to order defined by applica
+ 130:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n
+ 131:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n 		00.00.12
+ 132:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		08/10/2009
+ 133:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		Gabriele Merlonghi
+ 134:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		changes
+ 135:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n 		- BCP_BusMonitor uses (OCI2C_InitHwSync)
+ 136:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n
+ 137:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n 		00.00.01
+ 138:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		05/05/2009
+ 139:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		Gabriele Merlonghi
+ 140:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		changes
+ 141:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n 		- creation
+ 142:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n		- request manager state machine implementation
+ 143:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \n    	- addiction of methods to set requests
+ 144:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+ 145:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 146:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* ******** */
+ 147:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* Includes */
+ 148:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* ******** */
+ 149:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 150:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #include <string.h>
+ 151:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 152:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 153:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #include "OCI2C_drv.h"
+ 154:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #include "BusCommPltf_cfg.h"
+ 155:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #include "BCP_BusCommMng.h"
+ 156:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 157:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 158:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 159:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 160:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* ****************** */
+ 161:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* Defines and Macros */
+ 162:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* ****************** */
+ 163:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 164:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /** \addtogroup CRM
+ 165:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   @{
+ 166:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+ 167:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 168:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 169:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 170:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /** @name Requests Management
+ 171:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   @{
+ 172:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+ 173:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #define CP_REQ_COMPLETED_OK    0xFF    /**< requests array value for successfully completed request
+ 174:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #define CP_REQ_COMPLETED_KO    0xFE    /**< requests array value for unsuccessfully completed reque
+ 175:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #define CP_REQ_TIMEOUT_KO      0xFD    /**< requests array value for unsuccessfully completed reque
+ 176:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #define CP_REQ_PENDING      0x01    /**< requests array value for pending request*/
+ 177:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /*@}*/
+ 178:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 179:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /** Request manager state machine states*/
+ 180:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** enum eCRM_States
+ 181:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 182:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	COMM_PERIPHERAL_INIT=0,
+ 183:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	COMM_INIT,
+ 184:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	COMM_IDLE,
+ 185:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	COMM_PHYSICAL_LAYER_ACCESS,
+ 186:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	COMM_PHYSICAL_LAYER_MNG,
+ 187:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	COMM_REPETITION_MNG,
+ 188:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	COMM_REPETITION_TIMED
+ 189:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** };
+ 190:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /*@} addtogroup CRM */
+ 191:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 192:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 193:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* *************************** */
+ 194:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* Typedef, Structs and Unions */
+ 195:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* *************************** */
+ 196:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 197:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 198:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /**
+ 199:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****  * Communication Request Manager Class
+ 200:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****  */
+ 201:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #if BCP_MASTER_SUPPORT == TRUE
+ 202:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** typedef struct BCM_Data_tag
+ 203:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 204:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	uint16_t  timeout;          		/* calcolo del timeout da impostare sul contatore per eseguire la ri
+ 205:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	uint8_t  PendingReqState;
+ 206:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	struct
+ 207:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	{
+ 208:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		uint8_t  MasterDisable  :1;
+ 209:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		uint8_t  ReqPending     :1;
+ 210:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		uint8_t  TxTimeout      :3;    /*  1: Timeouted request (busy)
+ 211:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		                                    2: Timeouted request (duration)
+ 212:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		                                    3: Repetitions
+ 213:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		                                */
+ 214:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		uint8_t  Rebuild        :1;     /* rebuild forced */
+ 215:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		uint8_t  DontValidate   :1;
+ 216:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		uint8_t                 :1;
+ 217:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	} flag;
+ 218:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 219:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	uint8_t  PacketReq[BCM_REQ_NUM];    /* il numero di richieste su un determinato canale dipende dal
+ 220:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 221:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	uint8_t  comm_repetitions; 			/* ripetizioni rimanenti */
+ 222:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 223:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	uint8_t  PacketReqCurrentIndex; 	/* indice richiesta corrente */
+ 224:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	IO_ChannelType  idBoard;          	/* current board id */
+ 225:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	BCP_PacketOptionType CurrentOption;	/* current option */
+ 226:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }CRM_ClassType;
+ 227:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #endif
+ 228:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 229:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 230:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* ********* */
+ 231:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* Variables */
+ 232:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* ********* */
+ 233:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 234:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* Exported */
+ 235:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #if BCP_MASTER_SUPPORT == TRUE
+ 236:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /*Master Request variable*/
+ 237:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** CRM_ClassType CommMng[TOTAL_CHANNELS];
+ 238:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #endif
+ 239:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 240:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** CM_Err_ClassType CommErr[TOTAL_CHANNELS][BCP_COUNTERS_NUM];
+ 241:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 242:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* Static */
+ 243:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 244:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 245:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 246:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 247:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 248:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* ******************* */
+ 249:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* Functions Prototype */
+ 250:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* ******************* */
+ 251:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 252:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 253:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 254:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* *************** */
+ 255:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* Function Bodies */
+ 256:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* *************** */
+ 257:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 258:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* Exported function */
+ 259:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /**
+ 260:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Initialization of the CP channel (protocol and CRM state machine).
+ 261:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 262:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** If slave mode only call to this function can be omitted.
+ 263:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 264:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param [in]   ch channel index (must be ch < BCP_CH_NUM)
+ 265:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 266:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \return   IO_ErrorType
+ 267:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 268:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \retval   IO_E_OK initialization successfully completed.
+ 269:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \retval   IO_E_INVALID_CHANNEL_ID wrong value for ch (maybe ch >= BCP_CH_NUM)
+ 270:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 271:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \par Example
+ 272:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \code
+ 273:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	BCP_InitChSync(BCP_I2C_CH_ID);
+ 274:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \endcode
+ 275:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 276:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \warning
+ 277:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 278:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \note
+ 279:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 280:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \version		1.0.0
+ 281:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \date 			30/dec/2009
+ 282:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \author			Roberto Fioravanti
+ 283:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 284:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+ 285:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** IO_ErrorType BCP_InitChSync(IO_ChannelType ch)
+ 286:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+  10                             		.loc 1 286 0
+  11                             	.LVL0:
+ 287:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   if(ch>=(IO_ChannelType)BCP_CH_NUM)
+  12                             		.loc 1 287 0
+  13 0000 5B 11                   		movu.B	r1, r1
+  14 0002 61 11                   		cmp	#1, r1
+  15 0004 25 07                   		bleu	.L3
+ 288:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   {
+ 289:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+  16                             		.loc 1 289 0
+  17 0006 75 41 12                		mov	#18, r1
+  18                             	.LVL1:
+  19 0009 2E 05                   		bra	.L2
+  20                             	.L3:
+ 290:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   }
+ 291:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 292:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #if BCP_MASTER_SUPPORT == TRUE
+ 293:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	CommMng[ch].PendingReqState = COMM_PERIPHERAL_INIT;
+ 294:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	CommMng[ch].PacketReqCurrentIndex=0xFF; /* Empty request */
+ 295:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	return PP_InitChSync(ch);
+ 296:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #else
+ 297:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   return (IO_ErrorType)IO_E_OK;
+  21                             		.loc 1 297 0
+  22 000b 66 01                   		mov	#0, r1
+  23 000d 03                      		.balign 2,3,2
+  24                             	.L2:
+ 298:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #endif
+ 299:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }
+  25                             		.loc 1 299 0
+  26 000e 75 21 12                		and	#18, r1
+  27 0011 02                      		rts
+  28                             	.LFE0:
+  30                             		.section	.text.BCM_CountersUpdater,"ax",@progbits
+  31                             		.global	_BCM_CountersUpdater
+  33                             	_BCM_CountersUpdater:
+  34                             	.LFB1:
+ 300:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 301:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /**
+ 302:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Disables the Communication Request Manager for a specified channel.
+ 303:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** This method can be used to inhibit requests .
+ 304:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 305:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param [in] 	idChannel Index of the channel to be initialized.
+ 306:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 307:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \attention global variables used:
+ 308:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** - CommMng
+ 309:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 310:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \return 	void
+ 311:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 312:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \warning	[Type warnings]
+ 313:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 314:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \author 	Roberto Fioravanti
+ 315:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \date			20/Apr/2009
+ 316:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \version	1.0.0
+ 317:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 318:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \bug		[Type bugs]
+ 319:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 320:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \note		\par \b Note 1:
+ 321:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			documentation by: Roberto Fioravanti
+ 322:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			\par \b Note 2:
+ 323:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Available only if BCP_MASTER_SUPPORT == TRUE
+ 324:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 325:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \public \memberof CRM_ClassType
+ 326:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+ 327:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #if BCP_MASTER_SUPPORT == TRUE
+ 328:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** void BCM_MasterDisable(IO_ChannelType idChannel)
+ 329:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 330:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	CommMng[idChannel].flag.MasterDisable = TRUE;
+ 331:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }
+ 332:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #endif
+ 333:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 334:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /**
+ 335:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Allows to verify the state of the specified request id.
+ 336:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** it changes the status of the request in order that all calls to this method,
+ 337:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** before any call to BCM_SetChannelRequest method, return IO_E_NOT_QUEUED
+ 338:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 339:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param [in]		idChannel CP channel
+ 340:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param [in] 	idRequest Request index
+ 341:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 342:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 343:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \attention global variables used:
+ 344:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** - CommMng (R/W)
+ 345:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 346:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \return 	IO_ErrorType
+ 347:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 348:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \retval     IO_E_OK
+ 349:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Request completed with success.
+ 350:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \retval     IO_E_ALREADY_PENDING
+ 351:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Request already pending
+ 352:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \retval     IO_E_NOT_QUEUED
+ 353:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Request not queued
+ 354:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \retval     IO_E_FAIL
+ 355:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Request not completed or completed with error.
+ 356:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 357:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \warning	[Type warnings]
+ 358:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 359:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \author 	Roberto Fioravanti
+ 360:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \date		20/Apr/2009
+ 361:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \version	1.0.0
+ 362:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 363:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \bug		[Type bugs]
+ 364:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 365:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \note		\par \b Note 1:
+ 366:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			documentation by: Roberto Fioravanti
+ 367:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			\par \b Note n:
+ 368:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 369:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \public \memberof CRM_ClassType
+ 370:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+ 371:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #if BCP_MASTER_SUPPORT == TRUE
+ 372:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** IO_ErrorType BCM_TestRequest(IO_ChannelType idChannel, BCM_RequestType idRequest)
+ 373:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 374:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	IO_ErrorType ret;
+ 375:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 376:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	switch (CommMng[idChannel].PacketReq[idRequest])
+ 377:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	{
+ 378:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	case CP_REQ_PENDING:
+ 379:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	  return (IO_ErrorType)IO_E_ALREADY_PENDING;
+ 380:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 381:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	case CP_REQ_COMPLETED_OK:
+ 382:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	  /* request has been completed without error*/
+ 383:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	  ret = (IO_ErrorType)IO_E_OK;
+ 384:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	  break;
+ 385:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 386:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	case CP_REQ_COMPLETED_KO:
+ 387:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	  /* the request has been completed with error */
+ 388:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	  ret = (IO_ErrorType)IO_E_FAIL;
+ 389:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	  break;
+ 390:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 391:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	case CP_REQ_TIMEOUT_KO:
+ 392:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		/* the request has been completed with error */
+ 393:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		ret = (IO_ErrorType)IO_E_TIMEOUT_EXPIRED;
+ 394:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		break;
+ 395:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 396:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	default:
+ 397:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	  /* not queued request */
+ 398:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	  ret = (IO_ErrorType)IO_E_NOT_QUEUED;
+ 399:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	}
+ 400:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 401:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	CommMng[idChannel].PacketReq[idRequest] = FALSE;
+ 402:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	return ret;
+ 403:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }
+ 404:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #endif
+ 405:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 406:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 407:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 408:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 409:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 410:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /**
+ 411:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Check for valid request without changing its current status.
+ 412:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 413:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param [in] 	idRequest Request index. The value for this parameter must satisfy the condition:
+ 414:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 0 <= idRequest < BCM_REQ_NUM
+ 415:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param [in] 	ch CP channel index. The value for this parameter must satisfy the condition:
+ 416:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 0 <= ch < TOTAL_CHANNELS
+ 417:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 418:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \retval     IO_E_INVALID_CHANNEL_ID
+ 419:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** out of range for input param (idRequest or ch).
+ 420:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** One of the following condition are not satisfied.
+ 421:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 0 <= idRequest < BCM_REQ_NUM
+ 422:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 0 <= ch < TOTAL_CHANNELS
+ 423:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 424:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \attention global variables used:
+ 425:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** - CommMng (R)
+ 426:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 427:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \return 	IO_ErrorType
+ 428:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 429:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \retval     IO_E_OK
+ 430:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Request successfully completed
+ 431:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \retval     IO_E_NOT_QUEUED
+ 432:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** not queued or not valid request
+ 433:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 434:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 435:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 436:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \warning	[Type warnings]
+ 437:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 438:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \author 	Roberto Fioravanti
+ 439:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \date		  26/Feb/2010
+ 440:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \version	0.0.0
+ 441:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 442:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \bug		[Type bugs]
+ 443:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 444:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \note		\par \b Note 1:
+ 445:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			documentation by: Roberto Fioravanti
+ 446:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			\par \b Note n:
+ 447:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 448:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \public \memberof CRM_ClassType
+ 449:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+ 450:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #if BCP_MASTER_SUPPORT == TRUE
+ 451:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** IO_ErrorType CRM_IsPacketRequestSync(IO_ChannelType ch, BCM_RequestType idRequest)
+ 452:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 453:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 454:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   if(ch >= TOTAL_CHANNELS)
+ 455:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   {
+ 456:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 457:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   }
+ 458:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 459:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   if(idRequest >= BCM_REQ_NUM)
+ 460:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   {
+ 461:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 462:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   }
+ 463:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 464:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   if (CommMng[ch].PacketReq[idRequest]) /* check for already pending requests */
+ 465:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   {
+ 466:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	  return (IO_ErrorType)IO_E_OK;
+ 467:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   }
+ 468:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 469:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   return (IO_ErrorType)IO_E_NOT_QUEUED;
+ 470:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }
+ 471:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #endif
+ 472:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 473:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /**
+ 474:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Inserts the specified request in the queue of the specified CP channel.
+ 475:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 476:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param [in] 	idRequest Request index. The value for this param must satisfy the condition:
+ 477:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 0 <= idRequest < BCM_REQ_NUM
+ 478:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param [in] 	ch channel index. The value for this param must satisfy the condition:
+ 479:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 0 <= ch < TOTAL_CHANNELS
+ 480:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 481:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \attention global variables used:
+ 482:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** - CommMng (R/W)
+ 483:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 484:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \return 	IO_ErrorType
+ 485:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 486:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \retval     IO_E_OK
+ 487:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Request successfully completed
+ 488:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \retval     IO_E_ALREADY_PENDING
+ 489:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Already pending request
+ 490:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 491:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \retval     IO_E_INVALID_CHANNEL_ID
+ 492:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** out of range for input param (idRequest or ch).
+ 493:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** One of the following condition are not satisfied.
+ 494:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 0 <= idRequest < BCM_REQ_NUM
+ 495:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 0 <= ch < TOTAL_CHANNELS
+ 496:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 497:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 498:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \warning	[Type warnings]
+ 499:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 500:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \author 	Roberto Fioravanti
+ 501:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \date		  26/Feb/2010
+ 502:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \version	0.0.0
+ 503:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 504:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \bug		[Type bugs]
+ 505:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 506:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \todo		[To do action]
+ 507:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 508:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \note		\par \b Note 1:
+ 509:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			documentation by: Roberto Fioravanti
+ 510:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			\par \b Note n:
+ 511:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 512:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \public \memberof CRM_ClassType
+ 513:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+ 514:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #if BCP_MASTER_SUPPORT == TRUE
+ 515:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** IO_ErrorType CRM_SetPacketRequestSync(IO_ChannelType ch, BCM_RequestType idRequest)
+ 516:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 517:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 518:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* check for already pending requests */
+ 519:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 520:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   if(ch >= TOTAL_CHANNELS)
+ 521:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   {
+ 522:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 523:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   }
+ 524:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 525:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   if(idRequest >= BCM_REQ_NUM)
+ 526:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   {
+ 527:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 528:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   }
+ 529:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 530:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   if (CommMng[ch].PacketReq[idRequest]) /* check for already pending requests */
+ 531:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   {
+ 532:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	  return (IO_ErrorType)IO_E_ALREADY_PENDING;
+ 533:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   }
+ 534:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 535:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   CommMng[ch].PacketReq[idRequest] = CP_REQ_PENDING;
+ 536:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 537:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   CommMng[ch].flag.ReqPending = TRUE;
+ 538:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 539:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   return (IO_ErrorType)IO_E_OK;
+ 540:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }
+ 541:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #endif
+ 542:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 543:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 544:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 545:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 546:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /**
+ 547:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Sets the parameters for the specified request.
+ 548:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** This parameters passed by this function will be processed by the Platform Protocol to build the the
+ 549:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 550:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param [in] 	idRequest Request index.
+ 551:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param [in] 	pParam pointer to the paramenters
+ 552:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param [in] 	len size in byte of the paramenters.
+ 553:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 554:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \attention global variables used:
+ 555:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** - CommMng
+ 556:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 557:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \return 	IO_ErrorType
+ 558:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 559:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \retval     IO_E_OK
+ 560:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Request successfully completed
+ 561:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \retval     IO_E_NOT_QUEUED
+ 562:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Already pending request
+ 563:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 564:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 565:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \warning	[Type warnings]
+ 566:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 567:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \author 	Roberto Fioravanti
+ 568:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \date		26/Feb/2010
+ 569:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \version	1.0.0
+ 570:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 571:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \bug		[Type bugs]
+ 572:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 573:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \note		\par \b Note 1:
+ 574:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			documentation by: Roberto Fioravanti
+ 575:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			\par \b Note n:
+ 576:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 577:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \public \memberof CRM_ClassType
+ 578:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+ 579:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #if BCP_MASTER_SUPPORT == TRUE
+ 580:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** IO_ErrorType CRM_SetPacketParamSync(IO_ChannelType ch, BCM_RequestType idRequest, void * pParam, IO
+ 581:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 582:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 583:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   IO_ChannelType idProtReq = BCM_MasterRequestTable[idRequest].PPReqIndex; /* get index in the prot
+ 584:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 585:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   return PP_MasterSetParamRequestSync(ch, idProtReq, pParam, len);
+ 586:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }
+ 587:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #endif
+ 588:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 589:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /**
+ 590:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Removes the specified request from the queue.
+ 591:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param [in] 	idChannel CP Channel.
+ 592:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param [in] 	idRequest Request index.
+ 593:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 594:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \attention global variables used:
+ 595:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** - CommMng (R/W)
+ 596:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 597:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \return 	void
+ 598:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 599:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \warning	[Type warnings]
+ 600:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 601:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \author 	Gabriele Merlonghi, Roberto Fioravanti
+ 602:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \date		20/Mar/2010
+ 603:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \version	00.00.35
+ 604:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 605:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \bug		[Type bugs]
+ 606:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 607:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \note		\par \b Note 1:
+ 608:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			documentation by: Roberto Fioravanti
+ 609:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			\par \b Note n:
+ 610:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 611:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \public \memberof CRM_ClassType
+ 612:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+ 613:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #if BCP_MASTER_SUPPORT == TRUE
+ 614:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** void BCM_KillPacketRequest(IO_ChannelType idChannel, BCM_RequestType idRequest)
+ 615:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 616:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 617:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   CommMng[idChannel].PacketReq[idRequest] = FALSE;
+ 618:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   CommMng[idChannel].PacketReqCurrentIndex = 0xFF;
+ 619:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }
+ 620:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #endif
+ 621:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 622:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 623:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /**
+ 624:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Executes the Communication Request Manager state machine of the specified channel.
+ 625:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 626:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param [in] 	idChannel Index of the channel.
+ 627:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 628:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 629:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \attention global variables used:
+ 630:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** - CommMng (R/W)
+ 631:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 632:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \return 	void
+ 633:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 634:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \warning	[Type warnings]
+ 635:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 636:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \author 	Roberto Fioravanti
+ 637:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \date		16/Apr/2010
+ 638:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \version	1.0.0
+ 639:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 640:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \bug		[Type bugs]
+ 641:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 642:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \note		\par \b Note 1:
+ 643:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			documentation by: Roberto Fioravanti
+ 644:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			\par \b Note n:
+ 645:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 646:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \public \memberof CRM_ClassType
+ 647:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+ 648:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #if BCP_MASTER_SUPPORT == TRUE
+ 649:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** void BCM_RequestManager(uint8_t idChannel)
+ 650:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 651:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	CRM_ClassType* pCommMng = &CommMng[idChannel];
+ 652:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 653:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 654:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	switch(pCommMng->PendingReqState)
+ 655:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	{
+ 656:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	case COMM_PERIPHERAL_INIT:
+ 657:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	{
+ 658:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		IO_PhyInitSyncType drvParam={0};
+ 659:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 660:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		drvParam.eventCB=PP_SlaveNotification;
+ 661:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		drvParam.id=idChannel;
+ 662:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 663:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		pCommMng->flag.TxTimeout=0;
+ 664:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		pCommMng->PacketReqCurrentIndex = 0xFF;
+ 665:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 666:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 667:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		(void)PP_InitChSync(idChannel); 				/* TODO: check ret val */
+ 668:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 669:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		/* physical channel initialization */
+ 670:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		(void)(IO_PhyInitSync)(BCP_ChannelTable[idChannel].InitSync)(&drvParam);
+ 671:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	}
+ 672:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     /* -fallthrough */
+ 673:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     case COMM_INIT:
+ 674:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		DISABLE_TIMER;									/* disable timer */
+ 675:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		pCommMng->flag.TxTimeout=0;
+ 676:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		pCommMng->PendingReqState = COMM_IDLE;
+ 677:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 678:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     /* -fallthrough */
+ 679:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     case COMM_IDLE:
+ 680:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 681:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		if ((pCommMng->flag.ReqPending == FALSE) ||
+ 682:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			(pCommMng->flag.MasterDisable))
+ 683:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		{
+ 684:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			break;
+ 685:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			/* exit because:
+ 686:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			 * - no requests
+ 687:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			 * - master disabled
+ 688:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			 */
+ 689:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		}
+ 690:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****       /*  SET_TIMER_VAL(COMM_TIMEOUT); */
+ 691:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 692:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	/* -fallthrough */
+ 693:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     case COMM_PHYSICAL_LAYER_ACCESS:
+ 694:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		if ((bool_t)IS_TIMER_EXPIRED)
+ 695:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		{
+ 696:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			/* communication timeout has expired:
+ 697:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			 * then unlock the peripheral
+ 698:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			 */
+ 699:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			if(pCommMng->flag.TxTimeout == 2)
+ 700:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			{
+ 701:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				pCommMng->PendingReqState = COMM_PERIPHERAL_INIT;
+ 702:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				break;
+ 703:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			}
+ 704:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		}
+ 705:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 706:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		/*communication scheduler (lower array index means higher priority)*/
+ 707:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		{
+ 708:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			uint8_t i, noReq = TRUE;
+ 709:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			IO_ChannelType indexReq;
+ 710:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			IO_ChannelType idProtReq;
+ 711:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 712:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			CommDriverParamType param={0};
+ 713:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 714:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			for (i=0; i<sizeof(pCommMng->PacketReq); i++)
+ 715:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			{
+ 716:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				indexReq = pCommMng->PacketReq[i];
+ 717:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				if ((indexReq > 0) && (indexReq < 0xFE))
+ 718:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				{
+ 719:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					noReq = FALSE;
+ 720:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					break;  /* exit for-cycle */
+ 721:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				}
+ 722:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			}
+ 723:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 724:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			if (noReq == TRUE)
+ 725:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			{
+ 726:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				pCommMng->flag.ReqPending = FALSE;
+ 727:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				pCommMng->PendingReqState= COMM_IDLE;
+ 728:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				pCommMng->PacketReqCurrentIndex = 0xFF;
+ 729:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				pCommMng->CurrentOption = 0;
+ 730:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				break;   /* exit case COMM_PHYSICAL_LAYER_ACCESS */
+ 731:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			}
+ 732:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			/* prepare request*/
+ 733:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 734:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 735:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			indexReq = i;
+ 736:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 737:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			/* update the current idBoard */
+ 738:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			pCommMng->idBoard = BCM_MasterRequestTable[indexReq].idBoard;
+ 739:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			/* id Protocol Request */
+ 740:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			idProtReq = BCM_MasterRequestTable[indexReq].PPReqIndex;
+ 741:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 742:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #ifdef CP_PRE_BUILD_REQUEST_CB
+ 743:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			if(CP_PRE_BUILD_REQUEST_CB(idChannel, (PP_MasterProtocolTableType *) &PP_MasterProtocolTable[idP
+ 744:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			{
+ 745:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				pCommMng->flag.DontValidate=1;
+ 746:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				pCommMng->PacketReqCurrentIndex=indexReq;			
+ 747:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			}
+ 748:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			else
+ 749:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #endif
+ 750:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			{
+ 751:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			    pCommMng->flag.DontValidate=0;
+ 752:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				/* Prepare request parameters */
+ 753:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				(void)PP_MasterPrepareRequest(idProtReq, idChannel, &param);
+ 754:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 755:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				if( (pCommMng->PacketReqCurrentIndex == 0xFF) ||   			/* current request empty */
+ 756:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					(pCommMng->PacketReqCurrentIndex != indexReq)	||		/* current request changed */
+ 757:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					(pCommMng->flag.Rebuild)
+ 758:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				)
+ 759:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				{
+ 760:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					/* build is request */
+ 761:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 762:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					pCommMng->PacketReqCurrentIndex=indexReq;
+ 763:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 764:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					pCommMng->CurrentOption = (&PP_MasterProtocolTable[idProtReq])->option;
+ 765:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					pCommMng->flag.TxTimeout=0;
+ 766:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					pCommMng->flag.Rebuild=0;
+ 767:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					DISABLE_TIMER;
+ 768:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 769:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 770:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					(void)PP_PrepareRequest(param.buffer, &PP_MasterProtocolTable[idProtReq]);
+ 771:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				}
+ 772:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				else 																/* build is not request */
+ 773:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				if (pCommMng->flag.TxTimeout == 3)
+ 774:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				{
+ 775:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					if(IS_TIMER_NOT_EXPIRED)		/* Timer is not expired */
+ 776:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					{
+ 777:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 						break;
+ 778:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					}
+ 779:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					else
+ 780:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					{
+ 781:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 						pCommMng->flag.TxTimeout = 0;
+ 782:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					}
+ 783:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				}
+ 784:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 785:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				/* calculate length */
+ 786:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				param.len = PP_GetRequestLen(param.buffer, (PP_MasterProtocolTableType *) &PP_MasterProtocolTab
+ 787:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 788:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				/* address resolution*/
+ 789:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				param.slaveAddress =  PP_GetSlaveAddress(pCommMng->idBoard, (PP_MasterProtocolTableType *) &PP_
+ 790:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 791:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				/* Start driver request*/
+ 792:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				if ( PP_StartDriverRequestSync(idChannel, &param) != (IO_ErrorType)IO_E_WORKING)
+ 793:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				{
+ 794:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				    
+ 795:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					//pCommMng->PendingReqState = COMM_PHYSICAL_LAYER_ACCESS;
+ 796:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					
+ 797:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					if( pCommMng->CurrentOption & PRT_OPTION_TIMEOUTED )
+ 798:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         			{
+ 799:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         				if( pCommMng->flag.TxTimeout != 1 )
+ 800:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         				{
+ 801:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 802:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         					SET_TIMER_VAL(CP_MASTER_ATTEMPTS_TIMEOUT);
+ 803:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         					/* timeout started */
+ 804:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         					pCommMng->flag.TxTimeout = 1;
+ 805:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         				}
+ 806:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 807:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         				if (IS_TIMER_EXPIRED)
+ 808:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         				{
+ 809:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         					pCommMng->PendingReqState = COMM_PERIPHERAL_INIT;
+ 810:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         					pCommMng->PacketReq[pCommMng->PacketReqCurrentIndex] = CP_REQ_TIMEOUT_KO;
+ 811:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         					pCommMng->PacketReqCurrentIndex = 0xFF;
+ 812:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         				} else
+ 813:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         				{
+ 814:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         					pCommMng->PendingReqState = COMM_PHYSICAL_LAYER_ACCESS;
+ 815:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         				}
+ 816:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         			}
+ 817:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 										
+ 818:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					break;  /* bus busy, exit retry next loop */
+ 819:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				}
+ 820:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				else
+ 821:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				{
+ 822:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					BCM_CountersUpdater(idChannel, BCP_PACKET_NUM_ALL_CNT);
+ 823:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				}
+ 824:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 825:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				/* request successfully started */
+ 826:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 827:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 828:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				if(!pCommMng->flag.TxTimeout)
+ 829:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				{
+ 830:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					/* Start timeout if not already running */
+ 831:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					SET_TIMER_VAL(CP_MASTER_TIMEOUT_REQUEST);
+ 832:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					pCommMng->flag.TxTimeout=2;
+ 833:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				}
+ 834:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			}
+ 835:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			/*next loop wait for result */
+ 836:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			pCommMng->PendingReqState=COMM_PHYSICAL_LAYER_MNG;
+ 837:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		}
+ 838:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	/* -fallthrough */
+ 839:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	case COMM_PHYSICAL_LAYER_MNG:		
+ 840:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		
+ 841:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		
+ 842:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		switch (PP_GetEsit(idChannel))
+ 843:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		{
+ 844:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			/* Protocol Errors */
+ 845:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		case IO_E_ACK_PP:
+ 846:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		    PP_MasterValidateAnswer(idChannel);
+ 847:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			pCommMng->PacketReq[pCommMng->PacketReqCurrentIndex] = CP_REQ_COMPLETED_KO;
+ 848:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			pCommMng->PendingReqState = COMM_IDLE;
+ 849:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			pCommMng->PacketReqCurrentIndex=0xFF;
+ 850:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     		pCommMng->flag.TxTimeout = 0;
+ 851:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			BCM_OnRequestCompleted(idChannel);
+ 852:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     	break;
+ 853:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	
+ 854:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		case IO_E_OK:
+ 855:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		{	
+ 856:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		    IO_ErrorType err = IO_E_OK;
+ 857:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		    if(pCommMng->flag.DontValidate==1)
+ 858:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		    {
+ 859:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		        err = IO_E_OK;
+ 860:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		    } else
+ 861:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		    {
+ 862:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		        err = PP_MasterValidateAnswer(idChannel);
+ 863:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		    }
+ 864:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		    
+ 865:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		    
+ 866:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		    if((IO_E_OK == err ) || (IO_E_ACK_PP == err ) )
+ 867:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****  		    {
+ 868:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****  		    
+ 869:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****  		        if(IO_E_OK == err )
+ 870:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****  		        {
+ 871:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****  		            pCommMng->PacketReq[pCommMng->PacketReqCurrentIndex] = CP_REQ_COMPLETED_OK;    
+ 872:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****  		        } else if(IO_E_ACK_PP == err )
+ 873:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****  		        {
+ 874:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****  		            pCommMng->PacketReq[pCommMng->PacketReqCurrentIndex] = CP_REQ_COMPLETED_KO;
+ 875:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****  		        }
+ 876:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   		        
+ 877:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     			pCommMng->PacketReqCurrentIndex=0xFF;
+ 878:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     			pCommMng->flag.TxTimeout = 0;
+ 879:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     			pCommMng->PendingReqState = COMM_IDLE;
+ 880:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     			
+ 881:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     			BCM_OnRequestCompleted(idChannel);
+ 882:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     			
+ 883:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     			DISABLE_TIMER;
+ 884:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     			break;
+ 885:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		    }
+ 886:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		    /* else IO_E_CHECK_PP is returned, then */
+ 887:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		}
+ 888:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         case IO_E_CHECK_PP:
+ 889:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****             pCommMng->flag.Rebuild=1;
+ 890:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****             BCM_OnRequestCompleted(idChannel);
+ 891:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		/* Peripheral Errors */
+ 892:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		case IO_E_OV_AL:
+ 893:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		case IO_E_ACK_BUS:
+ 894:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 895:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			if( !(pCommMng->CurrentOption & PRT_OPTION_TIMEOUTED) )
+ 896:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			{
+ 897:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				pCommMng->PendingReqState = COMM_REPETITION_MNG;
+ 898:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				break;
+ 899:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			}
+ 900:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		/* Peripheral Busy */
+ 901:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		case IO_E_BUSY:
+ 902:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			if( pCommMng->CurrentOption & PRT_OPTION_TIMEOUTED )
+ 903:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			{
+ 904:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				if( pCommMng->flag.TxTimeout != 1 )
+ 905:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				{
+ 906:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 907:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					SET_TIMER_VAL(CP_MASTER_ATTEMPTS_TIMEOUT);
+ 908:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					/* timeout started */
+ 909:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					pCommMng->flag.TxTimeout = 1;
+ 910:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				}
+ 911:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 912:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				if (IS_TIMER_EXPIRED)
+ 913:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				{
+ 914:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					pCommMng->PendingReqState = COMM_PERIPHERAL_INIT;
+ 915:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					pCommMng->PacketReq[pCommMng->PacketReqCurrentIndex] = CP_REQ_TIMEOUT_KO;
+ 916:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					pCommMng->PacketReqCurrentIndex = 0xFF;
+ 917:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				} else
+ 918:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				{
+ 919:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					pCommMng->PendingReqState = COMM_PHYSICAL_LAYER_ACCESS;
+ 920:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				}
+ 921:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			}
+ 922:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			else
+ 923:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			{
+ 924:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				pCommMng->PendingReqState=COMM_IDLE;
+ 925:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			}
+ 926:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		break;
+ 927:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		/* working good */
+ 928:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		case IO_E_WORKING:
+ 929:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		default:
+ 930:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		  /* test if comm timeout has expired */
+ 931:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 932:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			if (IS_TIMER_EXPIRED)
+ 933:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			{
+ 934:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				/*comm timeout has expired: reason could be the slave or anomalous behavior of the bus
+ 935:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				* unlock the peripheral */
+ 936:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				pCommMng->PendingReqState = COMM_PERIPHERAL_INIT;
+ 937:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 938:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				if( pCommMng->CurrentOption & PRT_OPTION_TIMEOUTED )
+ 939:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				{
+ 940:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 					pCommMng->PacketReq[pCommMng->PacketReqCurrentIndex] = CP_REQ_TIMEOUT_KO;
+ 941:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				}
+ 942:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 943:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 				pCommMng->PacketReqCurrentIndex = 0xFF;
+ 944:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 945:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			}
+ 946:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			break;
+ 947:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		}
+ 948:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		break;
+ 949:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 950:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	case COMM_REPETITION_MNG:
+ 951:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		++pCommMng->comm_repetitions;
+ 952:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		pCommMng->comm_repetitions %= CP_MASTER_NUM_REPETITIONS_PER_ATTEMPS;
+ 953:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		if (!pCommMng->comm_repetitions)
+ 954:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		{
+ 955:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			pCommMng->timeout = minValue(CP_MASTER_MAX_DELAY_ATTEMPTS,(pCommMng->timeout+CP_MASTER_STEP_DELA
+ 956:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			pCommMng->flag.TxTimeout = 3;
+ 957:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			SET_TIMER_VAL(pCommMng->timeout);
+ 958:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		}
+ 959:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		else
+ 960:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		{
+ 961:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			DISABLE_TIMER;
+ 962:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			pCommMng->flag.TxTimeout=0;
+ 963:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		}
+ 964:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		pCommMng->PendingReqState=COMM_IDLE;
+ 965:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		break;
+ 966:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   }
+ 967:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }
+ 968:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #endif
+ 969:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 970:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 971:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 972:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 973:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 974:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 975:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 976:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 977:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* Local Functions */
+ 978:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 979:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 980:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /**
+ 981:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Increment of communication error counters
+ 982:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 983:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param [in] 	idChannel Physical channel communication identifier (ie: i2c, uart, spi, etc..) see CH
+ 984:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param [in] 	idError Error code id
+ 985:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 986:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \attention global variables used:
+ 987:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** - CommErr (R/W)
+ 988:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 989:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \return 	void
+ 990:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 991:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \warning	[Type warnings]
+ 992:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 993:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \author 	Gabriele Merlonghi
+ 994:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \date		20/Apr/2009
+ 995:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \version	1.0.0
+ 996:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 997:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \bug		[Type bugs]
+ 998:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+ 999:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \note		\par \b Note 1:
+1000:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			documentation by: Roberto Fioravanti
+1001:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			\par \b Note n:
+1002:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1003:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \private \memberof CM_Err_ClassType
+1004:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+1005:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1006:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** void BCM_CountersUpdater(IO_ChannelType idChannel, IO_ErrorType idError)
+1007:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+  35                             		.loc 1 1007 0
+  36                             	.LVL2:
+1008:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	if (CommErr[idChannel][idError] < 0xFFFF)
+  37                             		.loc 1 1008 0
+  38 0000 5B 11                   		movu.B	r1, r1
+  39 0002 5B 22                   		movu.B	r2, r2
+  40 0004 63 91                   		mul	#9, r1
+  41                             	.LVL3:
+  42 0006 4B 21                   		add	r2, r1
+  43 0008 FB E2 00 00 00 00       		mov.L	#_CommErr, r14
+  44 000e FE 51 E4                		mov.W	[r1,r14], r4
+  45 0011 5F 43                   		movu.W	r4, r3
+  46 0013 77 03 FF FF 00          		cmp	#0xffff, r3
+  47 0018 20 07                   		beq	.L4
+1009:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	{
+1010:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		++CommErr[idChannel][idError];
+  48                             		.loc 1 1010 0
+  49 001a 62 14                   		add	#1, r4
+  50 001c FE 11 E4                		mov.W	r4, [r1,r14]
+  51                             	.L4:
+  52 001f 02                      		rts
+  53                             	.LFE1:
+  55                             		.section	.text.BCP_BusMonitor,"ax",@progbits
+  56                             		.global	_BCP_BusMonitor
+  58                             	_BCP_BusMonitor:
+  59                             	.LFB2:
+1011:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	}
+1012:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }
+1013:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1014:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1015:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1016:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1017:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /**
+1018:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** Communication monitor detecting the following condition:
+1019:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \li I2C:
+1020:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** - Block 1: this condition occurs whan at least one line is low indefinitely.
+1021:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** - Block 2: when busy bit high indefinitely although bus is free.
+1022:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** - Block 3: wrong peripheral configuration: ACK enable bit = 0 and Slave-TX o Master-TX.
+1023:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** - Block 4: wrong peripheral configuration in slave mode: 	ACK enable bit = 1 and Slave-RX.
+1024:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** - Block 5: wrong peripheral configuration in slave mode: when bus is free (busy = 0), only slave Rx
+1025:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** - Block 6: timeout for no request to slave
+1026:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1027:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \return 	void
+1028:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1029:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \warning	[Type warnings]
+1030:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1031:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \author 	Roberto Fioravanti
+1032:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \date		20/Apr/2009
+1033:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \version	1.0.0
+1034:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1035:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \bug		[Type bugs]
+1036:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1037:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \note		\par \b Note 1:
+1038:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			documentation by: Roberto Fioravanti
+1039:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 			\par \b Note n:
+1040:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+1041:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** void BCP_BusMonitor(void)
+1042:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+  60                             		.loc 1 1042 0
+1043:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     if(OCI2C_Level1BlockMonitorSync())
+  61                             		.loc 1 1043 0
+  62 0000 05 00 00 00             		bsr	_OCI2C_Level1BlockMonitorSync
+  63                             	.LVL4:
+  64 0004 61 01                   		cmp	#0, r1
+  65 0006 20 0A                   		beq	.L10
+1044:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     {
+1045:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         BCM_CountersUpdater((IO_ChannelType)BCP_I2C_CH_ID, (IO_ErrorType)BCP_I2C_UNBLOCK_LEV1_CNT);
+  66                             		.loc 1 1045 0
+  67 0008 66 01                   		mov	#0, r1
+  68 000a 66 62                   		mov	#6, r2
+  69 000c 05 00 00 00             		bsr	_BCM_CountersUpdater
+  70                             	.LVL5:
+  71                             		.balign 2,3,3
+  72                             	.L10:
+1046:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     }
+1047:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1048:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     if(TRUE == OCI2C_Level2BlockMonitorSync())
+  73                             		.loc 1 1048 0
+  74 0010 05 00 00 00             		bsr	_OCI2C_Level2BlockMonitorSync
+  75                             	.LVL6:
+  76 0014 61 11                   		cmp	#1, r1
+  77 0016 21 0A                   		bne	.L11
+1049:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     {
+1050:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         BCM_CountersUpdater((IO_ChannelType)BCP_I2C_CH_ID, (IO_ErrorType)BCP_I2C_UNBLOCK_LEV2_CNT);
+  78                             		.loc 1 1050 0
+  79 0018 66 01                   		mov	#0, r1
+  80 001a 66 72                   		mov	#7, r2
+  81 001c 05 00 00 00             		bsr	_BCM_CountersUpdater
+  82                             	.LVL7:
+  83                             		.balign 2,3,3
+  84                             	.L11:
+1051:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #if defined(CP_LEV2_I2CDRIVER_ACTION_ENABLE)
+1052:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         OCI2C_Action_Lev2();
+1053:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #endif /* defined(CP_LEV2_I2CDRIVER_ACTION_ENABLE) */
+1054:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     }
+1055:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1056:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	/* Blocco 3
+1057:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	slave configuration wrong: cannot be transimmted ACK bit  = 0
+1058:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	during Slave-TX o Master-TX
+1059:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	*/
+1060:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     if(OCI2C_Level3BlockMonitorSync())
+  85                             		.loc 1 1060 0
+  86 0020 05 00 00 00             		bsr	_OCI2C_Level3BlockMonitorSync
+  87                             	.LVL8:
+  88 0024 61 01                   		cmp	#0, r1
+  89 0026 20 0E                   		beq	.L12
+1061:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	{
+1062:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		BCM_CountersUpdater((IO_ChannelType)BCP_I2C_CH_ID, (IO_ErrorType)BCP_I2C_UNBLOCK_LEV3_CNT);
+  90                             		.loc 1 1062 0
+  91 0028 66 01                   		mov	#0, r1
+  92 002a 66 82                   		mov	#8, r2
+  93 002c 05 00 00 00             		bsr	_BCM_CountersUpdater
+  94                             	.LVL9:
+1063:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		OCI2C_InitHwSync();	  
+  95                             		.loc 1 1063 0
+  96 0030 05 00 00 00             		bsr	_OCI2C_InitHwSync
+  97                             	.LVL10:
+  98                             		.balign 2,3,3
+  99                             	.L12:
+1064:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	}
+1065:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	/* Blocco 4
+1066:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	slave configuration wrong: cannot be transimmted ACK bit = 1
+1067:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	during Slave-RX
+1068:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	*/
+1069:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	if(OCI2C_Level4BlockMonitorSync())
+ 100                             		.loc 1 1069 0
+ 101 0034 05 00 00 00             		bsr	_OCI2C_Level4BlockMonitorSync
+ 102                             	.LVL11:
+ 103 0038 61 01                   		cmp	#0, r1
+ 104 003a 20 0E                   		beq	.L13
+1070:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	{
+1071:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		BCM_CountersUpdater((IO_ChannelType)BCP_I2C_CH_ID, (IO_ErrorType)BCP_I2C_UNBLOCK_LEV4_CNT);
+ 105                             		.loc 1 1071 0
+ 106 003c 66 01                   		mov	#0, r1
+ 107 003e 66 82                   		mov	#8, r2
+ 108 0040 05 00 00 00             		bsr	_BCM_CountersUpdater
+ 109                             	.LVL12:
+1072:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		OCI2C_InitHwSync();
+ 110                             		.loc 1 1072 0
+ 111 0044 05 00 00 00             		bsr	_OCI2C_InitHwSync
+ 112                             	.LVL13:
+ 113                             		.balign 2,3,3
+ 114                             	.L13:
+1073:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	}
+1074:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	/* slave configuration wrong: when bus is freee (busy = 0),
+1075:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	periphral must be  Slave-RX
+1076:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	(any other configuration Slave-TX, Master-TX o Master-RX is not allowed)
+1077:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	*/
+1078:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	if(OCI2C_Level5BlockMonitorSync())
+ 115                             		.loc 1 1078 0
+ 116 0048 05 00 00 00             		bsr	_OCI2C_Level5BlockMonitorSync
+ 117                             	.LVL14:
+ 118 004c 61 01                   		cmp	#0, r1
+ 119 004e 20 0E                   		beq	.L14
+1079:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	{
+1080:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		BCM_CountersUpdater((IO_ChannelType)BCP_I2C_CH_ID, (IO_ErrorType)BCP_I2C_UNBLOCK_LEV5_CNT);
+ 120                             		.loc 1 1080 0
+ 121 0050 66 01                   		mov	#0, r1
+ 122 0052 66 82                   		mov	#8, r2
+ 123 0054 05 00 00 00             		bsr	_BCM_CountersUpdater
+ 124                             	.LVL15:
+1081:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 		OCI2C_InitHwSync();
+ 125                             		.loc 1 1081 0
+ 126 0058 05 00 00 00             		bsr	_OCI2C_InitHwSync
+ 127                             	.LVL16:
+ 128                             		.balign 2,3,3
+ 129                             	.L14:
+1082:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	}
+1083:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1084:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	/* Blocco 6
+1085:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	no request for more than 5 sec: */
+1086:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #if BCP_SLAVE_SUPPORT	== TRUE
+1087:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   if(OCI2C_Level6BlockMonitorSync())
+ 130                             		.loc 1 1087 0
+ 131 005c 04 00 00 00             		bra	_OCI2C_Level6BlockMonitorSync
+ 132                             	.LVL17:
+ 133                             	.LFE2:
+ 135                             		.section	.text.CP_SlaveManager__Read_ApplData,"ax",@progbits
+ 136                             		.global	_CP_SlaveManager__Read_ApplData
+ 138                             	_CP_SlaveManager__Read_ApplData:
+ 139                             	.LFB3:
+1088:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	{
+1089:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #if defined(BCP_COUNTER_OPTION__LEV_6)
+1090:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	  BCM_CountersUpdater((IO_ChannelType)BCP_I2C_CH_ID, BCP_I2C_UNBLOCK_LEV6_CNT);
+1091:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #endif	  /* defined(BCP_COUNTER_OPTION__LEV_6) */
+1092:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	}
+1093:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** #endif /* BCP_SLAVE_SUPPORT	== TRUE */
+1094:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }
+1095:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1096:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1097:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1098:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /* FF: meaningless 
+1099:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****    other values: position */
+1100:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** const CP_InProtParamPType ProtParam[2]={
+1101:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /*                  hdr typ len dat stx     ee  */
+1102:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	{0xFF,	0xFF,	2,	3,	4,	5,	0,		1},		/*std format*/
+1103:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	{1,		2, 		3,	4,	5,	6,	0xFF,	0xFF}	/*GP format*/
+1104:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** };
+1105:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1106:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****                        
+1107:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** void CP_SlaveManager__Read_ApplData(uint8_t pos, IO_MemPtrType pRxBuff, IO_MemPtrType pData, PP_Sla
+1108:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 140                             		.loc 1 1108 0
+ 141                             	.LVL18:
+1109:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   pinfo->error = (IO_ErrorType)IO_E_OK;
+1110:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   pinfo->len = pRxBuff[pos];
+ 142                             		.loc 1 1110 0
+ 143 0000 5B 11                   		movu.B	r1, r1
+1109:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   pinfo->error = (IO_ErrorType)IO_E_OK;
+ 144                             		.loc 1 1109 0
+ 145 0002 3C 46 00                		mov.B	#0, 6[r4]
+ 146                             		.loc 1 1110 0
+ 147 0005 FE C1 22                		movu.B	[r1,r2], r2
+ 148                             	.LVL19:
+1108:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 149                             		.loc 1 1108 0
+ 150 0008 60 40                   		sub	#4, r0
+ 151                             	.LCFI0:
+1111:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   if((pinfo->len == 0) || (pinfo->len >= maxlen))
+ 152                             		.loc 1 1111 0
+ 153 000a 71 21 00                		add	#0, r2, r1
+ 154                             	.LVL20:
+1108:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 155                             		.loc 1 1108 0
+ 156 000d DD 0E 04                		mov.W	8[r0], r14
+ 157                             		.loc 1 1111 0
+ 158 0010 20 0C                   		beq	.L28
+ 159                             		.loc 1 1111 0 is_stmt 0 discriminator 1
+ 160 0012 5F E5                   		movu.W	r14, r5
+ 161 0014 47 51                   		cmp	r5, r1
+ 162 0016 22 06                   		bgeu	.L28
+1110:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   pinfo->len = pRxBuff[pos];
+ 163                             		.loc 1 1110 0 is_stmt 1
+ 164 0018 90 C2                   		mov.W	r2, 4[r4]
+ 165 001a 2E 06                   		bra	.L29
+ 166                             	.L28:
+1112:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   {
+1113:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     pinfo->len=maxlen;
+ 167                             		.loc 1 1113 0
+ 168 001c D7 4E 02                		mov.W	r14, 4[r4]
+ 169 001f 03                      		.balign 2,3,5
+ 170                             	.L29:
+1114:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   }
+1115:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   pinfo->address = pData;
+1116:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   pinfo->option|=PP_SL_RESP_ANSW_OPT;
+ 171                             		.loc 1 1116 0
+ 172 0020 CD 4E 07                		mov.B	7[r4], r14
+1115:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   pinfo->address = pData;
+ 173                             		.loc 1 1115 0
+ 174 0023 E3 43                   		mov.L	r3, [r4]
+ 175                             		.loc 1 1116 0
+ 176 0025 65 1E                   		or	#1, r14
+ 177 0027 C7 4E 07                		mov.B	r14, 7[r4]
+1117:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }
+ 178                             		.loc 1 1117 0
+ 179 002a 67 01                   		rtsd	#4
+ 180                             	.LFE3:
+ 182                             		.section	.text.CP_SlaveManager__Write_ApplData,"ax",@progbits
+ 183                             		.global	_CP_SlaveManager__Write_ApplData
+ 185                             	_CP_SlaveManager__Write_ApplData:
+ 186                             	.LFB4:
+1118:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****                              
+1119:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** void CP_SlaveManager__Write_ApplData(uint8_t pos, IO_MemPtrType pRxBuff, IO_MemPtrType pData, PP_Sl
+1120:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 187                             		.loc 1 1120 0
+ 188                             	.LVL21:
+1121:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     if((pRxBuff[pos]!=0) && (pRxBuff[pos] <= maxlen))
+ 189                             		.loc 1 1121 0
+ 190 0000 5B 11                   		movu.B	r1, r1
+1120:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 191                             		.loc 1 1120 0
+ 192 0002 7E A7                   		push.l	r7
+ 193                             	.LCFI1:
+ 194                             		.loc 1 1121 0
+ 195 0004 FF 2E 12                		add	r1, r2, r14
+ 196 0007 58 EF                   		movu.B	[r14], r15
+1120:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 197                             		.loc 1 1120 0
+ 198 0009 60 40                   		sub	#4, r0
+ 199                             	.LCFI2:
+ 200                             		.loc 1 1121 0
+ 201 000b 61 0F                   		cmp	#0, r15
+1120:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 202                             		.loc 1 1120 0
+ 203 000d 99 87                   		mov.W	12[r0], r7
+ 204                             		.loc 1 1121 0
+ 205 000f 20 17                   		beq	.L34
+ 206                             		.loc 1 1121 0 is_stmt 0 discriminator 1
+ 207 0011 5F 77                   		movu.W	r7, r7
+ 208 0013 47 7F                   		cmp	r7, r15
+ 209 0015 24 11                   		bgtu	.L34
+1122:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     {
+1123:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****       pinfo->error = (IO_ErrorType)IO_E_OK;
+ 210                             		.loc 1 1123 0 is_stmt 1
+ 211 0017 3C 46 00                		mov.B	#0, 6[r4]
+1124:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****       (void)memcpy((void*)pData, &pRxBuff[pos+1], pRxBuff[pos]);
+ 212                             		.loc 1 1124 0
+ 213 001a 71 15 01                		add	#1, r1, r5
+ 214 001d EF 31                   		mov.L	r3, r1
+ 215                             	.LVL22:
+ 216 001f 58 E3                   		movu.B	[r14], r3
+ 217                             	.LVL23:
+ 218 0021 4B 52                   		add	r5, r2
+ 219                             	.LVL24:
+ 220 0023 7F 8F                   		smovf
+ 221                             	.LVL25:
+ 222 0025 03                      		.balign 2,3,2
+ 223                             	.L34:
+1125:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     }
+1126:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }
+ 224                             		.loc 1 1126 0
+ 225 0026 3F 77 02                		rtsd	#8, r7-r7
+ 226                             	.LFE4:
+ 228 0029 03                      		.section	.text.BCP_SlaveManager__Read_ApplData,"ax",@progbits
+ 229                             		.global	_BCP_SlaveManager__Read_ApplData
+ 231                             	_BCP_SlaveManager__Read_ApplData:
+ 232                             	.LFB5:
+1127:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1128:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1129:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** void BCP_SlaveManager__Read_ApplData(IO_ChannelType ch, IO_MemPtrType pData, PP_SlaveBuilderInfoTyp
+1130:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 233                             		.loc 1 1130 0
+ 234                             	.LVL26:
+1131:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   pinfo->error = (IO_ErrorType)IO_E_OK;
+1132:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   pinfo->len = BCP_ChannelTable[ch].rxBuffer[PP_DAT_INDEX];
+ 235                             		.loc 1 1132 0
+ 236 0000 5B 11                   		movu.B	r1, r1
+ 237 0002 75 11 1C                		mul	#28, r1
+ 238                             	.LVL27:
+ 239 0005 70 11 00 00 00 00       		add	#_BCP_ChannelTable, r1
+ 240 000b ED 1E 05                		mov.L	20[r1], r14
+1131:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   pinfo->error = (IO_ErrorType)IO_E_OK;
+ 241                             		.loc 1 1131 0
+ 242 000e 3C 36 00                		mov.B	#0, 6[r3]
+ 243                             		.loc 1 1132 0
+ 244 0011 59 E1 05                		movu.B	5[r14], r1
+ 245 0014 90 B1                   		mov.W	r1, 4[r3]
+1133:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   if((BCP_ChannelTable[ch].rxBuffer[PP_DAT_INDEX] == 0) ||
+ 246                             		.loc 1 1133 0
+ 247 0016 59 EE 05                		movu.B	5[r14], r14
+ 248 0019 61 0E                   		cmp	#0, r14
+ 249 001b 20 09                   		beq	.L41
+ 250                             		.loc 1 1133 0 is_stmt 0 discriminator 1
+ 251 001d 5F 41                   		movu.W	r4, r1
+ 252 001f 47 1E                   		cmp	r1, r14
+ 253 0021 23 05                   		bltu	.L42
+ 254 0023 03                      		.balign 2,3,5
+ 255                             	.L41:
+1134:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   (BCP_ChannelTable[ch].rxBuffer[PP_DAT_INDEX] >= maxlen))
+1135:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   {
+1136:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     pinfo->len=maxlen;
+ 256                             		.loc 1 1136 0 is_stmt 1
+ 257 0024 90 B4                   		mov.W	r4, 4[r3]
+ 258                             		.balign 2,3,5
+ 259                             	.L42:
+1137:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   }
+1138:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   pinfo->address=pData;
+1139:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   pinfo->option|=PP_SL_RESP_ANSW_OPT;
+ 260                             		.loc 1 1139 0
+ 261 0026 CD 3E 07                		mov.B	7[r3], r14
+1138:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****   pinfo->address=pData;
+ 262                             		.loc 1 1138 0
+ 263 0029 E3 32                   		mov.L	r2, [r3]
+ 264                             		.loc 1 1139 0
+ 265 002b 65 1E                   		or	#1, r14
+ 266 002d C7 3E 07                		mov.B	r14, 7[r3]
+ 267 0030 02                      		rts
+ 268                             	.LFE5:
+ 270 0031 03                      		.section	.text.BCP_SlaveManager__Write_ApplData,"ax",@progbits
+ 271                             		.global	_BCP_SlaveManager__Write_ApplData
+ 273                             	_BCP_SlaveManager__Write_ApplData:
+ 274                             	.LFB6:
+1140:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }
+1141:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1142:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** void BCP_SlaveManager__Write_ApplData(IO_ChannelType ch, IO_MemPtrType pData, PP_SlaveBuilderInfoTy
+1143:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 275                             		.loc 1 1143 0
+ 276                             	.LVL28:
+1144:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     if((BCP_ChannelTable[ch].rxBuffer[PP_LEN_INDEX]!=0) &&
+ 277                             		.loc 1 1144 0
+ 278 0000 5B 11                   		movu.B	r1, r1
+ 279 0002 75 11 1C                		mul	#28, r1
+ 280                             	.LVL29:
+ 281 0005 70 1E 00 00 00 00       		add	#_BCP_ChannelTable, r1, r14
+ 282 000b ED EE 05                		mov.L	20[r14], r14
+ 283 000e 59 E5 04                		movu.B	4[r14], r5
+ 284 0011 61 05                   		cmp	#0, r5
+ 285 0013 20 15                   		beq	.L46
+ 286                             		.loc 1 1144 0 is_stmt 0 discriminator 1
+ 287 0015 5F 44                   		movu.W	r4, r4
+ 288 0017 47 45                   		cmp	r4, r5
+ 289 0019 24 0F                   		bgtu	.L46
+1145:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     (BCP_ChannelTable[ch].rxBuffer[PP_LEN_INDEX] <= maxlen))
+1146:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     {
+1147:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****       pinfo->error = (IO_ErrorType)IO_E_OK;
+ 290                             		.loc 1 1147 0 is_stmt 1
+ 291 001b 3C 36 00                		mov.B	#0, 6[r3]
+1148:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****       (void)memcpy((void*)pData, &BCP_ChannelTable[ch].rxBuffer[PP_DAT_INDEX], BCP_ChannelTable[ch]
+ 292                             		.loc 1 1148 0
+ 293 001e 59 E3 04                		movu.B	4[r14], r3
+ 294                             	.LVL30:
+ 295 0021 EF 21                   		mov.L	r2, r1
+ 296 0023 71 E2 05                		add	#5, r14, r2
+ 297                             	.LVL31:
+ 298 0026 7F 8F                   		smovf
+ 299                             	.LVL32:
+ 300                             	.L46:
+ 301 0028 02                      		rts
+ 302                             	.LFE6:
+ 304                             		.section	.text.PP_MappingGetOffset,"ax",@progbits
+ 305                             		.global	_PP_MappingGetOffset
+ 307                             	_PP_MappingGetOffset:
+ 308                             	.LFB7:
+1149:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     }
+1150:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }
+1151:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1152:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1153:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1154:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** int8_t PP_MappingGetOffset(IO_MemPtrType pStart, IO_MemPtrType pEnd, const PP_RemapTableType* pTabl
+1155:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 309                             		.loc 1 1155 0
+ 310                             	.LVL33:
+1156:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1157:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     while(size-->0)
+1158:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     {
+1159:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     	if(((void*)pStart >= (void*)((unsigned int)(pTable[size].start))) && ((void*)pEnd <= (void*)((
+ 311                             		.loc 1 1159 0
+ 312 0000 CF 4E                   		mov.B	r4, r14
+ 313 0002 6C 3E                   		shll	#3, r14
+1155:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 314                             		.loc 1 1155 0
+ 315 0004 60 40                   		sub	#4, r0
+ 316                             	.LCFI3:
+ 317                             		.loc 1 1159 0
+ 318 0006 4B E3                   		add	r14, r3
+ 319                             	.LVL34:
+1155:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 320                             		.loc 1 1155 0
+ 321 0008 A8 85                   		mov.L	8[r0], r5
+1154:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** int8_t PP_MappingGetOffset(IO_MemPtrType pStart, IO_MemPtrType pEnd, const PP_RemapTableType* pTabl
+ 322                             		.loc 1 1154 0
+ 323 000a 60 23                   		sub	#2, r3
+1157:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     while(size-->0)
+ 324                             		.loc 1 1157 0
+ 325 000c 2E 1A                   		bra	.L52
+ 326                             	.L55:
+1154:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** int8_t PP_MappingGetOffset(IO_MemPtrType pStart, IO_MemPtrType pEnd, const PP_RemapTableType* pTabl
+ 327                             		.loc 1 1154 0
+ 328 000e 71 3E FA                		add	#-6, r3, r14
+ 329 0011 71 3F FE                		add	#-2, r3, r15
+ 330                             		.loc 1 1159 0
+ 331 0014 06 C4 F1                		cmp	[r15].UW, r1
+ 332 0017 23 0D                   		bltu	.L53
+ 333                             		.loc 1 1159 0 is_stmt 0 discriminator 1
+ 334 0019 06 C4 32                		cmp	[r3].UW, r2
+ 335 001c 24 08                   		bgtu	.L53
+1160:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         {
+1161:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****             *pOffset = pTable[size].offset;
+ 336                             		.loc 1 1161 0 is_stmt 1
+ 337 001e EC EE                   		mov.L	[r14], r14
+ 338 0020 E3 5E                   		mov.L	r14, [r5]
+1162:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****             break;
+ 339                             		.loc 1 1162 0
+ 340 0022 2E 12                   		bra	.L54
+ 341                             	.L53:
+ 342 0024 60 83                   		sub	#8, r3
+ 343                             		.balign 2,3,2
+ 344                             	.L52:
+1157:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     while(size-->0)
+ 345                             		.loc 1 1157 0 discriminator 1
+ 346 0026 71 4E FF                		add	#-1, r4, r14
+ 347 0029 CF E4                   		mov.B	r14, r4
+ 348                             	.LVL35:
+1154:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** int8_t PP_MappingGetOffset(IO_MemPtrType pStart, IO_MemPtrType pEnd, const PP_RemapTableType* pTabl
+ 349                             		.loc 1 1154 0 discriminator 1
+ 350 002b 62 1E                   		add	#1, r14
+1157:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     while(size-->0)
+ 351                             		.loc 1 1157 0 discriminator 1
+ 352 002d CF EE                   		mov.B	r14, r14
+ 353 002f 61 0E                   		cmp	#0, r14
+ 354 0031 2A DD                   		bgt	.L55
+ 355 0033 03                      		.balign 2,3,1
+ 356                             	.L54:
+1163:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         }
+1164:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     }   
+1165:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     return size;
+1166:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }
+ 357                             		.loc 1 1166 0
+ 358 0034 CF 41                   		mov.B	r4, r1
+ 359                             	.LVL36:
+ 360 0036 67 01                   		rtsd	#4
+ 361                             	.LFE7:
+ 363                             		.section	.text.PP_IsAccessAllowed,"ax",@progbits
+ 364                             		.global	_PP_IsAccessAllowed
+ 366                             	_PP_IsAccessAllowed:
+ 367                             	.LFB8:
+1167:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1168:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1169:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** /*
+1170:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param pTable pointer to memory range type
+1171:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param tablelength number og items in pTable, must be at least 1
+1172:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param pStart start address
+1173:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \param size size in bytes , must be at least 1
+1174:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1175:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \return int_8_t
+1176:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \retval	>=0 access is allowed
+1177:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** \retval	< access is denied
+1178:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1179:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** */
+1180:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** int8_t PP_IsAccessAllowed(const PP_MemoryRangeType* pTable, int8_t tablelength, IO_MemPtrType pStar
+1181:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 368                             		.loc 1 1181 0
+ 369                             	.LVL37:
+1182:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	void* pend;
+1183:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	pend=pStart+size-1;
+ 370                             		.loc 1 1183 0
+ 371 0000 5F 44                   		movu.W	r4, r4
+ 372 0002 71 4E FF                		add	#-1, r4, r14
+1184:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     while(tablelength-- > 0)
+1185:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     {
+1186:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     	if(	((void*)pStart >= (void*)((unsigned int)(pTable[tablelength].start))) &&
+1187:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     			( (pend) <= (void*)((unsigned int)(pTable[tablelength].end))) &&
+ 373                             		.loc 1 1187 0
+ 374 0005 CF 24                   		mov.B	r2, r4
+ 375                             	.LVL38:
+ 376 0007 6C 34                   		shll	#3, r4
+ 377 0009 4B 41                   		add	r4, r1
+ 378                             	.LVL39:
+1183:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	pend=pStart+size-1;
+ 379                             		.loc 1 1183 0
+ 380 000b 4B 3E                   		add	r3, r14
+ 381                             	.LVL40:
+1180:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** int8_t PP_IsAccessAllowed(const PP_MemoryRangeType* pTable, int8_t tablelength, IO_MemPtrType pStar
+ 382                             		.loc 1 1180 0
+ 383 000d 60 41                   		sub	#4, r1
+1184:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     while(tablelength-- > 0)
+ 384                             		.loc 1 1184 0
+ 385 000f 2E 15                   		bra	.L58
+ 386                             	.L61:
+1180:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** int8_t PP_IsAccessAllowed(const PP_MemoryRangeType* pTable, int8_t tablelength, IO_MemPtrType pStar
+ 387                             		.loc 1 1180 0
+ 388 0011 71 14 FC                		add	#-4, r1, r4
+1186:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     	if(	((void*)pStart >= (void*)((unsigned int)(pTable[tablelength].start))) &&
+ 389                             		.loc 1 1186 0
+ 390 0014 06 84 43                		cmp	[r4].L, r3
+ 391 0017 23 0B                   		bltu	.L59
+1186:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     	if(	((void*)pStart >= (void*)((unsigned int)(pTable[tablelength].start))) &&
+ 392                             		.loc 1 1186 0 is_stmt 0 discriminator 1
+ 393 0019 06 84 1E                		cmp	[r1].L, r14
+ 394 001c 24 06                   		bgtu	.L59
+ 395                             		.loc 1 1187 0 is_stmt 1
+ 396 001e 47 3E                   		cmp	r3, r14
+ 397 0020 22 12                   		bgeu	.L60
+ 398                             		.balign 2,3,1
+ 399                             	.L59:
+ 400 0022 60 81                   		sub	#8, r1
+ 401                             		.balign 2,3,2
+ 402                             	.L58:
+1184:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     while(tablelength-- > 0)
+ 403                             		.loc 1 1184 0 discriminator 1
+ 404 0024 71 24 FF                		add	#-1, r2, r4
+ 405 0027 CF 42                   		mov.B	r4, r2
+ 406                             	.LVL41:
+1180:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** int8_t PP_IsAccessAllowed(const PP_MemoryRangeType* pTable, int8_t tablelength, IO_MemPtrType pStar
+ 407                             		.loc 1 1180 0 discriminator 1
+ 408 0029 62 14                   		add	#1, r4
+1184:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     while(tablelength-- > 0)
+ 409                             		.loc 1 1184 0 discriminator 1
+ 410 002b CF 44                   		mov.B	r4, r4
+ 411 002d 61 04                   		cmp	#0, r4
+ 412 002f 2A E2                   		bgt	.L61
+ 413 0031 03                      		.balign 2,3,1
+ 414                             	.L60:
+1188:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     			!((pend) < (void*)(pStart)))
+1189:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         {
+1190:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****             break;
+1191:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         }
+1192:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     }
+1193:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     return tablelength;
+1194:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }
+ 415                             		.loc 1 1194 0
+ 416 0032 CF 21                   		mov.B	r2, r1
+ 417 0034 02                      		rts
+ 418                             	.LFE8:
+ 420 0035 03                      		.section	.text.PP_MappingGetPPAddr,"ax",@progbits
+ 421                             		.global	_PP_MappingGetPPAddr
+ 423                             	_PP_MappingGetPPAddr:
+ 424                             	.LFB9:
+1195:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1196:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** uint16_t PP_MappingGetPPAddr(const IO_MemPtrType realAddr, const PP_RemapTableType* pTable, int8_t 
+1197:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** {
+ 425                             		.loc 1 1197 0
+ 426                             	.LVL42:
+1198:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	uint16_t retValue = 0xffff;
+1199:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 
+1200:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     while(size-->0)
+1201:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     {
+1202:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         if((realAddr >= ((IO_MemPtrType) pTable[size].offset + pTable[size].start))
+1203:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         		&& (realAddr <= ( (IO_MemPtrType) pTable[size].offset + pTable[size].end)) )
+ 427                             		.loc 1 1203 0
+ 428 0000 CF 3E                   		mov.B	r3, r14
+ 429 0002 6C 3E                   		shll	#3, r14
+ 430 0004 4B E2                   		add	r14, r2
+ 431                             	.LVL43:
+1196:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** uint16_t PP_MappingGetPPAddr(const IO_MemPtrType realAddr, const PP_RemapTableType* pTable, int8_t 
+ 432                             		.loc 1 1196 0
+ 433 0006 60 22                   		sub	#2, r2
+1200:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     while(size-->0)
+ 434                             		.loc 1 1200 0
+ 435 0008 2E 22                   		bra	.L63
+ 436                             	.LVL44:
+ 437                             	.L66:
+1196:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** uint16_t PP_MappingGetPPAddr(const IO_MemPtrType realAddr, const PP_RemapTableType* pTable, int8_t 
+ 438                             		.loc 1 1196 0
+ 439 000a 71 2E FA                		add	#-6, r2, r14
+ 440 000d 71 24 FE                		add	#-2, r2, r4
+1202:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         if((realAddr >= ((IO_MemPtrType) pTable[size].offset + pTable[size].start))
+ 441                             		.loc 1 1202 0
+ 442 0010 EC EE                   		mov.L	[r14], r14
+ 443 0012 5C 44                   		movu.W	[r4], r4
+ 444 0014 4B E4                   		add	r14, r4
+ 445 0016 47 41                   		cmp	r4, r1
+ 446 0018 23 0E                   		bltu	.L64
+ 447                             		.loc 1 1203 0
+ 448 001a 5C 24                   		movu.W	[r2], r4
+ 449 001c 4B E4                   		add	r14, r4
+ 450 001e 47 41                   		cmp	r4, r1
+ 451 0020 24 06                   		bgtu	.L64
+1204:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         {
+1205:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         	retValue = (uint16_t) (realAddr - (IO_MemPtrType) pTable[size].offset);
+ 452                             		.loc 1 1205 0
+ 453 0022 43 E1                   		sub	r14, r1
+ 454                             	.LVL45:
+1206:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****             break;
+ 455                             		.loc 1 1206 0
+ 456 0024 2E 10                   		bra	.L65
+ 457                             	.LVL46:
+ 458                             	.L64:
+ 459 0026 60 13                   		sub	#1, r3
+ 460 0028 60 82                   		sub	#8, r2
+ 461                             		.balign 2,3,1
+ 462                             	.L63:
+1200:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     while(size-->0)
+ 463                             		.loc 1 1200 0 discriminator 1
+ 464 002a CF 3E                   		mov.B	r3, r14
+ 465 002c 61 0E                   		cmp	#0, r14
+ 466 002e 2A DC                   		bgt	.L66
+1198:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** 	uint16_t retValue = 0xffff;
+ 467                             		.loc 1 1198 0
+ 468 0030 FB 16 FF                		mov	#-1, r1
+ 469                             	.LVL47:
+ 470 0033 03                      		.balign 2,3,1
+ 471                             	.L65:
+1207:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****         }
+1208:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     }
+1209:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c ****     return retValue;
+1210:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_BusCOMM\BCP_BusCommMng.c **** }
+ 472                             		.loc 1 1210 0
+ 473 0034 5F 11                   		movu.W	r1, r1
+ 474 0036 02                      		rts
+ 475                             	.LFE9:
+ 477                             		.global	_ProtParam
+ 478 0037 03                      		.section	.rodata.ProtParam,"a",@progbits
+ 481                             	_ProtParam:
+ 482 0000 FF                      		.byte	-1
+ 483 0001 FF                      		.byte	-1
+ 484 0002 02                      		.byte	2
+ 485 0003 03                      		.byte	3
+ 486 0004 04                      		.byte	4
+ 487 0005 05                      		.byte	5
+ 488 0006 00                      		.byte	0
+ 489 0007 01                      		.byte	1
+ 490 0008 01                      		.byte	1
+ 491 0009 02                      		.byte	2
+ 492 000a 03                      		.byte	3
+ 493 000b 04                      		.byte	4
+ 494 000c 05                      		.byte	5
+ 495 000d 06                      		.byte	6
+ 496 000e FF                      		.byte	-1
+ 497 000f FF                      		.byte	-1
+ 498                             		.comm	_CommErr,36,2
+ 615                             	.Letext0:
+ 616                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 617                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_cfg.h"
+ 618                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers/io_driver.h"
+ 619                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_BusCOMM/BCP_General.h"
+ 620                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_BusCOMM/BCP_PlatformProtocol.h"
+ 621                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_BusCOMM/CSM_PlatformProtocol_EE.
+ 622                             		.file 8 "C:\\Workspace\\FW_Platform2_5\\trunk\\CFG_DishWasher\\CFG_Inertia/BusCommPltf_cfg.h"
+ 623                             		.file 9 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCI2C/OCI2C_drv.h"

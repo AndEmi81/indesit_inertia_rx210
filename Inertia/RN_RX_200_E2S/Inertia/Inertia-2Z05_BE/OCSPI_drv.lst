@@ -1,0 +1,1286 @@
+   1                             		.file	"OCSPI_drv.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.SPI_SendChar,"ax",@progbits
+   5                             		.global	_SPI_SendChar
+   7                             	_SPI_SendChar:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI/OCSPI_drv.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** Copyright (c) 2010-2011, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /**
+   7:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \n
+   8:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \Par		    OCSPI - On Chip SPI Source file
+   9:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \n			    Contains implementation of the OCSPI driver
+  10:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \n
+  11:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \file		    OCSPI_drv.c
+  12:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \ingroup	  OCSPI
+  13:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \date		    18/07/2011
+  14:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \version	  00.00.01
+  15:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \author		  A.Ricci, F.Tarabelloni
+  16:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \n
+  17:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \n
+  18:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \Par\b	History:
+  19:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \n 
+  20:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \n 		        00.00.01
+  21:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \n          	18/07/2011
+  22:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \n          	A.Ricci, F.Tarabelloni
+  23:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \n            - Creation on the base of existing files for MC9S08
+  24:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** \n
+  25:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** */
+  26:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+  27:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+  28:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* Includes                    */
+  29:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+  30:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #include "OCSPI_drv.h"
+  31:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #include "LIB_TaskMonitoring.h"
+  32:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+  33:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+  34:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* Defines and Macros          */
+  35:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+  36:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_ClkEnable()            SPI_ClkEnable(1) 
+  37:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_ResetStatus()          SPI_ResetStatus(1)
+  38:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_Enable()               SPI_Enable(1)
+  39:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_IntEnable()            SPI_IntEnable(1)
+  40:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_SetBaudRate(b)         SPI_SetBaudRate(1, b)
+  41:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_MasterEnable()         SPI_MasterEnable(1)
+  42:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_SetClockPolarity(pol)  SPI_SetClockPolarity(1, pol)
+  43:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_SetClockPhase(pha)     SPI_SetClockPhase(1, pha)
+  44:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_SetShiftDir(dir)       SPI_SetShiftDir(1, dir)
+  45:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_GetStatus()            SPI_GetStatus(1)
+  46:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_ReadData()             SPI_ReadData(1)
+  47:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define SPI1_WriteData(chr)         SPI_WriteData(1, chr)
+  48:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+  49:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define SPI_RX_BUF_SIZE    SPI1_RX_BUF_SIZE_CFG
+  50:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define SPI_TX_BUF_SIZE    SPI1_TX_BUF_SIZE_CFG
+  51:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+  52:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* SPI State value list */
+  53:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define OVERRUN_ERR      0x01          /* Overrun error flag bit   */
+  54:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define CHAR_IN_RX       0x08          /* Char is in RX buffer     */
+  55:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define FULL_TX          0x10          /* Full transmit buffer     */
+  56:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define RUNINT_FROM_TX   0x20          /* Interrupt is in progress */
+  57:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define FULL_RX          0x40          /* Full receive buffer      */
+  58:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+  59:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define ON_ERROR         0x01
+  60:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define ON_FULL_RX       0x02
+  61:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define ON_RX_CHAR       0x04
+  62:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define ON_FREE_TX       0x08
+  63:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #define ON_TX_CHAR       0x10
+  64:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+  65:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+  66:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* Typedef, Structs and Unions */
+  67:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+  68:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+  69:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+  70:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* Variables                   */
+  71:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+  72:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** typedef struct {
+  73:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Callback function configuration structure. */
+  74:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** gSPICfg_t Cfg;
+  75:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /** \brief State of SPI operations. */
+  76:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** uint8_t State;
+  77:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Error during SPI operations. */
+  78:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** uint8_t Error;
+  79:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Decoded error used to export the occurred error. */
+  80:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** gSPIError_t StructError;
+  81:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+  82:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Input buffer for SPI communication. */
+  83:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** gSPIData_t RxBuffer[SPI_RX_BUF_SIZE];
+  84:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Index for reading from input buffer. */
+  85:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** gSPIDataLen_t RxIndxR;
+  86:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Index for writing to input buffer. */
+  87:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** gSPIDataLen_t RxIndxW;
+  88:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Length of data in Rx buffer. */
+  89:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** gSPIDataLen_t RxBufLen;
+  90:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+  91:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Output buffer for SPI communication. */
+  92:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** gSPIData_t TxBuffer[SPI_TX_BUF_SIZE];
+  93:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Index for reading from output buffer. */
+  94:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** gSPIDataLen_t TxIndxR;
+  95:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Index for writing to output buffer. */
+  96:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** gSPIDataLen_t TxIndxW;
+  97:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /** \brief Length of data in Tx buffer. */
+  98:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** gSPIDataLen_t TxBufLen;
+  99:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** } SpiDrv_t;
+ 100:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 101:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** static SpiDrv_t Spi0;
+ 102:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 103:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+ 104:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* Function prototypes         */
+ 105:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+ 106:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** void OCSPI_InitHwSync(void);
+ 107:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnError(void);
+ 108:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnFreeTxBuf(void);
+ 109:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnFullRxBuf(void);
+ 110:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnRxChar(void);
+ 111:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnTxChar(void);
+ 112:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** void SPI_ISR1(void);
+ 113:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 114:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+ 115:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* Function bodies             */
+ 116:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* *************************** */
+ 117:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 118:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 119:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+
+ 120:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_SendChar                                     |
+ 121:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | Send a char from SPI bus                         |
+ 122:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/
+ 123:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_SendChar( gSPIData_t chr )
+ 124:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** {
+  10                             		.loc 1 124 0
+  11                             	.LVL0:
+  12 0000 6E 7A                   		pushm	r7-r10
+  13                             	.LCFI0:
+  14                             		.loc 1 124 0
+  15 0002 CF 1A                   		mov.B	r1, r10
+ 125:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   EnterCriticalSection();                             /* Save the PS register */
+  16                             		.loc 1 125 0
+  17 0004 05 00 00 00             		bsr	_OS_DisableInterrupt
+  18                             	.LVL1:
+  19 0008 FB 42 00 00 00 00       		mov.L	#_OS_Global, r4
+  20 000e CD 4E 01                		mov.B	1[r4], r14
+  21 0011 71 E7 01                		add	#1, r14, r7
+  22 0014 80 4F                   		mov.B	r7, 1[r4]
+ 126:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 127:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   if (Spi0.TxBufLen == SPI_TX_BUF_SIZE) {       /* Is number of chars in buffer the same as the siz
+  23                             		.loc 1 127 0
+  24 0016 FB 72 00 00 00 00       		mov.L	#_Spi0, r7
+  25 001c CD 73 54                		mov.B	84[r7], r3
+  26 001f 5B 32                   		movu.B	r3, r2
+  27 0021 75 52 20                		cmp	#32, r2
+  28 0024 21 11                   		bne	.L2
+ 128:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     ExitCriticalSection();                            /* Restore the PS register */
+  29                             		.loc 1 128 0
+  30 0026 C7 4E 01                		mov.B	r14, 1[r4]
+  31 0029 5B EE                   		movu.B	r14, r14
+  32 002b 61 0E                   		cmp	#0, r14
+  33 002d 21 65                   		bne	.L5
+  34                             		.loc 1 128 0 is_stmt 0 discriminator 1
+  35 002f 05 00 00 00             		bsr	_OS_EnableInterrupt
+  36                             	.LVL2:
+  37 0033 2E 5F                   		bra	.L5
+  38                             	.L2:
+ 129:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     return ERR_TXFULL; /** \todo IO_E_TXFULL is better (to add) */
+ 130:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 131:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 132:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxBufLen++;                              /* Increase number of bytes in the transmit buffer 
+ 133:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxBuffer[Spi0.TxIndxW] = chr;             /* Store char to buffer */
+  39                             		.loc 1 133 0 is_stmt 1
+  40 0035 59 7E 53                		movu.B	83[r7], r14
+ 132:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxBufLen++;                              /* Increase number of bytes in the transmit buffer 
+  41                             		.loc 1 132 0
+  42 0038 62 13                   		add	#1, r3
+  43                             		.loc 1 133 0
+  44 003a 70 E4 00 00 00 00       		add	#_Spi0+48, r14, r4
+ 134:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 135:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   /*MS gSpiTxIndxW = (uint8_t)((gSpiTxIndxW + 1) & (SPI_TX_BUF_SIZE - 1)); */ /* Update index */
+ 136:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxIndxW = (Spi0.TxIndxW + 1) % (SPI_TX_BUF_SIZE); /* Update index */
+  45                             		.loc 1 136 0
+  46 0040 62 1E                   		add	#1, r14
+  47 0042 75 2E 1F                		and	#31, r14
+  48 0045 C7 7E 53                		mov.B	r14, 83[r7]
+ 137:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 138:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   if(!(Spi0.State & RUNINT_FROM_TX))
+  49                             		.loc 1 138 0
+  50 0048 CD 7E 0C                		mov.B	12[r7], r14
+ 132:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxBufLen++;                              /* Increase number of bytes in the transmit buffer 
+  51                             		.loc 1 132 0
+  52 004b C7 73 54                		mov.B	r3, 84[r7]
+  53                             		.loc 1 138 0
+  54 004e 75 2E 20                		and	#32, r14
+  55 0051 5B EE                   		movu.B	r14, r14
+ 133:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxBuffer[Spi0.TxIndxW] = chr;             /* Store char to buffer */
+  56                             		.loc 1 133 0
+  57 0053 C7 4A 02                		mov.B	r10, 2[r4]
+  58                             		.loc 1 138 0
+  59 0056 61 0E                   		cmp	#0, r14
+  60 0058 21 1E                   		bne	.L4
+ 139:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   {          /* Transmition running ? */
+ 140:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     SPI1_WriteData( Spi0.TxBuffer[Spi0.TxIndxR] ); /* Store char to transmitter register */
+  61                             		.loc 1 140 0
+  62 005a 59 7E 52                		movu.B	82[r7], r14
+  63 005d 66 11                   		mov	#1, r1
+  64 005f 70 EE 00 00 00 00       		add	#_Spi0+48, r14
+  65 0065 CD E2 02                		mov.B	2[r14], r2
+  66 0068 05 00 00 00             		bsr	_SPI_WriteData
+  67                             	.LVL3:
+ 141:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.State |= RUNINT_FROM_TX;               /* Set RUNINT_FROM_TX flag */
+  68                             		.loc 1 141 0
+  69 006c CD 7E 0C                		mov.B	12[r7], r14
+  70 006f 75 3E 20                		or	#32, r14
+  71 0072 C7 7E 0C                		mov.B	r14, 12[r7]
+  72 0075 03                      		.balign 2,3,5
+  73                             	.L4:
+ 142:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 143:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   ExitCriticalSection();                              /* Restore the PS register */
+  74                             		.loc 1 143 0
+  75 0076 FB E2 00 00 00 00       		mov.L	#_OS_Global, r14
+  76 007c CD E7 01                		mov.B	1[r14], r7
+  77 007f 60 17                   		sub	#1, r7
+  78 0081 C7 E7 01                		mov.B	r7, 1[r14]
+  79 0084 5B 77                   		movu.B	r7, r7
+  80 0086 61 07                   		cmp	#0, r7
+  81 0088 21 0E                   		bne	.L6
+  82                             		.loc 1 143 0 is_stmt 0 discriminator 1
+  83 008a 05 00 00 00             		bsr	_OS_EnableInterrupt
+  84                             	.LVL4:
+ 144:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   return IO_E_OK;                              /* OK */
+  85                             		.loc 1 144 0 is_stmt 1 discriminator 1
+  86 008e CF 71                   		mov.B	r7, r1
+  87 0090 2E 08                   		bra	.L3
+  88                             	.L5:
+ 129:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     return ERR_TXFULL; /** \todo IO_E_TXFULL is better (to add) */
+  89                             		.loc 1 129 0
+  90 0092 66 B1                   		mov	#11, r1
+  91 0094 2E 04                   		bra	.L3
+  92                             	.L6:
+  93                             		.loc 1 144 0
+  94 0096 66 01                   		mov	#0, r1
+  95                             		.balign 2,3,1
+  96                             	.L3:
+ 145:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** }
+  97                             		.loc 1 145 0
+  98 0098 5B 11                   		movu.B	r1, r1
+  99 009a 3F 7A 04                		rtsd	#16, r7-r10
+ 100                             	.LFE0:
+ 102 009d 03                      		.section	.text.SPI_RecvChar,"ax",@progbits
+ 103                             		.global	_SPI_RecvChar
+ 105                             	_SPI_RecvChar:
+ 106                             	.LFB1:
+ 146:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 147:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 148:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 149:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_RecvChar                                     |
+ 150:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | Receive a char from SPI bus                      |
+ 151:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/
+ 152:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_RecvChar( gSPIData_t *pChr )
+ 153:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** {
+ 107                             		.loc 1 153 0
+ 108                             	.LVL5:
+ 109 0000 6E 7B                   		pushm	r7-r11
+ 110                             	.LCFI1:
+ 154:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   uint8_t tmpState;
+ 155:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 156:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   if (Spi0.RxBufLen > 0) {                     /* Is number of received chars greater than 0? */
+ 111                             		.loc 1 156 0
+ 112 0002 FB 72 00 00 00 00       		mov.L	#_Spi0, r7
+ 113 0008 59 7E 31                		movu.B	49[r7], r14
+ 114 000b 61 0E                   		cmp	#0, r14
+ 115 000d 20 5E                   		beq	.L11
+ 116 000f EF 1A                   		mov.L	r1, r10
+ 157:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     EnterCriticalSection();                          /* Save the PS register */
+ 117                             		.loc 1 157 0
+ 118 0011 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 119                             	.LVL6:
+ 120 0015 FB E2 00 00 00 00       		mov.L	#_OS_Global, r14
+ 121 001b CD E4 01                		mov.B	1[r14], r4
+ 122 001e 62 14                   		add	#1, r4
+ 123 0020 C7 E4 01                		mov.B	r4, 1[r14]
+ 158:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.RxBufLen--;                           /* Decrease number of received chars */
+ 124                             		.loc 1 158 0
+ 125 0023 CD 74 31                		mov.B	49[r7], r4
+ 126 0026 60 14                   		sub	#1, r4
+ 127 0028 C7 74 31                		mov.B	r4, 49[r7]
+ 159:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     *pChr = Spi0.RxBuffer[Spi0.RxIndxR];        /* Read the char */
+ 128                             		.loc 1 159 0
+ 129 002b 59 74 2F                		movu.B	47[r7], r4
+ 130 002e 70 44 00 00 00 00       		add	#_Spi0+12, r4
+ 131 0034 88 CC                   		mov.B	3[r4], r4
+ 132 0036 C3 A4                   		mov.B	r4, [r10]
+ 160:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.RxIndxR = (uint8_t)((Spi0.RxIndxR + 1) & (SPI_RX_BUF_SIZE - 1)); /* Update index */
+ 133                             		.loc 1 160 0
+ 134 0038 CD 74 2F                		mov.B	47[r7], r4
+ 161:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     tmpState = Spi0.State;                     /* Safe the flags */
+ 135                             		.loc 1 161 0
+ 136 003b CD 7A 0C                		mov.B	12[r7], r10
+ 137                             	.LVL7:
+ 160:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.RxIndxR = (uint8_t)((Spi0.RxIndxR + 1) & (SPI_RX_BUF_SIZE - 1)); /* Update index */
+ 138                             		.loc 1 160 0
+ 139 003e 62 14                   		add	#1, r4
+ 140 0040 75 24 1F                		and	#31, r4
+ 141 0043 C7 74 2F                		mov.B	r4, 47[r7]
+ 162:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.State &= ~(OVERRUN_ERR | FULL_RX);    /* Clear flag "char in RX buffer" */
+ 142                             		.loc 1 162 0
+ 143 0046 EF A4                   		mov.L	r10, r4
+ 144 0048 75 24 BE                		and	#0xffffffbe, r4
+ 145 004b 83 74                   		mov.B	r4, 12[r7]
+ 163:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     ExitCriticalSection();                           /* Restore the PS register */
+ 146                             		.loc 1 163 0
+ 147 004d CD E7 01                		mov.B	1[r14], r7
+ 148 0050 60 17                   		sub	#1, r7
+ 149 0052 C7 E7 01                		mov.B	r7, 1[r14]
+ 150 0055 5B 77                   		movu.B	r7, r7
+ 151 0057 61 07                   		cmp	#0, r7
+ 152 0059 21 07                   		bne	.L10
+ 153                             		.loc 1 163 0 is_stmt 0 discriminator 1
+ 154 005b 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 155                             	.LVL8:
+ 156 005f 03                      		.balign 2,3,1
+ 157                             	.L10:
+ 164:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 165:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   else {
+ 166:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     return ERR_RXEMPTY; /** \todo IO_E_RXEMPTY is better (to add) */
+ 167:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 168:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   if ((tmpState & (OVERRUN_ERR | FULL_RX)) != 0) { /* Has the overrun occurred? */
+ 158                             		.loc 1 168 0 is_stmt 1
+ 159 0060 EF A1                   		mov.L	r10, r1
+ 160 0062 75 21 41                		and	#0x41, r1
+ 161 0065 20 09                   		beq	.L9
+ 169:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     return ERR_OVERRUN; /** \todo IO_E_OVERRUN is better (to add) */
+ 162                             		.loc 1 169 0
+ 163 0067 66 D1                   		mov	#13, r1
+ 164 0069 2E 05                   		bra	.L9
+ 165                             	.LVL9:
+ 166                             	.L11:
+ 166:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     return ERR_RXEMPTY; /** \todo IO_E_RXEMPTY is better (to add) */
+ 167                             		.loc 1 166 0
+ 168 006b 66 A1                   		mov	#10, r1
+ 169                             	.LVL10:
+ 170 006d 03                      		.balign 2,3,2
+ 171                             	.L9:
+ 170:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   } 
+ 171:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   else {
+ 172:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     return IO_E_OK;
+ 173:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 174:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** }
+ 172                             		.loc 1 174 0
+ 173 006e 75 21 4F                		and	#0x4f, r1
+ 174 0071 3F 7B 05                		rtsd	#20, r7-r11
+ 175                             	.LFE1:
+ 177                             		.section	.text.SPI_SendBlock,"ax",@progbits
+ 178                             		.global	_SPI_SendBlock
+ 180                             	_SPI_SendBlock:
+ 181                             	.LFB2:
+ 175:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 176:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 177:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 178:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_SendBlock                                    |
+ 179:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | Send a block of data from SPI bus                |
+ 180:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/
+ 181:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_SendBlock( gSPIData_t *pData, uint16_t dataLen, uint16_t *pSnd )
+ 182:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** {
+ 182                             		.loc 1 182 0
+ 183                             	.LVL11:
+ 184 0000 6E 7D                   		pushm	r7-r13
+ 185                             	.LCFI2:
+ 186                             		.loc 1 182 0
+ 187 0002 EF 1A                   		mov.L	r1, r10
+ 188 0004 EF 3C                   		mov.L	r3, r12
+ 183:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   IO_ErrorType result = IO_E_OK;
+ 184:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   uint16_t i;
+ 185:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   for (i=0; i<dataLen; i++) {
+ 189                             		.loc 1 185 0
+ 190 0006 EF 17                   		mov.L	r1, r7
+ 191 0008 5F 2D                   		movu.W	r2, r13
+ 192 000a 2E 10                   		bra	.L15
+ 193                             	.LVL12:
+ 194                             	.L17:
+ 186:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     result = SPI_SendChar(*(pData + i));  /* Send one byte */
+ 195                             		.loc 1 186 0
+ 196 000c FD 28 71                		mov.B	[r7+], r1
+ 197 000f 05 00 00 00             		bsr	_SPI_SendChar
+ 198                             	.LVL13:
+ 187:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     if (result != IO_E_OK) {
+ 199                             		.loc 1 187 0
+ 200 0013 5B 1E                   		movu.B	r1, r14
+ 201 0015 61 0E                   		cmp	#0, r14
+ 202 0017 21 0F                   		bne	.L16
+ 203                             	.LVL14:
+ 204 0019 03                      		.balign 2,3,2
+ 205                             	.L15:
+ 181:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_SendBlock( gSPIData_t *pData, uint16_t dataLen, uint16_t *pSnd )
+ 206                             		.loc 1 181 0 discriminator 1
+ 207 001a FF 0B A7                		sub	r10, r7, r11
+ 208                             	.LVL15:
+ 185:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   for (i=0; i<dataLen; i++) {
+ 209                             		.loc 1 185 0 discriminator 1
+ 210 001d 5F BE                   		movu.W	r11, r14
+ 211 001f 47 DE                   		cmp	r13, r14
+ 212 0021 23 EB                   		bltu	.L17
+ 185:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   for (i=0; i<dataLen; i++) {
+ 213                             		.loc 1 185 0 is_stmt 0
+ 214 0023 66 01                   		mov	#0, r1
+ 215                             	.LVL16:
+ 216 0025 03                      		.balign 2,3,1
+ 217                             	.L16:
+ 188:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****       break;
+ 189:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     }
+ 190:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 191:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   *pSnd = i;                          /* Return number of sent bytes */
+ 218                             		.loc 1 191 0 is_stmt 1
+ 219 0026 D3 CB                   		mov.W	r11, [r12]
+ 192:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   return result;                      /* Return error code */
+ 193:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** }
+ 220                             		.loc 1 193 0
+ 221 0028 5B 11                   		movu.B	r1, r1
+ 222 002a 3F 7D 07                		rtsd	#28, r7-r13
+ 223                             	.LFE2:
+ 225 002d 03                      		.section	.text.SPI_RecvBlock,"ax",@progbits
+ 226                             		.global	_SPI_RecvBlock
+ 228                             	_SPI_RecvBlock:
+ 229                             	.LFB3:
+ 194:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 195:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 196:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /**
+ 197:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  * SPI_RecvBlock                                    |
+ 198:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  * Receive a block of data from SPI bus             |
+ 199:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  \param  [in]	pData 	- pointer to buffer
+ 200:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  \param  [in]	dataLen - number of bytes to get from buffer
+ 201:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  \param  [in]	pRcv 	- number of bytes to get from buffer
+ 202:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  \return 	IO_E_OK, ERR_RXEMPTY, ERR_OVERRUN
+ 203:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  */
+ 204:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_RecvBlock( gSPIData_t *pData, uint16_t dataLen, uint16_t *pRcv )
+ 205:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** {
+ 230                             		.loc 1 205 0
+ 231                             	.LVL17:
+ 232 0000 6E 7D                   		pushm	r7-r13
+ 233                             	.LCFI3:
+ 206:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   IO_ErrorType mResult = IO_E_OK;    /* Most serious error */
+ 207:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   IO_ErrorType result;
+ 208:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   uint16_t i = 0;
+ 209:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 210:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   while (i < dataLen) {
+ 234                             		.loc 1 210 0
+ 235 0002 66 07                   		mov.L	#0, r7
+ 205:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** {
+ 236                             		.loc 1 205 0
+ 237 0004 EF 1D                   		mov.L	r1, r13
+ 238 0006 EF 3B                   		mov.L	r3, r11
+ 206:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   IO_ErrorType mResult = IO_E_OK;    /* Most serious error */
+ 239                             		.loc 1 206 0
+ 240 0008 CF 7A                   		mov.B	r7, r10
+ 241                             		.loc 1 210 0
+ 242 000a 5F 29                   		movu.W	r2, r9
+ 243 000c 2E 1E                   		bra	.L20
+ 244                             	.LVL18:
+ 245                             	.L24:
+ 211:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     result = SPI_RecvChar(pData++);  /* Retrieve byte from Rx buffer */
+ 246                             		.loc 1 211 0
+ 247 000e 05 00 00 00             		bsr	_SPI_RecvChar
+ 248                             	.LVL19:
+ 249 0012 5B A3                   		movu.B	r10, r3
+ 250 0014 47 13                   		cmp	r1, r3
+ 251 0016 EF 1E                   		mov.L	r1, r14
+ 252 0018 22 04                   		bgeu	.L21
+ 253 001a CF 1A                   		mov.B	r1, r10
+ 254                             	.LVL20:
+ 255                             		.balign 2,3,1
+ 256                             	.L21:
+ 212:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     if (result > mResult) {          /* Is last error most serious than through error state? */
+ 213:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****       mResult = result;              /* If yes then prepare error value to return */
+ 214:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     }
+ 215:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     if ((result != IO_E_OK) && (result != ERR_OVERRUN)) {
+ 257                             		.loc 1 215 0
+ 258 001c 61 0E                   		cmp	#0, r14
+ 259 001e 20 0A                   		beq	.L22
+ 260                             		.loc 1 215 0 is_stmt 0 discriminator 1
+ 261 0020 61 DE                   		cmp	#13, r14
+ 262 0022 20 06                   		beq	.L22
+ 216:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****       *pRcv = i;                      /* Return number of received bytes */
+ 263                             		.loc 1 216 0 is_stmt 1
+ 264 0024 D3 BC                   		mov.W	r12, [r11]
+ 217:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****       return mResult;                 /* Return error code */
+ 265                             		.loc 1 217 0
+ 266 0026 2E 12                   		bra	.L23
+ 267                             	.L22:
+ 268                             	.LVL21:
+ 269 0028 62 17                   		add	#1, r7
+ 270                             	.LVL22:
+ 271                             		.balign 2,3,2
+ 272                             	.L20:
+ 204:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_RecvBlock( gSPIData_t *pData, uint16_t dataLen, uint16_t *pRcv )
+ 273                             		.loc 1 204 0 discriminator 1
+ 274 002a FF 21 7D                		add	r7, r13, r1
+ 210:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   while (i < dataLen) {
+ 275                             		.loc 1 210 0 discriminator 1
+ 276 002d 5F 7E                   		movu.W	r7, r14
+ 277 002f 47 9E                   		cmp	r9, r14
+ 278 0031 DF 7C                   		mov.W	r7, r12
+ 279                             	.LVL23:
+ 280 0033 23 DB                   		bltu	.L24
+ 218:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     }
+ 219:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     i++;
+ 220:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 221:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   *pRcv = i;                          /* Return number of received bytes */
+ 281                             		.loc 1 221 0
+ 282 0035 D3 B7                   		mov.W	r7, [r11]
+ 283                             	.LVL24:
+ 284 0037 03                      		.balign 2,3,1
+ 285                             	.L23:
+ 222:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   return mResult;                     /* Return error code */
+ 223:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** }
+ 286                             		.loc 1 223 0
+ 287 0038 5B A1                   		movu.B	r10, r1
+ 288 003a 3F 7D 07                		rtsd	#28, r7-r13
+ 289                             	.LFE3:
+ 291 003d 03                      		.section	.text.SPI_ClearRxBuf,"ax",@progbits
+ 292                             		.global	_SPI_ClearRxBuf
+ 294                             	_SPI_ClearRxBuf:
+ 295                             	.LFB4:
+ 224:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 225:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 226:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 227:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_ClearRxBuf                                   |
+ 228:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | Clear the SPI Rx buffer                          |
+ 229:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/
+ 230:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_ClearRxBuf( void )
+ 231:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** {
+ 296                             		.loc 1 231 0
+ 232:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   EnterCriticalSection();                        /* Save the PS register */
+ 297                             		.loc 1 232 0
+ 298 0000 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 299                             	.LVL25:
+ 300 0004 FB E2 00 00 00 00       		mov.L	#_OS_Global, r14
+ 301 000a 59 E4 01                		movu.B	1[r14], r4
+ 233:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.RxBufLen = 0;                       /* Set number of bytes in the transmit buffer to 0 */
+ 302                             		.loc 1 233 0
+ 303 000d FB E2 00 00 00 00       		mov.L	#_Spi0, r14
+ 234:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.RxIndxR = Spi0.RxIndxW = 0;          /* Reset indices */
+ 235:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.State &= ~(OVERRUN_ERR | FULL_RX);  /* Clear flags */
+ 304                             		.loc 1 235 0
+ 305 0013 CD E3 0C                		mov.B	12[r14], r3
+ 233:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.RxBufLen = 0;                       /* Set number of bytes in the transmit buffer to 0 */
+ 306                             		.loc 1 233 0
+ 307 0016 F9 E4 31 00             		mov.B	#0, 49[r14]
+ 308                             		.loc 1 235 0
+ 309 001a 75 23 BE                		and	#0xffffffbe, r3
+ 234:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.RxIndxR = Spi0.RxIndxW = 0;          /* Reset indices */
+ 310                             		.loc 1 234 0
+ 311 001d F9 E4 30 00             		mov.B	#0, 48[r14]
+ 312 0021 F9 E4 2F 00             		mov.B	#0, 47[r14]
+ 313                             		.loc 1 235 0
+ 314 0025 C7 E3 0C                		mov.B	r3, 12[r14]
+ 236:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   ExitCriticalSection();                         /* Restore the PS register */
+ 315                             		.loc 1 236 0
+ 316 0028 71 4E 00                		add	#0, r4, r14
+ 317 002b 21 07                   		bne	.L33
+ 318                             		.loc 1 236 0 is_stmt 0 discriminator 1
+ 319 002d 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 320                             	.LVL26:
+ 321 0031 03                      		.balign 2,3,1
+ 322                             	.L33:
+ 237:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   return IO_E_OK;                         /* OK */
+ 238:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** }
+ 323                             		.loc 1 238 0 is_stmt 1
+ 324 0032 66 01                   		mov.L	#0, r1
+ 325 0034 02                      		rts
+ 326                             	.LFE4:
+ 328 0035 03                      		.section	.text.SPI_ClearTxBuf,"ax",@progbits
+ 329                             		.global	_SPI_ClearTxBuf
+ 331                             	_SPI_ClearTxBuf:
+ 332                             	.LFB5:
+ 239:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 240:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 241:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 242:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_ClearTxBuf                                   |
+ 243:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | Clear the SPI Tx buffer                          |
+ 244:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/
+ 245:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_ClearTxBuf( void )
+ 246:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** {
+ 333                             		.loc 1 246 0
+ 247:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   EnterCriticalSection();                        /* Save the PS register */
+ 334                             		.loc 1 247 0
+ 335 0000 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 336                             	.LVL27:
+ 337 0004 FB E2 00 00 00 00       		mov.L	#_OS_Global, r14
+ 338 000a 59 E4 01                		movu.B	1[r14], r4
+ 248:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxBufLen = 0;                      /* Set number of bytes in the receive buffer to 0 */
+ 339                             		.loc 1 248 0
+ 340 000d FB E2 00 00 00 00       		mov.L	#_Spi0, r14
+ 341 0013 F9 E4 54 00             		mov.B	#0, 84[r14]
+ 249:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxIndxR = Spi0.TxIndxW = 0;          /* Reset indices */
+ 342                             		.loc 1 249 0
+ 343 0017 F9 E4 53 00             		mov.B	#0, 83[r14]
+ 344 001b F9 E4 52 00             		mov.B	#0, 82[r14]
+ 250:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   ExitCriticalSection();                         /* Restore the PS register */
+ 345                             		.loc 1 250 0
+ 346 001f 71 4E 00                		add	#0, r4, r14
+ 347 0022 21 06                   		bne	.L35
+ 348                             		.loc 1 250 0 is_stmt 0 discriminator 1
+ 349 0024 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 350                             	.LVL28:
+ 351                             		.balign 2,3,1
+ 352                             	.L35:
+ 251:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   return IO_E_OK;                         /* OK */
+ 252:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** }
+ 353                             		.loc 1 252 0 is_stmt 1
+ 354 0028 66 01                   		mov.L	#0, r1
+ 355 002a 02                      		rts
+ 356                             	.LFE5:
+ 358 002b 03                      		.section	.text.SPI_GetError,"ax",@progbits
+ 359                             		.global	_SPI_GetError
+ 361                             	_SPI_GetError:
+ 362                             	.LFB6:
+ 253:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 254:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 255:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 256:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_GetError                                     |
+ 257:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | Get SPI Error                                    |
+ 258:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/
+ 259:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_GetError( gSPIError_t *pError )
+ 260:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** {
+ 363                             		.loc 1 260 0
+ 364                             	.LVL29:
+ 365 0000 6E 7A                   		pushm	r7-r10
+ 366                             	.LCFI4:
+ 367                             		.loc 1 260 0
+ 368 0002 EF 17                   		mov.L	r1, r7
+ 261:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   EnterCriticalSection();                     /* Save the PS register */
+ 369                             		.loc 1 261 0
+ 370 0004 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 371                             	.LVL30:
+ 372 0008 FB E2 00 00 00 00       		mov.L	#_OS_Global, r14
+ 373 000e CD E4 01                		mov.B	1[r14], r4
+ 262:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   pError->err = 0;
+ 263:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   pError->errName.OverRun = ((Spi0.Error & OVERRUN_ERR) != 0); /* Overrun error */
+ 374                             		.loc 1 263 0
+ 375 0011 66 03                   		mov	#0, r3
+ 261:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   EnterCriticalSection();                     /* Save the PS register */
+ 376                             		.loc 1 261 0
+ 377 0013 62 14                   		add	#1, r4
+ 378 0015 C7 E4 01                		mov.B	r4, 1[r14]
+ 262:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   pError->err = 0;
+ 379                             		.loc 1 262 0
+ 380 0018 3C 70 00                		mov.B	#0, [r7]
+ 381                             		.loc 1 263 0
+ 382 001b FB 42 00 00 00 00       		mov.L	#_Spi0, r4
+ 383 0021 8B 4A                   		mov.B	13[r4], r2
+ 384 0023 FD 74 C2 01             		tst	#1, r2
+ 385 0027 FD E7 13                		bmne	#7, r3
+ 386 002a C3 73                   		mov.B	r3, [r7]
+ 264:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   pError->errName.RxBufOvf = ((Spi0.Error & FULL_RX) != 0);    /* Buffer overflow */
+ 387                             		.loc 1 264 0
+ 388 002c 8B 4A                   		mov.B	13[r4], r2
+ 389 002e 6A 62                   		shar	#6, r2
+ 390 0030 FD 74 C2 01             		tst	#1, r2
+ 391 0034 FD E6 13                		bmne	#6, r3
+ 265:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   pError->errName.FaultErr = FALSE;    /* not used */  
+ 392                             		.loc 1 265 0
+ 393 0037 7A 53                   		bclr	#5, r3
+ 394 0039 C3 73                   		mov.B	r3, [r7]
+ 266:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.Error = 0x00;                   /* Reset error flags */
+ 267:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   ExitCriticalSection();                      /* Restore the PS register */
+ 395                             		.loc 1 267 0
+ 396 003b CD E7 01                		mov.B	1[r14], r7
+ 397                             	.LVL31:
+ 266:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.Error = 0x00;                   /* Reset error flags */
+ 398                             		.loc 1 266 0
+ 399 003e 3C 4D 00                		mov.B	#0, 13[r4]
+ 400                             		.loc 1 267 0
+ 401 0041 60 17                   		sub	#1, r7
+ 402 0043 C7 E7 01                		mov.B	r7, 1[r14]
+ 403 0046 5B 77                   		movu.B	r7, r7
+ 404 0048 61 07                   		cmp	#0, r7
+ 405 004a 21 06                   		bne	.L37
+ 406                             		.loc 1 267 0 is_stmt 0 discriminator 1
+ 407 004c 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 408                             	.LVL32:
+ 409                             		.balign 2,3,1
+ 410                             	.L37:
+ 268:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   return IO_E_OK;                      /* OK */
+ 269:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** }
+ 411                             		.loc 1 269 0 is_stmt 1
+ 412 0050 66 01                   		mov.L	#0, r1
+ 413 0052 3F 7A 04                		rtsd	#16, r7-r10
+ 414                             	.LFE6:
+ 416 0055 03                      		.section	.text.SPI_OnError,"ax",@progbits
+ 417                             		.global	_SPI_OnError
+ 419                             	_SPI_OnError:
+ 420                             	.LFB7:
+ 270:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 271:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 272:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 273:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | Test Functions                                   |
+ 274:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  |                                                  |
+ 275:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/
+ 276:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnError(void){
+ 421                             		.loc 1 276 0
+ 277:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 422                             		.loc 1 277 0
+ 423                             	 ; 277 "C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI/OCSPI_drv.c" 1
+ 424 0000 03                      		nop
+ 425                             	 ; 0 "" 2
+ 426 0001 02                      		rts
+ 427                             	.LFE7:
+ 429                             		.section	.text.SPI_OnRxChar,"ax",@progbits
+ 430                             		.global	_SPI_OnRxChar
+ 432                             	_SPI_OnRxChar:
+ 433                             	.LFB8:
+ 278:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** }
+ 279:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 280:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnRxChar(void){
+ 434                             		.loc 1 280 0
+ 281:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 435                             		.loc 1 281 0
+ 436                             	 ; 281 "C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI/OCSPI_drv.c" 1
+ 437 0000 03                      		nop
+ 438                             	 ; 0 "" 2
+ 439 0001 02                      		rts
+ 440                             	.LFE8:
+ 442                             		.section	.text.SPI_OnFullRxBuf,"ax",@progbits
+ 443                             		.global	_SPI_OnFullRxBuf
+ 445                             	_SPI_OnFullRxBuf:
+ 446                             	.LFB9:
+ 282:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** }
+ 283:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 284:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnFullRxBuf(void){
+ 447                             		.loc 1 284 0
+ 285:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 448                             		.loc 1 285 0
+ 449                             	 ; 285 "C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI/OCSPI_drv.c" 1
+ 450 0000 03                      		nop
+ 451                             	 ; 0 "" 2
+ 452 0001 02                      		rts
+ 453                             	.LFE9:
+ 455                             		.section	.text.SPI_OnTxChar,"ax",@progbits
+ 456                             		.global	_SPI_OnTxChar
+ 458                             	_SPI_OnTxChar:
+ 459                             	.LFB10:
+ 286:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** }
+ 287:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 288:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnTxChar(void){
+ 460                             		.loc 1 288 0
+ 289:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 461                             		.loc 1 289 0
+ 462                             	 ; 289 "C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI/OCSPI_drv.c" 1
+ 463 0000 03                      		nop
+ 464                             	 ; 0 "" 2
+ 465 0001 02                      		rts
+ 466                             	.LFE10:
+ 468                             		.section	.text.SPI_OnFreeTxBuf,"ax",@progbits
+ 469                             		.global	_SPI_OnFreeTxBuf
+ 471                             	_SPI_OnFreeTxBuf:
+ 472                             	.LFB11:
+ 290:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** }
+ 291:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 292:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** void SPI_OnFreeTxBuf(void){
+ 473                             		.loc 1 292 0
+ 293:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 474                             		.loc 1 293 0
+ 475                             	 ; 293 "C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI/OCSPI_drv.c" 1
+ 476 0000 03                      		nop
+ 477                             	 ; 0 "" 2
+ 478 0001 02                      		rts
+ 479                             	.LFE11:
+ 481                             		.section	.text.SPI_ISR1,"ax",@progbits
+ 482                             		.global	_SPI_ISR1
+ 484                             	_SPI_ISR1:
+ 485                             	.LFB12:
+ 294:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** }
+ 295:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 296:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 297:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 298:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_ISR1                                         |
+ 299:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  |                                                  |
+ 300:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/
+ 301:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** void SPI_ISR1(void)
+ 302:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** {
+ 486                             		.loc 1 302 0
+ 487                             	.LVL33:
+ 488 0000 6E 7A                   		pushm	r7-r10
+ 489                             	.LCFI5:
+ 303:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   gSPIData_t data;                          /* Temporary variable for data */
+ 304:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   uint8_t flags = 0;                        /* Temporary variable for flags */
+ 305:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   uint8_t status;                           /* Temporary variable for flags */
+ 306:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 307:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   IRQ_MONITOR_ENTER();
+ 490                             		.loc 1 307 0
+ 491 0002 05 00 00 00             		bsr	_LIB_IRQMonitor_Enter
+ 492                             	.LVL34:
+ 308:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 309:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   status = SPI1_GetStatus();                /* Read the device error register */
+ 493                             		.loc 1 309 0
+ 494 0006 66 11                   		mov	#1, r1
+ 495 0008 05 00 00 00             		bsr	_SPI_GetStatus
+ 496                             	.LVL35:
+ 310:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 311:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   data = SPI1_ReadData();                   /* Read data from receiver */
+ 497                             		.loc 1 311 0
+ 498 000c 66 11                   		mov	#1, r1
+ 499 000e 05 00 00 00             		bsr	_SPI_ReadData
+ 500                             	.LVL36:
+ 312:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 313:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   if(Spi0.RxBufLen < SPI_RX_BUF_SIZE) {     /* Is number of bytes in the receive buffer lower than 
+ 501                             		.loc 1 313 0
+ 502 0012 FB 72 00 00 00 00       		mov.L	#_Spi0, r7
+ 503 0018 CD 74 31                		mov.B	49[r7], r4
+ 504 001b 5B 4E                   		movu.B	r4, r14
+ 505 001d 75 5E 1F                		cmp	#31, r14
+ 506 0020 24 27                   		bgtu	.L45
+ 314:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	Spi0.RxBufLen++;                        /* Increase number of chars in the receive buffer */
+ 315:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.RxBuffer[Spi0.RxIndxW] = data;       /* Save received char to the receive buffer */
+ 507                             		.loc 1 315 0
+ 508 0022 CD 7E 30                		mov.B	48[r7], r14
+ 314:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	Spi0.RxBufLen++;                        /* Increase number of chars in the receive buffer */
+ 509                             		.loc 1 314 0
+ 510 0025 62 14                   		add	#1, r4
+ 511                             		.loc 1 315 0
+ 512 0027 5B E3                   		movu.B	r14, r3
+ 316:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.RxIndxW = (uint8_t)((Spi0.RxIndxW + 1) & (SPI_RX_BUF_SIZE-1)); /* Update index */
+ 513                             		.loc 1 316 0
+ 514 0029 62 1E                   		add	#1, r14
+ 315:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.RxBuffer[Spi0.RxIndxW] = data;       /* Save received char to the receive buffer */
+ 515                             		.loc 1 315 0
+ 516 002b 70 33 00 00 00 00       		add	#_Spi0+12, r3
+ 517                             		.loc 1 316 0
+ 518 0031 75 2E 1F                		and	#31, r14
+ 314:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	Spi0.RxBufLen++;                        /* Increase number of chars in the receive buffer */
+ 519                             		.loc 1 314 0
+ 520 0034 C7 74 31                		mov.B	r4, 49[r7]
+ 317:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     flags |= ON_RX_CHAR;                    /* If yes then set the OnRxChar flag */
+ 318:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     if(Spi0.RxBufLen == SPI_RX_BUF_SIZE) {   /* Is number of bytes in the receive buffer equal to t
+ 521                             		.loc 1 318 0
+ 522 0037 5B 44                   		movu.B	r4, r4
+ 315:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.RxBuffer[Spi0.RxIndxW] = data;       /* Save received char to the receive buffer */
+ 523                             		.loc 1 315 0
+ 524 0039 80 B9                   		mov.B	r1, 3[r3]
+ 316:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.RxIndxW = (uint8_t)((Spi0.RxIndxW + 1) & (SPI_RX_BUF_SIZE-1)); /* Update index */
+ 525                             		.loc 1 316 0
+ 526 003b C7 7E 30                		mov.B	r14, 48[r7]
+ 527                             	.LVL37:
+ 528                             		.loc 1 318 0
+ 529 003e 75 54 20                		cmp	#32, r4
+ 530 0041 20 1A                   		beq	.L56
+ 317:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     flags |= ON_RX_CHAR;                    /* If yes then set the OnRxChar flag */
+ 531                             		.loc 1 317 0
+ 532 0043 66 47                   		mov	#4, r7
+ 533 0045 2E 19                   		bra	.L46
+ 534                             	.LVL38:
+ 535                             	.L45:
+ 319:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****       flags |= ON_FULL_RX;                  /* Set flag "OnFullRxBuf" */
+ 320:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     }
+ 321:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 322:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   else {
+ 323:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	  Spi0.State |= FULL_RX;                   /* Set flag "full RX buffer" */
+ 536                             		.loc 1 323 0
+ 537 0047 CD 7E 0C                		mov.B	12[r7], r14
+ 538 004a 75 3E 40                		or	#64, r14
+ 539 004d C7 7E 0C                		mov.B	r14, 12[r7]
+ 540                             	.LVL39:
+ 324:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     flags |= ON_ERROR;                      /* Set the OnError flag */
+ 325:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     Spi0.Error |= Spi0.State;                /* Update error flag mirror */
+ 541                             		.loc 1 325 0
+ 542 0050 06 15 7E 0D             		or	13[r7].B, r14
+ 543 0054 C7 7E 0D                		mov.B	r14, 13[r7]
+ 324:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     flags |= ON_ERROR;                      /* Set the OnError flag */
+ 544                             		.loc 1 324 0
+ 545 0057 66 17                   		mov	#1, r7
+ 546 0059 2E 05                   		bra	.L46
+ 547                             	.LVL40:
+ 548                             	.L56:
+ 319:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****       flags |= ON_FULL_RX;                  /* Set flag "OnFullRxBuf" */
+ 549                             		.loc 1 319 0
+ 550 005b 66 67                   		mov	#6, r7
+ 551                             	.LVL41:
+ 552 005d 03                      		.balign 2,3,5
+ 553                             	.L46:
+ 326:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 327:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxBufLen--;                          /* Decrease number of chars in the transmit buffer */
+ 554                             		.loc 1 327 0
+ 555 005e FB E2 00 00 00 00       		mov.L	#_Spi0, r14
+ 556 0064 CD E3 54                		mov.B	84[r14], r3
+ 328:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxIndxR = (uint8_t)((Spi0.TxIndxR + 1) & (SPI_TX_BUF_SIZE-1)); /* Update index */
+ 557                             		.loc 1 328 0
+ 558 0067 CD E4 52                		mov.B	82[r14], r4
+ 327:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxBufLen--;                          /* Decrease number of chars in the transmit buffer */
+ 559                             		.loc 1 327 0
+ 560 006a 60 13                   		sub	#1, r3
+ 561                             		.loc 1 328 0
+ 562 006c 62 14                   		add	#1, r4
+ 563 006e 75 24 1F                		and	#31, r4
+ 327:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxBufLen--;                          /* Decrease number of chars in the transmit buffer */
+ 564                             		.loc 1 327 0
+ 565 0071 C7 E3 54                		mov.B	r3, 84[r14]
+ 329:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   if (Spi0.TxBufLen) {                         /* Is number of bytes in the transmit buffer greathe
+ 566                             		.loc 1 329 0
+ 567 0074 5B 33                   		movu.B	r3, r3
+ 328:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   Spi0.TxIndxR = (uint8_t)((Spi0.TxIndxR + 1) & (SPI_TX_BUF_SIZE-1)); /* Update index */
+ 568                             		.loc 1 328 0
+ 569 0076 C7 E4 52                		mov.B	r4, 82[r14]
+ 570                             		.loc 1 329 0
+ 571 0079 61 03                   		cmp	#0, r3
+ 572 007b 20 15                   		beq	.L47
+ 330:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     SPI1_WriteData(Spi0.TxBuffer[Spi0.TxIndxR]); /* Store char to transmitter register */
+ 573                             		.loc 1 330 0
+ 574 007d 5B 4E                   		movu.B	r4, r14
+ 575 007f 70 EE 00 00 00 00       		add	#_Spi0+48, r14
+ 576 0085 CD E2 02                		mov.B	2[r14], r2
+ 577 0088 66 11                   		mov	#1, r1
+ 578 008a 05 00 00 00             		bsr	_SPI_WriteData
+ 579                             	.LVL42:
+ 580 008e 2E 0E                   		bra	.L48
+ 581                             	.L47:
+ 331:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 332:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   else {
+ 333:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	  Spi0.State &= ~(RUNINT_FROM_TX|FULL_TX);  /* Clear "running int from TX" and "full TX buff" flag
+ 582                             		.loc 1 333 0
+ 583 0090 CD E4 0C                		mov.B	12[r14], r4
+ 334:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     flags |= ON_FREE_TX;                      /* Set the OnFreeTXBuf flag */
+ 584                             		.loc 1 334 0
+ 585 0093 65 87                   		or	#8, r7
+ 586                             	.LVL43:
+ 333:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	  Spi0.State &= ~(RUNINT_FROM_TX|FULL_TX);  /* Clear "running int from TX" and "full TX buff" flag
+ 587                             		.loc 1 333 0
+ 588 0095 75 24 CF                		and	#-49, r4
+ 589 0098 C7 E4 0C                		mov.B	r4, 12[r14]
+ 590 009b 03                      		.balign 2,3,6
+ 591                             	.L48:
+ 335:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 336:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   
+ 337:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   if(flags & ON_ERROR) {                          /* Is the error flag set? */
+ 592                             		.loc 1 337 0
+ 593 009c FD 74 C7 01             		tst	#1, r7
+ 594 00a0 20 04                   		beq	.L49
+ 595 00a2 2E 2E                   		bra	.L81
+ 596                             	.L49:
+ 338:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     SPI_OnError();                                /* for test only */
+ 339:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     if (Spi0.Cfg.errorCallback != NULL) {
+ 340:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     	Spi0.Cfg.errorCallback(Spi0.State, &Spi0.StructError); /* Invoke the error callback */
+ 341:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     }
+ 342:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 343:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   else {
+ 344:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     if(flags & ON_RX_CHAR) {                      /* Is OnRxChar flag set? */
+ 597                             		.loc 1 344 0
+ 598 00a4 EF 7E                   		mov.L	r7, r14
+ 599 00a6 64 4E                   		and	#4, r14
+ 600 00a8 5B EE                   		movu.B	r14, r14
+ 601 00aa 61 0E                   		cmp	#0, r14
+ 602 00ac 20 1A                   		beq	.L52
+ 603                             	.LBB12:
+ 604                             	.LBB13:
+ 281:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 605                             		.loc 1 281 0
+ 606                             	 ; 281 "C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI/OCSPI_drv.c" 1
+ 607 00ae 03                      		nop
+ 608                             	 ; 0 "" 2
+ 609                             	.LBE13:
+ 610                             	.LBE12:
+ 345:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****       SPI_OnRxChar();                             /* for test only */
+ 346:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****       if (Spi0.Cfg.rxCallback != NULL) {
+ 611                             		.loc 1 346 0
+ 612 00af FB 42 00 00 00 00       		mov.L	#_Spi0, r4
+ 613 00b5 ED 4E 01                		mov.L	4[r4], r14
+ 614 00b8 61 0E                   		cmp	#0, r14
+ 615 00ba 20 0C                   		beq	.L52
+ 347:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     	  Spi0.Cfg.rxCallback(Spi0.State, &Spi0.StructError);  /* Invoke the rx callback */
+ 616                             		.loc 1 347 0
+ 617 00bc 8B 41                   		mov.B	12[r4], r1
+ 618 00be FB 22 00 00 00 00       		mov.L	#_Spi0+14, r2
+ 619 00c4 7F 1E                   		jsr	r14
+ 620                             	.LVL44:
+ 621                             		.balign 2,3,1
+ 622                             	.L52:
+ 348:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****       }
+ 349:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     }
+ 350:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     if(flags & ON_FULL_RX) {                        /* Is OnTxChar flag set? */
+ 623                             		.loc 1 350 0
+ 624 00c6 EF 7E                   		mov.L	r7, r14
+ 625 00c8 64 2E                   		and	#2, r14
+ 626 00ca 5B EE                   		movu.B	r14, r14
+ 627 00cc 61 0E                   		cmp	#0, r14
+ 628 00ce 20 1A                   		beq	.L51
+ 629                             	.L81:
+ 630                             	.LBB14:
+ 631                             	.LBB15:
+ 285:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 632                             		.loc 1 285 0
+ 633                             	 ; 285 "C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI/OCSPI_drv.c" 1
+ 634 00d0 03                      		nop
+ 635                             	 ; 0 "" 2
+ 636                             	.LBE15:
+ 637                             	.LBE14:
+ 351:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****       SPI_OnFullRxBuf();                            /* for test only */
+ 352:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****       if (Spi0.Cfg.errorCallback != NULL) {
+ 638                             		.loc 1 352 0
+ 639 00d1 FB 42 00 00 00 00       		mov.L	#_Spi0, r4
+ 640 00d7 ED 4E 02                		mov.L	8[r4], r14
+ 641 00da 61 0E                   		cmp	#0, r14
+ 642 00dc 20 0C                   		beq	.L51
+ 353:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     	  Spi0.Cfg.errorCallback(Spi0.State, &Spi0.StructError); /* Invoke the error callback */
+ 643                             		.loc 1 353 0
+ 644 00de 8B 41                   		mov.B	12[r4], r1
+ 645 00e0 FB 22 00 00 00 00       		mov.L	#_Spi0+14, r2
+ 646 00e6 7F 1E                   		jsr	r14
+ 647                             	.LVL45:
+ 648                             	.L51:
+ 649                             	.LBB16:
+ 650                             	.LBB17:
+ 289:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 651                             		.loc 1 289 0
+ 652                             	 ; 289 "C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI/OCSPI_drv.c" 1
+ 653 00e8 03                      		nop
+ 654                             	 ; 0 "" 2
+ 655                             	.LBE17:
+ 656                             	.LBE16:
+ 354:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****       }
+ 355:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     }
+ 356:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 357:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   
+ 358:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   SPI_OnTxChar();                                 /* for test only */
+ 359:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   if (Spi0.Cfg.txCallback != NULL) {
+ 657                             		.loc 1 359 0
+ 658 00e9 FB 42 00 00 00 00       		mov.L	#_Spi0, r4
+ 659 00ef EC 4E                   		mov.L	[r4], r14
+ 660 00f1 61 0E                   		cmp	#0, r14
+ 661 00f3 20 0D                   		beq	.L54
+ 360:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	  Spi0.Cfg.txCallback(Spi0.State, &Spi0.StructError);      /* Invoke the tx callback */
+ 662                             		.loc 1 360 0
+ 663 00f5 8B 41                   		mov.B	12[r4], r1
+ 664 00f7 FB 22 00 00 00 00       		mov.L	#_Spi0+14, r2
+ 665 00fd 7F 1E                   		jsr	r14
+ 666                             	.LVL46:
+ 667 00ff 03                      		.balign 2,3,1
+ 668                             	.L54:
+ 361:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 362:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   
+ 363:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   if (flags & ON_FREE_TX) {                       /* Is flag "OnFreeTxBuf" set? */
+ 669                             		.loc 1 363 0
+ 670 0100 64 87                   		and	#8, r7
+ 671                             	.LVL47:
+ 672 0102 5B 77                   		movu.B	r7, r7
+ 673 0104 61 07                   		cmp	#0, r7
+ 674 0106 20 1C                   		beq	.L55
+ 675                             	.LBB18:
+ 676                             	.LBB19:
+ 293:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   __asm__("nop");
+ 677                             		.loc 1 293 0
+ 678                             	 ; 293 "C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI/OCSPI_drv.c" 1
+ 679 0108 03                      		nop
+ 680                             	 ; 0 "" 2
+ 681                             	.LBE19:
+ 682                             	.LBE18:
+ 364:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     SPI_OnFreeTxBuf();                          
+ 365:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     if (Spi0.Cfg.errorCallback != NULL) {
+ 683                             		.loc 1 365 0
+ 684 0109 FB E2 00 00 00 00       		mov.L	#_Spi0, r14
+ 685 010f ED E7 02                		mov.L	8[r14], r7
+ 686 0112 61 07                   		cmp	#0, r7
+ 687 0114 20 0E                   		beq	.L55
+ 366:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     	Spi0.Cfg.errorCallback(Spi0.State, &Spi0.StructError); /* Invoke the error callback */
+ 688                             		.loc 1 366 0
+ 689 0116 CD E1 0C                		mov.B	12[r14], r1
+ 690 0119 FB 22 00 00 00 00       		mov.L	#_Spi0+14, r2
+ 691 011f 7F 17                   		jsr	r7
+ 692                             	.LVL48:
+ 693 0121 03                      		.balign 2,3,1
+ 694                             	.L55:
+ 367:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****     }
+ 368:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 369:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 370:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   IRQ_MONITOR_EXIT();
+ 371:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 372:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** }
+ 695                             		.loc 1 372 0
+ 696 0122 6F 7A                   		popm	r7-r10
+ 370:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   IRQ_MONITOR_EXIT();
+ 697                             		.loc 1 370 0
+ 698 0124 04 00 00 00             		bra	_LIB_IRQMonitor_Exit
+ 699                             	.LVL49:
+ 700                             	.LFE12:
+ 702                             		.section	.text.OCSPI_InitHwSync,"ax",@progbits
+ 703                             		.global	_OCSPI_InitHwSync
+ 705                             	_OCSPI_InitHwSync:
+ 706                             	.LFB13:
+ 373:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 374:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #if defined(FREESCALE_MC9S08_QE128)
+ 375:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #ifdef MEMORY_MODEL_BANKED
+ 376:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #pragma CODE_SEG __NEAR_SEG NON_BANKED
+ 377:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /* Place it in NON_BANKED memory */
+ 378:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #else
+ 379:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #pragma CODE_SEG DEFAULT
+ 380:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #endif /* MEMORY_MODEL_BANKED */
+ 381:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /*INTERRUPT_KEYWORD void OCSPI_ISR1(void)
+ 382:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** {
+ 383:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   SPI_ISR1();   
+ 384:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** }*/
+ 385:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #pragma CODE_SEG DEFAULT
+ 386:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #endif
+ 387:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 388:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 389:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | OCSPI_InitHwSync                                 |
+ 390:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | Function initializes HW SPI interface            |
+ 391:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/ 
+ 392:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** void OCSPI_InitHwSync(void)
+ 393:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** {
+ 707                             		.loc 1 393 0
+ 394:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #if (SPI1_ENABLE == TRUE)
+ 395:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 396:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_ClkEnable();
+ 708                             		.loc 1 396 0
+ 709 0000 66 11                   		mov	#1, r1
+ 710 0002 05 00 00 00             		bsr	_SPI_ClkEnable
+ 711                             	.LVL50:
+ 397:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_ResetStatus();
+ 712                             		.loc 1 397 0
+ 713 0006 66 11                   		mov	#1, r1
+ 714 0008 05 00 00 00             		bsr	_SPI_ResetStatus
+ 715                             	.LVL51:
+ 398:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   
+ 399:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_SetBaudRate(SPI1_BAUDRATE);
+ 716                             		.loc 1 399 0
+ 717 000c FB 2E 00 09 3D          		mov.L	#0x3d0900, r2
+ 718 0011 66 11                   		mov	#1, r1
+ 719 0013 05 00 00 00             		bsr	_SPI_SetBaudRate
+ 720                             	.LVL52:
+ 400:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   
+ 401:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_MasterEnable();
+ 721                             		.loc 1 401 0
+ 722 0017 66 11                   		mov	#1, r1
+ 723 0019 05 00 00 00             		bsr	_SPI_MasterEnable
+ 724                             	.LVL53:
+ 402:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_SetClockPolarity(SPI1_CLOCK_POLARITY);
+ 725                             		.loc 1 402 0
+ 726 001d 66 11                   		mov	#1, r1
+ 727 001f 66 02                   		mov	#0, r2
+ 728 0021 05 00 00 00             		bsr	_SPI_SetClockPolarity
+ 729                             	.LVL54:
+ 403:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_SetClockPhase(SPI1_CLOCK_PHASE);
+ 730                             		.loc 1 403 0
+ 731 0025 66 11                   		mov	#1, r1
+ 732 0027 66 02                   		mov	#0, r2
+ 733 0029 05 00 00 00             		bsr	_SPI_SetClockPhase
+ 734                             	.LVL55:
+ 404:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_SetShiftDir(SPI1_SHIFT_DIRECTION);
+ 735                             		.loc 1 404 0
+ 736 002d 66 11                   		mov	#1, r1
+ 737 002f 66 02                   		mov	#0, r2
+ 738 0031 05 00 00 00             		bsr	_SPI_SetShiftDir
+ 739                             	.LVL56:
+ 405:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_Enable();
+ 740                             		.loc 1 405 0
+ 741 0035 66 11                   		mov	#1, r1
+ 742 0037 05 00 00 00             		bsr	_SPI_Enable
+ 743                             	.LVL57:
+ 406:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_IntEnable();
+ 744                             		.loc 1 406 0
+ 745 003b 66 11                   		mov	#1, r1
+ 746 003d 04 00 00 00             		bra	_SPI_IntEnable
+ 747                             	.LVL58:
+ 748                             	.LFE13:
+ 750                             		.section	.text.SPI_ResetSync,"ax",@progbits
+ 751                             		.global	_SPI_ResetSync
+ 753                             	_SPI_ResetSync:
+ 754                             	.LFB14:
+ 407:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 408:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** #endif /*SPI1_ENABLE*/
+ 409:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   
+ 410:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** } 
+ 411:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 412:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 413:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_ResetSync                                    |
+ 414:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | Function resets SPI interface                    |
+ 415:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/ 
+ 416:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** void SPI_ResetSync( void )
+ 417:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** {
+ 755                             		.loc 1 417 0
+ 418:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	Spi0.State = 0;
+ 756                             		.loc 1 418 0
+ 757 0000 FB E2 00 00 00 00       		mov.L	#_Spi0, r14
+ 758 0006 F9 E4 0C 00             		mov.B	#0, 12[r14]
+ 419:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	Spi0.Error = 0;
+ 759                             		.loc 1 419 0
+ 760 000a F9 E4 0D 00             		mov.B	#0, 13[r14]
+ 420:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   /* Clean SPI buffers */
+ 421:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   (void)SPI_ClearTxBuf();
+ 761                             		.loc 1 421 0
+ 762 000e 05 00 00 00             		bsr	_SPI_ClearTxBuf
+ 763                             	.LVL59:
+ 422:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   (void)SPI_ClearRxBuf();  
+ 764                             		.loc 1 422 0
+ 765 0012 05 00 00 00             		bsr	_SPI_ClearRxBuf
+ 766                             	.LVL60:
+ 423:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 424:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   SPI1_ResetStatus();
+ 767                             		.loc 1 424 0
+ 768 0016 66 11                   		mov	#1, r1
+ 769 0018 04 00 00 00             		bra	_SPI_ResetStatus
+ 770                             	.LVL61:
+ 771                             	.LFE14:
+ 773                             		.section	.text.SPI_InitSync,"ax",@progbits
+ 774                             		.global	_SPI_InitSync
+ 776                             	_SPI_InitSync:
+ 777                             	.LFB15:
+ 425:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** }
+ 426:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 427:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** /*--------------------------------------------------+ 
+ 428:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | SPI_InitSync                                     |
+ 429:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  | Function initializes SPI interface               |
+ 430:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****  +--------------------------------------------------*/ 
+ 431:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** IO_ErrorType SPI_InitSync( gSPICfg_t* pInitSync )
+ 432:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** {
+ 778                             		.loc 1 432 0
+ 779                             	.LVL62:
+ 433:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   /* Init the OCSPI data structure */
+ 434:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	Spi0.TxBufLen = 0;
+ 780                             		.loc 1 434 0
+ 781 0000 FB E2 00 00 00 00       		mov.L	#_Spi0, r14
+ 432:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** {
+ 782                             		.loc 1 432 0
+ 783 0006 7E A7                   		push.l	r7
+ 784                             	.LCFI6:
+ 785                             		.loc 1 434 0
+ 786 0008 F9 E4 54 00             		mov.B	#0, 84[r14]
+ 435:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	Spi0.RxBufLen = 0;
+ 787                             		.loc 1 435 0
+ 788 000c F9 E4 31 00             		mov.B	#0, 49[r14]
+ 436:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	Spi0.State = 0;
+ 789                             		.loc 1 436 0
+ 790 0010 F9 E4 0C 00             		mov.B	#0, 12[r14]
+ 437:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	Spi0.Error = 0;
+ 791                             		.loc 1 437 0
+ 792 0014 F9 E4 0D 00             		mov.B	#0, 13[r14]
+ 438:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   
+ 439:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   if (pInitSync != NULL) {
+ 793                             		.loc 1 439 0
+ 794 0018 61 01                   		cmp	#0, r1
+ 795 001a 20 10                   		beq	.L85
+ 440:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	  Spi0.Cfg.txCallback = pInitSync->txCallback;
+ 796                             		.loc 1 440 0
+ 797 001c EC 17                   		mov.L	[r1], r7
+ 798 001e E3 E7                   		mov.L	r7, [r14]
+ 441:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	  Spi0.Cfg.rxCallback = pInitSync->rxCallback;
+ 799                             		.loc 1 441 0
+ 800 0020 A8 1F                   		mov.L	4[r1], r7
+ 442:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	  Spi0.Cfg.errorCallback = pInitSync->errorCallback;
+ 801                             		.loc 1 442 0
+ 802 0022 A8 91                   		mov.L	8[r1], r1
+ 803                             	.LVL63:
+ 441:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	  Spi0.Cfg.rxCallback = pInitSync->rxCallback;
+ 804                             		.loc 1 441 0
+ 805 0024 E7 E7 01                		mov.L	r7, 4[r14]
+ 806                             		.loc 1 442 0
+ 807 0027 E7 E1 02                		mov.L	r1, 8[r14]
+ 808                             		.balign 2,3,3
+ 809                             	.L85:
+ 443:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   }
+ 444:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 445:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   /* Hw init */
+ 446:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c ****   OCSPI_InitHwSync();
+ 810                             		.loc 1 446 0
+ 811 002a 05 00 00 00             		bsr	_OCSPI_InitHwSync
+ 812                             	.LVL64:
+ 447:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 
+ 448:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** 	return IO_E_OK;  
+ 449:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI\OCSPI_drv.c **** }
+ 813                             		.loc 1 449 0
+ 814 002e 66 01                   		mov.L	#0, r1
+ 815 0030 3F 77 01                		rtsd	#4, r7-r7
+ 816                             	.LFE15:
+ 818 0033 03                      		.section	.bss.Spi0,"aw",@nobits
+ 819                             		.balign 4
+ 822                             	_Spi0:
+ 823 0000 00 00 00 00 00 00 00 00 		.zero	88
+ 823      00 00 00 00 00 00 00 00 
+ 823      00 00 00 00 00 00 00 00 
+ 823      00 00 00 00 00 00 00 00 
+ 823      00 00 00 00 00 00 00 00 
+ 1062                             	.Letext0:
+ 1063                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 1064                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 1065                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers/IO_driver.h"
+ 1066                             		.file 5 "C:/Workspace/FW_Platform2_5/trunk/Drivers/OCSPI/OCSPI_drv.h"
+ 1067                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_SecurityCheck/LIB_TaskMonitori
+ 1068                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_hal.h"

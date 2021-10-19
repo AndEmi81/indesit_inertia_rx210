@@ -1,0 +1,575 @@
+   1                             		.file	"OCRST_drv.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.OCRST_GetResetSourceSync,"ax",@progbits
+   5                             		.global	_OCRST_GetResetSourceSync
+   7                             	_OCRST_GetResetSourceSync:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST/OCRST_drv.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /**
+   7:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \n
+   8:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \Par		OCRST_drv.c
+   9:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \n			Implementation of all functions necessary to achieve the aim.
+  10:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \n
+  11:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \file		OCRST_drv.c
+  12:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \ingroup	OCRST
+  13:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \date		May 4, 2010
+  14:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \version	00.00.01
+  15:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \author		Jaroslav Musil, Alessandro Sabbatini
+  16:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \n
+  17:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \n
+  18:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \Par\b	History:
+  19:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \n
+  20:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \n 		00.00.01
+  21:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \n		04/05/2010
+  22:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \n		Jaroslav Musil
+  23:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \n		First Insertion
+  24:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \n
+  25:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \n
+  26:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \n etc.
+  27:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** */
+  28:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+  29:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* ******** */
+  30:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* Includes */
+  31:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* ******** */
+  32:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #include "OCRST_drv.h"
+  33:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+  34:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* ****************** */
+  35:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* Defines and Macros */
+  36:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* ****************** */
+  37:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #if !defined (NO_BOOT_LOADER)
+  38:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #define NO_BOOT_LOADER FALSE
+  39:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #endif
+  40:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /** Must be other than 0 */
+  41:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #define USER_RST_KEYWORD    0xAABB
+  42:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+  43:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* *************************** */
+  44:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* Typedef, Structs and Unions */
+  45:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* *************************** */
+  46:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+  47:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+  48:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* ********* */
+  49:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* Variables */
+  50:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* ********* */
+  51:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+  52:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* Global */
+  53:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+  54:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* Static */
+  55:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /** This is a keyword used to detect an user reset */
+  56:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #if defined (__CWCC__)     
+  57:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #pragma define_section noinit ".noinit" far_absolute
+  58:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #if _lint
+  59:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #define NO_INIT_VAR
+  60:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #else   /* _lint */
+  61:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #define NO_INIT_VAR __declspec(noinit)
+  62:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #endif  /* _lint */
+  63:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /** This variable contains ID reset's source */
+  64:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** NO_INIT_VAR uint16_t UserResetKeyWord;
+  65:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+  66:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #elif defined(__ICCARM__)
+  67:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #define __ram_initialization __iar_data_init3
+  68:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #pragma location = ".noinit"
+  69:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /** This variable contains ID reset's source */
+  70:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c ****  __no_init uint16_t UserResetKeyWord;
+  71:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #elif defined(__GNUC__)
+  72:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** uint16_t UserResetKeyWord __attribute__ ((section (".noinit")));
+  73:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #else
+  74:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #error "No IDE defined"
+  75:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** uint16_t UserResetKeyWord;
+  76:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** #endif
+  77:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* ******************* */
+  78:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* Functions Prototype */
+  79:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* ******************* */
+  80:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+  81:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* Exported function */
+  82:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+  83:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* Local Function */
+  84:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+  85:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* *************** */
+  86:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* Function Bodies */
+  87:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* *************** */
+  88:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+  89:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /* Exported function */
+  90:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+  91:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /**
+  92:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** Determines the reset source comparing the reset source register and its copy
+  93:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \n provided by BootLoader.
+  94:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \n If Boot Loader is not present in your application, please insert #define NO_BOOT_LOADER TRUE in 
+  95:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+  96:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \return 	RST_Type
+  97:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \retval		reset source identification
+  98:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+  99:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvRST_2
+ 100:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** */
+ 101:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** RST_Type OCRST_GetResetSourceSync(void)
+ 102:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** {
+  10                             		.loc 1 102 0
+  11 0000 7E A7                   		push.l	r7
+  12                             	.LCFI0:
+ 103:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 104:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	resetSource_t rstSrc = _RST_COPY_VALUE;
+  13                             		.loc 1 104 0
+  14 0002 FB 72 00 00 00 00       		mov.L	#_ResetInfo, r7
+  15 0008 A8 7F                   		mov.L	4[r7], r7
+  16                             	.LVL0:
+ 105:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	RST_Type rstID;
+ 106:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 107:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	if ( (SYS_UserReset(rstSrc)) && ( USER_RST_KEYWORD == UserResetKeyWord ) )
+  17                             		.loc 1 107 0
+  18 000a EF 71                   		mov.L	r7, r1
+  19 000c 05 00 00 00             		bsr	_SYS_UserReset
+  20                             	.LVL1:
+  21 0010 61 01                   		cmp	#0, r1
+  22 0012 20 12                   		beq	.L2
+  23                             		.loc 1 107 0 is_stmt 0 discriminator 1
+  24 0014 FB E2 00 00 00 00       		mov.L	#_UserResetKeyWord, r14
+  25 001a 5C EE                   		movu.W	[r14], r14
+  26 001c 77 0E BB AA 00          		cmp	#0xaabb, r14
+  27 0021 20 57                   		beq	.L4
+  28 0023 03                      		.balign 2,3,1
+  29                             	.L2:
+ 108:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	{
+ 109:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_USER;
+ 110:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	}
+ 111:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	else if (SYS_PowerOnReset(rstSrc))
+  30                             		.loc 1 111 0 is_stmt 1
+  31 0024 EF 71                   		mov.L	r7, r1
+  32 0026 05 00 00 00             		bsr	_SYS_PowerOnReset
+  33                             	.LVL2:
+  34 002a 61 01                   		cmp	#0, r1
+  35 002c 21 50                   		bne	.L5
+ 112:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	{
+ 113:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_POWER_ON;
+ 114:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	}
+ 115:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	else if (SYS_ExternalPinReset(rstSrc))
+  36                             		.loc 1 115 0
+  37 002e EF 71                   		mov.L	r7, r1
+  38 0030 05 00 00 00             		bsr	_SYS_ExternalPinReset
+  39                             	.LVL3:
+  40 0034 61 01                   		cmp	#0, r1
+  41 0036 21 4A                   		bne	.L6
+ 116:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	{
+ 117:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_PIN;
+ 118:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	}
+ 119:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	else if (SYS_WatchdogReset(rstSrc))
+  42                             		.loc 1 119 0
+  43 0038 EF 71                   		mov.L	r7, r1
+  44 003a 05 00 00 00             		bsr	_SYS_WatchdogReset
+  45                             	.LVL4:
+  46 003e 61 01                   		cmp	#0, r1
+  47 0040 21 44                   		bne	.L7
+ 120:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	{
+ 121:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_WATCHDOG;
+ 122:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	}
+ 123:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	else if (SYS_LowVoltageReset(rstSrc))
+  48                             		.loc 1 123 0
+  49 0042 EF 71                   		mov.L	r7, r1
+  50 0044 05 00 00 00             		bsr	_SYS_LowVoltageReset
+  51                             	.LVL5:
+  52 0048 61 01                   		cmp	#0, r1
+  53 004a 21 3E                   		bne	.L8
+ 124:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	{
+ 125:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_LOW_VOLT_DETECT;
+ 126:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	}
+ 127:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	else if (SYS_LossOfClockReset(rstSrc))
+  54                             		.loc 1 127 0
+  55 004c EF 71                   		mov.L	r7, r1
+  56 004e 05 00 00 00             		bsr	_SYS_LossOfClockReset
+  57                             	.LVL6:
+  58 0052 61 01                   		cmp	#0, r1
+  59 0054 21 38                   		bne	.L9
+ 128:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	{
+ 129:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_LOSS_OF_CLOCK;
+ 130:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	}
+ 131:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	else if (SYS_IllegalOpcodeReset(rstSrc))
+  60                             		.loc 1 131 0
+  61 0056 EF 71                   		mov.L	r7, r1
+  62 0058 05 00 00 00             		bsr	_SYS_IllegalOpcodeReset
+  63                             	.LVL7:
+  64 005c 61 01                   		cmp	#0, r1
+  65 005e 21 32                   		bne	.L10
+ 132:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	{
+ 133:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_ILLEGAL_OPCODE;
+ 134:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	}
+ 135:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	else if (SYS_IllegalAddressReset(rstSrc))
+  66                             		.loc 1 135 0
+  67 0060 EF 71                   		mov.L	r7, r1
+  68 0062 05 00 00 00             		bsr	_SYS_IllegalAddressReset
+  69                             	.LVL8:
+  70 0066 61 01                   		cmp	#0, r1
+  71 0068 21 2C                   		bne	.L11
+ 136:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	{
+ 137:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_ILLEGAL_ADDR_ACCESS;
+ 138:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	}
+ 139:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	else if (SYS_DebuggerReset(rstSrc))
+  72                             		.loc 1 139 0
+  73 006a EF 71                   		mov.L	r7, r1
+  74 006c 05 00 00 00             		bsr	_SYS_DebuggerReset
+  75                             	.LVL9:
+  76 0070 61 01                   		cmp	#0, r1
+  77 0072 20 24                   		beq	.L3
+ 140:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	{
+ 141:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_DEBUGGER;
+  78                             		.loc 1 141 0
+  79 0074 66 91                   		mov	#9, r1
+  80 0076 2E 20                   		bra	.L3
+  81                             	.L4:
+ 109:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_USER;
+  82                             		.loc 1 109 0
+  83 0078 66 81                   		mov	#8, r1
+  84 007a 2E 1C                   		bra	.L3
+  85                             	.L5:
+ 113:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_POWER_ON;
+  86                             		.loc 1 113 0
+  87 007c 66 11                   		mov	#1, r1
+  88 007e 2E 18                   		bra	.L3
+  89                             	.L6:
+ 117:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_PIN;
+  90                             		.loc 1 117 0
+  91 0080 66 21                   		mov	#2, r1
+  92 0082 2E 14                   		bra	.L3
+  93                             	.L7:
+ 121:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_WATCHDOG;
+  94                             		.loc 1 121 0
+  95 0084 66 31                   		mov	#3, r1
+  96 0086 2E 10                   		bra	.L3
+  97                             	.L8:
+ 125:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_LOW_VOLT_DETECT;
+  98                             		.loc 1 125 0
+  99 0088 66 41                   		mov	#4, r1
+ 100 008a 2E 0C                   		bra	.L3
+ 101                             	.L9:
+ 129:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_LOSS_OF_CLOCK;
+ 102                             		.loc 1 129 0
+ 103 008c 66 51                   		mov	#5, r1
+ 104 008e 2E 08                   		bra	.L3
+ 105                             	.L10:
+ 133:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_ILLEGAL_OPCODE;
+ 106                             		.loc 1 133 0
+ 107 0090 66 61                   		mov	#6, r1
+ 108 0092 2E 04                   		bra	.L3
+ 109                             	.L11:
+ 137:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_ILLEGAL_ADDR_ACCESS;
+ 110                             		.loc 1 137 0
+ 111 0094 66 71                   		mov	#7, r1
+ 112                             		.balign 2,3,5
+ 113                             	.L3:
+ 114                             	.LVL10:
+ 142:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	}
+ 143:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	else
+ 144:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	{
+ 145:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_UNKNOWN;
+ 146:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	}
+ 147:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	UserResetKeyWord = 0;
+ 115                             		.loc 1 147 0
+ 116 0096 FB 72 00 00 00 00       		mov.L	#_UserResetKeyWord, r7
+ 117                             	.LVL11:
+ 118 009c 3D 70 00                		mov.W	#0, [r7]
+ 148:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	return (rstID);
+ 149:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 150:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** }
+ 119                             		.loc 1 150 0
+ 120 009f 5B 11                   		movu.B	r1, r1
+ 121 00a1 3F 77 01                		rtsd	#4, r7-r7
+ 122                             	.LFE0:
+ 124                             		.section	.text.OCRST_SetSync,"ax",@progbits
+ 125                             		.global	_OCRST_SetSync
+ 127                             	_OCRST_SetSync:
+ 128                             	.LFB1:
+ 151:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 152:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /**
+ 153:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** Sets the reset source, according to rstValue, either by the reset source register or by its copy.
+ 154:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 155:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \param  [in]	rstValue id of reset
+ 156:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 157:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \return 	IO_ErrorType
+ 158:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \retval		IO_E_OK
+ 159:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 160:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \note		Writing the reset source register might not be available on every core
+ 161:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 162:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** */
+ 163:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** IO_ErrorType OCRST_SetSync(RST_Type rstValue)
+ 164:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** {
+ 129                             		.loc 1 164 0
+ 130                             	.LVL12:
+ 165:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	volatile resetSource_t *pRstSrc = (&_RST_COPY_VALUE);
+ 166:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	IO_ErrorType err = (IO_ErrorType)IO_E_OK;
+ 167:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 168:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	switch(rstValue)
+ 131                             		.loc 1 168 0
+ 132 0000 5B 11                   		movu.B	r1, r1
+ 133 0002 61 81                   		cmp	#8, r1
+ 134 0004 20 10                   		beq	.L20
+ 135 0006 24 08                   		bgtu	.L21
+ 136 0008 61 01                   		cmp	#0, r1
+ 137 000a 20 18                   		beq	.L22
+ 138 000c 2E 12                   		bra	.L29
+ 139                             	.L21:
+ 140 000e 61 91                   		cmp	#9, r1
+ 141 0010 21 12                   		bne	.L22
+ 142 0012 2E 0C                   		bra	.L29
+ 143                             	.L20:
+ 169:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	{
+ 170:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_POWER_ON:
+ 171:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetPowerOnReset(*pRstSrc);
+ 172:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 173:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_PIN:
+ 174:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetExternalPinReset(*pRstSrc);
+ 175:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 176:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_WATCHDOG:
+ 177:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetWatchdogReset(*pRstSrc);
+ 178:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 179:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_LOW_VOLT_DETECT:
+ 180:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetLowVoltageReset(*pRstSrc);
+ 181:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 182:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_LOSS_OF_CLOCK:
+ 183:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetLossOfClockReset(*pRstSrc);
+ 184:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 185:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_ILLEGAL_OPCODE:
+ 186:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetIllegalOpcodeReset(*pRstSrc);
+ 187:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 188:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_ILLEGAL_ADDR_ACCESS:
+ 189:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetIllegalAddressReset(*pRstSrc);
+ 190:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 191:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_USER:
+ 192:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		UserResetKeyWord = USER_RST_KEYWORD;
+ 144                             		.loc 1 192 0
+ 145 0014 FB E2 00 00 00 00       		mov.L	#_UserResetKeyWord, r14
+ 146 001a F8 E9 BB AA             		mov.W	#0xffffaabb, [r14]
+ 147                             		.balign 2,3,1
+ 148                             	.L29:
+ 166:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	IO_ErrorType err = (IO_ErrorType)IO_E_OK;
+ 149                             		.loc 1 166 0
+ 150 001e 66 01                   		mov	#0, r1
+ 151                             	.LVL13:
+ 193:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetUserReset(*pRstSrc);
+ 194:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 152                             		.loc 1 194 0
+ 153 0020 2E 04                   		bra	.L18
+ 154                             	.L22:
+ 195:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_DEBUGGER:
+ 196:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetDebuggerReset(*pRstSrc);
+ 197:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 198:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	default:
+ 199:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		err = (IO_ErrorType)IO_E_UNKNOWN_MODE;
+ 155                             		.loc 1 199 0
+ 156 0022 66 31                   		mov	#3, r1
+ 157                             		.balign 2,3,1
+ 158                             	.L18:
+ 159                             	.LVL14:
+ 200:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 201:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 202:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	}
+ 203:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 204:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	return (err);
+ 205:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** }
+ 160                             		.loc 1 205 0
+ 161 0024 64 31                   		and	#3, r1
+ 162                             	.LVL15:
+ 163 0026 02                      		rts
+ 164                             	.LFE1:
+ 166 0027 03                      		.section	.text.OCRST_GenerateUserResetSync,"ax",@progbits
+ 167                             		.global	_OCRST_GenerateUserResetSync
+ 169                             	_OCRST_GenerateUserResetSync:
+ 170                             	.LFB2:
+ 206:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 207:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /**
+ 208:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** This function generates an user reset.
+ 209:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** */
+ 210:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** void OCRST_GenerateUserResetSync(void)
+ 211:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** {
+ 171                             		.loc 1 211 0
+ 172 0000 60 40                   		sub	#4, r0
+ 173                             	.LCFI1:
+ 212:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	EnterCriticalSection();
+ 174                             		.loc 1 212 0
+ 175 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 176                             	.LVL16:
+ 177 0006 FB E2 00 00 00 00       		mov.L	#_OS_Global, r14
+ 178 000c CD E4 01                		mov.B	1[r14], r4
+ 179 000f 62 14                   		add	#1, r4
+ 180 0011 C7 E4 01                		mov.B	r4, 1[r14]
+ 213:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 214:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	UserResetKeyWord = USER_RST_KEYWORD;
+ 181                             		.loc 1 214 0
+ 182 0014 FB E2 00 00 00 00       		mov.L	#_UserResetKeyWord, r14
+ 183 001a F8 E9 BB AA             		mov.W	#0xffffaabb, [r14]
+ 215:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	UserReset();
+ 184                             		.loc 1 215 0
+ 185 001e FB EE 00 00 08          		mov.L	#0x80000, r14
+ 186 0023 FA E9 FF 01 0F A5       		mov.W	#0xffffa50f, 1022[r14]
+ 187 0029 F9 E9 61 01 A5          		mov.W	#0xffffa501, 194[r14]
+ 188                             	.LVL17:
+ 189                             		.balign 2,3,4
+ 190                             	.L31:
+ 191                             	.LBB2:
+ 216:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 217:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	/* Fallback to watchdog reset if User Reset fails */
+ 218:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	while(1) {
+ 219:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		volatile int foo=0;
+ 192                             		.loc 1 219 0 discriminator 1
+ 193 002e 3E 00 00                		mov.L	#0, [r0]
+ 220:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		foo++;
+ 194                             		.loc 1 220 0 discriminator 1
+ 195 0031 EC 0E                   		mov.L	[r0], r14
+ 196 0033 62 1E                   		add	#1, r14
+ 197                             	.LVL18:
+ 198 0035 E3 0E                   		mov.L	r14, [r0]
+ 199                             	.LVL19:
+ 200 0037 2E F7                   		bra	.L31
+ 201                             	.LBE2:
+ 202                             	.LFE2:
+ 204 0039 03                      		.section	.text.OCRST_MCU_RequiresResetAfterPOR,"ax",@progbits
+ 205                             		.global	_OCRST_MCU_RequiresResetAfterPOR
+ 207                             	_OCRST_MCU_RequiresResetAfterPOR:
+ 208                             	.LFB3:
+ 221:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	}
+ 222:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** }
+ 223:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /**
+ 224:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** Checks if MCU requires a reset under some conditions.
+ 225:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 226:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \return 	bool_t
+ 227:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 228:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \retval		TRUE MCU requires reset
+ 229:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \retval		FALSE MCU doesn't requires reset
+ 230:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 231:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** */
+ 232:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** bool_t OCRST_MCU_RequiresResetAfterPOR(void)
+ 233:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** {
+ 209                             		.loc 1 233 0
+ 234:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	if ((BootShortInfo != BOOT_SIGNATURE) && (MCU_RequiresResetAfterPOR()))
+ 235:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	{
+ 236:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		return TRUE;
+ 237:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	}
+ 238:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	else
+ 239:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	{
+ 240:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		return FALSE;
+ 241:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	}
+ 242:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 243:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** }
+ 210                             		.loc 1 243 0
+ 211 0000 66 01                   		mov.L	#0, r1
+ 212 0002 02                      		rts
+ 213                             	.LFE3:
+ 215                             		.section	.text.OCRST_SaveResetValue,"ax",@progbits
+ 216                             		.global	_OCRST_SaveResetValue
+ 218                             	_OCRST_SaveResetValue:
+ 219                             	.LFB4:
+ 244:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 245:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /**
+ 246:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** Provides resetSource value to save.
+ 247:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** Used to preserve value during required reset (e.g. ClassB WD Check)
+ 248:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 249:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \return 	resetSource_t
+ 250:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 251:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \retval		ResetSrc value (registers map)
+ 252:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 253:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** */
+ 254:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** resetSource_t OCRST_SaveResetValue(void)
+ 255:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** {
+ 220                             		.loc 1 255 0
+ 256:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	return _RST_COPY_VALUE;
+ 257:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** }
+ 221                             		.loc 1 257 0
+ 222 0000 FB E2 00 00 00 00       		mov.L	#_ResetInfo, r14
+ 223 0006 ED E1 01                		mov.L	4[r14], r1
+ 224 0009 02                      		rts
+ 225                             	.LFE4:
+ 227                             		.section	.text.OCRST_RestoreResetValue,"ax",@progbits
+ 228                             		.global	_OCRST_RestoreResetValue
+ 230                             	_OCRST_RestoreResetValue:
+ 231                             	.LFB5:
+ 258:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 259:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /**
+ 260:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** Set resetSource value saved previously.
+ 261:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** Used to preserve value during required reset (e.g. ClassB WD Check);
+ 262:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** it restores UserResetKeyWord if an user reset occurred.
+ 263:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 264:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \param  [in]	resetSource_t ResetSrc value (registers map)
+ 265:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \return	none
+ 266:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** */
+ 267:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** void OCRST_RestoreResetValue(resetSource_t resetCopyVal)
+ 268:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** {
+ 232                             		.loc 1 268 0
+ 233                             	.LVL20:
+ 269:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	_RST_COPY_VALUE = resetCopyVal;
+ 234                             		.loc 1 269 0
+ 235 0000 FB E2 00 00 00 00       		mov.L	#_ResetInfo, r14
+ 236 0006 E7 E1 01                		mov.L	r1, 4[r14]
+ 270:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 271:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	if (SYS_UserReset(resetCopyVal))
+ 237                             		.loc 1 271 0
+ 238 0009 05 00 00 00             		bsr	_SYS_UserReset
+ 239                             	.LVL21:
+ 240 000d 61 01                   		cmp	#0, r1
+ 241 000f 20 0C                   		beq	.L35
+ 272:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	{
+ 273:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 		UserResetKeyWord = USER_RST_KEYWORD;
+ 242                             		.loc 1 273 0
+ 243 0011 FB E2 00 00 00 00       		mov.L	#_UserResetKeyWord, r14
+ 244 0017 F8 E9 BB AA             		mov.W	#0xffffaabb, [r14]
+ 245                             	.L35:
+ 246 001b 02                      		rts
+ 247                             	.LFE5:
+ 249                             		.section	.text.OCRST_CopyFromRealResetSrc,"ax",@progbits
+ 250                             		.global	_OCRST_CopyFromRealResetSrc
+ 252                             	_OCRST_CopyFromRealResetSrc:
+ 253                             	.LFB6:
+ 274:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	}
+ 275:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** }
+ 276:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 277:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /**
+ 278:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** Copy resetSource from real registers.
+ 279:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** Used to simulate Bootloader ResetSource copy when bootloader is missing
+ 280:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 281:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \param  none
+ 282:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \return	none
+ 283:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** */
+ 284:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** void OCRST_CopyFromRealResetSrc(void)
+ 285:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** {
+ 254                             		.loc 1 285 0
+ 286:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	OCRST_RestoreResetValue(SYS_GetResetSrcVal());
+ 255                             		.loc 1 286 0
+ 256 0000 05 00 00 00             		bsr	_SYS_GetResetSrcVal
+ 257                             	.LVL22:
+ 258 0004 04 00 00 00             		bra	_OCRST_RestoreResetValue
+ 259                             	.LVL23:
+ 260                             	.LFE6:
+ 262                             		.section	.text.OCRST_WriteBootKeywordArea,"ax",@progbits
+ 263                             		.global	_OCRST_WriteBootKeywordArea
+ 265                             	_OCRST_WriteBootKeywordArea:
+ 266                             	.LFB7:
+ 287:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** }
+ 288:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 289:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** /**
+ 290:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** Set BootStartKey
+ 291:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 
+ 292:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \param  none
+ 293:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** \return	none
+ 294:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** */
+ 295:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** void OCRST_WriteBootKeywordArea(void)
+ 296:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** {
+ 267                             		.loc 1 296 0
+ 297:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCRST\OCRST_drv.c **** 	ResetInfo.BootStartKey= BOOT_START_KEY;
+ 268                             		.loc 1 297 0
+ 269 0000 FB E2 00 00 00 00       		mov.L	#_ResetInfo, r14
+ 270 0006 F8 E2 45 F4 78 E0       		mov.L	#0xe078f445, [r14]
+ 271 000c 02                      		rts
+ 272                             	.LFE7:
+ 274                             		.global	_UserResetKeyWord
+ 275                             		.section	.noinit,"aw",@progbits
+ 276                             		.balign 2
+ 279                             	_UserResetKeyWord:
+ 280 0000 00 00                   		.zero	2
+ 373                             	.Letext0:
+ 374                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 375                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 376                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_reg.h"
+ 377                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_cfg.h"
+ 378                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers/IO_driver.h"
+ 379                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_hal.h"

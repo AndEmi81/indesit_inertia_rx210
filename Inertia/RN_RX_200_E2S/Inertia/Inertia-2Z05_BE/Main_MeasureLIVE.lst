@@ -1,0 +1,749 @@
+   1                             		.file	"Main_MeasureLIVE.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.Main_LiveMeasure,"ax",@progbits
+   5                             		.global	_Main_LiveMeasure
+   7                             	_Main_LiveMeasure:
+   8                             	.LFB4:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Main_MeasureLIVE.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /**
+   7:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \n
+   8:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \par		Main_MeasureLive
+   9:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \n			This file contains the EmbOS-based service for the live peak value.
+  10:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \n
+  11:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \file		Main_MeasureLive.c
+  12:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \ingroup	Main
+  13:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \date		Feb 7, 2011
+  14:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \version	01.00.00
+  15:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \author		Roberto Fioravanti
+  16:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \n
+  17:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \n
+  18:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \par\b	History:
+  19:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \n
+  20:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \n 		00.00.00
+  21:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \n		29/03/2011
+  22:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \n		Roberto Fioravanti
+  23:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \n		changes
+  24:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \n 		- file created
+  25:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \n
+  26:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \n
+  27:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \n etc.
+  28:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+  29:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* ******** */
+  30:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* Includes */
+  31:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* ******** */
+  32:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #include "Config.h"
+  33:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #include "Analog.h"
+  34:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #include "Main.h"
+  35:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #include "LIB_GridVoltage.h"
+  36:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #include "LIB_ZeroCrossing.h"
+  37:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+  38:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_PM_ENERGY_METER_SW)
+  39:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #include "PM_EnergyMeterSw.h"
+  40:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* CONFIG_PM_ENERGY_METER_SW*/
+  41:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+  42:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_CLASS_B_DATA_INTEGRITY)
+  43:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #include "Lib_ClassBVar.h"
+  44:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* defined(CONFIG_CLASS_B_DATA_INTEGRITY) */
+  45:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* ****************** */
+  46:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* Defines and Macros */
+  47:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* ****************** */
+  48:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+  49:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if (ADC_RESOLUTION == 10)
+  50:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define EXPECTED_LIVE_PEAK_VOLTAGE_TO_ADC_10BIT(peakvoltage)	((unsigned short)( (((peakvoltage*1.41
+  51:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+  52:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if (ADC_RESOLUTION == 8)
+  53:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define EXPECTED_LIVE_PEAK_VOLTAGE_TO_ADC_8BIT(peakvoltage)	(VLINE_THEORETIC_AD_10BIT(peakvoltage)>
+  54:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+  55:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+  56:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+  57:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+  58:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+  59:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+  60:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /** 
+  61:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** @name Live task safety
+  62:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** If not needed, they can remain undefined.
+  63:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** The configuration definition is in TaskMonitor_Cfg.h
+  64:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** @{
+  65:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+  66:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if  !defined(MAIN_LIVE_TASK_TASKMONITOR_ENABLE) && !defined(CONFIG_MAIN_LIVE_TASK_TASKMONITOR_ENAB
+  67:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define START_LIVE_TASK_MONITORING()		{}
+  68:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK__MONITOR_IN()		{}
+  69:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK__MONITOR_OUT()		{}
+  70:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+  71:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /*@}*/
+  72:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+  73:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+  74:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /*  Check for the security entry definitions*/
+  75:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(START_LIVE_TASK_MONITORING)
+  76:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #error "START_LIVE_TASK_MONITORING() missing definition."
+  77:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+  78:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+  79:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(MAIN_LIVE_TASK__MONITOR_IN)
+  80:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #error "MAIN_LIVE_TASK__MONITOR_IN() missing definition."
+  81:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+  82:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+  83:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(MAIN_LIVE_TASK__MONITOR_OUT)
+  84:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #error "MAIN_LIVE_TASK__MONITOR_OUT() missing definition."
+  85:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+  86:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+  87:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /**
+  88:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** @name Debug macros
+  89:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \par Properties
+  90:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** Not mandatory. If not defined they assume the default values
+  91:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \code
+  92:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK_DEBUG                (1)
+  93:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK_DURATION             (1)
+  94:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK_DELAY_ON_ZC          (1)
+  95:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK_TUNING               (1)
+  96:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \endcode
+  97:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** @{
+  98:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+  99:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 100:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(MAIN_LIVE_TASK_DEBUG)
+ 101:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /** Debug enable
+ 102:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \li 0: all debug features disabled
+ 103:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \li 1: allows to enable the debug level for MAIN_LIVE_TASK_DURATION, MAIN_LIVE_TASK_DELAY_ON_ZC
+ 104:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** MAIN_LIVE_TASK_TUNING
+ 105:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 106:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK_DEBUG                (1)
+ 107:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 108:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 109:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(MAIN_LIVE_TASK_DURATION)
+ 110:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /** Measurement of the duration of the task
+ 111:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \li 0: disabled
+ 112:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \li 1: enabled
+ 113:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 114:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK_DURATION             (1)
+ 115:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 116:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 117:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(MAIN_LIVE_TASK_DELAY_ON_ZC)
+ 118:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /** delay of the activation of the task in [us] */
+ 119:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK_DELAY_ON_ZC          (1)
+ 120:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 121:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 122:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(MAIN_LIVE_TASK_TUNING)
+ 123:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /** correction of the delay of the activation of the task in [us] */
+ 124:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK_TUNING               (1)
+ 125:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 126:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /*@}*/
+ 127:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 128:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 129:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 130:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** @name Tuning macros
+ 131:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \par Properties
+ 132:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** Not mandatory. If not defined it assumes the default value
+ 133:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \code
+ 134:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define LIVE_OFFSET_ACTIVATION         (0)
+ 135:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \endcode
+ 136:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \attention Used only if \ref MAIN_LIVE_TASK_DEBUG is defined as 0.
+ 137:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** @{
+ 138:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 139:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #ifndef LIVE_OFFSET_ACTIVATION
+ 140:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /** Live task activation delay correction in [us] */
+ 141:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define LIVE_OFFSET_ACTIVATION             (0)
+ 142:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif  /* LIVE_OFFSET_DEFAULT */
+ 143:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /*@}*/
+ 144:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 145:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 146:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define LIVE_TASK__LIVE_AWG_SAMPLES         (1<<LIVE_TASK__LIVE_AWG_SAMPLES_POF2)
+ 147:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 148:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define V_LINE_UNDER_TH_FILTER              5
+ 149:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 150:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 151:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if V_LINE_UNDER_TH_FILTER >= 255
+ 152:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #error "V_LINE_UNDER_TH_FILTER >= 255"
+ 153:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* V_LINE_UNDER_TH_FILTER >= 255*/
+ 154:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 155:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* *************************** */
+ 156:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* Typedef, Structs and Unions */
+ 157:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* *************************** */
+ 158:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** typedef struct
+ 159:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 160:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	Main_LivePeakMeasureADCType LastSample;
+ 161:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	uint8_t LiveUnderThCnt;
+ 162:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** } Main_LiveFilterType;
+ 163:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 164:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 165:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** typedef struct
+ 166:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 167:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(LIVE_TASK__ADC_LIVE_TO_RMS_CONVERSION)
+ 168:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	Main_LiveRMSType   Vrms;
+ 169:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* defined(LIVE_TASK__ADC_LIVE_TO_RMS_CONVERSION) */
+ 170:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	uint16_t  AverageValue;
+ 171:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	int16_t   AverageIndex;
+ 172:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	uint8_t   AverageSamplesCount;
+ 173:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** } Main_LiveType;
+ 174:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 175:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 176:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /*
+ 177:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** Parameter for delay on ZC
+ 178:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** It is the delay on ZC in system cycles (OS_NANOSECS_TO_SYSTEMTIMERCYCLES())
+ 179:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 180:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** typedef struct
+ 181:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 182:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	OS_U32 min;
+ 183:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	OS_U32 max;
+ 184:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** }MainLiveDelayOnZCParamType;
+ 185:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 186:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 187:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* score (kind of correlation index) to state if delay on ZC measurement is in range and reliable *
+ 188:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** typedef struct Score_s
+ 189:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 190:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	OS_I8	score;
+ 191:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	OS_I8	eScore;
+ 192:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** } MainLive_ScoreType;
+ 193:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* **************************** */
+ 194:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* Prototype of local functions */
+ 195:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* **************************** */
+ 196:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 197:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 198:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 199:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 200:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 201:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* ********* */
+ 202:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* Variables */
+ 203:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* ********* */
+ 204:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 205:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* Global */
+ 206:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 207:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* Static */
+ 208:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 209:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** @name Service variables
+ 210:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** @{
+ 211:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 212:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 213:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY)
+ 214:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /** Task Stack */
+ 215:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static STACK_SEC OS_STACKPTR int      Main_MeasureLiveTaskStack[CONFIG_MAIN_MEASURELIVE_TASK_STACK_
+ 216:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 217:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /** Task Control Block*/
+ 218:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static OS_TASK              Main_MeasureLiveTaskTCB;
+ 219:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 220:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 221:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /** high resolution Alarm */
+ 222:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static OS_ALARM             Main_AlmMeasureLive;
+ 223:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif  /* defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY) */
+ 224:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 225:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 226:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(LIVE_TASK__ADC_LIVE_TO_RMS_CONVERSION)  
+ 227:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /** Sema */
+ 228:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static OS_RSEMA             LiveSema;
+ 229:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 230:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 231:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 232:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static Main_LiveFilterType  Main_LiveFilter = {0};
+ 233:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static Main_LiveType        Main_Live = {0};
+ 234:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /*@}*/
+ 235:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 236:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 237:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 238:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_MAIN_LIVE_DELAY_ON_ZC)
+ 239:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /*  timing for the measurement of the delay to ZC  */
+ 240:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static  TOOLS_TIMING        			LiveDelayOnZC;
+ 241:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* Number of updates for normal feedbacks :
+ 242:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****  * free runner counter incremented from -128 up to 127 each task execution
+ 243:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****  * */
+ 244:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static	MainLive_ScoreType				MainLiveDelayOnZC_Score; /*score*/
+ 245:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* Max and min delay in ZC in ns*/
+ 246:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static const MainLiveDelayOnZCParamType MainLiveDelayOnZCParam =
+ 247:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 248:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		OS_NANOSECS_TO_SYSTEMTIMERCYCLES(CONFIG_MAIN_LIVE_DELAY_ZC_ADV_MIN_VALUE*1000),
+ 249:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		OS_NANOSECS_TO_SYSTEMTIMERCYCLES(CONFIG_MAIN_LIVE_DELAY_ZC_ADV_MAX_VALUE*1000)
+ 250:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** };
+ 251:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 252:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 253:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif  /* MAIN_FEEDBACKS_TASK_DELAY_ON_ZC */
+ 254:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 255:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 256:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** @name Debug variables
+ 257:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** @{
+ 258:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 259:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY)
+ 260:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if     MAIN_LIVE_TASK_DEBUG
+ 261:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 262:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if     MAIN_LIVE_TASK_DELAY_ON_ZC
+ 263:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /** task delay in [us]
+ 264:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \attention Available only if \ref MAIN_LIVE_TASK_DEBUG and \ref MAIN_LIVE_TASK_DELAY_ON_ZC are
+ 265:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** defined as 1.
+ 266:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 267:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static  TOOLS_TIMING        MainLiveTaskDelayOnZC;
+ 268:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static  TOOLS_TIMING_STATS  MainLiveTaskDelayOnZCStat;
+ 269:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif  /* MAIN_LIVE_TASK_DELAY_ON_ZC */
+ 270:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 271:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if     MAIN_LIVE_TASK_DURATION
+ 272:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /** task duration in [us]
+ 273:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \attention Available only if \ref MAIN_LIVE_TASK_DEBUG and \ref MAIN_LIVE_TASK_DURATION are
+ 274:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** defined as 1.
+ 275:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 276:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static  TOOLS_TIMING        MainLiveTaskDuration;
+ 277:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /** statistics about task duration [us]
+ 278:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \attention Available only if \ref MAIN_LIVE_TASK_DEBUG and \ref MAIN_LIVE_TASK_DURATION are
+ 279:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** defined as 1.
+ 280:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 281:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static  TOOLS_TIMING_STATS  MainLiveTaskDurationStat;
+ 282:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif  /* MAIN_LIVE_TASK_DURATION */
+ 283:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 284:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 285:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if     MAIN_LIVE_TASK_TUNING
+ 286:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /** task delay correction in [us]
+ 287:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \attention Available only if \ref MAIN_LIVE_TASK_DEBUG and \ref MAIN_LIVE_TASK_TUNING are
+ 288:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** defined as 1.
+ 289:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 290:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static  OS_I32              MainLiveTaskTuning;
+ 291:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* MAIN_LIVE_TASK_TUNING */
+ 292:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 293:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif  /* MAIN_LIVE_TASK_DEBUG */
+ 294:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif  /* !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY) */
+ 295:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 296:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /*@}*/
+ 297:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY)
+ 298:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static Main_SequencerActivityType LiveActivity;
+ 299:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY) */
+ 300:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 301:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* ******************* */
+ 302:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* Functions Prototype */
+ 303:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* ******************* */
+ 304:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 305:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* Exported function */
+ 306:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 307:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 308:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* Local Function */
+ 309:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY)
+ 310:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_LiveTask ( void );
+ 311:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static OS_ALARMROUTINE AlmMeasureLiveCallback;
+ 312:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 313:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 314:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if     MAIN_LIVE_TASK_DEBUG   &&   MAIN_LIVE_TASK_DELAY_ON_ZC
+ 315:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_LiveTask_DelayOnZC_Init ( void );
+ 316:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_LiveTask_DelayOnZC_SetRef ( void );
+ 317:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_LiveTask_DelayOnZC_GetTiming ( void );
+ 318:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #else
+ 319:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_LiveTask_DelayOnZC_Init()
+ 320:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_LiveTask_DelayOnZC_SetRef()
+ 321:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_LiveTask_DelayOnZC_GetTiming()
+ 322:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* MAIN_LIVE_TASK_DEBUG   &&   MAIN_LIVE_TASK_DELAY_ON_ZC */
+ 323:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 324:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 325:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if     MAIN_LIVE_TASK_DEBUG   &&   MAIN_LIVE_TASK_DURATION
+ 326:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_LiveTask_Duration_Init ( void );
+ 327:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_LiveTask_Duration_Start ( void );
+ 328:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_LiveTask_Duration_End ( void );
+ 329:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #else
+ 330:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_LiveTask_Duration_Init()
+ 331:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_LiveTask_Duration_Start()
+ 332:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_LiveTask_Duration_End()
+ 333:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* MAIN_LIVE_TASK_DEBUG   &&   MAIN_LIVE_TASK_DURATION */
+ 334:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 335:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 336:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if     MAIN_LIVE_TASK_DEBUG   &&   MAIN_LIVE_TASK_TUNING
+ 337:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_LiveTask_Tuning_Init ( void );
+ 338:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static OS_I32 Main_LiveTask_Tuner ( OS_U32 usOffset );
+ 339:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #else
+ 340:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_LiveTask_Tuning_Init()
+ 341:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_LiveTask_Tuner(dummy)      ((OS_I32)LIVE_OFFSET_ACTIVATION)
+ 342:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* MAIN_LIVE_TASK_DEBUG   &&   MAIN_LIVE_TASK_TUNING */
+ 343:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY) */
+ 344:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 345:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_MAIN_LIVE_DELAY_ON_ZC) && defined(CONFIG_CLASS_B_DATA_INTEGRITY)
+ 346:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_Live_DelayOnZCProcess( void );
+ 347:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY)
+ 348:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_Live_DelayOnZC_Init ( void );
+ 349:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 350:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #else
+ 351:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_Live_DelayOnZCProcess()
+ 352:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_Live_DelayOnZC_Init()
+ 353:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 354:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 355:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* *************** */
+ 356:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* Function Bodies */
+ 357:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* *************** */
+ 358:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 359:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /* Exported function */
+ 360:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 361:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 362:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** Live initialization. It creates the task Main_LiveTask and alarm Main_AlmMeasureLive.
+ 363:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 364:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** void Main_LiveInit ( void )
+ 365:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 366:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(LIVE_TASK__ADC_LIVE_TO_RMS_CONVERSION)  
+ 367:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	OS_CREATERSEMA(&LiveSema);
+ 368:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 369:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     
+ 370:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY)
+ 371:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     OS_CREATETASK ( &Main_MeasureLiveTaskTCB,
+ 372:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 					"LiveTask",
+ 373:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 					Main_LiveTask,
+ 374:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 					( OS_U8 ) MAIN_LIVE_TASK_PRIORITY,
+ 375:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 					Main_MeasureLiveTaskStack );
+ 376:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	
+ 377:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	OS_CreateAlarm ( &Main_AlmMeasureLive, AlmMeasureLiveCallback, 0, 0 );
+ 378:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     Main_LiveTask_DelayOnZC_Init();
+ 379:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	Main_LiveTask_Duration_Init();
+ 380:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	Main_LiveTask_Tuning_Init();
+ 381:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #else
+ 382:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     Main_AddSequencerActivity ( &LiveActivity, Main_LiveMeasure );
+ 383:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif	
+ 384:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 385:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_MAIN_LIVE_DELAY_ON_ZC) && defined(CONFIG_CLASS_B_DATA_INTEGRITY)
+ 386:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     SAFETY_REGION_START();
+ 387:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****    	SAFETY_DATA_UPDATE(LiveDelayOnZC );
+ 388:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****    	SAFETY_DATA_UPDATE(MainLiveDelayOnZC_Score);
+ 389:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****    	SAFETY_REGION_END();
+ 390:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 391:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** }
+ 392:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 393:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** Returns Live rms value
+ 394:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 395:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(LIVE_TASK__ADC_LIVE_TO_RMS_CONVERSION)
+ 396:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** Main_LiveRMSType Main_GetLiveValue_Rms(void)
+ 397:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 398:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     Main_LiveRMSType tmp;
+ 399:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     
+ 400:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     OS_Use(&LiveSema);
+ 401:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     tmp = Main_Live.Vrms;
+ 402:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     OS_Unuse(&LiveSema);
+ 403:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     return tmp;
+ 404:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** }
+ 405:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif  /* defined(LIVE_TASK__ADC_LIVE_TO_RMS_CONVERSION) */
+ 406:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 407:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** Sets the Alarm on high resolution timer for Live Task
+ 408:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 409:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \param [in] usOffset alarm expiration in microseconds
+ 410:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \param [in] TickRef raw time reference in ticks
+ 411:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 412:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 413:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \author 	Roberto Fioravanti
+ 414:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \date		29/03/2011
+ 415:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \version	1.0.0
+ 416:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 417:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY)
+ 418:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** void Main_ScheduleMeasureLive ( OS_U32 usOffset, OS_U32 TickRef )
+ 419:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 420:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     OS_ALARM_TICK ref = (OS_ALARM_TICK)TickRef;
+ 421:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	usOffset += Main_LiveTask_Tuner ( usOffset );
+ 422:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	OS_START_ABSALARM_ONESHOT ( &Main_AlmMeasureLive, usOffset, &ref );
+ 423:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	Main_LiveTask_DelayOnZC_SetRef();
+ 424:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** }
+ 425:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY) */
+ 426:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 427:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 428:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** Sets the Alarm on high resolution timer for Live Task
+ 429:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 430:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \param [in] usOffset alarm expiration in microseconds
+ 431:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \param [in] TickRef raw time reference in ticks
+ 432:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 433:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 434:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \author 	Roberto Fioravanti
+ 435:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \date		29/03/2011
+ 436:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \version	1.0.0
+ 437:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 438:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY)
+ 439:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** void Main_MeasureLive_SetSequencerProfile ( Main_SequencerProfileType profile  )
+ 440:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 441:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     LiveActivity.profile = profile;
+ 442:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** }
+ 443:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 444:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 445:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** Returns the ADC live peak value
+ 446:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \return ADC_ValueType
+ 447:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \retval ADC sample of live peak.
+ 448:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 449:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** ADC_ValueType Main_GetLivePeakValueADC ( void )
+ 450:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 451:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	return Main_LiveFilter.LastSample;
+ 452:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** }
+ 453:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 454:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 455:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** Live peak acquisition
+ 456:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 457:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** void Main_LiveMeasure(void)
+ 458:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** {
+  10                             		.loc 1 458 0
+  11 0000 60 40                   		sub	#4, r0
+  12                             	.LCFI0:
+ 459:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     Main_LivePeakMeasureADCType LivePeakADC;
+ 460:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     Main_Live_DelayOnZCProcess();
+ 461:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     if ( LIB_ADC_VLineMeasure ( &LivePeakADC ) == TRUE )
+  13                             		.loc 1 461 0
+  14 0002 EF 01                   		mov.L	r0, r1
+  15 0004 05 00 00 00             		bsr	_LIB_ADC_VLineMeasure
+  16                             	.LVL0:
+  17 0008 61 11                   		cmp	#1, r1
+  18 000a 21 0C                   		bne	.L2
+  19                             	.LVL1:
+ 462:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     {
+ 463:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****         /* LIVE channel not present: suspend task */
+ 464:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if defined (CONFIG_MAIN_LIVE_UPDATE_ZC_LINE_VOLTAGE)
+ 465:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****         LIB_ZC_SetLineVoltageParams(FALSE, LivePeakADC);
+  20                             		.loc 1 465 0
+  21 000c DC 02                   		mov.W	[r0], r2
+  22 000e 66 01                   		mov.L	#0, r1
+  23 0010 05 00 00 00             		bsr	_LIB_ZC_SetLineVoltageParams
+  24                             	.LVL2:
+  25 0014 2E 46                   		bra	.L1
+  26                             	.LVL3:
+  27                             	.L2:
+ 466:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 467:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 468:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     }
+ 469:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     else
+ 470:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     {
+ 471:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if defined (CONFIG_MAIN_LIVE_UPDATE_ZC_LINE_VOLTAGE)
+ 472:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****         LIB_ZC_SetLineVoltageParams(TRUE, LivePeakADC);
+  28                             		.loc 1 472 0
+  29 0016 DC 02                   		mov.W	[r0], r2
+  30 0018 66 11                   		mov.L	#1, r1
+  31 001a 05 00 00 00             		bsr	_LIB_ZC_SetLineVoltageParams
+  32                             	.LVL4:
+ 473:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 474:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 475:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(LIVE_TASK__ADC_LIVE_TO_RMS_CONVERSION)
+ 476:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****         OS_Use(&LiveSema);
+  33                             		.loc 1 476 0
+  34 001e FB 12 00 00 00 00       		mov.L	#_LiveSema, r1
+  35 0024 05 00 00 00             		bsr	_OS_Use
+  36                             	.LVL5:
+ 477:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****         Main_Live.Vrms = LIB_GV_getRMS_Vac ( LivePeakADC );
+  37                             		.loc 1 477 0
+  38 0028 DC 01                   		mov.W	[r0], r1
+  39 002a 05 00 00 00             		bsr	_LIB_GV_getRMS_Vac
+  40                             	.LVL6:
+  41 002e FB E2 00 00 00 00       		mov.L	#_Main_Live, r14
+  42 0034 D3 E1                   		mov.W	r1, [r14]
+ 478:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****         OS_Unuse(&LiveSema);
+  43                             		.loc 1 478 0
+  44 0036 FB 12 00 00 00 00       		mov.L	#_LiveSema, r1
+  45 003c 05 00 00 00             		bsr	_OS_Unuse
+  46                             	.LVL7:
+ 479:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* defined(LIVE_TASK__ADC_LIVE_TO_RMS_CONVERSION) */
+ 480:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****         
+ 481:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****         if ( LIB_GV_CheckNominalVoltage ( LivePeakADC ) == TRUE )
+  47                             		.loc 1 481 0
+  48 0040 DC 01                   		mov.W	[r0], r1
+  49 0042 05 00 00 00             		bsr	_LIB_GV_CheckNominalVoltage
+  50                             	.LVL8:
+  51 0046 61 11                   		cmp	#1, r1
+  52 0048 21 0C                   		bne	.L4
+ 482:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****         {
+ 483:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****             {
+ 484:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****                 Main_LiveFilter.LiveUnderThCnt = 0;
+  53                             		.loc 1 484 0
+  54 004a FB E2 00 00 00 00       		mov.L	#_Main_LiveFilter, r14
+  55 0050 F9 E4 02 00             		mov.B	#0, 2[r14]
+  56                             		.balign 2,3,3
+  57                             	.L4:
+ 485:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****             }
+ 486:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****         }
+ 487:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_PM_ENERGY_METER_SW)
+ 488:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****   PowerMeter_SetInstant_V((uint32_t)LivePeakADC);
+  58                             		.loc 1 488 0
+  59 0054 5C 01                   		movu.W	[r0], r1
+  60 0056 05 00 00 00             		bsr	_PowerMeter_SetInstant_V
+  61                             	.LVL9:
+  62                             		.balign 2,3,1
+  63                             	.L1:
+ 489:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* CONFIG_PM_ENERGY_METER_SW*/
+ 490:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 491:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****         LIVE_TASK__LIVE_PROCESSING()
+ 492:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     }
+ 493:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** }
+  64                             		.loc 1 493 0
+  65 005a 67 01                   		rtsd	#4
+  66                             	.LFE4:
+  68                             		.section	.text.Main_LiveInit,"ax",@progbits
+  69                             		.global	_Main_LiveInit
+  71                             	_Main_LiveInit:
+  72                             	.LFB0:
+ 365:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** {
+  73                             		.loc 1 365 0
+ 367:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	OS_CREATERSEMA(&LiveSema);
+  74                             		.loc 1 367 0
+  75 0000 FB 12 00 00 00 00       		mov.L	#_LiveSema, r1
+  76 0006 05 00 00 00             		bsr	_OS_CreateRSema
+  77                             	.LVL10:
+ 382:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     Main_AddSequencerActivity ( &LiveActivity, Main_LiveMeasure );
+  78                             		.loc 1 382 0
+  79 000a FB 12 00 00 00 00       		mov.L	#_LiveActivity, r1
+  80 0010 FB 22 00 00 00 00       		mov.L	#_Main_LiveMeasure, r2
+  81 0016 04 00 00 00             		bra	_Main_AddSequencerActivity
+  82                             	.LVL11:
+  83                             	.LFE0:
+  85                             		.section	.text.Main_GetLiveValue_Rms,"ax",@progbits
+  86                             		.global	_Main_GetLiveValue_Rms
+  88                             	_Main_GetLiveValue_Rms:
+  89                             	.LFB1:
+ 397:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** {
+  90                             		.loc 1 397 0
+  91 0000 7E A7                   		push.l	r7
+  92                             	.LCFI1:
+ 400:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     OS_Use(&LiveSema);
+  93                             		.loc 1 400 0
+  94 0002 FB 12 00 00 00 00       		mov.L	#_LiveSema, r1
+  95 0008 05 00 00 00             		bsr	_OS_Use
+  96                             	.LVL12:
+ 401:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     tmp = Main_Live.Vrms;
+  97                             		.loc 1 401 0
+  98 000c FB 72 00 00 00 00       		mov.L	#_Main_Live, r7
+  99 0012 DC 77                   		mov.W	[r7], r7
+ 100                             	.LVL13:
+ 402:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     OS_Unuse(&LiveSema);
+ 101                             		.loc 1 402 0
+ 102 0014 FB 12 00 00 00 00       		mov.L	#_LiveSema, r1
+ 103 001a 05 00 00 00             		bsr	_OS_Unuse
+ 104                             	.LVL14:
+ 404:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** }
+ 105                             		.loc 1 404 0
+ 106 001e DF 71                   		mov.W	r7, r1
+ 107 0020 3F 77 01                		rtsd	#4, r7-r7
+ 108                             	.LFE1:
+ 110                             		.section	.text.Main_MeasureLive_SetSequencerProfile,"ax",@progbits
+ 111                             		.global	_Main_MeasureLive_SetSequencerProfile
+ 113                             	_Main_MeasureLive_SetSequencerProfile:
+ 114                             	.LFB2:
+ 440:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 115                             		.loc 1 440 0
+ 116                             	.LVL15:
+ 441:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c ****     LiveActivity.profile = profile;
+ 117                             		.loc 1 441 0
+ 118 0000 FB E2 00 00 00 00       		mov.L	#_LiveActivity, r14
+ 119 0006 C7 E1 08                		mov.B	r1, 8[r14]
+ 120 0009 02                      		rts
+ 121                             	.LFE2:
+ 123                             		.section	.text.Main_GetLivePeakValueADC,"ax",@progbits
+ 124                             		.global	_Main_GetLivePeakValueADC
+ 126                             	_Main_GetLivePeakValueADC:
+ 127                             	.LFB3:
+ 450:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 128                             		.loc 1 450 0
+ 452:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** }
+ 129                             		.loc 1 452 0
+ 130 0000 FB E2 00 00 00 00       		mov.L	#_Main_LiveFilter, r14
+ 131 0006 5C E1                   		movu.W	[r14], r1
+ 132 0008 02                      		rts
+ 133                             	.LFE3:
+ 135                             		.section	.text.Main_AvgIndexManager,"ax",@progbits
+ 136                             		.global	_Main_AvgIndexManager
+ 138                             	_Main_AvgIndexManager:
+ 139                             	.LFB5:
+ 494:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 495:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 496:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 497:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** Computes average index of Live peak with LIVE_TASK__LIVE_AWG_SAMPLES samples.
+ 498:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** \param [in] ADC_LivePeakValue ADC peak value
+ 499:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 500:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** void Main_AvgIndexManager ( ADC_ValueType ADC_LivePeakValue )
+ 501:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 140                             		.loc 1 501 0
+ 141                             	.LVL16:
+ 142 0000 7E A7                   		push.l	r7
+ 143                             	.LCFI2:
+ 502:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	if ( Main_Live.AverageSamplesCount++ < LIVE_TASK__LIVE_AWG_SAMPLES )
+ 144                             		.loc 1 502 0
+ 145 0002 FB 72 00 00 00 00       		mov.L	#_Main_Live, r7
+ 146 0008 59 7E 06                		movu.B	6[r7], r14
+ 147 000b 71 E4 01                		add	#1, r14, r4
+ 148 000e 81 F4                   		mov.B	r4, 6[r7]
+ 149 0010 75 5E 3F                		cmp	#63, r14
+ 150 0013 24 0A                   		bgtu	.L12
+ 503:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	{
+ 504:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		Main_Live.AverageValue += ADC_LivePeakValue;
+ 151                             		.loc 1 504 0
+ 152 0015 06 49 71 01             		add	2[r7].W, r1
+ 153                             	.LVL17:
+ 154 0019 90 79                   		mov.W	r1, 2[r7]
+ 155 001b 2E 2D                   		bra	.L11
+ 156                             	.LVL18:
+ 157                             	.L12:
+ 505:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	}
+ 506:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	else
+ 507:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	{
+ 508:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if ADC_RESOLUTION == 10
+ 509:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	
+ 510:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		if ( LIB_GV_GetNominalGridVoltage() )
+ 158                             		.loc 1 510 0
+ 159 001d 05 00 00 00             		bsr	_LIB_GV_GetNominalGridVoltage
+ 160                             	.LVL19:
+ 161 0021 5B 11                   		movu.B	r1, r1
+ 162 0023 61 01                   		cmp	#0, r1
+ 163 0025 5D 7E 01                		movu.W	2[r7], r14
+ 164 0028 20 09                   		beq	.L14
+ 511:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		{
+ 512:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 			Main_Live.AverageIndex = (int16_t) (Main_Live.AverageValue / EXPECTED_LIVE_PEAK_VOLTAGE_TO_ADC_1
+ 165                             		.loc 1 512 0
+ 166 002a FD 78 9E A5 01          		divu	#0x1a5, r14
+ 167 002f 2E 07                   		bra	.L17
+ 168                             	.L14:
+ 513:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		}
+ 514:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		else
+ 515:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		{
+ 516:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 			Main_Live.AverageIndex = (int16_t) ((Main_Live.AverageValue / EXPECTED_LIVE_PEAK_VOLTAGE_TO_ADC_
+ 169                             		.loc 1 516 0
+ 170 0031 FD 78 9E 51 03          		divu	#0x351, r14
+ 171                             		.balign 2,3,2
+ 172                             	.L17:
+ 173 0036 71 EE C0                		add	#-64, r14
+ 174 0039 D7 7E 02                		mov.W	r14, 4[r7]
+ 517:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		}
+ 518:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		
+ 519:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 520:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #if ADC_RESOLUTION == 8
+ 521:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		
+ 522:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		if ( LIB_GV_GetNominalGridVoltage() )
+ 523:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		{
+ 524:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 			Main_Live.AverageIndex = Main_Live.AverageValue / EXPECTED_LIVE_PEAK_VOLTAGE_TO_ADC_8BIT ( 110 )
+ 525:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		}
+ 526:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		else
+ 527:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		{
+ 528:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 			Main_Live.AverageIndex = Main_Live.AverageValue / EXPECTED_LIVE_PEAK_VOLTAGE_TO_ADC_8BIT ( 230 )
+ 529:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		}
+ 530:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		
+ 531:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 532:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		Main_Live.AverageSamplesCount = 0;
+ 175                             		.loc 1 532 0
+ 176 003c FB 72 00 00 00 00       		mov.L	#_Main_Live, r7
+ 177 0042 3C 76 00                		mov.B	#0, 6[r7]
+ 533:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 		Main_Live.AverageValue = 0;
+ 178                             		.loc 1 533 0
+ 179 0045 3D 71 00                		mov.W	#0, 2[r7]
+ 180                             		.balign 2,3,2
+ 181                             	.L11:
+ 534:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** 	}
+ 535:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_MeasureLIVE.c **** }
+ 182                             		.loc 1 535 0
+ 183 0048 3F 77 01                		rtsd	#4, r7-r7
+ 184                             	.LFE5:
+ 186 004b 03                      		.section	.bss.LiveSema,"aw",@nobits
+ 187                             		.balign 4
+ 190                             	_LiveSema:
+ 191 0000 00 00 00 00 00 00 00 00 		.zero	16
+ 191      00 00 00 00 00 00 00 00 
+ 192                             		.section	.bss.LiveActivity,"aw",@nobits
+ 193                             		.balign 4
+ 196                             	_LiveActivity:
+ 197 0000 00 00 00 00 00 00 00 00 		.zero	16
+ 197      00 00 00 00 00 00 00 00 
+ 198                             		.section	.bss.Main_Live,"aw",@nobits
+ 199                             		.balign 2
+ 202                             	_Main_Live:
+ 203 0000 00 00 00 00 00 00 00 00 		.zero	8
+ 204                             		.section	.bss.Main_LiveFilter,"aw",@nobits
+ 205                             		.balign 2
+ 208                             	_Main_LiveFilter:
+ 209 0000 00 00 00 00             		.zero	4
+ 292                             	.Letext0:
+ 293                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 294                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 295                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_EnergyMeterSw/PM_EnergyMeterSwEx
+ 296                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCADC/OCADC_drv.h"
+ 297                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\Main\\EmbOS\\Services\\ActivityList/Main_ActivityLi
+ 298                             		.file 7 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/MainInterface.h"
+ 299                             		.file 8 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Main.h"
+ 300                             		.file 9 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Analog/Analog.h"
+ 301                             		.file 10 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_GridVoltage/LIB_GridVoltage.h
+ 302                             		.file 11 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_ZeroCrossing/LIB_ZeroCrossing

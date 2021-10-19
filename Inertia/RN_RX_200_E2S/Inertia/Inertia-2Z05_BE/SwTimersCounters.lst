@@ -1,0 +1,1844 @@
+   1                             		.file	"SwTimersCounters.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.SWTC_PrescalerManager,"ax",@progbits
+   6                             	_SWTC_PrescalerManager:
+   7                             	.LFB15:
+   8                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters/SwTimersCounters.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+   6:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****  * \page pageTimers
+   7:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****  *	\ingroup	PM_SwTimersCounters
+   8:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****  */
+   9:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+  10:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+  11:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n
+  12:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \par		SW Timers Counters
+  13:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n			Implementation of software timers and counters that can be used to execute a 
+  14:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** user-defined action after a delay or for time measurement.
+  15:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****  
+  16:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n
+  17:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \file		SwTimersCounters.c 
+  18:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \ingroup	PM_SwTimersCounters
+  19:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \date		28-jun-2010 
+  20:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \version	01.00.00 
+  21:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \author		Roberto Fioravanti 
+  22:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n
+  23:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n
+  24:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \par\b	History:
+  25:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n 
+  26:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n 		00.00.70
+  27:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n		5/10/2010 
+  28:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n		Roberto Fioravanti 
+  29:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n		changes 
+  30:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n 		- fixed return of SWTC_IsStopped
+  31:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n 		00.00.50 
+  32:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n		28/06/2010 
+  33:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n		Roberto Fioravanti 
+  34:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n		changes 
+  35:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n 		- creation
+  36:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n
+  37:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n
+  38:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \n etc.
+  39:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+  40:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+  41:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+  42:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** #define MODULE_BODY_SWTIMERS
+  43:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* ******** */
+  44:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* Includes */
+  45:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* ******** */
+  46:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** #include "SwTimersCounters.h"
+  47:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** #include "LIB_Error.h"
+  48:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+  49:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* ****************** */
+  50:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* Defines and Macros */
+  51:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* ****************** */
+  52:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+  53:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+  54:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* *************************** */
+  55:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* Typedef, Structs and Unions */
+  56:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* *************************** */
+  57:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+  58:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** typedef struct SWTC_DataType_s{
+  59:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_InternalCounterType*	pInternalCountersTable;
+  60:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	const SWTC_PrescalerTableType*	pPrescalersTable;
+  61:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	uint8_t						PrescalersNum;
+  62:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_CounterConfigurationType* const* pCountersCfgTable;
+  63:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	void* 						const* pCountersTable;
+  64:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	uint8_t						CountersNum;
+  65:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+  66:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** SWTC_DataType;
+  67:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* ********* */
+  68:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* Variables */
+  69:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* ********* */
+  70:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+  71:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /*
+  72:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** extern const SWTC_PrescalerTableType SWTC_PrescalerTable[SWTC_PRESCALERS_NUM];
+  73:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** extern SWTC_CounterConfigurationType* const SWTC_CounterConfigurationTable[SWTC_COUNTERS_NUM];
+  74:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** extern void* const SWTC_CountersTable[SWTC_COUNTERS_NUM];
+  75:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+  76:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* Global */
+  77:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+  78:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* Static */
+  79:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /*static SWTC_InternalCounterType SWTC_InternalCounter[SWTC_PRESCALERS_NUM];*/
+  80:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** static SWTC_DataType SWTC_Data;
+  81:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* ******************* */
+  82:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* Functions Prototype */
+  83:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* ******************* */
+  84:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+  85:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* Exported function */
+  86:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+  87:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* Local Function */
+  88:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** static void SWTC_PrescalerManager ( SWTC_PrescalerType ps );
+  89:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+  90:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* *************** */
+  91:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* Function Bodies */
+  92:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* *************** */
+  93:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+  94:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* Exported function */
+  95:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+  96:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+  97:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****  @name MANAGER RELATED FUNCTIONS
+  98:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** @{
+  99:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 100:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+ 101:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 102:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** Timercounters manager initialization method.
+ 103:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 104:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 105:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \return 	none
+ 106:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****  
+ 107:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \author 	Roberto Fioravanti
+ 108:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \date		28-06-2010
+ 109:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \version	0.0.1
+ 110:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 111:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \note		\par \b Note 1:
+ 112:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			documentation by Roberto Fioravanti
+ 113:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 114:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** void SWTC_InitManager(void)
+ 115:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 116:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.PrescalersNum=0;
+ 117:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pPrescalersTable=NULL;
+ 118:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pInternalCountersTable=NULL;
+ 119:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 120:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.CountersNum=0;
+ 121:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pCountersCfgTable=NULL;
+ 122:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pCountersTable=NULL;
+ 123:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 124:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 125:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 126:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** void SWTC_InitTables(	const SWTC_PrescalerTableType* pPrescalers,
+ 127:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 				SWTC_InternalCounterType* pIntCountersTable,
+ 128:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 				uint8_t prescalersNum,
+ 129:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 				SWTC_CounterConfigurationType* const* pCountersCfgTable,
+ 130:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 				void* 						const* pCountersTable,
+ 131:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 				uint8_t						CountersNum
+ 132:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 				)
+ 133:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 134:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	uint8_t i = 0;
+ 135:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.PrescalersNum=prescalersNum;
+ 136:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pPrescalersTable=pPrescalers;
+ 137:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pInternalCountersTable=pIntCountersTable;
+ 138:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 139:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	for (i = 0; i < SWTC_Data.PrescalersNum; i++)
+ 140:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	{
+ 141:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		SWTC_Data.pInternalCountersTable[i]=0;
+ 142:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	}
+ 143:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 144:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.CountersNum=CountersNum;
+ 145:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pCountersCfgTable=pCountersCfgTable;
+ 146:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pCountersTable=pCountersTable;
+ 147:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 148:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 149:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+ 150:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** Timerscounters manager to be called periodically.
+ 151:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** The period determines the foundamental time base.
+ 152:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \return 	none
+ 153:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****  
+ 154:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \author 	Roberto Fioravanti
+ 155:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \date		28-06-2010
+ 156:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \version	0.0.1
+ 157:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 158:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \note		\par \b Note 1:
+ 159:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			documentation by Roberto Fioravanti
+ 160:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 161:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** void SWTC_Manager(void)
+ 162:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 163:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_PrescalerType i;
+ 164:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 165:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pInternalCountersTable[0]++;
+ 166:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_PrescalerManager (0);
+ 167:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 168:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	for (i = 0; i < SWTC_Data.PrescalersNum; ++i)
+ 169:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	{
+ 170:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		if(SWTC_Data.pInternalCountersTable[i] >= SWTC_Data.pPrescalersTable[i])
+ 171:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		{
+ 172:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			SWTC_PrescalerManager ((SWTC_PrescalerType)(i+1));
+ 173:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			
+ 174:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			SWTC_Data.pInternalCountersTable[i]=0;
+ 175:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			if(i < (SWTC_Data.PrescalersNum-1))
+ 176:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			{
+ 177:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 				SWTC_Data.pInternalCountersTable[i+1]++;
+ 178:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			}
+ 179:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		}
+ 180:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	}
+ 181:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 182:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /*@}*/
+ 183:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 184:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+ 185:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** @name NEW VALUE AND RUN RELATED FUNCTIONS
+ 186:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** @{
+ 187:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 188:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** Sets the a new value for the 'small' (...SetSValue),
+ 189:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****  'medium' (...SetMValue) or 'large' (...SetLValue) timercounter.
+ 190:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** TimerCounter state (enable or not) remains unchanged, that means timercounter continues counting it
+ 191:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 192:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \param  [in]		counterID timercounter identifier (zero-based index of the timercounter table)
+ 193:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \param  [in]		value new value applied to the timercounter.The range depends on size 
+ 194:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** of the counter timercounter:
+ 195:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 1<= value <= 2^(n)-1, where n is the number of the bit of the counter. See \ref SWTC_SCounterValue,
+ 196:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 197:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 198:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \return 	void
+ 199:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 200:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \author 	Roberto Fioravanti 
+ 201:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \date		Jun 26, 2010 
+ 202:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \version	1.0.0
+ 203:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 204:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****    
+ 205:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \note		\par \b Note 1:
+ 206:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			documentation by Roberto Fioravanti
+ 207:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 208:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** void SWTC_SetSValue(SWTC_CountersType counterID, SWTC_SCounterValue value)
+ 209:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 210:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	uint8_t enable;
+ 211:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_CounterConfigurationType* pcfg=0;
+ 212:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_SCounterVariableType* pCnt=0;
+ 213:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 214:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 215:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 216:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 217:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	enable = (uint8_t) (*pcfg & SWTC_CFG_ENABLE_MSK);
+ 218:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg &= (SWTC_CounterConfigurationType) (~SWTC_CFG_ENABLE_MSK);
+ 219:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 220:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (SWTC_SCounterVariableType*)(SWTC_Data.pCountersTable[counterID]);
+ 221:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	(pCnt)->counter = (SWTC_SCounterValue) (value - 1);
+ 222:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 223:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg |= enable;
+ 224:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 225:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 226:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 227:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 228:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** void SWTC_SetMValue(SWTC_CountersType counterID, SWTC_MCounterValue value)
+ 229:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 230:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	uint8_t enable;
+ 231:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_CounterConfigurationType* pcfg=0;
+ 232:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_MCounterVariableType* pCnt=0;
+ 233:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 234:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 235:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 236:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 237:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	enable = (uint8_t) (*pcfg & SWTC_CFG_ENABLE_MSK);
+ 238:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg &= (SWTC_CounterConfigurationType) (~SWTC_CFG_ENABLE_MSK);
+ 239:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 240:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (SWTC_MCounterVariableType*)(SWTC_Data.pCountersTable[counterID]);
+ 241:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	(pCnt)->counter = (SWTC_MCounterValue) (value - 1);
+ 242:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 243:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg |= enable;
+ 244:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 245:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** #if defined(SWTC_L_ENABLED)
+ 246:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+ 247:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \attention Available only if SWTC_L_ENABLED is defined in header configuration file
+ 248:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 249:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** void SWTC_SetLValue(SWTC_CountersType counterID, SWTC_LCounterValue value)
+ 250:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 251:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	uint8_t enable;
+ 252:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_COUNTERS_NUM), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 253:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 254:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	enable = (*SWTC_CounterConfigurationTable[counterID] & SWTC_CFG_ENABLE_MSK);
+ 255:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*SWTC_CounterConfigurationTable[counterID] &= ~(SWTC_CFG_ENABLE_MSK);
+ 256:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 257:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	((SWTC_LCounterVariableType*)SWTC_CountersTable[counterID])->counter = value - 1;
+ 258:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 259:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	enable= *SWTC_CounterConfigurationTable[counterID] |= enable;
+ 260:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 261:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 262:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** #endif
+ 263:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /*@}*/
+ 264:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 265:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 266:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+ 267:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** Sets the a new value for the prescaler of the timercounter.
+ 268:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** TimerCounter state (enable or not) remains unchanged.
+ 269:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 270:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \param  [in]		counterID timercounter identifier
+ 271:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \param  [in]		ps prescaler identifier.	
+ 272:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 273:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \return 	void
+ 274:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 275:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \author 	Roberto Fioravanti 
+ 276:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \date		Jun 26, 2010 
+ 277:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \version	1.0.0
+ 278:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 279:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****    
+ 280:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \note		\par \b Note 1:
+ 281:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			documentation by Roberto Fioravanti
+ 282:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 283:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** void SWTC_SetPrescaler(SWTC_CountersType counterID, SWTC_PrescalerType ps)
+ 284:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 285:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	uint8_t enable;
+ 286:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_CounterConfigurationType* pcfg=0;
+ 287:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 288:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(!SWTC_CFG_PS_ASSERT(ps), PLT_ERROR_SWTC_INVALID_PS);
+ 289:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 290:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 291:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 292:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 293:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	enable = (uint8_t) (*pcfg & SWTC_CFG_ENABLE_MSK);
+ 294:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg &= (SWTC_CounterConfigurationType) (~SWTC_CFG_ENABLE_MSK);
+ 295:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 296:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg &= ~(SWTC_CFG_PS_MSK);
+ 297:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg |= SWTC_CFG_PS(ps);
+ 298:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 299:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg |= enable;
+ 300:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 301:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 302:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 303:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+ 304:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** Starts timercounter.
+ 305:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 306:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \param  [in]		counterID timercounter identifier
+ 307:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 308:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \return 	void
+ 309:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 310:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \author 	Roberto Fioravanti 
+ 311:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \date		Jun 26, 2010 
+ 312:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \version	1.0.0
+ 313:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 314:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \attention
+ 315:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \par \b 1:
+ 316:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** Use this method to restart a timer counter which was stopped by calling SWTC_Stop().
+ 317:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** In this case timercounter will continue with the remaining time value preserved by stopping the tim
+ 318:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 319:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \par \b 2:
+ 320:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** this method has any effect on:
+ 321:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** - 	running timercounters
+ 322:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** -	not running timercounters because expired. To restart those timercounters use SWTC_SetXValue() me
+ 323:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 324:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****     
+ 325:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \note		\par \b Note 1:
+ 326:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			documentation by Roberto Fioravanti
+ 327:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 328:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** void  SWTC_Run(SWTC_CountersType counterID)
+ 329:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 330:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_CounterConfigurationType* pcfg=0;
+ 331:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 332:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 333:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 334:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 335:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg |= SWTC_CFG_ENABLE_MSK;
+ 336:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 337:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 338:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+ 339:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** Stops timercounter.
+ 340:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 341:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \param  [in]		counterID timercounter identifier
+ 342:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 343:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \return 	void
+ 344:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 345:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 346:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \author 	Roberto Fioravanti 
+ 347:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \date		Jun 26, 2010 
+ 348:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \version	1.0.0
+ 349:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 350:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \attention
+ 351:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \par \b 1:
+ 352:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** The current value of the timercounter is kept until SWTC_RunTimerCounter() or SWTC_SetSValue(), 
+ 353:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** SWTC_SetMValue() or SWTC_SetLValue() or SWTC_SetSValueAndRun(), SWTC_SetMValueAndRun(), SWTC_SetLVa
+ 354:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****     
+ 355:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \note		\par \b Note 1:
+ 356:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			documentation by Roberto Fioravanti
+ 357:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 358:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** void SWTC_Stop(SWTC_CountersType counterID)
+ 359:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 360:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_CounterConfigurationType* pcfg=0;
+ 361:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 362:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 363:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg &= ~(SWTC_CFG_ENABLE_MSK);
+ 364:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 365:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 366:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 367:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /** @name NEW VALUE RELATED FUNCTIONS
+ 368:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****    Sets a new value and then starts timercounter.
+ 369:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****    
+ 370:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****    \param  [in]		counterID timercounter identifier
+ 371:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \param  [in]		value new value applied to the timercounter.The range depends on size 
+ 372:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** of the counter timercounter:
+ 373:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 1<= value <= 2^(n)-1, where n is the number of the bit of the counter. See \ref SWTC_SCounterValue,
+ 374:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 375:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \return 	void
+ 376:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 377:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \author 	Roberto Fioravanti 
+ 378:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \date		Jun 26, 2010 
+ 379:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \version	1.0.0
+ 380:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 381:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \attention
+ 382:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \par \b 1:
+ 383:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** Use this method to restart a timer counter which was stopped by calling SWTC_Stop().
+ 384:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** In this case timercounter will continue with the remaining time value preserved by stopping the tim
+ 385:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 386:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \par \b 2:
+ 387:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** this method has any effect on:
+ 388:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** - 	running timercounters
+ 389:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** -	not running timercounters because expired. To restart those timercounters use SWTC_SetXValue(). 
+ 390:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 391:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****     
+ 392:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \note		\par \b Note 1:
+ 393:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			documentation by Roberto Fioravanti
+ 394:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****     
+ 395:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** @{
+ 396:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 397:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 398:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+ 399:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 400:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** void SWTC_SetSValueAndRun(SWTC_CountersType counterID, SWTC_SCounterValue value)
+ 401:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 402:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_CounterConfigurationType* pcfg=0;
+ 403:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_SCounterVariableType* pCnt=0;
+ 404:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 405:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 406:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 407:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 408:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg &= ~(SWTC_CFG_ENABLE_MSK);
+ 409:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 410:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (SWTC_SCounterVariableType*)(SWTC_Data.pCountersTable[counterID]);
+ 411:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	(pCnt)->counter = (SWTC_SCounterValue) (value - 1);
+ 412:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 413:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg |= (SWTC_CFG_ENABLE_MSK);
+ 414:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 415:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 416:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+ 417:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 418:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 419:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** void SWTC_SetMValueAndRun(SWTC_CountersType counterID, SWTC_MCounterValue value)
+ 420:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 421:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_CounterConfigurationType* pcfg=0;
+ 422:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_MCounterVariableType* pCnt=0;
+ 423:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 424:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 425:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 426:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 427:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 428:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 429:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg &= ~(SWTC_CFG_ENABLE_MSK);
+ 430:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 431:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (SWTC_MCounterVariableType*)(SWTC_Data.pCountersTable[counterID]);
+ 432:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	(pCnt)->counter = (SWTC_MCounterValue) (value - 1);
+ 433:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 434:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg |= (SWTC_CFG_ENABLE_MSK);
+ 435:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 436:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 437:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** #if defined(SWTC_L_ENABLED)
+ 438:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+ 439:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \attention Available only if SWTC_L_ENABLED is defined in header configuration file
+ 440:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 441:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** void SWTC_SetLValueAndRun(SWTC_CountersType counterID, SWTC_LCounterValue value)
+ 442:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 443:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PL_ERROR_FATAL(counterID >= (SWTC_COUNTERS_NUM), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 444:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 445:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*SWTC_CounterConfigurationTable[counterID] &= ~(SWTC_CFG_ENABLE_MSK);
+ 446:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 447:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	((SWTC_LCounterVariableType*)SWTC_CountersTable[counterID])->counter = value - 1;
+ 448:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 449:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*SWTC_CounterConfigurationTable[counterID] |= (SWTC_CFG_ENABLE_MSK);
+ 450:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 451:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** #endif
+ 452:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /*@}*/
+ 453:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 454:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+ 455:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** @name STATUS RELATED FUNCTIONS
+ 456:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** @{   
+ 457:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 458:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 459:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+ 460:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** Returns if the timercounter is expired.
+ 461:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 462:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \param  [in]		counterID timercounter identifier
+ 463:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 464:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \return 	bool_t
+ 465:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 466:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \retval		TRUE (returned also for not invalid timercouner IDs)
+ 467:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \retval		FALSE	not expired.		 	 
+ 468:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 469:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 470:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 471:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \author 	Roberto Fioravanti 
+ 472:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \date		Jun 26, 2010 
+ 473:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \version	1.0.0
+ 474:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 475:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \attention
+ 476:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** A timercounter not expired can be running or not.
+ 477:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****       
+ 478:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \note		\par \b Note 1:
+ 479:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			documentation by Roberto Fioravanti
+ 480:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 481:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** bool_t SWTC_IsExpired(SWTC_CountersType counterID)
+ 482:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 483:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_CounterConfigurationType* pcfg=0;
+ 484:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	void* pCnt=0;
+ 485:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 486:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 487:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 488:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 489:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (void*)(SWTC_Data.pCountersTable[counterID]);
+ 490:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 491:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	switch(*pcfg & SWTC_CFG_SIZE_MSK)
+ 492:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	{
+ 493:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	#if defined(SWTC_L_ENABLED)	
+ 494:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		case SWTC_CFG_SIZE_L:
+ 495:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			return (bool_t)(((SWTC_LCounterVariableType*)pCnt)->counter < 0);
+ 496:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			break;
+ 497:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	#endif
+ 498:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		case SWTC_CFG_SIZE_S:
+ 499:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			return (bool_t)(((SWTC_SCounterVariableType*)pCnt)->counter < 0);
+ 500:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			/*lint -e{527} Warning 527:*/
+ 501:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			break;
+ 502:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 503:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		case SWTC_CFG_SIZE_M:
+ 504:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			return (bool_t)(((SWTC_MCounterVariableType*)pCnt)->counter < 0);
+ 505:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			/*lint -e{527} Warning 527:*/
+ 506:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			break;
+ 507:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 508:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	}
+ 509:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 510:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	return FALSE;	
+ 511:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 512:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 513:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 514:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+ 515:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** Returns if the timercounter is stopped or enabled.
+ 516:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 517:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \param  [in]		counterID timercounter identifier
+ 518:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 519:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \return 	bool_t
+ 520:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 521:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \retval		TRUE	stopped
+ 522:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \retval		FALSE	enabled (returned also for not invalid timercouner IDs).
+ 523:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 524:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \author 	Roberto Fioravanti 
+ 525:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \date		Jun 26, 2010 
+ 526:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \version	1.0.0
+ 527:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 528:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \attention
+ 529:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** A timercounter not expired can be running or not.
+ 530:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****       
+ 531:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \note		\par \b Note 1:
+ 532:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			documentation by Roberto Fioravanti
+ 533:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 534:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** bool_t SWTC_IsStopped(SWTC_CountersType counterID)
+ 535:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 536:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_CounterConfigurationType* pcfg=0;
+ 537:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 538:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 539:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 540:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	return (bool_t)(!(*pcfg & SWTC_CFG_ENABLE_MSK));
+ 541:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 542:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 543:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /*@}*/
+ 544:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 545:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+ 546:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** Retrigger an expired timercounter.
+ 547:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** timercounter starts counting form it maximum value.
+ 548:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 549:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \param  [in]		counterID timercounter identifier
+ 550:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 551:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \return 	bool_t
+ 552:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 553:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \retval		TRUE (returned also for not invalid timercouner IDs)
+ 554:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \retval		FALSE	not expired.		 	 
+ 555:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 556:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 557:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 558:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \author 	Roberto Fioravanti 
+ 559:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \date		Jun 26, 2010 
+ 560:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \version	1.0.0
+ 561:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 562:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \attention
+ 563:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** This method has no effect on not expired timercounters. 
+ 564:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****       
+ 565:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \note		\par \b Note 1:
+ 566:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			documentation by Roberto Fioravanti
+ 567:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			
+ 568:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			
+ 569:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 570:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** bool_t SWTC_Retrigger(SWTC_CountersType counterID)
+ 571:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 572:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_CounterConfigurationType* pcfg=0;
+ 573:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	bool_t pending=FALSE;
+ 574:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	void* pCnt=0;
+ 575:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 576:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 577:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 578:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 579:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (void*)(SWTC_Data.pCountersTable[counterID]);
+ 580:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 581:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	switch(*pcfg & SWTC_CFG_SIZE_MSK)
+ 582:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	{
+ 583:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** #if defined(SWTC_L_ENABLED)	
+ 584:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	case SWTC_CFG_SIZE_L:
+ 585:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		pending = (bool_t)(((SWTC_LCounterVariableType*)SWTC_CountersTable[counterID])->counter < 0);
+ 586:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		if(pending)
+ 587:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		((SWTC_LCounterVariableType*)pCnt)->counter += 0x7FFFFFFF;
+ 588:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		break;
+ 589:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** #endif
+ 590:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	case SWTC_CFG_SIZE_S:		
+ 591:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		pending = (bool_t)(((SWTC_SCounterVariableType*)pCnt)->counter < 0);
+ 592:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		if(pending)
+ 593:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		{
+ 594:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			((SWTC_SCounterVariableType*)pCnt)->counter += 0x7F;
+ 595:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		}
+ 596:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		else
+ 597:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		{
+ 598:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		}
+ 599:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		break;
+ 600:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	case SWTC_CFG_SIZE_M:
+ 601:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		pending = (bool_t)(((SWTC_MCounterVariableType*)pCnt)->counter < 0);
+ 602:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		if(pending)
+ 603:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		{
+ 604:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			((SWTC_MCounterVariableType*)pCnt)->counter += 0x7FFF;
+ 605:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		}
+ 606:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		else
+ 607:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		{
+ 608:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		}
+ 609:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		break;	
+ 610:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	}
+ 611:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 612:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	return pending;
+ 613:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 614:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 615:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+ 616:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** Returns the remaining time before expire.
+ 617:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** Value is in prescaler unit.
+ 618:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 619:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \param  [in]		counterID timercounter identifier
+ 620:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 621:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \return 	SWTC_TimeType
+ 622:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 623:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \retval		value ( 0 is returned if timercouner ID is invalid)
+ 624:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 625:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \author 	Roberto Fioravanti 
+ 626:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \date		Jun 26, 2010 
+ 627:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \version	1.0.0
+ 628:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 629:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****       
+ 630:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \note		\par \b Note 1:
+ 631:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			documentation by Roberto Fioravanti
+ 632:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 633:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** SWTC_TimeType SWTC_GetRemainingTime(SWTC_CountersType counterID)
+ 634:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 635:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_CounterConfigurationType* pcfg=0;
+ 636:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_TimeType time=0;
+ 637:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	void* pCnt=0;
+ 638:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 639:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 640:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 641:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 642:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (void*)(SWTC_Data.pCountersTable[counterID]);
+ 643:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 644:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	switch(*pcfg & SWTC_CFG_SIZE_MSK)
+ 645:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	{
+ 646:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** #if defined(SWTC_L_ENABLED)	
+ 647:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	case SWTC_CFG_SIZE_L:
+ 648:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		time = ((SWTC_LCounterVariableType*)pCnt)->counter + 1;
+ 649:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		break;
+ 650:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** #endif
+ 651:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	case SWTC_CFG_SIZE_S:
+ 652:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		time = ((SWTC_SCounterVariableType*)pCnt)->counter + 1;
+ 653:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		break;
+ 654:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		
+ 655:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	case SWTC_CFG_SIZE_M:
+ 656:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		time = ((SWTC_MCounterVariableType*)pCnt)->counter + 1;
+ 657:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		break;	
+ 658:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	}
+ 659:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 660:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	return time;
+ 661:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 662:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 663:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /**
+ 664:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** Returns the elapsed time is in prescaler unit.
+ 665:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** The returned value assumes that the TimerCounter was initialized at its maximum value.
+ 666:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 667:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** General formula to get the elapsed time is:
+ 668:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** InitVal - TimeCounterMaxVal + SWTC_GetElapsedTime()
+ 669:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 670:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** where TimeCounterMaxVal depends on the size of the TimerCounter.
+ 671:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 672:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 673:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \param  [in]		counterID timercounter identifier
+ 674:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 675:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \return 	SWTC_TimeType
+ 676:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 677:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \retval		value ( 0 is returned if timercouner ID is invalid)
+ 678:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 679:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \author 	Roberto Fioravanti 
+ 680:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \date		Jun 26, 2010 
+ 681:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \version	1.0.0
+ 682:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 683:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c ****       
+ 684:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** \note		\par \b Note 1:
+ 685:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			documentation by Roberto Fioravanti
+ 686:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** */
+ 687:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** SWTC_TimeType SWTC_GetElapsedTime(SWTC_CountersType counterID)
+ 688:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 689:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 690:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_CounterConfigurationType* pcfg=0;
+ 691:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_TimeType time=0;
+ 692:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	void* pCnt=0;
+ 693:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 694:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 695:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 696:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 697:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (void*)(SWTC_Data.pCountersTable[counterID]);
+ 698:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 699:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	switch(*pcfg & SWTC_CFG_SIZE_MSK)
+ 700:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	{
+ 701:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** #if defined(SWTC_L_ENABLED)	
+ 702:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	case SWTC_CFG_SIZE_L:
+ 703:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		time = 0x7FFFFFFF -1 - ((SWTC_LCounterVariableType*)pCnt)->counter;
+ 704:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		break;
+ 705:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** #endif
+ 706:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	case SWTC_CFG_SIZE_S:
+ 707:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		time = (0x7F -1) - ((SWTC_SCounterVariableType*)pCnt)->counter;
+ 708:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		break;
+ 709:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		
+ 710:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	case SWTC_CFG_SIZE_M:
+ 711:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		time = (0x7FFF -1) - ((SWTC_MCounterVariableType*)pCnt)->counter;
+ 712:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		break;	
+ 713:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	}
+ 714:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 715:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	return time;
+ 716:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 717:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 718:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 719:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** /* Local Function */
+ 720:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** static void SWTC_PrescalerManager ( SWTC_PrescalerType ps )
+ 721:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+   9                             		.loc 1 721 0
+  10                             	.LVL0:
+  11 0000 7E A7                   		push.l	r7
+  12                             	.LCFI0:
+ 722:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_PrescalerType i;
+ 723:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_CounterConfigurationType* pcfg=0;
+ 724:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	void* pCnt=0;
+ 725:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 726:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	for ( i = 0; i < (SWTC_Data.CountersNum); i++ )
+  13                             		.loc 1 726 0
+  14 0002 FB E2 00 00 00 00       		mov.L	#_SWTC_Data, r14
+ 727:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	{
+ 728:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		pcfg=SWTC_Data.pCountersCfgTable[i];
+ 729:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		pCnt = (void*)(SWTC_Data.pCountersTable[i]);
+ 730:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 
+ 731:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		if ( ( *pcfg & (SWTC_CFG_ENABLE_MSK) )
+ 732:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		&& ( (*pcfg & SWTC_CFG_PS_MSK) == SWTC_CFG_PS(ps) )
+  15                             		.loc 1 732 0
+  16 0008 64 F1                   		and	#15, r1
+  17                             	.LVL1:
+  18 000a 6C 21                   		shll	#2, r1
+  19 000c ED E5 03                		mov.L	12[r14], r5
+  20 000f ED E2 04                		mov.L	16[r14], r2
+ 726:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	for ( i = 0; i < (SWTC_Data.CountersNum); i++ )
+  21                             		.loc 1 726 0
+  22 0012 66 04                   		mov	#0, r4
+  23 0014 59 EF 14                		movu.B	20[r14], r15
+  24 0017 2E 41                   		bra	.L2
+  25                             	.LVL2:
+  26                             	.L6:
+ 728:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		pcfg=SWTC_Data.pCountersCfgTable[i];
+  27                             		.loc 1 728 0
+  28 0019 FD 2A 57                		mov.L	[r5+], r7
+  29                             	.LVL3:
+ 729:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		pCnt = (void*)(SWTC_Data.pCountersTable[i]);
+  30                             		.loc 1 729 0
+  31 001c FD 2A 2E                		mov.L	[r2+], r14
+  32                             	.LVL4:
+ 731:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		if ( ( *pcfg & (SWTC_CFG_ENABLE_MSK) )
+  33                             		.loc 1 731 0
+  34 001f CC 73                   		mov.B	[r7], r3
+  35 0021 CF 37                   		mov.B	r3, r7
+  36                             	.LVL5:
+  37 0023 61 07                   		cmp	#0, r7
+  38 0025 28 31                   		bge	.L3
+  39                             		.loc 1 732 0
+  40 0027 EF 37                   		mov.L	r3, r7
+  41 0029 75 27 3C                		and	#60, r7
+  42 002c 47 17                   		cmp	r1, r7
+  43 002e 21 28                   		bne	.L3
+ 733:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			)
+ 734:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		{
+ 735:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 				/* Down Counter */
+ 736:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			switch(*pcfg & SWTC_CFG_SIZE_MSK)
+  44                             		.loc 1 736 0
+  45 0030 64 33                   		and	#3, r3
+  46 0032 61 13                   		cmp	#1, r3
+  47 0034 20 08                   		beq	.L4
+  48 0036 61 23                   		cmp	#2, r3
+  49 0038 21 1E                   		bne	.L3
+  50 003a 2E 10                   		bra	.L5
+  51                             	.L4:
+ 737:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			{
+ 738:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** #if defined(SWTC_L_ENABLED)        	
+ 739:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			case SWTC_CFG_SIZE_L:
+ 740:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 					if(((SWTC_LCounterVariableType*)pCnt)->counter >= 0)
+ 741:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 					{
+ 742:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 						((SWTC_LCounterVariableType*)pCnt)->counter --;
+ 743:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 					}
+ 744:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 					break;
+ 745:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** #endif
+ 746:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			case SWTC_CFG_SIZE_S:
+ 747:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 				if(((SWTC_SCounterVariableType*)pCnt)->counter >= 0)
+  52                             		.loc 1 747 0
+  53 003c CC E3                   		mov.B	[r14], r3
+  54 003e CF 37                   		mov.B	r3, r7
+  55 0040 61 07                   		cmp	#0, r7
+  56 0042 29 14                   		blt	.L3
+ 748:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 				{
+ 749:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 					((SWTC_SCounterVariableType*)pCnt)->counter --;
+  57                             		.loc 1 749 0
+  58 0044 60 13                   		sub	#1, r3
+  59 0046 C3 E3                   		mov.B	r3, [r14]
+  60 0048 2E 0E                   		bra	.L3
+  61                             	.L5:
+ 750:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 				}
+ 751:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 				break;
+ 752:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			case SWTC_CFG_SIZE_M:
+ 753:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 				if(((SWTC_MCounterVariableType*)pCnt)->counter >= 0)
+  62                             		.loc 1 753 0
+  63 004a DC E3                   		mov.W	[r14], r3
+  64 004c DF 37                   		mov.W	r3, r7
+  65 004e 61 07                   		cmp	#0, r7
+  66 0050 29 06                   		blt	.L3
+ 754:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 					{
+ 755:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 						((SWTC_MCounterVariableType*)pCnt)->counter --;
+  67                             		.loc 1 755 0
+  68 0052 60 13                   		sub	#1, r3
+  69 0054 D3 E3                   		mov.W	r3, [r14]
+  70                             		.balign 2,3,1
+  71                             	.L3:
+ 726:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	for ( i = 0; i < (SWTC_Data.CountersNum); i++ )
+  72                             		.loc 1 726 0
+  73 0056 62 14                   		add	#1, r4
+  74                             	.LVL6:
+  75                             		.balign 2,3,1
+  76                             	.L2:
+ 726:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	for ( i = 0; i < (SWTC_Data.CountersNum); i++ )
+  77                             		.loc 1 726 0 is_stmt 0 discriminator 1
+  78 0058 5B 4E                   		movu.B	r4, r14
+  79 005a 47 FE                   		cmp	r15, r14
+  80 005c 21 BD                   		bne	.L6
+ 756:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 					}
+ 757:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 				break;
+ 758:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	
+ 759:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			}        	
+ 760:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		}
+ 761:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	}
+ 762:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+  81                             		.loc 1 762 0 is_stmt 1
+  82 005e 3F 77 01                		rtsd	#4, r7-r7
+  83                             	.LFE15:
+  85 0061 03                      		.section	.text.SWTC_InitManager,"ax",@progbits
+  86                             		.global	_SWTC_InitManager
+  88                             	_SWTC_InitManager:
+  89                             	.LFB0:
+ 115:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+  90                             		.loc 1 115 0
+ 116:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.PrescalersNum=0;
+  91                             		.loc 1 116 0
+  92 0000 FB E2 00 00 00 00       		mov.L	#_SWTC_Data, r14
+  93 0006 F9 E4 08 00             		mov.B	#0, 8[r14]
+ 117:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pPrescalersTable=NULL;
+  94                             		.loc 1 117 0
+  95 000a F9 E6 01 00             		mov.L	#0, 4[r14]
+ 118:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pInternalCountersTable=NULL;
+  96                             		.loc 1 118 0
+  97 000e F8 E6 00                		mov.L	#0, [r14]
+ 120:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.CountersNum=0;
+  98                             		.loc 1 120 0
+  99 0011 F9 E4 14 00             		mov.B	#0, 20[r14]
+ 121:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pCountersCfgTable=NULL;
+ 100                             		.loc 1 121 0
+ 101 0015 F9 E6 03 00             		mov.L	#0, 12[r14]
+ 122:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pCountersTable=NULL;
+ 102                             		.loc 1 122 0
+ 103 0019 F9 E6 04 00             		mov.L	#0, 16[r14]
+ 104 001d 02                      		rts
+ 105                             	.LFE0:
+ 107                             		.section	.text.SWTC_InitTables,"ax",@progbits
+ 108                             		.global	_SWTC_InitTables
+ 110                             	_SWTC_InitTables:
+ 111                             	.LFB1:
+ 133:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 112                             		.loc 1 133 0
+ 113                             	.LVL7:
+ 114 0000 6E 7A                   		pushm	r7-r10
+ 115                             	.LCFI1:
+ 116 0002 60 80                   		sub	#8, r0
+ 117                             	.LCFI2:
+ 133:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 118                             		.loc 1 133 0
+ 119 0004 75 47 1C                		mov.L	#28, r7
+ 135:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.PrescalersNum=prescalersNum;
+ 120                             		.loc 1 135 0
+ 121 0007 FB E2 00 00 00 00       		mov.L	#_SWTC_Data, r14
+ 133:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 122                             		.loc 1 133 0
+ 123 000d 4B 07                   		add	r0, r7
+ 135:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.PrescalersNum=prescalersNum;
+ 124                             		.loc 1 135 0
+ 125 000f C7 E3 08                		mov.B	r3, 8[r14]
+ 133:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 126                             		.loc 1 133 0
+ 127 0012 EC 75                   		mov.L	[r7], r5
+ 136:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pPrescalersTable=pPrescalers;
+ 128                             		.loc 1 136 0
+ 129 0014 E7 E1 01                		mov.L	r1, 4[r14]
+ 137:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pInternalCountersTable=pIntCountersTable;
+ 130                             		.loc 1 137 0
+ 131 0017 E3 E2                   		mov.L	r2, [r14]
+ 133:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 132                             		.loc 1 133 0
+ 133 0019 89 77                   		mov.B	4[r7], r7
+ 139:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	for (i = 0; i < SWTC_Data.PrescalersNum; i++)
+ 134                             		.loc 1 139 0
+ 135 001b EF 2E                   		mov.L	r2, r14
+ 136 001d 5B 33                   		movu.B	r3, r3
+ 137                             	.LVL8:
+ 138 001f 2E 07                   		bra	.L10
+ 139                             	.LVL9:
+ 140                             	.L11:
+ 141:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		SWTC_Data.pInternalCountersTable[i]=0;
+ 141                             		.loc 1 141 0 discriminator 2
+ 142 0021 66 0A                   		mov	#0, r10
+ 143 0023 FD 20 EA                		mov.B	r10, [r14+]
+ 144                             		.balign 2,3,2
+ 145                             	.L10:
+ 139:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	for (i = 0; i < SWTC_Data.PrescalersNum; i++)
+ 146                             		.loc 1 139 0 discriminator 1
+ 147 0026 FF 01 2E                		sub	r2, r14, r1
+ 148 0029 5B 11                   		movu.B	r1, r1
+ 149 002b 47 13                   		cmp	r1, r3
+ 150 002d 24 F4                   		bgtu	.L11
+ 144:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.CountersNum=CountersNum;
+ 151                             		.loc 1 144 0
+ 152 002f FB E2 00 00 00 00       		mov.L	#_SWTC_Data, r14
+ 153 0035 C7 E7 14                		mov.B	r7, 20[r14]
+ 145:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pCountersCfgTable=pCountersCfgTable;
+ 154                             		.loc 1 145 0
+ 155 0038 E7 E4 03                		mov.L	r4, 12[r14]
+ 146:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pCountersTable=pCountersTable;
+ 156                             		.loc 1 146 0
+ 157 003b E7 E5 04                		mov.L	r5, 16[r14]
+ 147:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 158                             		.loc 1 147 0
+ 159 003e 3F 7A 06                		rtsd	#24, r7-r10
+ 160                             	.LFE1:
+ 162 0041 03                      		.section	.text.SWTC_Manager,"ax",@progbits
+ 163                             		.global	_SWTC_Manager
+ 165                             	_SWTC_Manager:
+ 166                             	.LFB2:
+ 162:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 167                             		.loc 1 162 0
+ 168 0000 6E 7D                   		pushm	r7-r13
+ 169                             	.LCFI3:
+ 165:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pInternalCountersTable[0]++;
+ 170                             		.loc 1 165 0
+ 171 0002 FB D2 00 00 00 00       		mov.L	#_SWTC_Data, r13
+ 172 0008 EC DB                   		mov.L	[r13], r11
+ 166:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_PrescalerManager (0);
+ 173                             		.loc 1 166 0
+ 174 000a 66 01                   		mov	#0, r1
+ 165:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pInternalCountersTable[0]++;
+ 175                             		.loc 1 165 0
+ 176 000c CC B7                   		mov.B	[r11], r7
+ 168:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	for (i = 0; i < SWTC_Data.PrescalersNum; ++i)
+ 177                             		.loc 1 168 0
+ 178 000e 66 0A                   		mov	#0, r10
+ 165:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_Data.pInternalCountersTable[0]++;
+ 179                             		.loc 1 165 0
+ 180 0010 62 17                   		add	#1, r7
+ 181 0012 C3 B7                   		mov.B	r7, [r11]
+ 166:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_PrescalerManager (0);
+ 182                             		.loc 1 166 0
+ 183 0014 05 00 00 00             		bsr	_SWTC_PrescalerManager
+ 184                             	.LVL10:
+ 168:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	for (i = 0; i < SWTC_Data.PrescalersNum; ++i)
+ 185                             		.loc 1 168 0
+ 186 0018 2E 2E                   		bra	.L14
+ 187                             	.LVL11:
+ 188                             	.L18:
+ 170:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		if(SWTC_Data.pInternalCountersTable[i] >= SWTC_Data.pPrescalersTable[i])
+ 189                             		.loc 1 170 0
+ 190 001a ED DE 01                		mov.L	4[r13], r14
+ 191 001d FF 29 7B                		add	r7, r11, r9
+ 192 0020 58 94                   		movu.B	[r9], r4
+ 193 0022 FE C7 EE                		movu.B	[r7,r14], r14
+ 194 0025 47 E4                   		cmp	r14, r4
+ 195 0027 23 1D                   		bltu	.L16
+ 172:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			SWTC_PrescalerManager ((SWTC_PrescalerType)(i+1));
+ 196                             		.loc 1 172 0
+ 197 0029 71 A1 01                		add	#1, r10, r1
+ 198 002c 05 00 00 00             		bsr	_SWTC_PrescalerManager
+ 199                             	.LVL12:
+ 175:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			if(i < (SWTC_Data.PrescalersNum-1))
+ 200                             		.loc 1 175 0
+ 201 0030 60 1C                   		sub	#1, r12
+ 174:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			SWTC_Data.pInternalCountersTable[i]=0;
+ 202                             		.loc 1 174 0
+ 203 0032 F8 94 00                		mov.B	#0, [r9]
+ 175:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			if(i < (SWTC_Data.PrescalersNum-1))
+ 204                             		.loc 1 175 0
+ 205 0035 47 C7                   		cmp	r12, r7
+ 206 0037 28 0D                   		bge	.L16
+ 177:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 				SWTC_Data.pInternalCountersTable[i+1]++;
+ 207                             		.loc 1 177 0
+ 208 0039 62 17                   		add	#1, r7
+ 209 003b 4B B7                   		add	r11, r7
+ 210 003d CC 7C                   		mov.B	[r7], r12
+ 211 003f 62 1C                   		add	#1, r12
+ 212 0041 C3 7C                   		mov.B	r12, [r7]
+ 213 0043 03                      		.balign 2,3,1
+ 214                             	.L16:
+ 168:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	for (i = 0; i < SWTC_Data.PrescalersNum; ++i)
+ 215                             		.loc 1 168 0
+ 216 0044 62 1A                   		add	#1, r10
+ 217                             	.LVL13:
+ 218                             		.balign 2,3,3
+ 219                             	.L14:
+ 168:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	for (i = 0; i < SWTC_Data.PrescalersNum; ++i)
+ 220                             		.loc 1 168 0 is_stmt 0 discriminator 1
+ 221 0046 59 DC 08                		movu.B	8[r13], r12
+ 222 0049 5B A7                   		movu.B	r10, r7
+ 223 004b 47 C7                   		cmp	r12, r7
+ 224 004d 23 CD                   		bltu	.L18
+ 181:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 225                             		.loc 1 181 0 is_stmt 1
+ 226 004f 3F 7D 07                		rtsd	#28, r7-r13
+ 227                             	.LFE2:
+ 229                             		.section	.text.SWTC_SetSValue,"ax",@progbits
+ 230                             		.global	_SWTC_SetSValue
+ 232                             	_SWTC_SetSValue:
+ 233                             	.LFB3:
+ 209:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 234                             		.loc 1 209 0
+ 235                             	.LVL14:
+ 236 0000 6E 7A                   		pushm	r7-r10
+ 237                             	.LCFI4:
+ 214:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 238                             		.loc 1 214 0
+ 239 0002 FB E2 00 00 00 00       		mov.L	#_SWTC_Data, r14
+ 240 0008 5B 17                   		movu.B	r1, r7
+ 241 000a 45 E7 14                		cmp	20[r14].UB, r7
+ 209:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 242                             		.loc 1 209 0
+ 243 000d CF 2A                   		mov.B	r2, r10
+ 214:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 244                             		.loc 1 214 0
+ 245 000f 23 09                   		bltu	.L21
+ 214:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 246                             		.loc 1 214 0 is_stmt 0 discriminator 1
+ 247 0011 75 41 42                		mov.L	#0x42, r1
+ 248                             	.LVL15:
+ 249 0014 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+ 250                             	.LVL16:
+ 251                             		.balign 2,3,5
+ 252                             	.L21:
+ 216:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 253                             		.loc 1 216 0 is_stmt 1
+ 254 0018 FB 32 00 00 00 00       		mov.L	#_SWTC_Data, r3
+ 255 001e ED 3E 03                		mov.L	12[r3], r14
+ 221:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	(pCnt)->counter = (SWTC_SCounterValue) (value - 1);
+ 256                             		.loc 1 221 0
+ 257 0021 60 1A                   		sub	#1, r10
+ 258                             	.LVL17:
+ 216:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 259                             		.loc 1 216 0
+ 260 0023 FE 67 EE                		mov.L	[r7,r14], r14
+ 261                             	.LVL18:
+ 220:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (SWTC_SCounterVariableType*)(SWTC_Data.pCountersTable[counterID]);
+ 262                             		.loc 1 220 0
+ 263 0026 6C 27                   		shll	#2, r7
+ 264                             	.LVL19:
+ 217:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	enable = (uint8_t) (*pcfg & SWTC_CFG_ENABLE_MSK);
+ 265                             		.loc 1 217 0
+ 266 0028 CC E4                   		mov.B	[r14], r4
+ 267                             	.LVL20:
+ 220:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (SWTC_SCounterVariableType*)(SWTC_Data.pCountersTable[counterID]);
+ 268                             		.loc 1 220 0
+ 269 002a 06 89 37 04             		add	16[r3].L, r7
+ 218:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg &= (SWTC_CounterConfigurationType) (~SWTC_CFG_ENABLE_MSK);
+ 270                             		.loc 1 218 0
+ 271 002e EF 42                   		mov.L	r4, r2
+ 272 0030 75 22 7F                		and	#0x7f, r2
+ 273 0033 C3 E2                   		mov.B	r2, [r14]
+ 220:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (SWTC_SCounterVariableType*)(SWTC_Data.pCountersTable[counterID]);
+ 274                             		.loc 1 220 0
+ 275 0035 EC 77                   		mov.L	[r7], r7
+ 276                             	.LVL21:
+ 217:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	enable = (uint8_t) (*pcfg & SWTC_CFG_ENABLE_MSK);
+ 277                             		.loc 1 217 0
+ 278 0037 75 24 80                		and	#0xffffff80, r4
+ 279                             	.LVL22:
+ 221:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	(pCnt)->counter = (SWTC_SCounterValue) (value - 1);
+ 280                             		.loc 1 221 0
+ 281 003a C3 7A                   		mov.B	r10, [r7]
+ 223:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg |= enable;
+ 282                             		.loc 1 223 0
+ 283 003c CC E7                   		mov.B	[r14], r7
+ 284                             	.LVL23:
+ 285 003e 57 74                   		or	r7, r4
+ 286 0040 C3 E4                   		mov.B	r4, [r14]
+ 225:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 287                             		.loc 1 225 0
+ 288 0042 3F 7A 04                		rtsd	#16, r7-r10
+ 289                             	.LFE3:
+ 291 0045 03                      		.section	.text.SWTC_SetMValue,"ax",@progbits
+ 292                             		.global	_SWTC_SetMValue
+ 294                             	_SWTC_SetMValue:
+ 295                             	.LFB4:
+ 229:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 296                             		.loc 1 229 0
+ 297                             	.LVL24:
+ 298 0000 6E 7A                   		pushm	r7-r10
+ 299                             	.LCFI5:
+ 235:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 300                             		.loc 1 235 0
+ 301 0002 FB E2 00 00 00 00       		mov.L	#_SWTC_Data, r14
+ 302 0008 5B 17                   		movu.B	r1, r7
+ 303 000a 45 E7 14                		cmp	20[r14].UB, r7
+ 229:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 304                             		.loc 1 229 0
+ 305 000d DF 2A                   		mov.W	r2, r10
+ 235:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 306                             		.loc 1 235 0
+ 307 000f 23 09                   		bltu	.L24
+ 235:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 308                             		.loc 1 235 0 is_stmt 0 discriminator 1
+ 309 0011 75 41 42                		mov.L	#0x42, r1
+ 310                             	.LVL25:
+ 311 0014 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+ 312                             	.LVL26:
+ 313                             		.balign 2,3,5
+ 314                             	.L24:
+ 236:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 315                             		.loc 1 236 0 is_stmt 1
+ 316 0018 FB 32 00 00 00 00       		mov.L	#_SWTC_Data, r3
+ 317 001e ED 3E 03                		mov.L	12[r3], r14
+ 241:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	(pCnt)->counter = (SWTC_MCounterValue) (value - 1);
+ 318                             		.loc 1 241 0
+ 319 0021 60 1A                   		sub	#1, r10
+ 320                             	.LVL27:
+ 236:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 321                             		.loc 1 236 0
+ 322 0023 FE 67 EE                		mov.L	[r7,r14], r14
+ 323                             	.LVL28:
+ 240:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (SWTC_MCounterVariableType*)(SWTC_Data.pCountersTable[counterID]);
+ 324                             		.loc 1 240 0
+ 325 0026 6C 27                   		shll	#2, r7
+ 326                             	.LVL29:
+ 237:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	enable = (uint8_t) (*pcfg & SWTC_CFG_ENABLE_MSK);
+ 327                             		.loc 1 237 0
+ 328 0028 CC E4                   		mov.B	[r14], r4
+ 329                             	.LVL30:
+ 240:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (SWTC_MCounterVariableType*)(SWTC_Data.pCountersTable[counterID]);
+ 330                             		.loc 1 240 0
+ 331 002a 06 89 37 04             		add	16[r3].L, r7
+ 238:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg &= (SWTC_CounterConfigurationType) (~SWTC_CFG_ENABLE_MSK);
+ 332                             		.loc 1 238 0
+ 333 002e EF 42                   		mov.L	r4, r2
+ 334 0030 75 22 7F                		and	#0x7f, r2
+ 335 0033 C3 E2                   		mov.B	r2, [r14]
+ 336                             	.LVL31:
+ 241:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	(pCnt)->counter = (SWTC_MCounterValue) (value - 1);
+ 337                             		.loc 1 241 0
+ 338 0035 EC 77                   		mov.L	[r7], r7
+ 237:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	enable = (uint8_t) (*pcfg & SWTC_CFG_ENABLE_MSK);
+ 339                             		.loc 1 237 0
+ 340 0037 75 24 80                		and	#0xffffff80, r4
+ 341                             	.LVL32:
+ 241:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	(pCnt)->counter = (SWTC_MCounterValue) (value - 1);
+ 342                             		.loc 1 241 0
+ 343 003a D3 7A                   		mov.W	r10, [r7]
+ 243:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg |= enable;
+ 344                             		.loc 1 243 0
+ 345 003c CC E7                   		mov.B	[r14], r7
+ 346 003e 57 74                   		or	r7, r4
+ 347 0040 C3 E4                   		mov.B	r4, [r14]
+ 244:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 348                             		.loc 1 244 0
+ 349 0042 3F 7A 04                		rtsd	#16, r7-r10
+ 350                             	.LFE4:
+ 352 0045 03                      		.section	.text.SWTC_SetPrescaler,"ax",@progbits
+ 353                             		.global	_SWTC_SetPrescaler
+ 355                             	_SWTC_SetPrescaler:
+ 356                             	.LFB5:
+ 284:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 357                             		.loc 1 284 0
+ 358                             	.LVL33:
+ 359 0000 6E 7B                   		pushm	r7-r11
+ 360                             	.LCFI6:
+ 284:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 361                             		.loc 1 284 0
+ 362 0002 CF 27                   		mov.B	r2, r7
+ 288:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(!SWTC_CFG_PS_ASSERT(ps), PLT_ERROR_SWTC_INVALID_PS);
+ 363                             		.loc 1 288 0
+ 364 0004 EF 7B                   		mov.L	r7, r11
+ 365 0006 76 2B F0 00             		and	#0xf0, r11
+ 284:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 366                             		.loc 1 284 0
+ 367 000a CF 1A                   		mov.B	r1, r10
+ 288:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(!SWTC_CFG_PS_ASSERT(ps), PLT_ERROR_SWTC_INVALID_PS);
+ 368                             		.loc 1 288 0
+ 369 000c 20 0A                   		beq	.L27
+ 288:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(!SWTC_CFG_PS_ASSERT(ps), PLT_ERROR_SWTC_INVALID_PS);
+ 370                             		.loc 1 288 0 is_stmt 0 discriminator 1
+ 371 000e 75 41 43                		mov.L	#0x43, r1
+ 372                             	.LVL34:
+ 373 0011 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+ 374                             	.LVL35:
+ 375 0015 03                      		.balign 2,3,5
+ 376                             	.L27:
+ 290:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 377                             		.loc 1 290 0 is_stmt 1
+ 378 0016 FB E2 00 00 00 00       		mov.L	#_SWTC_Data, r14
+ 379 001c 59 E4 14                		movu.B	20[r14], r4
+ 380 001f 5B AA                   		movu.B	r10, r10
+ 381 0021 47 4A                   		cmp	r4, r10
+ 382 0023 EF EB                   		mov.L	r14, r11
+ 383 0025 23 09                   		bltu	.L28
+ 290:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 384                             		.loc 1 290 0 is_stmt 0 discriminator 1
+ 385 0027 75 41 42                		mov.L	#0x42, r1
+ 386 002a 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+ 387                             	.LVL36:
+ 388                             		.balign 2,3,1
+ 389                             	.L28:
+ 292:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 390                             		.loc 1 292 0 is_stmt 1
+ 391 002e ED BB 03                		mov.L	12[r11], r11
+ 297:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg |= SWTC_CFG_PS(ps);
+ 392                             		.loc 1 297 0
+ 393 0031 64 F7                   		and	#15, r7
+ 394                             	.LVL37:
+ 292:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 395                             		.loc 1 292 0
+ 396 0033 FE 6A BA                		mov.L	[r10,r11], r10
+ 397                             	.LVL38:
+ 297:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg |= SWTC_CFG_PS(ps);
+ 398                             		.loc 1 297 0
+ 399 0036 6C 27                   		shll	#2, r7
+ 293:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	enable = (uint8_t) (*pcfg & SWTC_CFG_ENABLE_MSK);
+ 400                             		.loc 1 293 0
+ 401 0038 CC AB                   		mov.B	[r10], r11
+ 402                             	.LVL39:
+ 403 003a 75 2B C3                		and	#-61, r11
+ 404                             	.LVL40:
+ 299:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg |= enable;
+ 405                             		.loc 1 299 0
+ 406 003d 57 B7                   		or	r11, r7
+ 407 003f C3 A7                   		mov.B	r7, [r10]
+ 300:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 408                             		.loc 1 300 0
+ 409 0041 3F 7B 05                		rtsd	#20, r7-r11
+ 410                             	.LFE5:
+ 412                             		.section	.text.SWTC_Run,"ax",@progbits
+ 413                             		.global	_SWTC_Run
+ 415                             	_SWTC_Run:
+ 416                             	.LFB6:
+ 329:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 417                             		.loc 1 329 0
+ 418                             	.LVL41:
+ 331:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 419                             		.loc 1 331 0
+ 420 0000 FB E2 00 00 00 00       		mov.L	#_SWTC_Data, r14
+ 421 0006 59 E4 14                		movu.B	20[r14], r4
+ 329:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 422                             		.loc 1 329 0
+ 423 0009 6E 7A                   		pushm	r7-r10
+ 424                             	.LCFI7:
+ 331:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 425                             		.loc 1 331 0
+ 426 000b 5B 17                   		movu.B	r1, r7
+ 427 000d 47 47                   		cmp	r4, r7
+ 428 000f EF EA                   		mov.L	r14, r10
+ 429 0011 23 09                   		bltu	.L34
+ 331:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 430                             		.loc 1 331 0 is_stmt 0 discriminator 1
+ 431 0013 75 41 42                		mov.L	#0x42, r1
+ 432                             	.LVL42:
+ 433 0016 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+ 434                             	.LVL43:
+ 435                             		.balign 2,3,1
+ 436                             	.L34:
+ 333:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 437                             		.loc 1 333 0 is_stmt 1
+ 438 001a ED AA 03                		mov.L	12[r10], r10
+ 439 001d FE 67 A7                		mov.L	[r7,r10], r7
+ 440                             	.LVL44:
+ 335:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg |= SWTC_CFG_ENABLE_MSK;
+ 441                             		.loc 1 335 0
+ 442 0020 CC 7A                   		mov.B	[r7], r10
+ 443 0022 75 3A 80                		or	#0xffffff80, r10
+ 444 0025 C3 7A                   		mov.B	r10, [r7]
+ 336:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 445                             		.loc 1 336 0
+ 446 0027 3F 7A 04                		rtsd	#16, r7-r10
+ 447                             	.LFE6:
+ 449                             		.section	.text.SWTC_Stop,"ax",@progbits
+ 450                             		.global	_SWTC_Stop
+ 452                             	_SWTC_Stop:
+ 453                             	.LFB7:
+ 359:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 454                             		.loc 1 359 0
+ 455                             	.LVL45:
+ 361:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 456                             		.loc 1 361 0
+ 457 0000 FB E2 00 00 00 00       		mov.L	#_SWTC_Data, r14
+ 458 0006 59 E4 14                		movu.B	20[r14], r4
+ 359:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 459                             		.loc 1 359 0
+ 460 0009 6E 7A                   		pushm	r7-r10
+ 461                             	.LCFI8:
+ 361:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 462                             		.loc 1 361 0
+ 463 000b 5B 17                   		movu.B	r1, r7
+ 464 000d 47 47                   		cmp	r4, r7
+ 465 000f EF EA                   		mov.L	r14, r10
+ 466 0011 23 09                   		bltu	.L37
+ 361:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 467                             		.loc 1 361 0 is_stmt 0 discriminator 1
+ 468 0013 75 41 42                		mov.L	#0x42, r1
+ 469                             	.LVL46:
+ 470 0016 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+ 471                             	.LVL47:
+ 472                             		.balign 2,3,1
+ 473                             	.L37:
+ 362:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 474                             		.loc 1 362 0 is_stmt 1
+ 475 001a ED AA 03                		mov.L	12[r10], r10
+ 476 001d FE 67 A7                		mov.L	[r7,r10], r7
+ 477                             	.LVL48:
+ 363:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg &= ~(SWTC_CFG_ENABLE_MSK);
+ 478                             		.loc 1 363 0
+ 479 0020 CC 7A                   		mov.B	[r7], r10
+ 480 0022 75 2A 7F                		and	#0x7f, r10
+ 481 0025 C3 7A                   		mov.B	r10, [r7]
+ 364:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 482                             		.loc 1 364 0
+ 483 0027 3F 7A 04                		rtsd	#16, r7-r10
+ 484                             	.LFE7:
+ 486                             		.section	.text.SWTC_SetSValueAndRun,"ax",@progbits
+ 487                             		.global	_SWTC_SetSValueAndRun
+ 489                             	_SWTC_SetSValueAndRun:
+ 490                             	.LFB8:
+ 401:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 491                             		.loc 1 401 0
+ 492                             	.LVL49:
+ 493 0000 6E 7A                   		pushm	r7-r10
+ 494                             	.LCFI9:
+ 404:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 495                             		.loc 1 404 0
+ 496 0002 FB E2 00 00 00 00       		mov.L	#_SWTC_Data, r14
+ 497 0008 5B 17                   		movu.B	r1, r7
+ 498 000a 45 E7 14                		cmp	20[r14].UB, r7
+ 401:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 499                             		.loc 1 401 0
+ 500 000d CF 2A                   		mov.B	r2, r10
+ 404:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 501                             		.loc 1 404 0
+ 502 000f 23 09                   		bltu	.L40
+ 404:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 503                             		.loc 1 404 0 is_stmt 0 discriminator 1
+ 504 0011 75 41 42                		mov.L	#0x42, r1
+ 505                             	.LVL50:
+ 506 0014 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+ 507                             	.LVL51:
+ 508                             		.balign 2,3,5
+ 509                             	.L40:
+ 406:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 510                             		.loc 1 406 0 is_stmt 1
+ 511 0018 FB 42 00 00 00 00       		mov.L	#_SWTC_Data, r4
+ 512 001e ED 4E 03                		mov.L	12[r4], r14
+ 411:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	(pCnt)->counter = (SWTC_SCounterValue) (value - 1);
+ 513                             		.loc 1 411 0
+ 514 0021 60 1A                   		sub	#1, r10
+ 515                             	.LVL52:
+ 406:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 516                             		.loc 1 406 0
+ 517 0023 FE 67 EE                		mov.L	[r7,r14], r14
+ 518                             	.LVL53:
+ 410:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (SWTC_SCounterVariableType*)(SWTC_Data.pCountersTable[counterID]);
+ 519                             		.loc 1 410 0
+ 520 0026 6C 27                   		shll	#2, r7
+ 521                             	.LVL54:
+ 408:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg &= ~(SWTC_CFG_ENABLE_MSK);
+ 522                             		.loc 1 408 0
+ 523 0028 CC E3                   		mov.B	[r14], r3
+ 410:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (SWTC_SCounterVariableType*)(SWTC_Data.pCountersTable[counterID]);
+ 524                             		.loc 1 410 0
+ 525 002a 06 89 47 04             		add	16[r4].L, r7
+ 408:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg &= ~(SWTC_CFG_ENABLE_MSK);
+ 526                             		.loc 1 408 0
+ 527 002e 75 23 7F                		and	#0x7f, r3
+ 528 0031 C3 E3                   		mov.B	r3, [r14]
+ 410:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (SWTC_SCounterVariableType*)(SWTC_Data.pCountersTable[counterID]);
+ 529                             		.loc 1 410 0
+ 530 0033 EC 77                   		mov.L	[r7], r7
+ 531                             	.LVL55:
+ 411:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	(pCnt)->counter = (SWTC_SCounterValue) (value - 1);
+ 532                             		.loc 1 411 0
+ 533 0035 C3 7A                   		mov.B	r10, [r7]
+ 413:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg |= (SWTC_CFG_ENABLE_MSK);
+ 534                             		.loc 1 413 0
+ 535 0037 CC E7                   		mov.B	[r14], r7
+ 536                             	.LVL56:
+ 537 0039 75 37 80                		or	#0xffffff80, r7
+ 538 003c C3 E7                   		mov.B	r7, [r14]
+ 414:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 539                             		.loc 1 414 0
+ 540 003e 3F 7A 04                		rtsd	#16, r7-r10
+ 541                             	.LFE8:
+ 543 0041 03                      		.section	.text.SWTC_SetMValueAndRun,"ax",@progbits
+ 544                             		.global	_SWTC_SetMValueAndRun
+ 546                             	_SWTC_SetMValueAndRun:
+ 547                             	.LFB9:
+ 420:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 548                             		.loc 1 420 0
+ 549                             	.LVL57:
+ 550 0000 6E 7A                   		pushm	r7-r10
+ 551                             	.LCFI10:
+ 424:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 552                             		.loc 1 424 0
+ 553 0002 FB E2 00 00 00 00       		mov.L	#_SWTC_Data, r14
+ 554 0008 5B 17                   		movu.B	r1, r7
+ 555 000a 45 E7 14                		cmp	20[r14].UB, r7
+ 420:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 556                             		.loc 1 420 0
+ 557 000d DF 2A                   		mov.W	r2, r10
+ 424:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 558                             		.loc 1 424 0
+ 559 000f 23 09                   		bltu	.L43
+ 424:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 560                             		.loc 1 424 0 is_stmt 0 discriminator 1
+ 561 0011 75 41 42                		mov.L	#0x42, r1
+ 562                             	.LVL58:
+ 563 0014 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+ 564                             	.LVL59:
+ 565                             		.balign 2,3,5
+ 566                             	.L43:
+ 427:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 567                             		.loc 1 427 0 is_stmt 1
+ 568 0018 FB 42 00 00 00 00       		mov.L	#_SWTC_Data, r4
+ 569 001e ED 4E 03                		mov.L	12[r4], r14
+ 432:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	(pCnt)->counter = (SWTC_MCounterValue) (value - 1);
+ 570                             		.loc 1 432 0
+ 571 0021 60 1A                   		sub	#1, r10
+ 572                             	.LVL60:
+ 427:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 573                             		.loc 1 427 0
+ 574 0023 FE 67 EE                		mov.L	[r7,r14], r14
+ 575                             	.LVL61:
+ 431:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (SWTC_MCounterVariableType*)(SWTC_Data.pCountersTable[counterID]);
+ 576                             		.loc 1 431 0
+ 577 0026 6C 27                   		shll	#2, r7
+ 578                             	.LVL62:
+ 429:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg &= ~(SWTC_CFG_ENABLE_MSK);
+ 579                             		.loc 1 429 0
+ 580 0028 CC E3                   		mov.B	[r14], r3
+ 431:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (SWTC_MCounterVariableType*)(SWTC_Data.pCountersTable[counterID]);
+ 581                             		.loc 1 431 0
+ 582 002a 06 89 47 04             		add	16[r4].L, r7
+ 429:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg &= ~(SWTC_CFG_ENABLE_MSK);
+ 583                             		.loc 1 429 0
+ 584 002e 75 23 7F                		and	#0x7f, r3
+ 585 0031 C3 E3                   		mov.B	r3, [r14]
+ 586                             	.LVL63:
+ 432:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	(pCnt)->counter = (SWTC_MCounterValue) (value - 1);
+ 587                             		.loc 1 432 0
+ 588 0033 EC 77                   		mov.L	[r7], r7
+ 589 0035 D3 7A                   		mov.W	r10, [r7]
+ 434:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	*pcfg |= (SWTC_CFG_ENABLE_MSK);
+ 590                             		.loc 1 434 0
+ 591 0037 CC E7                   		mov.B	[r14], r7
+ 592 0039 75 37 80                		or	#0xffffff80, r7
+ 593 003c C3 E7                   		mov.B	r7, [r14]
+ 435:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 594                             		.loc 1 435 0
+ 595 003e 3F 7A 04                		rtsd	#16, r7-r10
+ 596                             	.LFE9:
+ 598 0041 03                      		.section	.text.SWTC_IsExpired,"ax",@progbits
+ 599                             		.global	_SWTC_IsExpired
+ 601                             	_SWTC_IsExpired:
+ 602                             	.LFB10:
+ 482:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 603                             		.loc 1 482 0
+ 604                             	.LVL64:
+ 605 0000 7E A7                   		push.l	r7
+ 606                             	.LCFI11:
+ 486:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 607                             		.loc 1 486 0
+ 608 0002 FB E2 00 00 00 00       		mov.L	#_SWTC_Data, r14
+ 609 0008 5B 17                   		movu.B	r1, r7
+ 610 000a 45 E7 14                		cmp	20[r14].UB, r7
+ 611 000d 23 09                   		bltu	.L46
+ 486:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 612                             		.loc 1 486 0 is_stmt 0 discriminator 1
+ 613 000f 75 41 42                		mov.L	#0x42, r1
+ 614                             	.LVL65:
+ 615 0012 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+ 616                             	.LVL66:
+ 617                             		.balign 2,3,5
+ 618                             	.L46:
+ 489:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (void*)(SWTC_Data.pCountersTable[counterID]);
+ 619                             		.loc 1 489 0 is_stmt 1
+ 620 0016 FB 42 00 00 00 00       		mov.L	#_SWTC_Data, r4
+ 621 001c ED 4E 04                		mov.L	16[r4], r14
+ 622 001f FE 67 EE                		mov.L	[r7,r14], r14
+ 623                             	.LVL67:
+ 488:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 624                             		.loc 1 488 0
+ 625 0022 6C 27                   		shll	#2, r7
+ 626                             	.LVL68:
+ 627 0024 06 89 47 03             		add	12[r4].L, r7
+ 628                             	.LVL69:
+ 491:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	switch(*pcfg & SWTC_CFG_SIZE_MSK)
+ 629                             		.loc 1 491 0
+ 630 0028 EC 77                   		mov.L	[r7], r7
+ 631                             	.LVL70:
+ 632 002a CC 77                   		mov.B	[r7], r7
+ 633                             	.LVL71:
+ 634 002c 64 37                   		and	#3, r7
+ 635 002e 61 17                   		cmp	#1, r7
+ 636 0030 20 08                   		beq	.L48
+ 637 0032 61 27                   		cmp	#2, r7
+ 638 0034 21 0E                   		bne	.L51
+ 639 0036 2E 06                   		bra	.L49
+ 640                             	.L48:
+ 499:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			return (bool_t)(((SWTC_SCounterVariableType*)pCnt)->counter < 0);
+ 641                             		.loc 1 499 0
+ 642 0038 CC E1                   		mov.B	[r14], r1
+ 643 003a 2E 04                   		bra	.L53
+ 644                             	.L49:
+ 504:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			return (bool_t)(((SWTC_MCounterVariableType*)pCnt)->counter < 0);
+ 645                             		.loc 1 504 0
+ 646 003c DC E1                   		mov.W	[r14], r1
+ 647                             		.balign 2,3,1
+ 648                             	.L53:
+ 649 003e 69 F1                   		shlr	#31, r1
+ 650 0040 2E 04                   		bra	.L47
+ 651                             	.L51:
+ 510:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	return FALSE;	
+ 652                             		.loc 1 510 0
+ 653 0042 66 01                   		mov.L	#0, r1
+ 654                             		.balign 2,3,2
+ 655                             	.L47:
+ 511:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 656                             		.loc 1 511 0
+ 657 0044 3F 77 01                		rtsd	#4, r7-r7
+ 658                             	.LFE10:
+ 660 0047 03                      		.section	.text.SWTC_IsStopped,"ax",@progbits
+ 661                             		.global	_SWTC_IsStopped
+ 663                             	_SWTC_IsStopped:
+ 664                             	.LFB11:
+ 535:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 665                             		.loc 1 535 0
+ 666                             	.LVL72:
+ 537:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 667                             		.loc 1 537 0
+ 668 0000 FB E2 00 00 00 00       		mov.L	#_SWTC_Data, r14
+ 669 0006 59 E4 14                		movu.B	20[r14], r4
+ 535:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 670                             		.loc 1 535 0
+ 671 0009 6E 7A                   		pushm	r7-r10
+ 672                             	.LCFI12:
+ 537:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 673                             		.loc 1 537 0
+ 674 000b 5B 17                   		movu.B	r1, r7
+ 675 000d 47 47                   		cmp	r4, r7
+ 676 000f EF EA                   		mov.L	r14, r10
+ 677 0011 23 09                   		bltu	.L55
+ 537:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 678                             		.loc 1 537 0 is_stmt 0 discriminator 1
+ 679 0013 75 41 42                		mov.L	#0x42, r1
+ 680                             	.LVL73:
+ 681 0016 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+ 682                             	.LVL74:
+ 683                             		.balign 2,3,1
+ 684                             	.L55:
+ 538:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 685                             		.loc 1 538 0 is_stmt 1
+ 686 001a ED AA 03                		mov.L	12[r10], r10
+ 540:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	return (bool_t)(!(*pcfg & SWTC_CFG_ENABLE_MSK));
+ 687                             		.loc 1 540 0
+ 688 001d FE 67 A7                		mov.L	[r7,r10], r7
+ 689                             	.LVL75:
+ 690 0020 CC 71                   		mov.B	[r7], r1
+ 541:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 691                             		.loc 1 541 0
+ 692 0022 61 01                   		cmp	#0, r1
+ 693 0024 FC DB 18                		scge.L	r1
+ 694 0027 3F 7A 04                		rtsd	#16, r7-r10
+ 695                             	.LFE11:
+ 697                             		.section	.text.SWTC_Retrigger,"ax",@progbits
+ 698                             		.global	_SWTC_Retrigger
+ 700                             	_SWTC_Retrigger:
+ 701                             	.LFB12:
+ 571:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 702                             		.loc 1 571 0
+ 703                             	.LVL76:
+ 704 0000 7E A7                   		push.l	r7
+ 705                             	.LCFI13:
+ 576:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 706                             		.loc 1 576 0
+ 707 0002 FB E2 00 00 00 00       		mov.L	#_SWTC_Data, r14
+ 708 0008 5B 17                   		movu.B	r1, r7
+ 709 000a 45 E7 14                		cmp	20[r14].UB, r7
+ 710 000d 23 09                   		bltu	.L58
+ 576:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 711                             		.loc 1 576 0 is_stmt 0 discriminator 1
+ 712 000f 75 41 42                		mov.L	#0x42, r1
+ 713                             	.LVL77:
+ 714 0012 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+ 715                             	.LVL78:
+ 716                             		.balign 2,3,5
+ 717                             	.L58:
+ 579:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (void*)(SWTC_Data.pCountersTable[counterID]);
+ 718                             		.loc 1 579 0 is_stmt 1
+ 719 0016 FB 42 00 00 00 00       		mov.L	#_SWTC_Data, r4
+ 720 001c ED 4E 04                		mov.L	16[r4], r14
+ 721 001f FE 67 EE                		mov.L	[r7,r14], r14
+ 722                             	.LVL79:
+ 578:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 723                             		.loc 1 578 0
+ 724 0022 6C 27                   		shll	#2, r7
+ 725                             	.LVL80:
+ 726 0024 06 89 47 03             		add	12[r4].L, r7
+ 727                             	.LVL81:
+ 581:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	switch(*pcfg & SWTC_CFG_SIZE_MSK)
+ 728                             		.loc 1 581 0
+ 729 0028 EC 77                   		mov.L	[r7], r7
+ 730                             	.LVL82:
+ 731 002a CC 71                   		mov.B	[r7], r1
+ 732 002c 64 31                   		and	#3, r1
+ 733 002e 61 11                   		cmp	#1, r1
+ 734 0030 20 08                   		beq	.L60
+ 735 0032 61 21                   		cmp	#2, r1
+ 736 0034 21 25                   		bne	.L64
+ 737 0036 2E 11                   		bra	.L61
+ 738                             	.L60:
+ 591:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		pending = (bool_t)(((SWTC_SCounterVariableType*)pCnt)->counter < 0);
+ 739                             		.loc 1 591 0
+ 740 0038 CC E7                   		mov.B	[r14], r7
+ 741                             	.LVL83:
+ 592:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		if(pending)
+ 742                             		.loc 1 592 0
+ 743 003a CF 74                   		mov.B	r7, r4
+ 744 003c 61 04                   		cmp	#0, r4
+ 745 003e 28 1B                   		bge	.L64
+ 594:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			((SWTC_SCounterVariableType*)pCnt)->counter += 0x7F;
+ 746                             		.loc 1 594 0
+ 747 0040 71 77 7F                		add	#0x7f, r7
+ 748 0043 C3 E7                   		mov.B	r7, [r14]
+ 749 0045 2E 17                   		bra	.L59
+ 750                             	.LVL84:
+ 751                             	.L61:
+ 601:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		pending = (bool_t)(((SWTC_MCounterVariableType*)pCnt)->counter < 0);
+ 752                             		.loc 1 601 0
+ 753 0047 DC E7                   		mov.W	[r14], r7
+ 754                             	.LVL85:
+ 602:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		if(pending)
+ 755                             		.loc 1 602 0
+ 756 0049 DF 74                   		mov.W	r7, r4
+ 757 004b 61 04                   		cmp	#0, r4
+ 758 004d 28 0C                   		bge	.L64
+ 604:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 			((SWTC_MCounterVariableType*)pCnt)->counter += 0x7FFF;
+ 759                             		.loc 1 604 0
+ 760 004f 72 77 FF 7F             		add	#0x7fff, r7
+ 761 0053 D3 E7                   		mov.W	r7, [r14]
+ 762 0055 66 11                   		mov.L	#1, r1
+ 763 0057 2E 05                   		bra	.L59
+ 764                             	.LVL86:
+ 765                             	.L64:
+ 602:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		if(pending)
+ 766                             		.loc 1 602 0
+ 767 0059 66 01                   		mov.L	#0, r1
+ 768 005b 03                      		.balign 2,3,2
+ 769                             	.L59:
+ 770                             	.LVL87:
+ 613:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 771                             		.loc 1 613 0
+ 772 005c 3F 77 01                		rtsd	#4, r7-r7
+ 773                             	.LFE12:
+ 775 005f 03                      		.section	.text.SWTC_GetRemainingTime,"ax",@progbits
+ 776                             		.global	_SWTC_GetRemainingTime
+ 778                             	_SWTC_GetRemainingTime:
+ 779                             	.LFB13:
+ 634:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 780                             		.loc 1 634 0
+ 781                             	.LVL88:
+ 782 0000 7E A7                   		push.l	r7
+ 783                             	.LCFI14:
+ 639:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 784                             		.loc 1 639 0
+ 785 0002 FB E2 00 00 00 00       		mov.L	#_SWTC_Data, r14
+ 786 0008 5B 17                   		movu.B	r1, r7
+ 787 000a 45 E7 14                		cmp	20[r14].UB, r7
+ 788 000d 23 09                   		bltu	.L68
+ 639:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 789                             		.loc 1 639 0 is_stmt 0 discriminator 1
+ 790 000f 75 41 42                		mov.L	#0x42, r1
+ 791                             	.LVL89:
+ 792 0012 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+ 793                             	.LVL90:
+ 794                             		.balign 2,3,5
+ 795                             	.L68:
+ 642:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (void*)(SWTC_Data.pCountersTable[counterID]);
+ 796                             		.loc 1 642 0 is_stmt 1
+ 797 0016 FB 42 00 00 00 00       		mov.L	#_SWTC_Data, r4
+ 798 001c ED 4E 04                		mov.L	16[r4], r14
+ 799 001f FE 67 EE                		mov.L	[r7,r14], r14
+ 800                             	.LVL91:
+ 641:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 801                             		.loc 1 641 0
+ 802 0022 6C 27                   		shll	#2, r7
+ 803                             	.LVL92:
+ 804 0024 06 89 47 03             		add	12[r4].L, r7
+ 805                             	.LVL93:
+ 644:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	switch(*pcfg & SWTC_CFG_SIZE_MSK)
+ 806                             		.loc 1 644 0
+ 807 0028 EC 77                   		mov.L	[r7], r7
+ 808                             	.LVL94:
+ 809 002a CC 77                   		mov.B	[r7], r7
+ 810                             	.LVL95:
+ 811 002c 64 37                   		and	#3, r7
+ 812 002e 61 17                   		cmp	#1, r7
+ 813 0030 20 08                   		beq	.L70
+ 814 0032 61 27                   		cmp	#2, r7
+ 815 0034 21 0E                   		bne	.L73
+ 816 0036 2E 06                   		bra	.L71
+ 817                             	.L70:
+ 652:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		time = ((SWTC_SCounterVariableType*)pCnt)->counter + 1;
+ 818                             		.loc 1 652 0
+ 819 0038 CC E1                   		mov.B	[r14], r1
+ 820 003a 2E 04                   		bra	.L75
+ 821                             	.L71:
+ 656:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		time = ((SWTC_MCounterVariableType*)pCnt)->counter + 1;
+ 822                             		.loc 1 656 0
+ 823 003c DC E1                   		mov.W	[r14], r1
+ 824                             		.balign 2,3,1
+ 825                             	.L75:
+ 826 003e 62 11                   		add	#1, r1
+ 827                             	.LVL96:
+ 657:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		break;	
+ 828                             		.loc 1 657 0
+ 829 0040 2E 04                   		bra	.L69
+ 830                             	.LVL97:
+ 831                             	.L73:
+ 636:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_TimeType time=0;
+ 832                             		.loc 1 636 0
+ 833 0042 66 01                   		mov.L	#0, r1
+ 834                             	.LVL98:
+ 835                             		.balign 2,3,2
+ 836                             	.L69:
+ 661:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 837                             		.loc 1 661 0
+ 838 0044 3F 77 01                		rtsd	#4, r7-r7
+ 839                             	.LFE13:
+ 841 0047 03                      		.section	.text.SWTC_GetElapsedTime,"ax",@progbits
+ 842                             		.global	_SWTC_GetElapsedTime
+ 844                             	_SWTC_GetElapsedTime:
+ 845                             	.LFB14:
+ 688:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** {
+ 846                             		.loc 1 688 0
+ 847                             	.LVL99:
+ 848 0000 7E A7                   		push.l	r7
+ 849                             	.LCFI15:
+ 694:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 850                             		.loc 1 694 0
+ 851 0002 FB E2 00 00 00 00       		mov.L	#_SWTC_Data, r14
+ 852 0008 5B 17                   		movu.B	r1, r7
+ 853 000a 45 E7 14                		cmp	20[r14].UB, r7
+ 854 000d 23 09                   		bltu	.L77
+ 694:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	PLT_ERROR_FATAL_IF(counterID >= (SWTC_Data.CountersNum), PLT_ERROR_SWTC_INVALID_COUNTER);
+ 855                             		.loc 1 694 0 is_stmt 0 discriminator 1
+ 856 000f 75 41 42                		mov.L	#0x42, r1
+ 857                             	.LVL100:
+ 858 0012 05 00 00 00             		bsr	_LIB_Error_Fatal_Handler
+ 859                             	.LVL101:
+ 860                             		.balign 2,3,5
+ 861                             	.L77:
+ 697:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pCnt = (void*)(SWTC_Data.pCountersTable[counterID]);
+ 862                             		.loc 1 697 0 is_stmt 1
+ 863 0016 FB 42 00 00 00 00       		mov.L	#_SWTC_Data, r4
+ 864 001c ED 4E 04                		mov.L	16[r4], r14
+ 865 001f FE 67 EE                		mov.L	[r7,r14], r14
+ 866                             	.LVL102:
+ 696:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	pcfg=SWTC_Data.pCountersCfgTable[counterID];
+ 867                             		.loc 1 696 0
+ 868 0022 6C 27                   		shll	#2, r7
+ 869                             	.LVL103:
+ 870 0024 06 89 47 03             		add	12[r4].L, r7
+ 871                             	.LVL104:
+ 699:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	switch(*pcfg & SWTC_CFG_SIZE_MSK)
+ 872                             		.loc 1 699 0
+ 873 0028 EC 77                   		mov.L	[r7], r7
+ 874                             	.LVL105:
+ 875 002a CC 77                   		mov.B	[r7], r7
+ 876                             	.LVL106:
+ 877 002c 64 37                   		and	#3, r7
+ 878 002e 61 17                   		cmp	#1, r7
+ 879 0030 20 08                   		beq	.L79
+ 880 0032 61 27                   		cmp	#2, r7
+ 881 0034 21 16                   		bne	.L82
+ 882 0036 2E 09                   		bra	.L80
+ 883                             	.L79:
+ 707:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		time = (0x7F -1) - ((SWTC_SCounterVariableType*)pCnt)->counter;
+ 884                             		.loc 1 707 0
+ 885 0038 CC E7                   		mov.B	[r14], r7
+ 886 003a 75 41 7E                		mov.L	#0x7e, r1
+ 887 003d 2E 09                   		bra	.L84
+ 888                             	.L80:
+ 711:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		time = (0x7FFF -1) - ((SWTC_MCounterVariableType*)pCnt)->counter;
+ 889                             		.loc 1 711 0
+ 890 003f DC E7                   		mov.W	[r14], r7
+ 891 0041 FB 1A FE 7F             		mov.L	#0x7ffe, r1
+ 892 0045 03                      		.balign 2,3,1
+ 893                             	.L84:
+ 894 0046 43 71                   		sub	r7, r1
+ 895                             	.LVL107:
+ 712:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 		break;	
+ 896                             		.loc 1 712 0
+ 897 0048 2E 04                   		bra	.L78
+ 898                             	.LVL108:
+ 899                             	.L82:
+ 691:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** 	SWTC_TimeType time=0;
+ 900                             		.loc 1 691 0
+ 901 004a 66 01                   		mov.L	#0, r1
+ 902                             	.LVL109:
+ 903                             		.balign 2,3,2
+ 904                             	.L78:
+ 716:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters\SwTimersCounters.c **** }
+ 905                             		.loc 1 716 0
+ 906 004c 3F 77 01                		rtsd	#4, r7-r7
+ 907                             	.LFE14:
+ 909 004f 03                      		.section	.bss.SWTC_Data,"aw",@nobits
+ 910                             		.balign 4
+ 913                             	_SWTC_Data:
+ 914 0000 00 00 00 00 00 00 00 00 		.zero	24
+ 914      00 00 00 00 00 00 00 00 
+ 914      00 00 00 00 00 00 00 00 
+ 1223                             	.Letext0:
+ 1224                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 1225                             		.file 3 "C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_SwTimersCounters/SwTimersCounters.h"
+ 1226                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Error/LIB_Error.h"

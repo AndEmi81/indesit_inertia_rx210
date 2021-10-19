@@ -1,0 +1,2675 @@
+   1                             		.file	"DW_Safety.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.SFT_7liter_Mgmt,"ax",@progbits
+   5                             		.global	_SFT_7liter_Mgmt
+   7                             	_SFT_7liter_Mgmt:
+   8                             	.LFB0:
+   9                             		.file 1 "..\\..\\..\\Control\\DW_Safety.c"
+   1:..\..\..\Control/DW_Safety.c **** /*
+   2:..\..\..\Control/DW_Safety.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:..\..\..\Control/DW_Safety.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:..\..\..\Control/DW_Safety.c **** */
+   5:..\..\..\Control/DW_Safety.c **** /**
+   6:..\..\..\Control/DW_Safety.c **** \defgroup	CK_Safety.c
+   7:..\..\..\Control/DW_Safety.c **** \ingroup	ApplControl
+   8:..\..\..\Control/DW_Safety.c **** 
+   9:..\..\..\Control/DW_Safety.c **** Il modulo contiene le funzioni di gestione delle azioni di sicurezza
+  10:..\..\..\Control/DW_Safety.c **** */
+  11:..\..\..\Control/DW_Safety.c **** 
+  12:..\..\..\Control/DW_Safety.c **** /**
+  13:..\..\..\Control/DW_Safety.c **** 
+  14:..\..\..\Control/DW_Safety.c **** \file    DW_Safety.c
+  15:..\..\..\Control/DW_Safety.c **** \ingroup DW_Safety
+  16:..\..\..\Control/DW_Safety.c **** \date    11/04/2008
+  17:..\..\..\Control/DW_Safety.c **** \author  Valeria Catani
+  18:..\..\..\Control/DW_Safety.c **** \version 1.0.0
+  19:..\..\..\Control/DW_Safety.c **** 
+  20:..\..\..\Control/DW_Safety.c **** 
+  21:..\..\..\Control/DW_Safety.c **** \Par		History (titolo)
+  22:..\..\..\Control/DW_Safety.c **** 
+  23:..\..\..\Control/DW_Safety.c **** \n	to do 	
+  24:..\..\..\Control/DW_Safety.c **** 
+  25:..\..\..\Control/DW_Safety.c **** 
+  26:..\..\..\Control/DW_Safety.c **** */
+  27:..\..\..\Control/DW_Safety.c **** 
+  28:..\..\..\Control/DW_Safety.c **** 
+  29:..\..\..\Control/DW_Safety.c **** /* ******** */
+  30:..\..\..\Control/DW_Safety.c **** /* Includes */
+  31:..\..\..\Control/DW_Safety.c **** /* ******** */
+  32:..\..\..\Control/DW_Safety.c **** 
+  33:..\..\..\Control/DW_Safety.c **** #include "CstmHeaders.h"
+  34:..\..\..\Control/DW_Safety.c **** #include "LIB_ZeroCrossingExp.h"
+  35:..\..\..\Control/DW_Safety.c **** #ifdef _VERIFY_ZC_GOOD_
+  36:..\..\..\Control/DW_Safety.c **** #if defined(PLATFORM2_SUPPORT)
+  37:..\..\..\Control/DW_Safety.c **** #include "OCUART_drv.h"
+  38:..\..\..\Control/DW_Safety.c **** #endif
+  39:..\..\..\Control/DW_Safety.c **** #endif /* _VERIFY_ZC_GOOD_ */
+  40:..\..\..\Control/DW_Safety.c **** 
+  41:..\..\..\Control/DW_Safety.c **** 
+  42:..\..\..\Control/DW_Safety.c **** /* ****************** */
+  43:..\..\..\Control/DW_Safety.c **** /* Defines and Macros */
+  44:..\..\..\Control/DW_Safety.c **** /* ****************** */
+  45:..\..\..\Control/DW_Safety.c **** 
+  46:..\..\..\Control/DW_Safety.c **** /* *************************** */
+  47:..\..\..\Control/DW_Safety.c **** /* Typedef, Structs and Unions */
+  48:..\..\..\Control/DW_Safety.c **** /* *************************** */
+  49:..\..\..\Control/DW_Safety.c **** 
+  50:..\..\..\Control/DW_Safety.c **** /* **************************** */
+  51:..\..\..\Control/DW_Safety.c **** /* Prototype of local functions */
+  52:..\..\..\Control/DW_Safety.c **** /* **************************** */
+  53:..\..\..\Control/DW_Safety.c **** /*void SFT_backupManagement(void);*/
+  54:..\..\..\Control/DW_Safety.c **** void SFT_washResManagement(void);
+  55:..\..\..\Control/DW_Safety.c **** #ifdef _ENABLE_RESISTOR_WASH_PUMP_SAFETY_
+  56:..\..\..\Control/DW_Safety.c **** void SFT_WashPump_ResSafetymanagement(void);
+  57:..\..\..\Control/DW_Safety.c **** #endif /* _ENABLE_RESISTOR_WASH_PUMP_SAFETY_ */
+  58:..\..\..\Control/DW_Safety.c **** void SFT_drainPump_Mgmt(void);
+  59:..\..\..\Control/DW_Safety.c **** void SFT_LoadEV_Mgmt(void);
+  60:..\..\..\Control/DW_Safety.c **** void SFT_salt_Activation(void);
+  61:..\..\..\Control/DW_Safety.c **** void SFT_dry_sincronizyng ( void) ;
+  62:..\..\..\Control/DW_Safety.c **** #ifdef _VERIFY_ZC_GOOD_
+  63:..\..\..\Control/DW_Safety.c **** void SFT_checkGoodZC(void);
+  64:..\..\..\Control/DW_Safety.c **** #endif /* _VERIFY_ZC_GOOD_ */
+  65:..\..\..\Control/DW_Safety.c **** #ifdef ENABLE_7LITER
+  66:..\..\..\Control/DW_Safety.c **** void SFT_7liter_Mgmt(void);
+  67:..\..\..\Control/DW_Safety.c **** #endif
+  68:..\..\..\Control/DW_Safety.c **** 
+  69:..\..\..\Control/DW_Safety.c **** void SFT_Sensor_EV_Unblock(void);
+  70:..\..\..\Control/DW_Safety.c **** 
+  71:..\..\..\Control/DW_Safety.c **** /* ****************** */
+  72:..\..\..\Control/DW_Safety.c **** /* Exported variables */
+  73:..\..\..\Control/DW_Safety.c **** /* ****************** */
+  74:..\..\..\Control/DW_Safety.c **** 
+  75:..\..\..\Control/DW_Safety.c **** /* **************** */
+  76:..\..\..\Control/DW_Safety.c **** /* Global variables */
+  77:..\..\..\Control/DW_Safety.c **** /* **************** */
+  78:..\..\..\Control/DW_Safety.c **** 
+  79:..\..\..\Control/DW_Safety.c **** 
+  80:..\..\..\Control/DW_Safety.c **** /* ***************** */
+  81:..\..\..\Control/DW_Safety.c **** /* Exported function */
+  82:..\..\..\Control/DW_Safety.c **** /* ***************** */
+  83:..\..\..\Control/DW_Safety.c **** 
+  84:..\..\..\Control/DW_Safety.c **** 
+  85:..\..\..\Control/DW_Safety.c **** #ifdef ENABLE_7LITER
+  86:..\..\..\Control/DW_Safety.c **** void SFT_7liter_Mgmt()
+  87:..\..\..\Control/DW_Safety.c **** {
+  10                             		.loc 1 87 0
+  88:..\..\..\Control/DW_Safety.c **** 	if(SWTC_IsExpired((SWTC_CountersType)_7LITER_DIRTYWATER_TIMEOUT_M_COUNTER))
+  11                             		.loc 1 88 0
+  12 0000 75 41 29                		mov	#41, r1
+  13 0003 05 00 00 00             		bsr	_SWTC_IsExpired
+  14                             	.LVL0:
+  15 0007 FB E2 00 00 00 00       		mov.L	#_Flags_1, r14
+  16 000d 61 01                   		cmp	#0, r1
+  89:..\..\..\Control/DW_Safety.c **** 	{
+  90:..\..\..\Control/DW_Safety.c ****        SETBIT(Flags_1,JIF_FLAG1_7LITER_TIMER_EXPIRED_POS);
+  17                             		.loc 1 90 0
+  18 000f CC E4                   		mov.B	[r14], r4
+  88:..\..\..\Control/DW_Safety.c **** 	if(SWTC_IsExpired((SWTC_CountersType)_7LITER_DIRTYWATER_TIMEOUT_M_COUNTER))
+  19                             		.loc 1 88 0
+  20 0011 20 06                   		beq	.L2
+  21                             		.loc 1 90 0
+  22 0013 65 84                   		or	#8, r4
+  23 0015 2E 05                   		bra	.L4
+  24                             	.L2:
+  91:..\..\..\Control/DW_Safety.c **** 	}
+  92:..\..\..\Control/DW_Safety.c **** 	else
+  93:..\..\..\Control/DW_Safety.c **** 	{
+  94:..\..\..\Control/DW_Safety.c **** 	   CLRBIT(Flags_1,JIF_FLAG1_7LITER_TIMER_EXPIRED_POS);
+  25                             		.loc 1 94 0
+  26 0017 75 24 F7                		and	#-9, r4
+  27                             		.balign 2,3,1
+  28                             	.L4:
+  29 001a C3 E4                   		mov.B	r4, [r14]
+  30 001c 02                      		rts
+  31                             	.LFE0:
+  33 001d 03                      		.section	.text.SFT_washResManagement,"ax",@progbits
+  34                             		.global	_SFT_washResManagement
+  36                             	_SFT_washResManagement:
+  37                             	.LFB2:
+  95:..\..\..\Control/DW_Safety.c **** 	}
+  96:..\..\..\Control/DW_Safety.c **** }
+  97:..\..\..\Control/DW_Safety.c **** #endif /* ENABLE_7LITER */
+  98:..\..\..\Control/DW_Safety.c **** 
+  99:..\..\..\Control/DW_Safety.c **** /**
+ 100:..\..\..\Control/DW_Safety.c **** Gestisce controlli e azioni di sicurezza.
+ 101:..\..\..\Control/DW_Safety.c ****  
+ 102:..\..\..\Control/DW_Safety.c ****  
+ 103:..\..\..\Control/DW_Safety.c **** \version		1.0.0
+ 104:..\..\..\Control/DW_Safety.c **** \date 			30/06/2006
+ 105:..\..\..\Control/DW_Safety.c **** \author			Valeria Catani
+ 106:..\..\..\Control/DW_Safety.c **** 
+ 107:..\..\..\Control/DW_Safety.c **** */
+ 108:..\..\..\Control/DW_Safety.c **** #if defined (BUILD_FREESCALE_GB60)
+ 109:..\..\..\Control/DW_Safety.c **** #pragma INLINE
+ 110:..\..\..\Control/DW_Safety.c **** #elif defined (BUILD_RENESAS_36079)
+ 111:..\..\..\Control/DW_Safety.c **** #pragma inline(SFT_safetyManagement)
+ 112:..\..\..\Control/DW_Safety.c **** #endif
+ 113:..\..\..\Control/DW_Safety.c **** void SFT_safetyManagement(void)
+ 114:..\..\..\Control/DW_Safety.c **** {
+ 115:..\..\..\Control/DW_Safety.c **** 
+ 116:..\..\..\Control/DW_Safety.c **** /** Gestione Backup */			 
+ 117:..\..\..\Control/DW_Safety.c **** /*NON NECESSARIA! SE REINTRODOTTA CONSIDERARE INTERAZIONE CON STANDBY*/
+ 118:..\..\..\Control/DW_Safety.c **** /*SFT_backupManagement();*/
+ 119:..\..\..\Control/DW_Safety.c **** 		
+ 120:..\..\..\Control/DW_Safety.c **** #ifndef _DEBUG_DISABLE_WASH_RES_SAFETY_
+ 121:..\..\..\Control/DW_Safety.c **** /** Gestione Res Lavaggio */
+ 122:..\..\..\Control/DW_Safety.c **** 	if (Res_Pos[LD_WASH_RES_IND] != NO_LD_POS)
+ 123:..\..\..\Control/DW_Safety.c **** 	{/* Resistenza lavaggio presente */
+ 124:..\..\..\Control/DW_Safety.c **** 		
+ 125:..\..\..\Control/DW_Safety.c **** 		SFT_washResManagement();
+ 126:..\..\..\Control/DW_Safety.c **** 
+ 127:..\..\..\Control/DW_Safety.c **** #ifdef _ENABLE_RESISTOR_WASH_PUMP_SAFETY_
+ 128:..\..\..\Control/DW_Safety.c **** 		if( ( HWC_Flags.bit.bldc1 != 0 ) && ( Sft_WashPumpSpeedLow != 0 ) )
+ 129:..\..\..\Control/DW_Safety.c **** 		{
+ 130:..\..\..\Control/DW_Safety.c **** 			/* Presente pompa lavaggio BLAC e sicurezza abilitata */
+ 131:..\..\..\Control/DW_Safety.c **** 		
+ 132:..\..\..\Control/DW_Safety.c **** 			SFT_WashPump_ResSafetymanagement();
+ 133:..\..\..\Control/DW_Safety.c **** 		}
+ 134:..\..\..\Control/DW_Safety.c **** #endif /* _ENABLE_RESISTOR_WASH_PUMP_SAFETY_ */
+ 135:..\..\..\Control/DW_Safety.c **** 
+ 136:..\..\..\Control/DW_Safety.c **** 	}
+ 137:..\..\..\Control/DW_Safety.c **** #endif /* _DEBUG_DISABLE_WASH_RES_SAFETY_ */
+ 138:..\..\..\Control/DW_Safety.c **** 
+ 139:..\..\..\Control/DW_Safety.c **** #ifdef ENABLE_7LITER
+ 140:..\..\..\Control/DW_Safety.c **** /** Gestione 7 litri */
+ 141:..\..\..\Control/DW_Safety.c ****     SFT_7liter_Mgmt();
+ 142:..\..\..\Control/DW_Safety.c **** #endif /* ENABLE_7LITER */
+ 143:..\..\..\Control/DW_Safety.c **** 
+ 144:..\..\..\Control/DW_Safety.c **** /** Gestione pompa scarico in stati stazionari (con p.p.) */	
+ 145:..\..\..\Control/DW_Safety.c **** 	SFT_drainPump_Mgmt();
+ 146:..\..\..\Control/DW_Safety.c **** 
+ 147:..\..\..\Control/DW_Safety.c **** /** Gestione sblocco EV in caso di warning turbina */		
+ 148:..\..\..\Control/DW_Safety.c **** 	SFT_LoadEV_Mgmt();
+ 149:..\..\..\Control/DW_Safety.c ****   
+ 150:..\..\..\Control/DW_Safety.c **** 	if ( RegDev_Pos[LD_SALT_ACTIVATION_REG_IND] != NO_LD_POS)
+ 151:..\..\..\Control/DW_Safety.c **** 	{
+ 152:..\..\..\Control/DW_Safety.c **** 	  SFT_salt_Activation();
+ 153:..\..\..\Control/DW_Safety.c **** 	}
+ 154:..\..\..\Control/DW_Safety.c **** 
+ 155:..\..\..\Control/DW_Safety.c **** #ifndef _DEBUG_DISABLE_WASH_RES_SAFETY_
+ 156:..\..\..\Control/DW_Safety.c **** 	if (( Fan_Pos[LD_DRY_FAN_IND] != NO_LD_POS) && ( Res_Pos[LD_DRY_RES_IND] != NO_LD_POS) )
+ 157:..\..\..\Control/DW_Safety.c **** 	{
+ 158:..\..\..\Control/DW_Safety.c **** 		SFT_dry_sincronizyng();
+ 159:..\..\..\Control/DW_Safety.c **** 	}
+ 160:..\..\..\Control/DW_Safety.c **** #endif /* _DEBUG_DISABLE_WASH_RES_SAFETY_ */
+ 161:..\..\..\Control/DW_Safety.c **** 
+ 162:..\..\..\Control/DW_Safety.c **** 
+ 163:..\..\..\Control/DW_Safety.c **** #ifdef _VERIFY_ZC_GOOD_
+ 164:..\..\..\Control/DW_Safety.c **** 	/* Verifica la corretta presenza dello ZC per controllare l'oscillatore */
+ 165:..\..\..\Control/DW_Safety.c **** 	SFT_checkGoodZC();
+ 166:..\..\..\Control/DW_Safety.c **** #endif /* _VERIFY_ZC_GOOD_ */
+ 167:..\..\..\Control/DW_Safety.c **** 
+ 168:..\..\..\Control/DW_Safety.c **** 	if ( HWC_Flags.bit.vs_wash_presence )
+ 169:..\..\..\Control/DW_Safety.c **** 	{
+ 170:..\..\..\Control/DW_Safety.c **** 		SFT_Sensor_EV_Unblock();
+ 171:..\..\..\Control/DW_Safety.c **** 	}
+ 172:..\..\..\Control/DW_Safety.c **** 	OldCycleLabel = Interpreter_Data[0].completeLabel.s.label; 
+ 173:..\..\..\Control/DW_Safety.c **** 
+ 174:..\..\..\Control/DW_Safety.c **** }
+ 175:..\..\..\Control/DW_Safety.c **** /**/
+ 176:..\..\..\Control/DW_Safety.c **** 
+ 177:..\..\..\Control/DW_Safety.c **** 
+ 178:..\..\..\Control/DW_Safety.c **** /* ************** */
+ 179:..\..\..\Control/DW_Safety.c **** /* Local Function */
+ 180:..\..\..\Control/DW_Safety.c **** /* ************** */
+ 181:..\..\..\Control/DW_Safety.c **** 
+ 182:..\..\..\Control/DW_Safety.c **** #if 0 /*NON NECESSARIA! SE REINTRODOTTA CONSIDERARE INTERAZIONE CON STANDBY*/
+ 183:..\..\..\Control/DW_Safety.c **** /**
+ 184:..\..\..\Control/DW_Safety.c **** Gestisce meccanismo di abilitazione/disabilitazione backup, backup forzato, invalidazione dati back
+ 185:..\..\..\Control/DW_Safety.c **** in corrispondenza delle transizioni di stato () 
+ 186:..\..\..\Control/DW_Safety.c ****  
+ 187:..\..\..\Control/DW_Safety.c **** \version		1.0.0
+ 188:..\..\..\Control/DW_Safety.c **** \date 			30/06/2006
+ 189:..\..\..\Control/DW_Safety.c **** \author			Valeria Catani
+ 190:..\..\..\Control/DW_Safety.c **** 
+ 191:..\..\..\Control/DW_Safety.c **** 
+ 192:..\..\..\Control/DW_Safety.c **** \history 29.09.2006 MODIFICA PER RTN: UNICA MODALITA' (PER ORA ANCHE IN PROG E FAULT POI VERRA' DIS
+ 193:..\..\..\Control/DW_Safety.c **** */
+ 194:..\..\..\Control/DW_Safety.c **** #if defined (BUILD_FREESCALE_GB60)
+ 195:..\..\..\Control/DW_Safety.c **** #pragma INLINE
+ 196:..\..\..\Control/DW_Safety.c **** #elif defined (BUILD_RENESAS_36079)
+ 197:..\..\..\Control/DW_Safety.c **** #pragma inline(SFT_backupManagement)
+ 198:..\..\..\Control/DW_Safety.c **** #endif
+ 199:..\..\..\Control/DW_Safety.c **** void SFT_backupManagement(void)
+ 200:..\..\..\Control/DW_Safety.c **** {
+ 201:..\..\..\Control/DW_Safety.c **** 
+ 202:..\..\..\Control/DW_Safety.c **** /* Gi� cos� per default al Reset */
+ 203:..\..\..\Control/DW_Safety.c **** 
+ 204:..\..\..\Control/DW_Safety.c **** 	/* disabilitazione backup automatico su Vline-ZC / abilitazione backup automatico su RTN */
+ 205:..\..\..\Control/DW_Safety.c **** 	Backup_DisableControl(0);
+ 206:..\..\..\Control/DW_Safety.c **** 	Backup_DisableControl(BACKUP_ZC|BACKUP_VLINE);	
+ 207:..\..\..\Control/DW_Safety.c **** 
+ 208:..\..\..\Control/DW_Safety.c **** }
+ 209:..\..\..\Control/DW_Safety.c **** #endif
+ 210:..\..\..\Control/DW_Safety.c **** /**/
+ 211:..\..\..\Control/DW_Safety.c **** 
+ 212:..\..\..\Control/DW_Safety.c **** 
+ 213:..\..\..\Control/DW_Safety.c **** #if 1
+ 214:..\..\..\Control/DW_Safety.c **** /**
+ 215:..\..\..\Control/DW_Safety.c **** Controlla condizioni di sicurezza per la resistenza lavaggio
+ 216:..\..\..\Control/DW_Safety.c **** (attivazione della resistenza lavaggio possibile solo con il pieno pressostato).
+ 217:..\..\..\Control/DW_Safety.c **** 
+ 218:..\..\..\Control/DW_Safety.c **** Viene verificato lo stato richiesto per la RES da uP/algoritmi processati in precedenza
+ 219:..\..\..\Control/DW_Safety.c **** nella stessa iterazione del main.
+ 220:..\..\..\Control/DW_Safety.c **** 
+ 221:..\..\..\Control/DW_Safety.c **** Se richiesta RES on pu� venir imposto stato di RES OFF e questo verr� effettivamente
+ 222:..\..\..\Control/DW_Safety.c **** applicato nella ActivateLoads. 
+ 223:..\..\..\Control/DW_Safety.c **** 
+ 224:..\..\..\Control/DW_Safety.c **** Il caso di Porta Aperta (disabilitazione timer) ricade nel caso di richiesta RES OFF
+ 225:..\..\..\Control/DW_Safety.c ****  
+ 226:..\..\..\Control/DW_Safety.c **** \version		1.0.0
+ 227:..\..\..\Control/DW_Safety.c **** \date 			23/08/2006
+ 228:..\..\..\Control/DW_Safety.c **** \author			Valeria Catani
+ 229:..\..\..\Control/DW_Safety.c **** 
+ 230:..\..\..\Control/DW_Safety.c **** \note
+ 231:..\..\..\Control/DW_Safety.c **** - � corretto spegnere la resistenza anche in caso di stato non valido sul pressostato?
+ 232:..\..\..\Control/DW_Safety.c **** 				 
+ 233:..\..\..\Control/DW_Safety.c **** */
+ 234:..\..\..\Control/DW_Safety.c **** void SFT_washResManagement(void)
+ 235:..\..\..\Control/DW_Safety.c **** {
+  38                             		.loc 1 235 0
+  39 0000 6E 7B                   		pushm	r7-r11
+  40                             	.LCFI0:
+ 236:..\..\..\Control/DW_Safety.c **** static uint8_t pressStatus_Old = 0;
+ 237:..\..\..\Control/DW_Safety.c **** uint8_t pressStatus;
+ 238:..\..\..\Control/DW_Safety.c **** uint8_t pressValid;
+ 239:..\..\..\Control/DW_Safety.c **** 
+ 240:..\..\..\Control/DW_Safety.c **** 	if (LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b == RES_ON)
+  41                             		.loc 1 240 0
+  42 0002 FB 72 00 00 00 00       		mov.L	#_Res_Pos, r7
+  43 0008 58 7A                   		movu.B	[r7], r10
+  44 000a FB 72 00 00 00 00       		mov.L	#_LoadsReq_New, r7
+  45 0010 FE CA 7E                		movu.B	[r10,r7], r14
+  46 0013 FB 72 00 00 00 00       		mov.L	#_HWC_Flags, r7
+  47 0019 61 1E                   		cmp	#1, r14
+  48 001b 3B 53 01                		bne	.L6
+ 241:..\..\..\Control/DW_Safety.c **** 	{/* il controllo va fatto solo in caso di richiesta RES ON */
+ 242:..\..\..\Control/DW_Safety.c ****         if(HWC_Flags.bit.vs_wash_presence)
+  49                             		.loc 1 242 0
+  50 001e DC 77                   		mov.W	[r7], r7
+  51 0020 76 27 00 08             		and	#0x800, r7
+  52 0024 5F 7E                   		movu.W	r7, r14
+  53 0026 61 0E                   		cmp	#0, r14
+  54 0028 20 17                   		beq	.L7
+  55                             	.LVL1:
+ 243:..\..\..\Control/DW_Safety.c **** 		{ /* � valido se sto alternando o � valido il criterio  */
+ 244:..\..\..\Control/DW_Safety.c **** 		   pressValid = ( GET_BLDC_SPEED(BLDC_PumpReq_Old[WASH_BLDC_PUMP])>0);/*TESTBIT (GIValid, (GI_FIR
+  56                             		.loc 1 244 0
+  57 002a FB E2 00 00 00 00       		mov.L	#_BLDC_PumpReq_Old, r14
+  58 0030 59 E3 02                		movu.B	2[r14], r3
+  59 0033 59 E4 03                		movu.B	3[r14], r4
+  60 0036 6C 83                   		shll	#8, r3
+ 245:..\..\..\Control/DW_Safety.c **** 		   				 
+ 246:..\..\..\Control/DW_Safety.c **** 						/* se il timer � spirato e la pompa gira*/
+ 247:..\..\..\Control/DW_Safety.c **** 		}
+ 248:..\..\..\Control/DW_Safety.c **** 		else
+ 249:..\..\..\Control/DW_Safety.c **** 		{
+ 250:..\..\..\Control/DW_Safety.c **** 		   pressValid = TESTBIT (GIValid, (GI_FIRST_CRITERION_BIT + GI_PRESS_SENS_CR_FULL_IND) ) != 0;
+ 251:..\..\..\Control/DW_Safety.c **** 		}
+ 252:..\..\..\Control/DW_Safety.c **** 
+ 253:..\..\..\Control/DW_Safety.c **** 		if (!pressValid)
+  61                             		.loc 1 253 0
+  62 0038 FF 5E 43                		or	r4, r3, r14
+  63 003b 20 13                   		beq	.L8
+  64 003d 2E 2E                   		bra	.L40
+  65                             	.LVL2:
+  66                             	.L7:
+ 250:..\..\..\Control/DW_Safety.c **** 		   pressValid = TESTBIT (GIValid, (GI_FIRST_CRITERION_BIT + GI_PRESS_SENS_CR_FULL_IND) ) != 0;
+  67                             		.loc 1 250 0
+  68 003f FB E2 00 00 00 00       		mov.L	#_GIValid, r14
+  69                             	.LVL3:
+  70 0045 DC EE                   		mov.W	[r14], r14
+  71                             	.LVL4:
+  72                             		.loc 1 253 0
+  73 0047 FD 74 CE 01             		tst	#1, r14
+  74 004b 3B 9B 00                		bne	.L10
+  75                             	.LVL5:
+  76                             		.balign 2,3,5
+  77                             	.L8:
+ 254:..\..\..\Control/DW_Safety.c **** 		{/* stato criterio non valido  - la res lavaggio viene spenta precauzionalmente */
+ 255:..\..\..\Control/DW_Safety.c **** 		/* questo caso copre il criterio invalido senza che si stia alternando*/	
+ 256:..\..\..\Control/DW_Safety.c **** 
+ 257:..\..\..\Control/DW_Safety.c **** 			LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b = RES_OFF;	
+  78                             		.loc 1 257 0
+  79 004e FB E2 00 00 00 00       		mov.L	#_LoadsReq_New, r14
+  80 0054 66 0B                   		mov	#0, r11
+ 258:..\..\..\Control/DW_Safety.c **** 			 if(HWC_Flags.bit.vs_wash_presence)
+  81                             		.loc 1 258 0
+  82 0056 5F 77                   		movu.W	r7, r7
+ 257:..\..\..\Control/DW_Safety.c **** 			LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b = RES_OFF;	
+  83                             		.loc 1 257 0
+  84 0058 FE 0A EB                		mov.B	r11, [r10,r14]
+  85                             		.loc 1 258 0
+  86 005b 61 07                   		cmp	#0, r7
+  87 005d 3A 2D 01                		beq	.L5
+ 259:..\..\..\Control/DW_Safety.c **** 			 {
+ 260:..\..\..\Control/DW_Safety.c **** 				 pressStatus_Old=0;
+  88                             		.loc 1 260 0
+  89 0060 FB 72 00 00 00 00       		mov.L	#_pressStatus_Old.11629, r7
+  90 0066 C3 7B                   		mov.B	r11, [r7]
+  91 0068 38 22 01                		bra	.L5
+  92                             	.LVL6:
+  93                             	.L40:
+ 261:..\..\..\Control/DW_Safety.c **** 			 }
+ 262:..\..\..\Control/DW_Safety.c **** 
+ 263:..\..\..\Control/DW_Safety.c **** 		}
+ 264:..\..\..\Control/DW_Safety.c **** 		else
+ 265:..\..\..\Control/DW_Safety.c **** 		{/* stato criterio valido - test sul valore  */
+ 266:..\..\..\Control/DW_Safety.c **** 
+ 267:..\..\..\Control/DW_Safety.c ****             if(HWC_Flags.bit.vs_wash_presence)
+ 268:..\..\..\Control/DW_Safety.c **** 			{
+ 269:..\..\..\Control/DW_Safety.c **** 			   if ( ( (uP_AltCtrl_Data.SV_invalid_4alt==TRUE)||(!SWTC_IsExpired((SWTC_CountersType)HIO_STABI
+  94                             		.loc 1 269 0
+  95 006b FB 72 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r7
+  96 0071 89 77                   		mov.B	4[r7], r7
+  97 0073 76 27 80 00             		and	#0x80, r7
+  98 0077 5B 77                   		movu.B	r7, r7
+  99 0079 61 07                   		cmp	#0, r7
+ 100 007b 20 11                   		beq	.L13
+ 101                             	.LVL7:
+ 102 007d 03                      		.balign 2,3,5
+ 103                             	.L16:
+ 104 007e FB 72 00 00 00 00       		mov.L	#_Virtual_Sensor_Value, r7
+ 105 0084 58 77                   		movu.B	[r7], r7
+ 106 0086 61 57                   		cmp	#5, r7
+ 107 0088 21 11                   		bne	.L14
+ 108 008a 2E 4D                   		bra	.L15
+ 109                             	.LVL8:
+ 110                             	.L13:
+ 111                             		.loc 1 269 0 is_stmt 0 discriminator 2
+ 112 008c 75 41 22                		mov	#34, r1
+ 113 008f 05 00 00 00             		bsr	_SWTC_IsExpired
+ 114                             	.LVL9:
+ 115 0093 61 01                   		cmp	#0, r1
+ 116 0095 20 E9                   		beq	.L16
+ 117 0097 2E 40                   		bra	.L15
+ 118                             	.L14:
+ 119                             		.loc 1 269 0 discriminator 1
+ 120 0099 61 07                   		cmp	#0, r7
+ 121 009b 20 3C                   		beq	.L15
+ 270:..\..\..\Control/DW_Safety.c **** 			   ( Virtual_Sensor_Value[GI_VIRTUAL_SENSOR_WASH]!=0 )) 
+ 271:..\..\..\Control/DW_Safety.c **** 			   {/* se sta alternando o il criterio non � valido  attiva comunque la resistenza se deve far
+ 272:..\..\..\Control/DW_Safety.c **** 			   		if ( MAKEWORD(BLDC_Pump_InfoBuffer[WASH_BLDC_PUMP][BLDC_VS_STATE_MSB], BLDC_Pump_InfoBuffer
+ 122                             		.loc 1 272 0 is_stmt 1
+ 123 009d FB A2 00 00 00 00       		mov.L	#_BLDC_Pump_InfoBuffer, r10
+ 124 00a3 59 A7 04                		movu.B	4[r10], r7
+ 125 00a6 59 AA 05                		movu.B	5[r10], r10
+ 126 00a9 6C 87                   		shll	#8, r7
+ 127 00ab 57 7A                   		or	r7, r10
+ 128 00ad DF A7                   		mov.W	r10, r7
+ 129 00af 61 07                   		cmp	#0, r7
+ 130 00b1 20 3F                   		beq	.L17
+ 273:..\..\..\Control/DW_Safety.c **** 					{ 
+ 274:..\..\..\Control/DW_Safety.c **** 						/* se il senore virtuale manda uno 0 la resistenza deve comunque spegnersi 
+ 275:..\..\..\Control/DW_Safety.c **** 						NB: virtual_sensor_data non viene aggiornata mentre il c'� il filtro di stabilit� attivo.
+ 276:..\..\..\Control/DW_Safety.c **** 						pressStatus = 0;
+ 277:..\..\..\Control/DW_Safety.c **** 					}else
+ 278:..\..\..\Control/DW_Safety.c **** 					{	
+ 279:..\..\..\Control/DW_Safety.c **** 						pressStatus= pressStatus_Old;	
+ 280:..\..\..\Control/DW_Safety.c **** 						LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b = LoadsReq_Old[Res_Pos[LD_WASH_RES_IND]].b;  /* new 
+ 131                             		.loc 1 280 0
+ 132 00b3 FB A2 00 00 00 00       		mov.L	#_Res_Pos, r10
+ 133 00b9 58 AA                   		movu.B	[r10], r10
+ 134 00bb FB 42 00 00 00 00       		mov.L	#_LoadsReq_Old, r4
+ 135 00c1 FE 4A 44                		mov.B	[r10,r4], r4
+ 279:..\..\..\Control/DW_Safety.c **** 						pressStatus= pressStatus_Old;	
+ 136                             		.loc 1 279 0
+ 137 00c4 FB 72 00 00 00 00       		mov.L	#_pressStatus_Old.11629, r7
+ 138                             		.loc 1 280 0
+ 139 00ca FB E2 00 00 00 00       		mov.L	#_LoadsReq_New, r14
+ 279:..\..\..\Control/DW_Safety.c **** 						pressStatus= pressStatus_Old;	
+ 140                             		.loc 1 279 0
+ 141 00d0 CC 77                   		mov.B	[r7], r7
+ 142                             	.LVL10:
+ 143                             		.loc 1 280 0
+ 144 00d2 FE 0A E4                		mov.B	r4, [r10,r14]
+ 145 00d5 2E 1B                   		bra	.L17
+ 146                             	.LVL11:
+ 147                             	.L15:
+ 281:..\..\..\Control/DW_Safety.c **** 					}	
+ 282:..\..\..\Control/DW_Safety.c **** 								
+ 283:..\..\..\Control/DW_Safety.c **** 			   }else
+ 284:..\..\..\Control/DW_Safety.c **** 			   {
+ 285:..\..\..\Control/DW_Safety.c **** 			   
+ 286:..\..\..\Control/DW_Safety.c **** 				   switch(Virtual_Sensor_Value[GI_VIRTUAL_SENSOR_WASH])
+ 148                             		.loc 1 286 0
+ 149 00d7 FB 72 00 00 00 00       		mov.L	#_Virtual_Sensor_Value, r7
+ 150 00dd 58 77                   		movu.B	[r7], r7
+ 287:..\..\..\Control/DW_Safety.c **** 				   {
+ 288:..\..\..\Control/DW_Safety.c **** 					   default:/* comprende stato 3 e 5 */
+ 289:..\..\..\Control/DW_Safety.c **** 					   case 0:
+ 290:..\..\..\Control/DW_Safety.c **** 					   case 1:
+ 291:..\..\..\Control/DW_Safety.c **** 					   	 /* stato pressostato = vuoto -> RES OFF forzatamente */
+ 292:..\..\..\Control/DW_Safety.c **** 					     pressStatus = 0;
+ 151                             		.loc 1 292 0
+ 152 00df 61 27                   		cmp	#2, r7
+ 153 00e1 FC DB 70                		sceq.L	r7
+ 154 00e4 2E 0C                   		bra	.L17
+ 155                             	.LVL12:
+ 156                             	.L10:
+ 293:..\..\..\Control/DW_Safety.c **** 						 break;
+ 294:..\..\..\Control/DW_Safety.c **** 					
+ 295:..\..\..\Control/DW_Safety.c **** 					   case 2:
+ 296:..\..\..\Control/DW_Safety.c **** 					     pressStatus = 1;
+ 297:..\..\..\Control/DW_Safety.c **** 						 break;
+ 298:..\..\..\Control/DW_Safety.c **** 					 
+ 299:..\..\..\Control/DW_Safety.c **** 				   }
+ 300:..\..\..\Control/DW_Safety.c **** 			   }
+ 301:..\..\..\Control/DW_Safety.c **** 			}
+ 302:..\..\..\Control/DW_Safety.c **** 			else
+ 303:..\..\..\Control/DW_Safety.c **** 			{
+ 304:..\..\..\Control/DW_Safety.c **** 			   pressStatus = TESTBIT(GICriteria,GI_PRESS_SENS_CR_FULL_IND);
+ 157                             		.loc 1 304 0
+ 158 00e6 FB 72 00 00 00 00       		mov.L	#_GICriteria, r7
+ 159 00ec CC 77                   		mov.B	[r7], r7
+ 160 00ee 64 17                   		and	#1, r7
+ 161                             	.LVL13:
+ 162                             		.balign 2,3,1
+ 163                             	.L17:
+ 305:..\..\..\Control/DW_Safety.c **** 			}
+ 306:..\..\..\Control/DW_Safety.c **** 			
+ 307:..\..\..\Control/DW_Safety.c **** 			if ( pressStatus != pressStatus_Old )
+ 164                             		.loc 1 307 0
+ 165 00f0 5B 7A                   		movu.B	r7, r10
+ 166 00f2 FB E2 00 00 00 00       		mov.L	#_pressStatus_Old.11629, r14
+ 167 00f8 44 EA                   		cmp	[r14].UB, r10
+ 168 00fa 20 23                   		beq	.L19
+ 169 00fc FB E2 00 00 00 00       		mov.L	#_Tab_SFT_PressRes, r14
+ 308:..\..\..\Control/DW_Safety.c **** 			{/* cambiamento di stato pressostato - init timer stabilit� pressostato */
+ 309:..\..\..\Control/DW_Safety.c **** 
+ 310:..\..\..\Control/DW_Safety.c **** 				if (pressStatus == 0)
+ 170                             		.loc 1 310 0
+ 171 0102 61 0A                   		cmp	#0, r10
+ 311:..\..\..\Control/DW_Safety.c **** 				{/* stato attuale = vuoto */
+ 312:..\..\..\Control/DW_Safety.c **** 
+ 313:..\..\..\Control/DW_Safety.c **** 					(void)Set_SmallCounter((SWTC_CountersType)SFT_RES_PRES_STABLE_S_COUNTER, (SWTC_PrescalerType)C
+ 172                             		.loc 1 313 0
+ 173 0104 EC EA                   		mov.L	[r14], r10
+ 310:..\..\..\Control/DW_Safety.c **** 				if (pressStatus == 0)
+ 174                             		.loc 1 310 0
+ 175 0106 21 06                   		bne	.L20
+ 176                             		.loc 1 313 0
+ 177 0108 CC A3                   		mov.B	[r10], r3
+ 178 010a 2E 06                   		bra	.L42
+ 179                             	.L20:
+ 314:..\..\..\Control/DW_Safety.c **** 				}
+ 315:..\..\..\Control/DW_Safety.c **** 				else
+ 316:..\..\..\Control/DW_Safety.c **** 				{ /* stato attuale = pieno */
+ 317:..\..\..\Control/DW_Safety.c **** 
+ 318:..\..\..\Control/DW_Safety.c **** 					(void)Set_SmallCounter((SWTC_CountersType)SFT_RES_PRES_STABLE_S_COUNTER, (SWTC_PrescalerType)C
+ 180                             		.loc 1 318 0
+ 181 010c CD A3 01                		mov.B	1[r10], r3
+ 182 010f 03                      		.balign 2,3,1
+ 183                             	.L42:
+ 184 0110 66 A1                   		mov	#10, r1
+ 185 0112 66 12                   		mov	#1, r2
+ 186 0114 75 23 7F                		and	#0x7f, r3
+ 187 0117 05 00 00 00             		bsr	_Set_SmallCounter
+ 188                             	.LVL14:
+ 189 011b 2E 2F                   		bra	.L43
+ 190                             	.L19:
+ 319:..\..\..\Control/DW_Safety.c **** 				}
+ 320:..\..\..\Control/DW_Safety.c **** 
+ 321:..\..\..\Control/DW_Safety.c **** 				LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b = LoadsReq_Old[Res_Pos[LD_WASH_RES_IND]].b;  /* new st
+ 322:..\..\..\Control/DW_Safety.c **** 			}
+ 323:..\..\..\Control/DW_Safety.c **** 			else
+ 324:..\..\..\Control/DW_Safety.c **** 			{/* stato stabile pressostato */
+ 325:..\..\..\Control/DW_Safety.c **** 
+ 326:..\..\..\Control/DW_Safety.c **** #ifdef _CORRECT_BUG_TIMER_SFT_WASH_MNGMT_
+ 327:..\..\..\Control/DW_Safety.c **** 				if( SWTC_IsExpired((SWTC_CountersType)SFT_RES_PRES_STABLE_S_COUNTER)  )
+ 191                             		.loc 1 327 0
+ 192 011d 66 A1                   		mov	#10, r1
+ 193 011f 05 00 00 00             		bsr	_SWTC_IsExpired
+ 194                             	.LVL15:
+ 195 0123 61 01                   		cmp	#0, r1
+ 196 0125 20 1F                   		beq	.L23
+ 328:..\..\..\Control/DW_Safety.c **** #else
+ 329:..\..\..\Control/DW_Safety.c **** 				if( SWTC_IsExpired((SWTC_CountersType)SFT_RES_PRES_STABLE_S_COUNTER) && (SWTC_GetRemainingTime(
+ 330:..\..\..\Control/DW_Safety.c **** #endif /* _CORRECT_BUG_TIMER_SFT_WASH_MNGMT_ */
+ 331:..\..\..\Control/DW_Safety.c **** 				{/* conteggio stabilit� concluso */
+ 332:..\..\..\Control/DW_Safety.c **** 
+ 333:..\..\..\Control/DW_Safety.c **** 					if (pressStatus == 0)
+ 197                             		.loc 1 333 0
+ 198 0127 61 0A                   		cmp	#0, r10
+ 199 0129 21 13                   		bne	.L24
+ 334:..\..\..\Control/DW_Safety.c **** 					{ /* stato pressostato = vuoto -> RES OFF forzatamente */
+ 335:..\..\..\Control/DW_Safety.c **** 
+ 336:..\..\..\Control/DW_Safety.c **** 						LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b = RES_OFF;    
+ 200                             		.loc 1 336 0
+ 201 012b FB E2 00 00 00 00       		mov.L	#_Res_Pos, r14
+ 202 0131 58 EE                   		movu.B	[r14], r14
+ 203 0133 FB 42 00 00 00 00       		mov.L	#_LoadsReq_New, r4
+ 204 0139 FE 0E 4A                		mov.B	r10, [r14,r4]
+ 205                             		.balign 2,3,1
+ 206                             	.L24:
+ 337:..\..\..\Control/DW_Safety.c **** 					}
+ 338:..\..\..\Control/DW_Safety.c **** 					/* else stato resistenza invariato (RES ON) */
+ 339:..\..\..\Control/DW_Safety.c **** 
+ 340:..\..\..\Control/DW_Safety.c **** 					(void)SWTC_Stop((SWTC_CountersType)SFT_RES_PRES_STABLE_S_COUNTER);
+ 207                             		.loc 1 340 0
+ 208 013c 66 A1                   		mov	#10, r1
+ 209 013e 05 00 00 00             		bsr	_SWTC_Stop
+ 210                             	.LVL16:
+ 211 0142 2E 22                   		bra	.L22
+ 212                             	.L23:
+ 341:..\..\..\Control/DW_Safety.c **** 				}
+ 342:..\..\..\Control/DW_Safety.c **** 				else
+ 343:..\..\..\Control/DW_Safety.c **** 				{/* conteggio in corso */
+ 344:..\..\..\Control/DW_Safety.c **** 
+ 345:..\..\..\Control/DW_Safety.c **** 					(void)SWTC_Run((SWTC_CountersType)SFT_RES_PRES_STABLE_S_COUNTER);
+ 213                             		.loc 1 345 0
+ 214 0144 66 A1                   		mov	#10, r1
+ 215 0146 05 00 00 00             		bsr	_SWTC_Run
+ 216                             	.LVL17:
+ 217                             		.balign 2,3,5
+ 218                             	.L43:
+ 346:..\..\..\Control/DW_Safety.c **** 
+ 347:..\..\..\Control/DW_Safety.c **** 					LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b = LoadsReq_Old[Res_Pos[LD_WASH_RES_IND]].b;  /* new s
+ 219                             		.loc 1 347 0
+ 220 014a FB A2 00 00 00 00       		mov.L	#_Res_Pos, r10
+ 221 0150 58 AA                   		movu.B	[r10], r10
+ 222 0152 FB 42 00 00 00 00       		mov.L	#_LoadsReq_Old, r4
+ 223 0158 FE 4A 44                		mov.B	[r10,r4], r4
+ 224 015b FB E2 00 00 00 00       		mov.L	#_LoadsReq_New, r14
+ 225 0161 FE 0A E4                		mov.B	r4, [r10,r14]
+ 226                             		.balign 2,3,5
+ 227                             	.L22:
+ 348:..\..\..\Control/DW_Safety.c **** 				}
+ 349:..\..\..\Control/DW_Safety.c **** 
+ 350:..\..\..\Control/DW_Safety.c **** 			}
+ 351:..\..\..\Control/DW_Safety.c **** 
+ 352:..\..\..\Control/DW_Safety.c **** 			pressStatus_Old = pressStatus;    /* aggiornamento old status press */ 
+ 228                             		.loc 1 352 0
+ 229 0164 FB A2 00 00 00 00       		mov.L	#_pressStatus_Old.11629, r10
+ 230 016a C3 A7                   		mov.B	r7, [r10]
+ 231 016c 2E 1E                   		bra	.L5
+ 232                             	.LVL18:
+ 233                             	.L6:
+ 353:..\..\..\Control/DW_Safety.c **** 		}
+ 354:..\..\..\Control/DW_Safety.c **** 	}
+ 355:..\..\..\Control/DW_Safety.c **** 	else
+ 356:..\..\..\Control/DW_Safety.c **** 	{/* se richiedo RES OFF, comprende anche caso di porta aperta */
+ 357:..\..\..\Control/DW_Safety.c **** 
+ 358:..\..\..\Control/DW_Safety.c **** 		(void)SWTC_Stop((SWTC_CountersType)SFT_RES_PRES_STABLE_S_COUNTER);
+ 234                             		.loc 1 358 0
+ 235 016e 66 A1                   		mov	#10, r1
+ 236 0170 05 00 00 00             		bsr	_SWTC_Stop
+ 237                             	.LVL19:
+ 359:..\..\..\Control/DW_Safety.c **** 		if(HWC_Flags.bit.vs_wash_presence)
+ 238                             		.loc 1 359 0
+ 239 0174 DC 77                   		mov.W	[r7], r7
+ 240 0176 76 27 00 08             		and	#0x800, r7
+ 241 017a 5F 77                   		movu.W	r7, r7
+ 242 017c 61 07                   		cmp	#0, r7
+ 243 017e 20 0C                   		beq	.L5
+ 360:..\..\..\Control/DW_Safety.c **** 		 {
+ 361:..\..\..\Control/DW_Safety.c **** 			 pressStatus_Old=0;
+ 244                             		.loc 1 361 0
+ 245 0180 FB 72 00 00 00 00       		mov.L	#_pressStatus_Old.11629, r7
+ 246 0186 3C 70 00                		mov.B	#0, [r7]
+ 247 0189 03                      		.balign 2,3,2
+ 248                             	.L5:
+ 362:..\..\..\Control/DW_Safety.c **** 		 }
+ 363:..\..\..\Control/DW_Safety.c **** 	}
+ 364:..\..\..\Control/DW_Safety.c **** 	
+ 365:..\..\..\Control/DW_Safety.c **** }
+ 249                             		.loc 1 365 0
+ 250 018a 3F 7B 05                		rtsd	#20, r7-r11
+ 251                             	.LFE2:
+ 253 018d 03                      		.section	.text.SFT_WashPump_ResSafetymanagement,"ax",@progbits
+ 254                             		.global	_SFT_WashPump_ResSafetymanagement
+ 256                             	_SFT_WashPump_ResSafetymanagement:
+ 257                             	.LFB3:
+ 366:..\..\..\Control/DW_Safety.c **** #else /* #if 1 */
+ 367:..\..\..\Control/DW_Safety.c **** #if defined (BUILD_FREESCALE_GB60)
+ 368:..\..\..\Control/DW_Safety.c **** #pragma INLINE
+ 369:..\..\..\Control/DW_Safety.c **** #elif defined (BUILD_RENESAS_36079)
+ 370:..\..\..\Control/DW_Safety.c **** #pragma inline(SFT_washResManagement)
+ 371:..\..\..\Control/DW_Safety.c **** #endif
+ 372:..\..\..\Control/DW_Safety.c **** void SFT_washResManagement(void)
+ 373:..\..\..\Control/DW_Safety.c **** {
+ 374:..\..\..\Control/DW_Safety.c **** static uint8_t pressStatus_Old = 0;
+ 375:..\..\..\Control/DW_Safety.c **** uint8_t pressStatus;
+ 376:..\..\..\Control/DW_Safety.c **** 		
+ 377:..\..\..\Control/DW_Safety.c **** 	if (LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b == RES_ON)
+ 378:..\..\..\Control/DW_Safety.c **** 	{/* il controllo va fatto solo in caso di richiesta RES ON */
+ 379:..\..\..\Control/DW_Safety.c **** 
+ 380:..\..\..\Control/DW_Safety.c **** 		if ( TESTBIT (GIValid, (GI_FIRST_CRITERION_BIT + GI_PRESS_SENS_CR_FULL_IND) ) == 0 )
+ 381:..\..\..\Control/DW_Safety.c **** 		{/* stato criterio non valido  - la res lavaggio viene spenta precauzionalmente */
+ 382:..\..\..\Control/DW_Safety.c **** 		/*EA se il pressostato non � presente si presuppone ci siano i senori virtuali*/
+ 383:..\..\..\Control/DW_Safety.c **** 			if (HWC_Flags.bit.vs_wash_presence)
+ 384:..\..\..\Control/DW_Safety.c **** 			{
+ 385:..\..\..\Control/DW_Safety.c **** 				if ((Virtual_Sensor_Value[GI_VIRTUAL_SENSOR_WASH]==0) && (TESTBIT(GIValid, (GI_FIRST_VIRTSENSOR
+ 386:..\..\..\Control/DW_Safety.c **** 				{/* EA vuoto sensore , resistenza spenta*/
+ 387:..\..\..\Control/DW_Safety.c **** 					LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b = RES_OFF;
+ 388:..\..\..\Control/DW_Safety.c **** 				}else
+ 389:..\..\..\Control/DW_Safety.c **** 				{
+ 390:..\..\..\Control/DW_Safety.c **** 					if (( uP_AltCtrl_Data.SV_invalid_4alt==FALSE)&& !TESTBIT(GIValid, (GI_FIRST_VIRTSENSOR_BIT+GI_
+ 391:..\..\..\Control/DW_Safety.c **** 					{/* se il criterio invalid non �  dovuto al cambiamento dell'alternato allora non piloto la 
+ 392:..\..\..\Control/DW_Safety.c **** 						LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b = RES_OFF;
+ 393:..\..\..\Control/DW_Safety.c **** 						
+ 394:..\..\..\Control/DW_Safety.c **** 					}else
+ 395:..\..\..\Control/DW_Safety.c **** 					{
+ 396:..\..\..\Control/DW_Safety.c **** 						/*LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b = RES_OFF;*/
+ 397:..\..\..\Control/DW_Safety.c **** 					}/* non esistono sensori virtuali anche se uP_AltCtrl_Data.SV_invalid_4alt==TRUE*/
+ 398:..\..\..\Control/DW_Safety.c **** 				}	
+ 399:..\..\..\Control/DW_Safety.c **** 			}else
+ 400:..\..\..\Control/DW_Safety.c **** 			{/* non esistono sensori virtuali*/
+ 401:..\..\..\Control/DW_Safety.c **** 					LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b = RES_OFF;
+ 402:..\..\..\Control/DW_Safety.c **** 			}	
+ 403:..\..\..\Control/DW_Safety.c **** 			/*LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b = RES_OFF;*/
+ 404:..\..\..\Control/DW_Safety.c **** 		}
+ 405:..\..\..\Control/DW_Safety.c **** 		else
+ 406:..\..\..\Control/DW_Safety.c **** 		{/* stato criterio valido - test sul valore  */
+ 407:..\..\..\Control/DW_Safety.c **** 		/*EA se i finisce qui  vuol dire che il pressostato � presente , altrimenti il criterio non sar
+ 408:..\..\..\Control/DW_Safety.c **** 			pressStatus = TESTBIT(GICriteria,GI_PRESS_SENS_CR_FULL_IND);
+ 409:..\..\..\Control/DW_Safety.c **** 
+ 410:..\..\..\Control/DW_Safety.c **** 			if ( pressStatus != pressStatus_Old )
+ 411:..\..\..\Control/DW_Safety.c **** 			{/* cambiamento di stato pressostato - init timer stabilit� pressostato */
+ 412:..\..\..\Control/DW_Safety.c **** 
+ 413:..\..\..\Control/DW_Safety.c **** 				if (pressStatus == 0)
+ 414:..\..\..\Control/DW_Safety.c **** 				{/* stato attuale = vuoto */
+ 415:..\..\..\Control/DW_Safety.c **** 
+ 416:..\..\..\Control/DW_Safety.c **** 					(void)Set_SmallCounter((SWTC_CountersType)SFT_RES_PRES_STABLE_S_COUNTER, (SWTC_PrescalerType)C
+ 417:..\..\..\Control/DW_Safety.c **** 				}
+ 418:..\..\..\Control/DW_Safety.c **** 				else
+ 419:..\..\..\Control/DW_Safety.c **** 				{ /* stato attuale = pieno */
+ 420:..\..\..\Control/DW_Safety.c **** 
+ 421:..\..\..\Control/DW_Safety.c **** 					(void)Set_SmallCounter((SWTC_CountersType)SFT_RES_PRES_STABLE_S_COUNTER, (SWTC_PrescalerType)C
+ 422:..\..\..\Control/DW_Safety.c **** 				}
+ 423:..\..\..\Control/DW_Safety.c **** 
+ 424:..\..\..\Control/DW_Safety.c **** 				LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b = LoadsReq_Old[Res_Pos[LD_WASH_RES_IND]].b;  /* new st
+ 425:..\..\..\Control/DW_Safety.c **** 			}
+ 426:..\..\..\Control/DW_Safety.c **** 			else
+ 427:..\..\..\Control/DW_Safety.c **** 			{/* stato stabile pressostato */
+ 428:..\..\..\Control/DW_Safety.c **** 
+ 429:..\..\..\Control/DW_Safety.c **** #ifdef _CORRECT_BUG_TIMER_SFT_WASH_MNGMT_
+ 430:..\..\..\Control/DW_Safety.c **** 				if( SWTC_IsExpired((SWTC_CountersType)SFT_RES_PRES_STABLE_S_COUNTER)  )
+ 431:..\..\..\Control/DW_Safety.c **** #else
+ 432:..\..\..\Control/DW_Safety.c **** 				if( SWTC_IsExpired((SWTC_CountersType)SFT_RES_PRES_STABLE_S_COUNTER) && (SWTC_GetRemainingTime(
+ 433:..\..\..\Control/DW_Safety.c **** #endif /* _CORRECT_BUG_TIMER_SFT_WASH_MNGMT_ */
+ 434:..\..\..\Control/DW_Safety.c **** 				{/* conteggio stabilit� concluso */
+ 435:..\..\..\Control/DW_Safety.c **** 
+ 436:..\..\..\Control/DW_Safety.c **** 					if (pressStatus == 0)
+ 437:..\..\..\Control/DW_Safety.c **** 					{ /* stato pressostato = vuoto -> RES OFF forzatamente */
+ 438:..\..\..\Control/DW_Safety.c **** 
+ 439:..\..\..\Control/DW_Safety.c **** 						LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b = RES_OFF;    
+ 440:..\..\..\Control/DW_Safety.c **** 					}
+ 441:..\..\..\Control/DW_Safety.c **** 					/* else stato resistenza invariato (RES ON) */
+ 442:..\..\..\Control/DW_Safety.c **** 
+ 443:..\..\..\Control/DW_Safety.c **** 					(void)SWTC_Stop((SWTC_CountersType)SFT_RES_PRES_STABLE_S_COUNTER);
+ 444:..\..\..\Control/DW_Safety.c **** 				}
+ 445:..\..\..\Control/DW_Safety.c **** 				else
+ 446:..\..\..\Control/DW_Safety.c **** 				{/* conteggio in corso */
+ 447:..\..\..\Control/DW_Safety.c **** 
+ 448:..\..\..\Control/DW_Safety.c **** 					(void)SWTC_Run((SWTC_CountersType)SFT_RES_PRES_STABLE_S_COUNTER);
+ 449:..\..\..\Control/DW_Safety.c **** 
+ 450:..\..\..\Control/DW_Safety.c **** 					LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b = LoadsReq_Old[Res_Pos[LD_WASH_RES_IND]].b;  /* new s
+ 451:..\..\..\Control/DW_Safety.c **** 				}
+ 452:..\..\..\Control/DW_Safety.c **** 
+ 453:..\..\..\Control/DW_Safety.c **** 			}
+ 454:..\..\..\Control/DW_Safety.c **** 
+ 455:..\..\..\Control/DW_Safety.c **** 			pressStatus_Old = pressStatus;    /* aggiornamento old status press */ 
+ 456:..\..\..\Control/DW_Safety.c **** 		}
+ 457:..\..\..\Control/DW_Safety.c **** 	}
+ 458:..\..\..\Control/DW_Safety.c **** 	else
+ 459:..\..\..\Control/DW_Safety.c **** 	{/* se richiedo RES OFF, comprende anche caso di porta aperta */
+ 460:..\..\..\Control/DW_Safety.c **** 
+ 461:..\..\..\Control/DW_Safety.c **** 		(void)SWTC_Stop((SWTC_CountersType)SFT_RES_PRES_STABLE_S_COUNTER);
+ 462:..\..\..\Control/DW_Safety.c **** 	}
+ 463:..\..\..\Control/DW_Safety.c **** 	
+ 464:..\..\..\Control/DW_Safety.c **** }
+ 465:..\..\..\Control/DW_Safety.c **** /**/
+ 466:..\..\..\Control/DW_Safety.c **** #endif /* else di #if 1 */
+ 467:..\..\..\Control/DW_Safety.c **** 
+ 468:..\..\..\Control/DW_Safety.c **** #ifdef _ENABLE_RESISTOR_WASH_PUMP_SAFETY_
+ 469:..\..\..\Control/DW_Safety.c **** /**
+ 470:..\..\..\Control/DW_Safety.c **** Controlla condizioni di sicurezza per la resistenza lavaggio:
+ 471:..\..\..\Control/DW_Safety.c **** se la velocita' della pompa lavaggio e' minore di un parametro specificato
+ 472:..\..\..\Control/DW_Safety.c **** nel file di setting la resistenza lavaggio viene forzatamente spenta.
+ 473:..\..\..\Control/DW_Safety.c **** 
+ 474:..\..\..\Control/DW_Safety.c **** \return 			none
+ 475:..\..\..\Control/DW_Safety.c **** 				
+ 476:..\..\..\Control/DW_Safety.c **** \version		1.0.0
+ 477:..\..\..\Control/DW_Safety.c **** \date 			13/04/2011
+ 478:..\..\..\Control/DW_Safety.c **** \author			Marco Quintini
+ 479:..\..\..\Control/DW_Safety.c **** */
+ 480:..\..\..\Control/DW_Safety.c **** void SFT_WashPump_ResSafetymanagement(void)
+ 481:..\..\..\Control/DW_Safety.c **** {
+ 258                             		.loc 1 481 0
+ 482:..\..\..\Control/DW_Safety.c **** int16_t currentSpeed;
+ 483:..\..\..\Control/DW_Safety.c **** static uint8_t speedUnderThreshold = TRUE;
+ 484:..\..\..\Control/DW_Safety.c **** 
+ 485:..\..\..\Control/DW_Safety.c **** 	currentSpeed = ((int16_t)(BLDC_Pump_InfoBuffer[WASH_BLDC_PUMP][BLDC_VCURR_MSB] << 8) + (int16_t)BL
+ 259                             		.loc 1 485 0
+ 260 0000 FB E2 00 00 00 00       		mov.L	#_BLDC_Pump_InfoBuffer, r14
+ 261 0006 59 E4 02                		movu.B	2[r14], r4
+ 262 0009 6C 84                   		shll	#8, r4
+ 263 000b 49 E4 03                		add	3[r14].UB, r4
+ 486:..\..\..\Control/DW_Safety.c **** 
+ 487:..\..\..\Control/DW_Safety.c **** 	if( currentSpeed < 0 )
+ 264                             		.loc 1 487 0
+ 265 000e DF 43                   		mov.W	r4, r3
+ 266 0010 61 03                   		cmp	#0, r3
+ 485:..\..\..\Control/DW_Safety.c **** 	currentSpeed = ((int16_t)(BLDC_Pump_InfoBuffer[WASH_BLDC_PUMP][BLDC_VCURR_MSB] << 8) + (int16_t)BL
+ 267                             		.loc 1 485 0
+ 268 0012 DF 4E                   		mov.W	r4, r14
+ 269                             	.LVL20:
+ 270                             		.loc 1 487 0
+ 271 0014 28 06                   		bge	.L45
+ 488:..\..\..\Control/DW_Safety.c **** 	{
+ 489:..\..\..\Control/DW_Safety.c **** 		/* La velocit� viene considerata in valore assoluto */
+ 490:..\..\..\Control/DW_Safety.c **** 		currentSpeed = -currentSpeed;	
+ 272                             		.loc 1 490 0
+ 273 0016 FC 07 4E                		neg	r4, r14
+ 274                             	.LVL21:
+ 275 0019 03                      		.balign 2,3,1
+ 276                             	.L45:
+ 491:..\..\..\Control/DW_Safety.c **** 	}
+ 492:..\..\..\Control/DW_Safety.c **** 
+ 493:..\..\..\Control/DW_Safety.c **** 	/* Stato della velocit� della pompa rispetto alla soglia */
+ 494:..\..\..\Control/DW_Safety.c **** /*lint -e574
+ 495:..\..\..\Control/DW_Safety.c **** 	currentSpeed non pu� essere negativa perch� c'� un controllo in precedenza
+ 496:..\..\..\Control/DW_Safety.c **** */
+ 497:..\..\..\Control/DW_Safety.c **** 	if( currentSpeed < Sft_WashPumpSpeedLow )
+ 277                             		.loc 1 497 0
+ 278 001a DF E4                   		mov.W	r14, r4
+ 279 001c FB E2 00 00 00 00       		mov.L	#_Sft_WashPumpSpeedLow, r14
+ 280                             	.LVL22:
+ 281 0022 5C E3                   		movu.W	[r14], r3
+ 282 0024 FB E2 00 00 00 00       		mov.L	#_speedUnderThreshold.11641, r14
+ 283 002a 47 34                   		cmp	r3, r4
+ 284 002c 28 07                   		bge	.L46
+ 498:..\..\..\Control/DW_Safety.c **** 	{
+ 499:..\..\..\Control/DW_Safety.c **** 		/* Velocit� sotto soglia */
+ 500:..\..\..\Control/DW_Safety.c **** 		speedUnderThreshold = TRUE;	
+ 285                             		.loc 1 500 0
+ 286 002e F8 E4 01                		mov.B	#1, [r14]
+ 287 0031 2E 11                   		bra	.L47
+ 288                             	.L46:
+ 501:..\..\..\Control/DW_Safety.c **** 	}
+ 502:..\..\..\Control/DW_Safety.c **** 	else if( currentSpeed > Sft_WashPumpSpeedHigh )
+ 289                             		.loc 1 502 0
+ 290 0033 FB 32 00 00 00 00       		mov.L	#_Sft_WashPumpSpeedHigh, r3
+ 291 0039 06 C4 34                		cmp	[r3].UW, r4
+ 292 003c 2B 06                   		ble	.L47
+ 503:..\..\..\Control/DW_Safety.c **** /*lint +e574 */
+ 504:..\..\..\Control/DW_Safety.c **** 	{
+ 505:..\..\..\Control/DW_Safety.c **** 		/* Velocit� sopra soglia */
+ 506:..\..\..\Control/DW_Safety.c **** 		speedUnderThreshold = FALSE;	
+ 293                             		.loc 1 506 0
+ 294 003e F8 E4 00                		mov.B	#0, [r14]
+ 295 0041 03                      		.balign 2,3,3
+ 296                             	.L47:
+ 507:..\..\..\Control/DW_Safety.c **** 	}
+ 508:..\..\..\Control/DW_Safety.c **** 	else
+ 509:..\..\..\Control/DW_Safety.c **** 	{
+ 510:..\..\..\Control/DW_Safety.c **** 		/* speedUnderThreshold invariato, siamo nella fascia dell'isteresi */
+ 511:..\..\..\Control/DW_Safety.c **** 	}
+ 512:..\..\..\Control/DW_Safety.c **** 	
+ 513:..\..\..\Control/DW_Safety.c **** #ifdef _CORRECT_UNDER_VOLTAGE_MNGMT_
+ 514:..\..\..\Control/DW_Safety.c **** 	if( ( speedUnderThreshold == TRUE ) && ( FltBLDCUnblock.res_off	== 0) && ( FltWarning.bldc_low_vol
+ 297                             		.loc 1 514 0
+ 298 0042 58 EE                   		movu.B	[r14], r14
+ 299 0044 61 1E                   		cmp	#1, r14
+ 300 0046 21 32                   		bne	.L44
+ 301                             		.loc 1 514 0 is_stmt 0 discriminator 1
+ 302 0048 FB E2 00 00 00 00       		mov.L	#_FltBLDCUnblock, r14
+ 303 004e DC EE                   		mov.W	[r14], r14
+ 304 0050 76 2E 00 20             		and	#0x2000, r14
+ 305 0054 5F EE                   		movu.W	r14, r14
+ 306 0056 61 0E                   		cmp	#0, r14
+ 307 0058 21 20                   		bne	.L44
+ 308 005a FB E2 00 00 00 00       		mov.L	#_FltWarning, r14
+ 309 0060 CC EE                   		mov.B	[r14], r14
+ 310 0062 75 2E 14                		and	#20, r14
+ 311 0065 21 13                   		bne	.L44
+ 515:..\..\..\Control/DW_Safety.c **** #else
+ 516:..\..\..\Control/DW_Safety.c **** 	if( speedUnderThreshold == TRUE )
+ 517:..\..\..\Control/DW_Safety.c **** #endif /* _CORRECT_UNDER_VOLTAGE_MNGMT_ */
+ 518:..\..\..\Control/DW_Safety.c **** 	{
+ 519:..\..\..\Control/DW_Safety.c **** 		/*
+ 520:..\..\..\Control/DW_Safety.c **** 		Se lo stato della velocit� � sotto soglia, la resistenza
+ 521:..\..\..\Control/DW_Safety.c **** 		viene spenta per sicurezza, ma solo se non ne � gia richiesto
+ 522:..\..\..\Control/DW_Safety.c **** 		lo spegnimento a causa di un'anomalia segnalata dal DSP.
+ 523:..\..\..\Control/DW_Safety.c **** 		In questo modo, ad esempio in condizioni di Under Voltage,
+ 524:..\..\..\Control/DW_Safety.c **** 		questa sicurezza non interviene e la routine FLT_bldcFaultLoadMgmt()
+ 525:..\..\..\Control/DW_Safety.c **** 		pu� vedere LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b = RES_ON,
+ 526:..\..\..\Control/DW_Safety.c **** 		altrimenti, dato che in Under Voltage il motore viene fermato,
+ 527:..\..\..\Control/DW_Safety.c **** 		la suddetta routine vedrebbe sempre lo stato richiesto uguale a
+ 528:..\..\..\Control/DW_Safety.c **** 		OFF a causa di questa routine di sicurezza.
+ 529:..\..\..\Control/DW_Safety.c **** 		*/
+ 530:..\..\..\Control/DW_Safety.c **** 		LoadsReq_New[Res_Pos[LD_WASH_RES_IND]].b = RES_OFF;    
+ 312                             		.loc 1 530 0 is_stmt 1
+ 313 0067 FB 42 00 00 00 00       		mov.L	#_Res_Pos, r4
+ 314                             	.LVL23:
+ 315 006d 58 44                   		movu.B	[r4], r4
+ 316 006f FB 32 00 00 00 00       		mov.L	#_LoadsReq_New, r3
+ 317 0075 FE 04 3E                		mov.B	r14, [r4,r3]
+ 318                             	.L44:
+ 319 0078 02                      		rts
+ 320                             	.LFE3:
+ 322 0079 03                      		.section	.text.SFT_drainPump_Mgmt,"ax",@progbits
+ 323                             		.global	_SFT_drainPump_Mgmt
+ 325                             	_SFT_drainPump_Mgmt:
+ 326                             	.LFB4:
+ 531:..\..\..\Control/DW_Safety.c **** 	}
+ 532:..\..\..\Control/DW_Safety.c **** 	
+ 533:..\..\..\Control/DW_Safety.c **** }
+ 534:..\..\..\Control/DW_Safety.c **** #endif /* _ENABLE_RESISTOR_WASH_PUMP_SAFETY_ */
+ 535:..\..\..\Control/DW_Safety.c **** 
+ 536:..\..\..\Control/DW_Safety.c **** /**
+ 537:..\..\..\Control/DW_Safety.c **** Controllo delle condizioni (stato + PP) per innescare verifica
+ 538:..\..\..\Control/DW_Safety.c **** su acqua entrante e gestione eventuale scarico
+ 539:..\..\..\Control/DW_Safety.c **** (eseguito indipendentemente dalle condizioni della turbina)
+ 540:..\..\..\Control/DW_Safety.c **** 
+ 541:..\..\..\Control/DW_Safety.c **** \return 			none
+ 542:..\..\..\Control/DW_Safety.c **** 				
+ 543:..\..\..\Control/DW_Safety.c **** \version		1.0.0
+ 544:..\..\..\Control/DW_Safety.c **** \date 			05/09/2008
+ 545:..\..\..\Control/DW_Safety.c **** \author			Valeria Catani
+ 546:..\..\..\Control/DW_Safety.c **** 
+ 547:..\..\..\Control/DW_Safety.c **** \ revisione QI 28.10.09
+ 548:..\..\..\Control/DW_Safety.c **** */
+ 549:..\..\..\Control/DW_Safety.c **** void SFT_drainPump_Mgmt(void)
+ 550:..\..\..\Control/DW_Safety.c **** {
+ 327                             		.loc 1 550 0
+ 328 0000 6E 7A                   		pushm	r7-r10
+ 329                             	.LCFI1:
+ 551:..\..\..\Control/DW_Safety.c ****   
+ 552:..\..\..\Control/DW_Safety.c ****   CLRBIT(Flags_2,FLAG2_SAFETY_DRAIN_PP_ON_POS); 
+ 330                             		.loc 1 552 0
+ 331 0002 FB 72 00 00 00 00       		mov.L	#_Flags_2, r7
+ 332 0008 CC 73                   		mov.B	[r7], r3
+ 333 000a 75 23 F7                		and	#-9, r3
+ 334 000d C3 73                   		mov.B	r3, [r7]
+ 553:..\..\..\Control/DW_Safety.c ****      
+ 554:..\..\..\Control/DW_Safety.c **** 
+ 555:..\..\..\Control/DW_Safety.c ****   if( (Interpreter_Data[0].completeLabel.s.label == LBL_PROGRAMMING) ||
+ 335                             		.loc 1 555 0
+ 336 000f FB 72 00 00 00 00       		mov.L	#_Interpreter_Data, r7
+ 337 0015 CC 7E                   		mov.B	[r7], r14
+ 338 0017 64 FE                   		and	#15, r14
+ 339 0019 20 0F                   		beq	.L50
+ 340                             		.loc 1 555 0 is_stmt 0 discriminator 1
+ 341 001b 61 3E                   		cmp	#3, r14
+ 342 001d 20 0B                   		beq	.L50
+ 556:..\..\..\Control/DW_Safety.c ****       (Interpreter_Data[0].completeLabel.s.label == LBL_END) ||
+ 343                             		.loc 1 556 0 is_stmt 1
+ 344 001f 61 2E                   		cmp	#2, r14
+ 345 0021 20 07                   		beq	.L50
+ 557:..\..\..\Control/DW_Safety.c ****       (Interpreter_Data[0].completeLabel.s.label == LBL_DELAY)||
+ 346                             		.loc 1 557 0
+ 347 0023 61 5E                   		cmp	#5, r14
+ 348 0025 3B 7B 01                		bne	.L51
+ 349                             		.balign 2,3,5
+ 350                             	.L50:
+ 558:..\..\..\Control/DW_Safety.c ****       (Interpreter_Data[0].completeLabel.s.label == LBL_FAULT) )	                                  
+ 559:..\..\..\Control/DW_Safety.c ****   { /* stati stazionari (con EV OFF) in cui va monitorato il pressostato */
+ 560:..\..\..\Control/DW_Safety.c ****         
+ 561:..\..\..\Control/DW_Safety.c ****     if ( (TESTBIT (GIValid, (GI_FIRST_CRITERION_BIT + GI_PRESS_SENS_CR_FULL_IND) ) != 0)||
+ 351                             		.loc 1 561 0
+ 352 0028 FB 72 00 00 00 00       		mov.L	#_GIValid, r7
+ 353 002e DC 74                   		mov.W	[r7], r4
+ 354 0030 FD 74 C4 01             		tst	#1, r4
+ 355 0034 21 16                   		bne	.L52
+ 356                             		.loc 1 561 0 is_stmt 0 discriminator 1
+ 357 0036 FB 72 00 00 00 00       		mov.L	#_HWC_Flags, r7
+ 358 003c DC 77                   		mov.W	[r7], r7
+ 359 003e 76 27 00 04             		and	#0x400, r7
+ 360 0042 5F 77                   		movu.W	r7, r7
+ 361 0044 61 07                   		cmp	#0, r7
+ 362 0046 3A 5A 01                		beq	.L51
+ 363 0049 03                      		.balign 2,3,5
+ 364                             	.L52:
+ 562:..\..\..\Control/DW_Safety.c **** 	HWC_Flags.bit.vs_drain_presence )
+ 563:..\..\..\Control/DW_Safety.c ****     {/* criterio pressostato valido */
+ 564:..\..\..\Control/DW_Safety.c **** 
+ 565:..\..\..\Control/DW_Safety.c ****       if ( (TESTBIT (GICriteria,GI_PRESS_SENS_CR_FULL_IND) != 0 )|| (  HWC_Flags.bit.vs_drain_prese
+ 365                             		.loc 1 565 0 is_stmt 1
+ 366 004a FB 72 00 00 00 00       		mov.L	#_GICriteria, r7
+ 367 0050 CC 77                   		mov.B	[r7], r7
+ 368 0052 FD 74 C7 01             		tst	#1, r7
+ 369 0056 21 22                   		bne	.L54
+ 370                             		.loc 1 565 0 is_stmt 0 discriminator 1
+ 371 0058 FB 72 00 00 00 00       		mov.L	#_HWC_Flags, r7
+ 372 005e DC 77                   		mov.W	[r7], r7
+ 373 0060 76 27 00 04             		and	#0x400, r7
+ 374 0064 5F 77                   		movu.W	r7, r7
+ 375 0066 61 07                   		cmp	#0, r7
+ 376 0068 3A A7 00                		beq	.L55
+ 377 006b FB 72 00 00 00 00       		mov.L	#_WaterInDW, r7
+ 378 0071 58 77                   		movu.B	[r7], r7
+ 379 0073 61 07                   		cmp	#0, r7
+ 380 0075 3A 9A 00                		beq	.L55
+ 381                             		.balign 2,3,5
+ 382                             	.L54:
+ 566:..\..\..\Control/DW_Safety.c ****       {/* pieno pressostato -> attivazione pompa scarico + disabilitazione standby */
+ 567:..\..\..\Control/DW_Safety.c ****          
+ 568:..\..\..\Control/DW_Safety.c ****          /* pieno pressostato -> attivazione pompa scarico + disabilitazione standby */
+ 569:..\..\..\Control/DW_Safety.c ****         
+ 570:..\..\..\Control/DW_Safety.c ****         /* QI 28.10.09 */ 
+ 571:..\..\..\Control/DW_Safety.c ****         if (Sft_DrainPP.init_full == 0)
+ 383                             		.loc 1 571 0 is_stmt 1
+ 384 0078 FB E2 00 00 00 00       		mov.L	#_Sft_DrainPP, r14
+ 385 007e DC E7                   		mov.W	[r14], r7
+ 386 0080 EF 7A                   		mov.L	r7, r10
+ 387 0082 64 2A                   		and	#2, r10
+ 388 0084 5F AA                   		movu.W	r10, r10
+ 389 0086 61 0A                   		cmp	#0, r10
+ 390 0088 21 2C                   		bne	.L56
+ 572:..\..\..\Control/DW_Safety.c ****         {
+ 573:..\..\..\Control/DW_Safety.c ****           Sft_DrainPP.cnt = 0; 
+ 391                             		.loc 1 573 0
+ 392 008a 64 37                   		and	#3, r7
+ 393 008c D3 E7                   		mov.W	r7, [r14]
+ 574:..\..\..\Control/DW_Safety.c ****           
+ 575:..\..\..\Control/DW_Safety.c ****           if (Tab_SFT_EV.DataLenght == 2)
+ 394                             		.loc 1 575 0
+ 395 008e FB A2 00 00 00 00       		mov.L	#_Tab_SFT_EV, r10
+ 396 0094 59 A2 04                		movu.B	4[r10], r2
+ 397 0097 61 22                   		cmp	#2, r2
+ 398 0099 21 0F                   		bne	.L57
+ 576:..\..\..\Control/DW_Safety.c ****           {/* nuovi setting file : nuova gestione con ritardo */
+ 577:..\..\..\Control/DW_Safety.c ****                   
+ 578:..\..\..\Control/DW_Safety.c ****             Sft_DrainPP.cnt = CNT_DRAIN_DELAY;  
+ 399                             		.loc 1 578 0
+ 400 009b EC AA                   		mov.L	[r10], r10
+ 401 009d 59 A2 02                		movu.B	2[r10], r2
+ 402 00a0 63 A2                   		mul	#10, r2
+ 403 00a2 6C 22                   		shll	#2, r2
+ 404 00a4 57 27                   		or	r2, r7
+ 405 00a6 D3 E7                   		mov.W	r7, [r14]
+ 406                             		.balign 2,3,5
+ 407                             	.L57:
+ 579:..\..\..\Control/DW_Safety.c ****           
+ 580:..\..\..\Control/DW_Safety.c ****           }/* else contatore ritardo = 0, rimane la vecchia gestione */
+ 581:..\..\..\Control/DW_Safety.c ****           
+ 582:..\..\..\Control/DW_Safety.c ****           Sft_DrainPP.init_full = 1;   
+ 408                             		.loc 1 582 0
+ 409 00a8 FB 72 00 00 00 00       		mov.L	#_Sft_DrainPP, r7
+ 410 00ae DC 7A                   		mov.W	[r7], r10
+ 411 00b0 78 1A                   		bset	#1, r10
+ 412 00b2 D3 7A                   		mov.W	r10, [r7]
+ 413                             		.balign 2,3,5
+ 414                             	.L56:
+ 583:..\..\..\Control/DW_Safety.c ****         }
+ 584:..\..\..\Control/DW_Safety.c ****         
+ 585:..\..\..\Control/DW_Safety.c ****         if (Sft_DrainPP.cnt > 0)
+ 415                             		.loc 1 585 0
+ 416 00b4 FB E2 00 00 00 00       		mov.L	#_Sft_DrainPP, r14
+ 417 00ba 5C E7                   		movu.W	[r14], r7
+ 418 00bc 68 27                   		shlr	#2, r7
+ 419 00be 20 16                   		beq	.L58
+ 586:..\..\..\Control/DW_Safety.c ****         {/*conteggio delay in corso : PUMP OFF */
+ 587:..\..\..\Control/DW_Safety.c ****           Sft_DrainPP.cnt--;   
+ 420                             		.loc 1 587 0
+ 421 00c0 72 74 FF 3F             		add	#0x3fff, r7, r4
+ 422 00c4 DC E7                   		mov.W	[r14], r7
+ 423 00c6 76 24 FF 3F             		and	#0x3fff, r4
+ 424 00ca 6C 24                   		shll	#2, r4
+ 425 00cc 64 37                   		and	#3, r7
+ 426 00ce 57 74                   		or	r7, r4
+ 427 00d0 D3 E4                   		mov.W	r4, [r14]
+ 428 00d2 2E 30                   		bra	.L59
+ 429                             	.L58:
+ 588:..\..\..\Control/DW_Safety.c ****         }
+ 589:..\..\..\Control/DW_Safety.c ****         else
+ 590:..\..\..\Control/DW_Safety.c ****         {/* conteggio delay concluso : PUMP ON */
+ 591:..\..\..\Control/DW_Safety.c ****           DrainSftReq_New.b = LOAD_ON; 
+ 430                             		.loc 1 591 0
+ 431 00d4 FB 72 00 00 00 00       		mov.L	#_DrainSftReq_New, r7
+ 432 00da 3C 70 01                		mov.B	#1, [r7]
+ 592:..\..\..\Control/DW_Safety.c ****           
+ 593:..\..\..\Control/DW_Safety.c ****           Sft_DrainPP.init_empty = 1; 
+ 433                             		.loc 1 593 0
+ 434 00dd DC E7                   		mov.W	[r14], r7
+ 594:..\..\..\Control/DW_Safety.c **** 		  if ( (TESTBIT(GIValid, GI_FIRST_VIRTSENSOR_BIT+GI_VIRTUAL_SENSOR_DRAIN))&& (Virtual_Sensor_Valu
+ 435                             		.loc 1 594 0
+ 436 00df 76 24 00 08             		and	#0x800, r4
+ 593:..\..\..\Control/DW_Safety.c ****           Sft_DrainPP.init_empty = 1; 
+ 437                             		.loc 1 593 0
+ 438 00e3 78 07                   		bset	#0, r7
+ 439                             		.loc 1 594 0
+ 440 00e5 5F 44                   		movu.W	r4, r4
+ 593:..\..\..\Control/DW_Safety.c ****           Sft_DrainPP.init_empty = 1; 
+ 441                             		.loc 1 593 0
+ 442 00e7 D3 E7                   		mov.W	r7, [r14]
+ 443                             		.loc 1 594 0
+ 444 00e9 61 04                   		cmp	#0, r4
+ 445 00eb 20 17                   		beq	.L59
+ 446                             		.loc 1 594 0 is_stmt 0 discriminator 1
+ 447 00ed FB 72 00 00 00 00       		mov.L	#_Virtual_Sensor_Value, r7
+ 448 00f3 B0 7F                   		movu.B	1[r7], r7
+ 449 00f5 61 07                   		cmp	#0, r7
+ 450 00f7 21 0B                   		bne	.L59
+ 595:..\..\..\Control/DW_Safety.c **** 		  {/* NB: 28/11/11 il valore del sensore virtuale della pompa scarico ha valori:0-2-3-5*/
+ 596:..\..\..\Control/DW_Safety.c **** 			 				
+ 597:..\..\..\Control/DW_Safety.c ****      		 WaterInDW=0;
+ 451                             		.loc 1 597 0 is_stmt 1
+ 452 00f9 FB A2 00 00 00 00       		mov.L	#_WaterInDW, r10
+ 453 00ff C3 A7                   		mov.B	r7, [r10]
+ 454 0101 03                      		.balign 2,3,1
+ 455                             	.L59:
+ 598:..\..\..\Control/DW_Safety.c **** 	      }
+ 599:..\..\..\Control/DW_Safety.c ****         }      
+ 600:..\..\..\Control/DW_Safety.c ****         SETBIT(Flags_2,FLAG2_SAFETY_DRAIN_PP_ON_POS);  
+ 456                             		.loc 1 600 0
+ 457 0102 65 83                   		or	#8, r3
+ 458 0104 FB 72 00 00 00 00       		mov.L	#_Flags_2, r7
+ 459 010a C3 73                   		mov.B	r3, [r7]
+ 460 010c 38 A0 00                		bra	.L49
+ 461                             	.L55:
+ 601:..\..\..\Control/DW_Safety.c ****         
+ 602:..\..\..\Control/DW_Safety.c ****         /* END QI 28.10.09 */ 
+ 603:..\..\..\Control/DW_Safety.c **** 
+ 604:..\..\..\Control/DW_Safety.c ****       }
+ 605:..\..\..\Control/DW_Safety.c ****       else
+ 606:..\..\..\Control/DW_Safety.c ****       {/* vuoto -> attivo pompa per 1 sec in pi� per evitare On-OFF */
+ 607:..\..\..\Control/DW_Safety.c **** 			
+ 608:..\..\..\Control/DW_Safety.c ****         if (Sft_DrainPP.init_empty == 1)
+ 462                             		.loc 1 608 0
+ 463 010f FB 72 00 00 00 00       		mov.L	#_Sft_DrainPP, r7
+ 464 0115 DC 7E                   		mov.W	[r7], r14
+ 465 0117 FD 74 CE 01             		tst	#1, r14
+ 466 011b 20 17                   		beq	.L61
+ 609:..\..\..\Control/DW_Safety.c ****         {
+ 610:..\..\..\Control/DW_Safety.c ****           Sft_DrainPP.cnt = CNT_DRAIN_EMPTY; 
+ 467                             		.loc 1 610 0
+ 468 011d FB A2 00 00 00 00       		mov.L	#_Tab_SFT_EV, r10
+ 469 0123 EC AA                   		mov.L	[r10], r10
+ 470 0125 64 3E                   		and	#3, r14
+ 471 0127 59 AA 01                		movu.B	1[r10], r10
+ 472 012a 6C 2A                   		shll	#2, r10
+ 611:..\..\..\Control/DW_Safety.c ****           
+ 612:..\..\..\Control/DW_Safety.c ****           Sft_DrainPP.init_empty = 0; 
+ 473                             		.loc 1 612 0
+ 474 012c 57 EA                   		or	r14, r10
+ 475 012e 7A 0A                   		bclr	#0, r10
+ 476 0130 D3 7A                   		mov.W	r10, [r7]
+ 477                             		.balign 2,3,5
+ 478                             	.L61:
+ 613:..\..\..\Control/DW_Safety.c ****         }
+ 614:..\..\..\Control/DW_Safety.c ****         
+ 615:..\..\..\Control/DW_Safety.c ****         if (Sft_DrainPP.cnt > 0)
+ 479                             		.loc 1 615 0
+ 480 0132 FB 72 00 00 00 00       		mov.L	#_Sft_DrainPP, r7
+ 481 0138 5C 77                   		movu.W	[r7], r7
+ 482 013a 68 27                   		shlr	#2, r7
+ 483 013c 20 64                   		beq	.L51
+ 616:..\..\..\Control/DW_Safety.c ****   	    {
+ 617:..\..\..\Control/DW_Safety.c ****   	      	DrainSftReq_New.b = LOAD_ON;
+ 484                             		.loc 1 617 0
+ 485 013e FB 72 00 00 00 00       		mov.L	#_DrainSftReq_New, r7
+ 618:..\..\..\Control/DW_Safety.c ****   	    
+ 619:..\..\..\Control/DW_Safety.c ****   	      	SETBIT(Flags_2,FLAG2_SAFETY_DRAIN_PP_ON_POS);
+ 620:..\..\..\Control/DW_Safety.c **** 			
+ 621:..\..\..\Control/DW_Safety.c ****   	    	if ( (TESTBIT(GIValid, GI_FIRST_VIRTSENSOR_BIT+GI_VIRTUAL_SENSOR_DRAIN))&& (Virtual_Sensor_
+ 486                             		.loc 1 621 0
+ 487 0144 76 24 00 08             		and	#0x800, r4
+ 617:..\..\..\Control/DW_Safety.c ****   	      	DrainSftReq_New.b = LOAD_ON;
+ 488                             		.loc 1 617 0
+ 489 0148 3C 70 01                		mov.B	#1, [r7]
+ 619:..\..\..\Control/DW_Safety.c ****   	      	SETBIT(Flags_2,FLAG2_SAFETY_DRAIN_PP_ON_POS);
+ 490                             		.loc 1 619 0
+ 491 014b 65 83                   		or	#8, r3
+ 492 014d FB 72 00 00 00 00       		mov.L	#_Flags_2, r7
+ 493                             		.loc 1 621 0
+ 494 0153 5F 44                   		movu.W	r4, r4
+ 619:..\..\..\Control/DW_Safety.c ****   	      	SETBIT(Flags_2,FLAG2_SAFETY_DRAIN_PP_ON_POS);
+ 495                             		.loc 1 619 0
+ 496 0155 C3 73                   		mov.B	r3, [r7]
+ 497                             		.loc 1 621 0
+ 498 0157 61 04                   		cmp	#0, r4
+ 499 0159 20 17                   		beq	.L63
+ 500                             		.loc 1 621 0 is_stmt 0 discriminator 1
+ 501 015b FB 72 00 00 00 00       		mov.L	#_Virtual_Sensor_Value, r7
+ 502 0161 B0 7F                   		movu.B	1[r7], r7
+ 503 0163 61 07                   		cmp	#0, r7
+ 504 0165 20 0B                   		beq	.L63
+ 622:..\..\..\Control/DW_Safety.c **** 		    {/* NB: 28/11/11 il valore del sensore virtuale della pompa scarico ha valori:0-2-3-5*/
+ 623:..\..\..\Control/DW_Safety.c **** 			 				
+ 624:..\..\..\Control/DW_Safety.c ****      		   WaterInDW=0xFF;/* valore per far ripartire lo scarico a sensore , perch� ancora non ved
+ 505                             		.loc 1 624 0 is_stmt 1
+ 506 0167 FB 72 00 00 00 00       		mov.L	#_WaterInDW, r7
+ 507 016d F8 74 FF                		mov.B	#-1, [r7]
+ 508                             		.balign 2,3,5
+ 509                             	.L63:
+ 625:..\..\..\Control/DW_Safety.c **** 	        }
+ 626:..\..\..\Control/DW_Safety.c ****   	    	
+ 627:..\..\..\Control/DW_Safety.c **** 			if ( (Sft_DrainPP.cnt == 1) && (WaterInDW!=0xFF) )
+ 510                             		.loc 1 627 0
+ 511 0170 FB 72 00 00 00 00       		mov.L	#_Sft_DrainPP, r7
+ 512 0176 DC 7A                   		mov.W	[r7], r10
+ 513 0178 77 2A FC FF 00          		and	#0xfffc, r10
+ 514 017d 61 4A                   		cmp	#4, r10
+ 515 017f 21 1B                   		bne	.L64
+ 516                             		.loc 1 627 0 is_stmt 0 discriminator 1
+ 517 0181 FB A2 00 00 00 00       		mov.L	#_WaterInDW, r10
+ 518 0187 58 AE                   		movu.B	[r10], r14
+ 519 0189 75 5E FF                		cmp	#0xff, r14
+ 520 018c 20 0E                   		beq	.L64
+ 628:..\..\..\Control/DW_Safety.c **** 			{/*ultima iterazione - eseguo reset dati acqua caricata e turbina */
+ 629:..\..\..\Control/DW_Safety.c **** 				
+ 630:..\..\..\Control/DW_Safety.c ****   				updateRegWaterLoaded(); /*?? vedere se va inserito anche questo!!*/
+ 521                             		.loc 1 630 0 is_stmt 1
+ 522 018e 05 00 00 00             		bsr	_updateRegWaterLoaded
+ 523                             	.LVL24:
+ 631:..\..\..\Control/DW_Safety.c ****   				WaterInDW = 0;
+ 524                             		.loc 1 631 0
+ 525 0192 F8 A4 00                		mov.B	#0, [r10]
+ 632:..\..\..\Control/DW_Safety.c ****   			
+ 633:..\..\..\Control/DW_Safety.c **** 				/* restart dati turbina: OK, una singola iterazione non altera il funzionamento delle
+ 634:..\..\..\Control/DW_Safety.c **** 						altre procedure di Fault e Safety */
+ 635:..\..\..\Control/DW_Safety.c **** 				WaterLoadedReset();	  
+ 526                             		.loc 1 635 0
+ 527 0195 05 00 00 00             		bsr	_WaterLoadedReset
+ 528                             	.LVL25:
+ 529 0199 03                      		.balign 2,3,5
+ 530                             	.L64:
+ 636:..\..\..\Control/DW_Safety.c **** 			} 
+ 637:..\..\..\Control/DW_Safety.c ****   	      
+ 638:..\..\..\Control/DW_Safety.c ****   	      	Sft_DrainPP.cnt --;
+ 531                             		.loc 1 638 0
+ 532 019a DC 7A                   		mov.W	[r7], r10
+ 533 019c 60 4A                   		sub	#4, r10
+ 534 019e D3 7A                   		mov.W	r10, [r7]
+ 535                             		.balign 2,3,5
+ 536                             	.L51:
+ 639:..\..\..\Control/DW_Safety.c ****  	
+ 640:..\..\..\Control/DW_Safety.c ****   	    }
+ 641:..\..\..\Control/DW_Safety.c **** 				/* else scarico concluso */
+ 642:..\..\..\Control/DW_Safety.c **** 				
+ 643:..\..\..\Control/DW_Safety.c **** 		Sft_DrainPP.init_full = 0;
+ 644:..\..\..\Control/DW_Safety.c **** 				
+ 645:..\..\..\Control/DW_Safety.c ****       }
+ 646:..\..\..\Control/DW_Safety.c ****     }
+ 647:..\..\..\Control/DW_Safety.c ****     else
+ 648:..\..\..\Control/DW_Safety.c ****     {
+ 649:..\..\..\Control/DW_Safety.c ****       /* criterio non valido */
+ 650:..\..\..\Control/DW_Safety.c **** 
+ 651:..\..\..\Control/DW_Safety.c ****       Sft_DrainPP.init_full = 0; /* init solo per contatore in pieno, se rientrassi da stato invali
+ 652:..\..\..\Control/DW_Safety.c ****                                     in vuoto scaricherei per il tempo aggiuntivo, ma senza essere p
+ 653:..\..\..\Control/DW_Safety.c ****     }
+ 654:..\..\..\Control/DW_Safety.c ****   }
+ 655:..\..\..\Control/DW_Safety.c ****   else
+ 656:..\..\..\Control/DW_Safety.c ****   {/* RUN - PAUSE */
+ 657:..\..\..\Control/DW_Safety.c ****     Sft_DrainPP.init_full = 0;  
+ 537                             		.loc 1 657 0
+ 538 01a0 FB E2 00 00 00 00       		mov.L	#_Sft_DrainPP, r14
+ 539 01a6 DC E4                   		mov.W	[r14], r4
+ 540 01a8 7A 14                   		bclr	#1, r4
+ 541 01aa D3 E4                   		mov.W	r4, [r14]
+ 542                             		.balign 2,3,2
+ 543                             	.L49:
+ 658:..\..\..\Control/DW_Safety.c ****     
+ 659:..\..\..\Control/DW_Safety.c ****   }
+ 660:..\..\..\Control/DW_Safety.c ****   
+ 661:..\..\..\Control/DW_Safety.c **** }
+ 544                             		.loc 1 661 0
+ 545 01ac 3F 7A 04                		rtsd	#16, r7-r10
+ 546                             	.LFE4:
+ 548 01af 03                      		.section	.text.SFT_LoadEV_Mgmt,"ax",@progbits
+ 549                             		.global	_SFT_LoadEV_Mgmt
+ 551                             	_SFT_LoadEV_Mgmt:
+ 552                             	.LFB5:
+ 662:..\..\..\Control/DW_Safety.c **** 
+ 663:..\..\..\Control/DW_Safety.c **** /**
+ 664:..\..\..\Control/DW_Safety.c **** Gestisce tentativi di sblocco EV nel caso di warning su turbina
+ 665:..\..\..\Control/DW_Safety.c **** negli stati END-DELAY-PROGRAMMING
+ 666:..\..\..\Control/DW_Safety.c **** 
+ 667:..\..\..\Control/DW_Safety.c **** negli stati RUN-PAUSE il fallimento dei tentativi porta alla dichiarazione del Fault F02
+ 668:..\..\..\Control/DW_Safety.c **** 
+ 669:..\..\..\Control/DW_Safety.c **** 
+ 670:..\..\..\Control/DW_Safety.c **** La sequenza dei due tentativi pu� essere eseguita una sola volta
+ 671:..\..\..\Control/DW_Safety.c **** 
+ 672:..\..\..\Control/DW_Safety.c **** \return 			none
+ 673:..\..\..\Control/DW_Safety.c **** 				
+ 674:..\..\..\Control/DW_Safety.c **** \version		1.0.0
+ 675:..\..\..\Control/DW_Safety.c **** \date 			05/09/2008
+ 676:..\..\..\Control/DW_Safety.c **** \author			Valeria Catani
+ 677:..\..\..\Control/DW_Safety.c **** 
+ 678:..\..\..\Control/DW_Safety.c **** */
+ 679:..\..\..\Control/DW_Safety.c **** 
+ 680:..\..\..\Control/DW_Safety.c **** void SFT_LoadEV_Mgmt(void)
+ 681:..\..\..\Control/DW_Safety.c **** {
+ 553                             		.loc 1 681 0
+ 554 0000 7E A7                   		push.l	r7
+ 555                             	.LCFI2:
+ 682:..\..\..\Control/DW_Safety.c **** 	/*selezione modalit� in base allo stato */
+ 683:..\..\..\Control/DW_Safety.c **** 
+ 684:..\..\..\Control/DW_Safety.c **** 	
+ 685:..\..\..\Control/DW_Safety.c **** 	if( (Interpreter_Data[0].completeLabel.s.label == LBL_PROGRAMMING) ||
+ 556                             		.loc 1 685 0
+ 557 0002 FB 72 00 00 00 00       		mov.L	#_Interpreter_Data, r7
+ 558 0008 CC 7E                   		mov.B	[r7], r14
+ 559 000a 64 FE                   		and	#15, r14
+ 560 000c 20 0E                   		beq	.L100
+ 561                             		.loc 1 685 0 is_stmt 0 discriminator 1
+ 562 000e 61 3E                   		cmp	#3, r14
+ 563 0010 20 0A                   		beq	.L100
+ 686:..\..\..\Control/DW_Safety.c **** 		(Interpreter_Data[0].completeLabel.s.label == LBL_END) ||
+ 564                             		.loc 1 686 0 is_stmt 1
+ 565 0012 61 2E                   		cmp	#2, r14
+ 566 0014 20 06                   		beq	.L100
+ 687:..\..\..\Control/DW_Safety.c **** 		(Interpreter_Data[0].completeLabel.s.label == LBL_DELAY)||
+ 567                             		.loc 1 687 0
+ 568 0016 61 5E                   		cmp	#5, r14
+ 569 0018 21 0F                   		bne	.L101
+ 570                             		.balign 2,3,5
+ 571                             	.L100:
+ 688:..\..\..\Control/DW_Safety.c **** 		(Interpreter_Data[0].completeLabel.s.label == LBL_FAULT) )  
+ 689:..\..\..\Control/DW_Safety.c **** 	{ /* PROG - END - DELAY - FAULT : no fault */
+ 690:..\..\..\Control/DW_Safety.c **** 
+ 691:..\..\..\Control/DW_Safety.c **** 		SftPulseWarn.mode = SFT_PULSE_WARN_SAFETY_MODE; 
+ 572                             		.loc 1 691 0
+ 573 001a FB 72 00 00 00 00       		mov.L	#_SftPulseWarn, r7
+ 574 0020 CC 7E                   		mov.B	[r7], r14
+ 575 0022 75 2E F9                		and	#-7, r14
+ 576 0025 2E 27                   		bra	.L136
+ 577                             	.L101:
+ 692:..\..\..\Control/DW_Safety.c **** 	}
+ 693:..\..\..\Control/DW_Safety.c **** 	else if ( (Interpreter_Data[0].completeLabel.s.label == LBL_RUN) || 
+ 578                             		.loc 1 693 0
+ 579 0027 61 1E                   		cmp	#1, r14
+ 580 0029 20 07                   		beq	.L103
+ 581                             		.loc 1 693 0 is_stmt 0 discriminator 1
+ 582 002b 61 4E                   		cmp	#4, r14
+ 583 002d 21 21                   		bne	.L102
+ 584 002f 03                      		.balign 2,3,5
+ 585                             	.L103:
+ 694:..\..\..\Control/DW_Safety.c **** 			  (Interpreter_Data[0].completeLabel.s.label == LBL_PAUSE) )
+ 695:..\..\..\Control/DW_Safety.c **** 	{/* RUN - PAUSE : dopo tentativi falliti c'� fault*/
+ 696:..\..\..\Control/DW_Safety.c **** 		SftPulseWarn.mode = SFT_PULSE_WARN_FAULT_MODE;
+ 586                             		.loc 1 696 0 is_stmt 1
+ 587 0030 FB 72 00 00 00 00       		mov.L	#_SftPulseWarn, r7
+ 588 0036 CC 7E                   		mov.B	[r7], r14
+ 589 0038 75 2E F9                		and	#-7, r14
+ 697:..\..\..\Control/DW_Safety.c **** 
+ 698:..\..\..\Control/DW_Safety.c **** 		SftPulseWarn.pilot_disable = FALSE;  /* tentativi di sblocco EV (ri)abilitati */         
+ 590                             		.loc 1 698 0
+ 591 003b 65 2E                   		or	#2, r14
+ 592 003d 7A 0E                   		bclr	#0, r14
+ 593 003f C3 7E                   		mov.B	r14, [r7]
+ 699:..\..\..\Control/DW_Safety.c **** 
+ 700:..\..\..\Control/DW_Safety.c **** 		FltWarning.outOfRange_EVKO = FALSE;	/* reset warning */
+ 594                             		.loc 1 700 0
+ 595 0041 FB 72 00 00 00 00       		mov.L	#_FltWarning, r7
+ 596 0047 CC 7E                   		mov.B	[r7], r14
+ 597 0049 7A 6E                   		bclr	#6, r14
+ 598 004b 03                      		.balign 2,3,1
+ 599                             	.L136:
+ 600 004c C3 7E                   		mov.B	r14, [r7]
+ 601                             		.balign 2,3,5
+ 602                             	.L102:
+ 701:..\..\..\Control/DW_Safety.c **** 	}
+ 702:..\..\..\Control/DW_Safety.c **** 	else
+ 703:..\..\..\Control/DW_Safety.c **** 	{
+ 704:..\..\..\Control/DW_Safety.c **** 		/* Do nothing */
+ 705:..\..\..\Control/DW_Safety.c **** 	}
+ 706:..\..\..\Control/DW_Safety.c **** 	
+ 707:..\..\..\Control/DW_Safety.c **** 	if ( (LoadsReq_New[EV_Pos[LD_WASH_EV_IND]].b == EV_OFF )&&(ReadVS_Data.ctrl_active==FALSE))
+ 603                             		.loc 1 707 0
+ 604 004e FB 72 00 00 00 00       		mov.L	#_EV_Pos, r7
+ 605 0054 58 77                   		movu.B	[r7], r7
+ 606 0056 FB E2 00 00 00 00       		mov.L	#_LoadsReq_New, r14
+ 607 005c FE C7 E7                		movu.B	[r7,r14], r7
+ 608 005f 61 07                   		cmp	#0, r7
+ 609 0061 3B 34 01                		bne	.L104
+ 610                             		.loc 1 707 0 is_stmt 0 discriminator 1
+ 611 0064 FB 72 00 00 00 00       		mov.L	#_ReadVS_Data, r7
+ 612 006a DC 77                   		mov.W	[r7], r7
+ 613 006c 76 27 00 40             		and	#0x4000, r7
+ 614 0070 5F 77                   		movu.W	r7, r7
+ 615 0072 61 07                   		cmp	#0, r7
+ 616 0074 3B 21 01                		bne	.L104
+ 708:..\..\..\Control/DW_Safety.c **** 	{/* non sto pilotando EV da uP, cio� non sto caricando acqua intenzionalmente 
+ 709:..\..\..\Control/DW_Safety.c **** 	MA NON STO FACENDO IL CHECH COL SENSORE VIRTUALE */
+ 710:..\..\..\Control/DW_Safety.c **** 	
+ 711:..\..\..\Control/DW_Safety.c **** 
+ 712:..\..\..\Control/DW_Safety.c **** 		if ( SftPulseWarn.status == SFT_PULSE_WARN_NO )
+ 617                             		.loc 1 712 0 is_stmt 1
+ 618 0077 FB 72 00 00 00 00       		mov.L	#_SftPulseWarn, r7
+ 619 007d CC 7E                   		mov.B	[r7], r14
+ 620 007f 76 2E F0 00             		and	#0xf0, r14
+ 621 0083 21 37                   		bne	.L106
+ 622                             	.LBB2:
+ 713:..\..\..\Control/DW_Safety.c **** 		{/* stato stazionario di monitoraggio */
+ 714:..\..\..\Control/DW_Safety.c **** 
+ 715:..\..\..\Control/DW_Safety.c **** 			if ( PulseCounter_GetWarning() == b1 ) 
+ 623                             		.loc 1 715 0
+ 624 0085 05 00 00 00             		bsr	_PulseCounter_GetWarning
+ 625 0089 61 21                   		cmp	#2, r1
+ 626 008b 21 2F                   		bne	.L106
+ 716:..\..\..\Control/DW_Safety.c **** 			{/* low frequency warning */
+ 717:..\..\..\Control/DW_Safety.c **** 
+ 718:..\..\..\Control/DW_Safety.c **** 				/* config + init counter per monitoraggio warning su turbina */
+ 719:..\..\..\Control/DW_Safety.c **** 				(void)Set_SmallCounter((SWTC_CountersType)SFT_EVCHECK_S_COUNTER, (SWTC_PrescalerType)COUNTERS2_
+ 627                             		.loc 1 719 0
+ 628 008d FB E2 00 00 00 00       		mov.L	#_Tab_SFT_EV, r14
+ 629 0093 EC EE                   		mov.L	[r14], r14
+ 630 0095 66 B1                   		mov	#11, r1
+ 631 0097 CC E3                   		mov.B	[r14], r3
+ 632 0099 66 32                   		mov	#3, r2
+ 633 009b 75 23 7F                		and	#0x7f, r3
+ 634 009e 05 00 00 00             		bsr	_Set_SmallCounter
+ 720:..\..\..\Control/DW_Safety.c **** /*
+ 721:..\..\..\Control/DW_Safety.c **** 
+ 722:..\..\..\Control/DW_Safety.c **** 				PulseCounter_Reset_Warning(PULSECOUNTER_RESET_BOTH_WARNING);           Reset di tutti i warning
+ 723:..\..\..\Control/DW_Safety.c **** 
+ 724:..\..\..\Control/DW_Safety.c **** */ /*AE FIXME PULSECOUNTER_RESET_BOTH_WARNING */
+ 725:..\..\..\Control/DW_Safety.c **** 				LoadEVCheck.status = LOAD_EV_PILOT_OK;
+ 635                             		.loc 1 725 0
+ 636 00a2 FB 42 00 00 00 00       		mov.L	#_LoadEVCheck, r4
+ 637 00a8 CC 4E                   		mov.B	[r4], r14
+ 638 00aa 64 FE                   		and	#15, r14
+ 639 00ac 75 3E 60                		or	#0x60, r14
+ 640 00af C3 4E                   		mov.B	r14, [r4]
+ 726:..\..\..\Control/DW_Safety.c **** 
+ 727:..\..\..\Control/DW_Safety.c **** 				SftPulseWarn.status = SFT_PULSE_WARN_INIT;
+ 641                             		.loc 1 727 0
+ 642 00b1 CC 7E                   		mov.B	[r7], r14
+ 643 00b3 64 FE                   		and	#15, r14
+ 644 00b5 75 3E 10                		or	#16, r14
+ 645 00b8 C3 7E                   		mov.B	r14, [r7]
+ 646                             		.balign 2,3,5
+ 647                             	.L106:
+ 648                             	.LBE2:
+ 728:..\..\..\Control/DW_Safety.c **** 			} 
+ 729:..\..\..\Control/DW_Safety.c **** 
+ 730:..\..\..\Control/DW_Safety.c **** 		}
+ 731:..\..\..\Control/DW_Safety.c **** 
+ 732:..\..\..\Control/DW_Safety.c **** 
+ 733:..\..\..\Control/DW_Safety.c **** 		if ( SftPulseWarn.status == SFT_PULSE_WARN_INIT )
+ 649                             		.loc 1 733 0
+ 650 00ba FB 72 00 00 00 00       		mov.L	#_SftPulseWarn, r7
+ 651 00c0 CC 7E                   		mov.B	[r7], r14
+ 652 00c2 76 2E F0 00             		and	#0xf0, r14
+ 653 00c6 75 5E 10                		cmp	#16, r14
+ 654 00c9 21 59                   		bne	.L109
+ 734:..\..\..\Control/DW_Safety.c **** 		{
+ 735:..\..\..\Control/DW_Safety.c **** 			(void)SWTC_Run((SWTC_CountersType)SFT_EVCHECK_S_COUNTER);
+ 655                             		.loc 1 735 0
+ 656 00cb 66 B1                   		mov	#11, r1
+ 657 00cd 05 00 00 00             		bsr	_SWTC_Run
+ 736:..\..\..\Control/DW_Safety.c **** 
+ 737:..\..\..\Control/DW_Safety.c **** 			if ( SWTC_IsExpired((SWTC_CountersType)SFT_EVCHECK_S_COUNTER))
+ 658                             		.loc 1 737 0
+ 659 00d1 66 B1                   		mov	#11, r1
+ 660 00d3 05 00 00 00             		bsr	_SWTC_IsExpired
+ 661 00d7 61 01                   		cmp	#0, r1
+ 662 00d9 20 49                   		beq	.L109
+ 663                             	.LBB3:
+ 738:..\..\..\Control/DW_Safety.c **** 			{/* end counting preliminare -> controllo warning low frequency persistente -> tentativi di sblo
+ 739:..\..\..\Control/DW_Safety.c **** 				/* il controllo sul warning viene fatto alla fine 
+ 740:..\..\..\Control/DW_Safety.c **** 				del tempo perch� la frequenza da monitorare � molto bassa (<2.5 Hz typ) */
+ 741:..\..\..\Control/DW_Safety.c **** 				if ( PulseCounter_GetWarning() == b1 )		 
+ 664                             		.loc 1 741 0
+ 665 00db 05 00 00 00             		bsr	_PulseCounter_GetWarning
+ 666 00df 61 21                   		cmp	#2, r1
+ 667 00e1 21 3A                   		bne	.L111
+ 742:..\..\..\Control/DW_Safety.c **** 				{
+ 743:..\..\..\Control/DW_Safety.c **** 					if ( SftPulseWarn.pilot_disable == TRUE )
+ 668                             		.loc 1 743 0
+ 669 00e3 CC 72                   		mov.B	[r7], r2
+ 670 00e5 FB 72 00 00 00 00       		mov.L	#_LoadEVCheck, r7
+ 744:..\..\..\Control/DW_Safety.c **** 					{/* tentativi non consentiti : non eseguo sbloco */
+ 745:..\..\..\Control/DW_Safety.c **** 
+ 746:..\..\..\Control/DW_Safety.c **** 						LoadEVCheck.status = LOAD_EV_PILOT_END;  
+ 671                             		.loc 1 746 0
+ 672 00eb CC 7E                   		mov.B	[r7], r14
+ 673 00ed 64 FE                   		and	#15, r14
+ 743:..\..\..\Control/DW_Safety.c **** 					if ( SftPulseWarn.pilot_disable == TRUE )
+ 674                             		.loc 1 743 0
+ 675 00ef FD 74 C2 01             		tst	#1, r2
+ 676 00f3 20 09                   		beq	.L112
+ 677                             		.loc 1 746 0
+ 678 00f5 75 3E 50                		or	#0x50, r14
+ 679 00f8 C3 7E                   		mov.B	r14, [r7]
+ 680 00fa 2E 10                   		bra	.L113
+ 681                             	.L112:
+ 747:..\..\..\Control/DW_Safety.c **** 					}
+ 748:..\..\..\Control/DW_Safety.c **** 					else
+ 749:..\..\..\Control/DW_Safety.c **** 					{/* tentativi consentiti */
+ 750:..\..\..\Control/DW_Safety.c **** 
+ 751:..\..\..\Control/DW_Safety.c **** 						LoadEVCheck.status = LOAD_EV_PILOT_INIT;  /* init tentativi di pilotaggio 
+ 752:..\..\..\Control/DW_Safety.c **** 						                             gestiti da macchina a stati */
+ 753:..\..\..\Control/DW_Safety.c **** 	/*
+ 754:..\..\..\Control/DW_Safety.c **** 						PulseCounter_Reset_Warning(PULSECOUNTER_RESET_BOTH_WARNING);  Reset di tutti i warning presen
+ 755:..\..\..\Control/DW_Safety.c **** 
+ 756:..\..\..\Control/DW_Safety.c **** */	/*AE FIXME PULSECOUNTER_RESET_BOTH_WARNING*/
+ 757:..\..\..\Control/DW_Safety.c **** 						if ( SftPulseWarn.mode == SFT_PULSE_WARN_FAULT_MODE )
+ 682                             		.loc 1 757 0
+ 683 00fc 64 62                   		and	#6, r2
+ 751:..\..\..\Control/DW_Safety.c **** 						LoadEVCheck.status = LOAD_EV_PILOT_INIT;  /* init tentativi di pilotaggio 
+ 684                             		.loc 1 751 0
+ 685 00fe C3 7E                   		mov.B	r14, [r7]
+ 686                             		.loc 1 757 0
+ 687 0100 61 22                   		cmp	#2, r2
+ 688 0102 21 08                   		bne	.L113
+ 758:..\..\..\Control/DW_Safety.c **** 						{/* modalit� Fault F02- sub 2*/
+ 759:..\..\..\Control/DW_Safety.c **** 
+ 760:..\..\..\Control/DW_Safety.c **** 							/* dichiarazione PreFault F02 - sub 2 */
+ 761:..\..\..\Control/DW_Safety.c **** 							FLT_preFaultSet(CODE_LOAD_EV_KO,SUBCODE_PULSE_LOW_RANGE);
+ 689                             		.loc 1 761 0
+ 690 0104 CF 21                   		mov.B	r2, r1
+ 691 0106 05 00 00 00             		bsr	_FLT_preFaultSet
+ 692                             		.balign 2,3,5
+ 693                             	.L113:
+ 762:..\..\..\Control/DW_Safety.c **** 						}
+ 763:..\..\..\Control/DW_Safety.c **** 					}
+ 764:..\..\..\Control/DW_Safety.c **** 					               
+ 765:..\..\..\Control/DW_Safety.c **** 					SftPulseWarn.status = SFT_PULSE_WARN_EXE;
+ 694                             		.loc 1 765 0
+ 695 010a FB E2 00 00 00 00       		mov.L	#_SftPulseWarn, r14
+ 696 0110 CC E7                   		mov.B	[r14], r7
+ 697 0112 64 F7                   		and	#15, r7
+ 698 0114 75 37 20                		or	#32, r7
+ 699 0117 C3 E7                   		mov.B	r7, [r14]
+ 700 0119 2E 09                   		bra	.L109
+ 701                             	.L111:
+ 766:..\..\..\Control/DW_Safety.c **** 				}
+ 767:..\..\..\Control/DW_Safety.c **** 				else
+ 768:..\..\..\Control/DW_Safety.c **** 				{/* no warning o warning high freq */
+ 769:..\..\..\Control/DW_Safety.c **** 
+ 770:..\..\..\Control/DW_Safety.c **** 					SftPulseWarn.status = SFT_PULSE_WARN_NO; 
+ 702                             		.loc 1 770 0
+ 703 011b CC 7E                   		mov.B	[r7], r14
+ 704 011d 64 FE                   		and	#15, r14
+ 705 011f C3 7E                   		mov.B	r14, [r7]
+ 706 0121 03                      		.balign 2,3,5
+ 707                             	.L109:
+ 708                             	.LBE3:
+ 771:..\..\..\Control/DW_Safety.c **** 				}
+ 772:..\..\..\Control/DW_Safety.c **** 			}
+ 773:..\..\..\Control/DW_Safety.c **** 		}
+ 774:..\..\..\Control/DW_Safety.c **** 
+ 775:..\..\..\Control/DW_Safety.c **** 		if ( SftPulseWarn.status == SFT_PULSE_WARN_EXE )
+ 709                             		.loc 1 775 0
+ 710 0122 FB 72 00 00 00 00       		mov.L	#_SftPulseWarn, r7
+ 711 0128 CC 7E                   		mov.B	[r7], r14
+ 712 012a 76 2E F0 00             		and	#0xf0, r14
+ 713 012e 75 5E 20                		cmp	#32, r14
+ 714 0131 21 73                   		bne	.L99
+ 776:..\..\..\Control/DW_Safety.c **** 		{/* esecuzione tentativi pilotaggio */
+ 777:..\..\..\Control/DW_Safety.c **** 
+ 778:..\..\..\Control/DW_Safety.c **** 			FLT_pilotLoadEV_Mgmt(CHECK_EV_WARN_CTRL);  
+ 715                             		.loc 1 778 0
+ 716 0133 66 11                   		mov	#1, r1
+ 717 0135 05 00 00 00             		bsr	_FLT_pilotLoadEV_Mgmt
+ 779:..\..\..\Control/DW_Safety.c **** 			  
+ 780:..\..\..\Control/DW_Safety.c **** 			if ( LoadEVCheck.status == LOAD_EV_PILOT_END )
+ 718                             		.loc 1 780 0
+ 719 0139 FB E2 00 00 00 00       		mov.L	#_LoadEVCheck, r14
+ 720 013f CC EE                   		mov.B	[r14], r14
+ 721 0141 76 2E F0 00             		and	#0xf0, r14
+ 722 0145 75 5E 50                		cmp	#0x50, r14
+ 723 0148 21 2C                   		bne	.L116
+ 781:..\..\..\Control/DW_Safety.c **** 			{/* end procedura : esauriti tentativi di sblocco EV */
+ 782:..\..\..\Control/DW_Safety.c **** 
+ 783:..\..\..\Control/DW_Safety.c **** 				if ( SftPulseWarn.mode == SFT_PULSE_WARN_FAULT_MODE )
+ 724                             		.loc 1 783 0
+ 725 014a CC 72                   		mov.B	[r7], r2
+ 726 014c 64 62                   		and	#6, r2
+ 727 014e 61 22                   		cmp	#2, r2
+ 728 0150 21 0A                   		bne	.L117
+ 784:..\..\..\Control/DW_Safety.c **** 				{/* viene dichiarato il Fault F02- sub 2*/
+ 785:..\..\..\Control/DW_Safety.c **** 
+ 786:..\..\..\Control/DW_Safety.c **** 					/* dichiarazione Fault F02 - sub 2 */
+ 787:..\..\..\Control/DW_Safety.c **** 					FLT_currentFaultSet(CODE_LOAD_EV_KO,SUBCODE_PULSE_LOW_RANGE);
+ 729                             		.loc 1 787 0
+ 730 0152 CF 21                   		mov.B	r2, r1
+ 731 0154 05 00 00 00             		bsr	_FLT_currentFaultSet
+ 732 0158 2E 0E                   		bra	.L118
+ 733                             	.L117:
+ 788:..\..\..\Control/DW_Safety.c **** 
+ 789:..\..\..\Control/DW_Safety.c **** 				}
+ 790:..\..\..\Control/DW_Safety.c **** 				else
+ 791:..\..\..\Control/DW_Safety.c **** 				{
+ 792:..\..\..\Control/DW_Safety.c **** 					FltWarning.outOfRange_EVKO = TRUE;	
+ 734                             		.loc 1 792 0
+ 735 015a FB 72 00 00 00 00       		mov.L	#_FltWarning, r7
+ 736 0160 CC 7E                   		mov.B	[r7], r14
+ 737 0162 78 6E                   		bset	#6, r14
+ 738 0164 C3 7E                   		mov.B	r14, [r7]
+ 739                             		.balign 2,3,5
+ 740                             	.L118:
+ 793:..\..\..\Control/DW_Safety.c **** 				}
+ 794:..\..\..\Control/DW_Safety.c **** 
+ 795:..\..\..\Control/DW_Safety.c **** 				SftPulseWarn.status = SFT_PULSE_WARN_NO;		/*VERIFICA CHE SIA OK QUESTO STATO!*/
+ 741                             		.loc 1 795 0
+ 742 0166 FB 72 00 00 00 00       		mov.L	#_SftPulseWarn, r7
+ 743 016c CC 7E                   		mov.B	[r7], r14
+ 796:..\..\..\Control/DW_Safety.c **** 
+ 797:..\..\..\Control/DW_Safety.c **** 				SftPulseWarn.pilot_disable = TRUE; 	 /* tentativi disabilitati */
+ 744                             		.loc 1 797 0
+ 745 016e 64 FE                   		and	#15, r14
+ 746 0170 78 0E                   		bset	#0, r14
+ 747 0172 2E 30                   		bra	.L137
+ 748                             	.L116:
+ 798:..\..\..\Control/DW_Safety.c **** 			}
+ 799:..\..\..\Control/DW_Safety.c **** 			else if ( LoadEVCheck.status == LOAD_EV_PILOT_OK )
+ 749                             		.loc 1 799 0
+ 750 0174 75 5E 60                		cmp	#0x60, r14
+ 751 0177 21 2D                   		bne	.L99
+ 800:..\..\..\Control/DW_Safety.c **** 			{/* tentativo di pilotaggio OK - reset fault e prefault */
+ 801:..\..\..\Control/DW_Safety.c **** 
+ 802:..\..\..\Control/DW_Safety.c **** 				SftPulseWarn.status = SFT_PULSE_WARN_NO;
+ 752                             		.loc 1 802 0
+ 753 0179 CC 7E                   		mov.B	[r7], r14
+ 803:..\..\..\Control/DW_Safety.c **** 
+ 804:..\..\..\Control/DW_Safety.c **** 				FltWarning.outOfRange_EVKO = FALSE;
+ 805:..\..\..\Control/DW_Safety.c **** 
+ 806:..\..\..\Control/DW_Safety.c **** 				/* reset PreFault F02 - sub 2 */
+ 807:..\..\..\Control/DW_Safety.c **** 				FLT_preFaultReset(CODE_LOAD_EV_KO,SUBCODE_PULSE_LOW_RANGE);
+ 754                             		.loc 1 807 0
+ 755 017b 66 21                   		mov	#2, r1
+ 802:..\..\..\Control/DW_Safety.c **** 				SftPulseWarn.status = SFT_PULSE_WARN_NO;
+ 756                             		.loc 1 802 0
+ 757 017d 64 FE                   		and	#15, r14
+ 758 017f C3 7E                   		mov.B	r14, [r7]
+ 804:..\..\..\Control/DW_Safety.c **** 				FltWarning.outOfRange_EVKO = FALSE;
+ 759                             		.loc 1 804 0
+ 760 0181 FB 72 00 00 00 00       		mov.L	#_FltWarning, r7
+ 761 0187 CC 7E                   		mov.B	[r7], r14
+ 762                             		.loc 1 807 0
+ 763 0189 CF 12                   		mov.B	r1, r2
+ 804:..\..\..\Control/DW_Safety.c **** 				FltWarning.outOfRange_EVKO = FALSE;
+ 764                             		.loc 1 804 0
+ 765 018b 7A 6E                   		bclr	#6, r14
+ 766 018d C3 7E                   		mov.B	r14, [r7]
+ 808:..\..\..\Control/DW_Safety.c **** 			}
+ 809:..\..\..\Control/DW_Safety.c **** #ifdef _CORRECT_DW_SAFETY_PC_LINT_INFO_
+ 810:..\..\..\Control/DW_Safety.c **** 			else
+ 811:..\..\..\Control/DW_Safety.c **** 			{
+ 812:..\..\..\Control/DW_Safety.c **** 				/* Do nothing */
+ 813:..\..\..\Control/DW_Safety.c **** 			}
+ 814:..\..\..\Control/DW_Safety.c **** #endif /* _CORRECT_DW_SAFETY_PC_LINT_INFO_ */
+ 815:..\..\..\Control/DW_Safety.c **** 		}
+ 816:..\..\..\Control/DW_Safety.c **** 	}
+ 817:..\..\..\Control/DW_Safety.c **** 	else
+ 818:..\..\..\Control/DW_Safety.c **** 	{/* EV pilotata da uP per caricamento */
+ 819:..\..\..\Control/DW_Safety.c **** 
+ 820:..\..\..\Control/DW_Safety.c **** 		SftPulseWarn.status = SFT_PULSE_WARN_NO;  
+ 821:..\..\..\Control/DW_Safety.c **** 
+ 822:..\..\..\Control/DW_Safety.c **** 		SftPulseWarn.pilot_disable = FALSE;  /* tentativi di sblocco EV abilitati */ 
+ 823:..\..\..\Control/DW_Safety.c **** 	}
+ 824:..\..\..\Control/DW_Safety.c **** 
+ 825:..\..\..\Control/DW_Safety.c **** }
+ 767                             		.loc 1 825 0
+ 768 018f 7E B7                   		pop	r7
+ 807:..\..\..\Control/DW_Safety.c **** 				FLT_preFaultReset(CODE_LOAD_EV_KO,SUBCODE_PULSE_LOW_RANGE);
+ 769                             		.loc 1 807 0
+ 770 0191 04 00 00 00             		bra	_FLT_preFaultReset
+ 771                             	.L104:
+ 820:..\..\..\Control/DW_Safety.c **** 		SftPulseWarn.status = SFT_PULSE_WARN_NO;  
+ 772                             		.loc 1 820 0
+ 773 0195 FB 72 00 00 00 00       		mov.L	#_SftPulseWarn, r7
+ 774 019b CC 7E                   		mov.B	[r7], r14
+ 822:..\..\..\Control/DW_Safety.c **** 		SftPulseWarn.pilot_disable = FALSE;  /* tentativi di sblocco EV abilitati */ 
+ 775                             		.loc 1 822 0
+ 776 019d 64 FE                   		and	#15, r14
+ 777 019f 7A 0E                   		bclr	#0, r14
+ 778 01a1 03                      		.balign 2,3,1
+ 779                             	.L137:
+ 780 01a2 C3 7E                   		mov.B	r14, [r7]
+ 781                             		.balign 2,3,2
+ 782                             	.L99:
+ 783                             		.loc 1 825 0
+ 784 01a4 3F 77 01                		rtsd	#4, r7-r7
+ 785                             	.LFE5:
+ 787 01a7 03                      		.section	.text.SFT_uPdoorStatus_Mgmt,"ax",@progbits
+ 788                             		.global	_SFT_uPdoorStatus_Mgmt
+ 790                             	_SFT_uPdoorStatus_Mgmt:
+ 791                             	.LFB6:
+ 826:..\..\..\Control/DW_Safety.c **** /**/
+ 827:..\..\..\Control/DW_Safety.c **** 
+ 828:..\..\..\Control/DW_Safety.c **** /**
+ 829:..\..\..\Control/DW_Safety.c **** Aggiorna la variabile che indica che la porta � aperta o che 
+ 830:..\..\..\Control/DW_Safety.c **** � stata chiusa ma siamo in attesa che il timeout scada.
+ 831:..\..\..\Control/DW_Safety.c **** Gestisce il Timeout a porta chiusa.
+ 832:..\..\..\Control/DW_Safety.c **** 
+ 833:..\..\..\Control/DW_Safety.c **** \return 			none
+ 834:..\..\..\Control/DW_Safety.c **** 				
+ 835:..\..\..\Control/DW_Safety.c **** \version		1.0.0
+ 836:..\..\..\Control/DW_Safety.c **** \date 			14/05/2008
+ 837:..\..\..\Control/DW_Safety.c **** \author			Valeria Catani
+ 838:..\..\..\Control/DW_Safety.c **** 
+ 839:..\..\..\Control/DW_Safety.c **** */
+ 840:..\..\..\Control/DW_Safety.c **** void SFT_uPdoorStatus_Mgmt(void)
+ 841:..\..\..\Control/DW_Safety.c **** {
+ 792                             		.loc 1 841 0
+ 793 0000 7E A7                   		push.l	r7
+ 794                             	.LCFI3:
+ 842:..\..\..\Control/DW_Safety.c **** uint8_t giDoor;
+ 843:..\..\..\Control/DW_Safety.c **** static uint8_t giDoorOld=GI_DOOR_CLOSE;
+ 844:..\..\..\Control/DW_Safety.c **** 
+ 845:..\..\..\Control/DW_Safety.c **** 
+ 846:..\..\..\Control/DW_Safety.c **** 	/* Gestione counter e Gestione stato porta per uP */
+ 847:..\..\..\Control/DW_Safety.c **** 
+ 848:..\..\..\Control/DW_Safety.c **** 	uPDoorStatus = UP_DOOR_CLOSE;
+ 849:..\..\..\Control/DW_Safety.c **** 
+ 850:..\..\..\Control/DW_Safety.c **** 	giDoor = GICriteria & MASK_B(GI_CR_DOOR_IND);
+ 795                             		.loc 1 850 0
+ 796 0002 FB 72 00 00 00 00       		mov.L	#_GICriteria, r7
+ 797 0008 CC 77                   		mov.B	[r7], r7
+ 848:..\..\..\Control/DW_Safety.c **** 	uPDoorStatus = UP_DOOR_CLOSE;
+ 798                             		.loc 1 848 0
+ 799 000a FB E2 00 00 00 00       		mov.L	#_uPDoorStatus, r14
+ 800                             		.loc 1 850 0
+ 801 0010 64 47                   		and	#4, r7
+ 802                             	.LVL26:
+ 851:..\..\..\Control/DW_Safety.c **** 
+ 852:..\..\..\Control/DW_Safety.c **** 	if ( giDoor == GI_DOOR_CLOSE )
+ 803                             		.loc 1 852 0
+ 804 0012 5B 74                   		movu.B	r7, r4
+ 848:..\..\..\Control/DW_Safety.c **** 	uPDoorStatus = UP_DOOR_CLOSE;
+ 805                             		.loc 1 848 0
+ 806 0014 F8 E4 01                		mov.B	#1, [r14]
+ 807                             		.loc 1 852 0
+ 808 0017 61 44                   		cmp	#4, r4
+ 809 0019 21 4A                   		bne	.L139
+ 853:..\..\..\Control/DW_Safety.c **** 	{
+ 854:..\..\..\Control/DW_Safety.c **** 		if ( giDoorOld == GI_DOOR_OPEN )
+ 810                             		.loc 1 854 0
+ 811 001b FB E2 00 00 00 00       		mov.L	#_giDoorOld.11655, r14
+ 812 0021 58 EE                   		movu.B	[r14], r14
+ 813 0023 61 0E                   		cmp	#0, r14
+ 814 0025 21 19                   		bne	.L140
+ 855:..\..\..\Control/DW_Safety.c **** 		{/* transizione porta aperta - porta chiusa */
+ 856:..\..\..\Control/DW_Safety.c **** 
+ 857:..\..\..\Control/DW_Safety.c **** 			(void)Set_SmallCounter((SWTC_CountersType)SFT_DOOR_CLOSE_PAUSE_S_COUNTER, (SWTC_PrescalerType)CO
+ 815                             		.loc 1 857 0
+ 816 0027 FB E2 00 00 00 00       		mov.L	#_Tab_SFT_Door, r14
+ 817 002d EC EE                   		mov.L	[r14], r14
+ 818 002f 75 41 1B                		mov	#27, r1
+ 819 0032 CC E3                   		mov.B	[r14], r3
+ 820 0034 66 32                   		mov	#3, r2
+ 821 0036 75 23 7F                		and	#0x7f, r3
+ 822 0039 05 00 00 00             		bsr	_Set_SmallCounter
+ 823                             	.LVL27:
+ 824 003d 03                      		.balign 2,3,2
+ 825                             	.L140:
+ 858:..\..\..\Control/DW_Safety.c **** 		}
+ 859:..\..\..\Control/DW_Safety.c **** 
+ 860:..\..\..\Control/DW_Safety.c **** 		if(SWTC_IsExpired((SWTC_CountersType)SFT_DOOR_CLOSE_PAUSE_S_COUNTER)) 
+ 826                             		.loc 1 860 0
+ 827 003e 75 41 1B                		mov	#27, r1
+ 828 0041 05 00 00 00             		bsr	_SWTC_IsExpired
+ 829                             	.LVL28:
+ 830 0045 61 01                   		cmp	#0, r1
+ 831 0047 20 0B                   		beq	.L141
+ 861:..\..\..\Control/DW_Safety.c **** 		{ /* porta chiusa e timeout scaduto */
+ 862:..\..\..\Control/DW_Safety.c **** 
+ 863:..\..\..\Control/DW_Safety.c **** 			(void)SWTC_Stop((SWTC_CountersType)SFT_DOOR_CLOSE_PAUSE_S_COUNTER);
+ 832                             		.loc 1 863 0
+ 833 0049 75 41 1B                		mov	#27, r1
+ 834 004c 05 00 00 00             		bsr	_SWTC_Stop
+ 835                             	.LVL29:
+ 836 0050 2E 16                   		bra	.L142
+ 837                             	.L141:
+ 864:..\..\..\Control/DW_Safety.c **** 		}
+ 865:..\..\..\Control/DW_Safety.c **** 		else
+ 866:..\..\..\Control/DW_Safety.c **** 		{/* porta chiusa e timeout non scaduto */
+ 867:..\..\..\Control/DW_Safety.c **** 
+ 868:..\..\..\Control/DW_Safety.c **** 			uPDoorStatus = UP_DOOR_WAIT;
+ 838                             		.loc 1 868 0
+ 839 0052 FB E2 00 00 00 00       		mov.L	#_uPDoorStatus, r14
+ 840 0058 C3 E1                   		mov.B	r1, [r14]
+ 869:..\..\..\Control/DW_Safety.c **** 
+ 870:..\..\..\Control/DW_Safety.c **** 			(void)SWTC_Run((SWTC_CountersType)SFT_DOOR_CLOSE_PAUSE_S_COUNTER); 
+ 841                             		.loc 1 870 0
+ 842 005a 75 41 1B                		mov	#27, r1
+ 843 005d 05 00 00 00             		bsr	_SWTC_Run
+ 844                             	.LVL30:
+ 845 0061 2E 05                   		bra	.L142
+ 846                             	.L139:
+ 871:..\..\..\Control/DW_Safety.c **** 		}
+ 872:..\..\..\Control/DW_Safety.c **** 	}
+ 873:..\..\..\Control/DW_Safety.c **** 	else
+ 874:..\..\..\Control/DW_Safety.c **** 	{/* porta aperta */
+ 875:..\..\..\Control/DW_Safety.c **** 
+ 876:..\..\..\Control/DW_Safety.c **** 		uPDoorStatus = UP_DOOR_WAIT;  
+ 847                             		.loc 1 876 0
+ 848 0063 F8 E4 00                		mov.B	#0, [r14]
+ 849                             		.balign 2,3,5
+ 850                             	.L142:
+ 877:..\..\..\Control/DW_Safety.c **** 	}
+ 878:..\..\..\Control/DW_Safety.c **** 
+ 879:..\..\..\Control/DW_Safety.c **** 	giDoorOld = giDoor;
+ 851                             		.loc 1 879 0
+ 852 0066 FB E2 00 00 00 00       		mov.L	#_giDoorOld.11655, r14
+ 853 006c C3 E7                   		mov.B	r7, [r14]
+ 880:..\..\..\Control/DW_Safety.c **** }
+ 854                             		.loc 1 880 0
+ 855 006e 3F 77 01                		rtsd	#4, r7-r7
+ 856                             	.LFE6:
+ 858 0071 03                      		.section	.text.SFT_salt_Activation,"ax",@progbits
+ 859                             		.global	_SFT_salt_Activation
+ 861                             	_SFT_salt_Activation:
+ 862                             	.LFB7:
+ 881:..\..\..\Control/DW_Safety.c **** /**/
+ 882:..\..\..\Control/DW_Safety.c **** 
+ 883:..\..\..\Control/DW_Safety.c **** /* ************** */
+ 884:..\..\..\Control/DW_Safety.c **** /* Local Function */
+ 885:..\..\..\Control/DW_Safety.c **** /* ************** */
+ 886:..\..\..\Control/DW_Safety.c **** /**
+ 887:..\..\..\Control/DW_Safety.c **** - Gestisce l'attivazione della lettura del sensore sale:
+ 888:..\..\..\Control/DW_Safety.c **** viene sempre pilotato ad eccezione dello stato di OFF logico ( ciclo 0 fase 0)
+ 889:..\..\..\Control/DW_Safety.c **** La disablitazione del sensore � necessaria per il risparmio energetico, anche se non c'� lo sta
+ 890:..\..\..\Control/DW_Safety.c **** il sensore deve essere disabilitato in caso di standby "virtuale" ( solo visual)
+ 891:..\..\..\Control/DW_Safety.c ****  
+ 892:..\..\..\Control/DW_Safety.c **** 	
+ 893:..\..\..\Control/DW_Safety.c **** \version		1.0.0
+ 894:..\..\..\Control/DW_Safety.c **** \date 			25/8/2010
+ 895:..\..\..\Control/DW_Safety.c **** \author			Emanuela Antognoli
+ 896:..\..\..\Control/DW_Safety.c **** 
+ 897:..\..\..\Control/DW_Safety.c **** -created
+ 898:..\..\..\Control/DW_Safety.c **** */
+ 899:..\..\..\Control/DW_Safety.c **** void SFT_salt_Activation( void )
+ 900:..\..\..\Control/DW_Safety.c **** {
+ 863                             		.loc 1 900 0
+ 864 0000 7E A7                   		push.l	r7
+ 865                             	.LCFI4:
+ 901:..\..\..\Control/DW_Safety.c **** 	if ( ( Interpreter_Data[0].completeLabel.s.label == LBL_PROGRAMMING) &&
+ 866                             		.loc 1 901 0
+ 867 0002 FB 32 00 00 00 00       		mov.L	#_Interpreter_Data, r3
+ 868 0008 CC 32                   		mov.B	[r3], r2
+ 869 000a FB 42 00 00 00 00       		mov.L	#_RegDev_Pos, r4
+ 870 0010 FD 74 C2 0F             		tst	#15, r2
+ 871 0014 FB E2 00 00 00 00       		mov.L	#_LoadsReq_New, r14
+ 902:..\..\..\Control/DW_Safety.c **** 	 (Interpreter_Data[0].phase == 0) )
+ 903:..\..\..\Control/DW_Safety.c **** 	 /* standby virtuale o OFF logico*/
+ 904:..\..\..\Control/DW_Safety.c **** 	{
+ 905:..\..\..\Control/DW_Safety.c **** 		LoadsReq_New[RegDev_Pos[LD_SALT_ACTIVATION_REG_IND]].b = LOAD_OFF;
+ 872                             		.loc 1 905 0
+ 873 001a B0 CC                   		movu.B	3[r4], r4
+ 901:..\..\..\Control/DW_Safety.c **** 	if ( ( Interpreter_Data[0].completeLabel.s.label == LBL_PROGRAMMING) &&
+ 874                             		.loc 1 901 0
+ 875 001c 21 0D                   		bne	.L145
+ 901:..\..\..\Control/DW_Safety.c **** 	if ( ( Interpreter_Data[0].completeLabel.s.label == LBL_PROGRAMMING) &&
+ 876                             		.loc 1 901 0 is_stmt 0 discriminator 1
+ 877 001e B0 B3                   		movu.B	2[r3], r3
+ 878 0020 61 03                   		cmp	#0, r3
+ 879 0022 21 07                   		bne	.L145
+ 880                             		.loc 1 905 0 is_stmt 1
+ 881 0024 FE 04 E3                		mov.B	r3, [r4,r14]
+ 882 0027 2E 07                   		bra	.L144
+ 883                             	.L145:
+ 906:..\..\..\Control/DW_Safety.c **** 		
+ 907:..\..\..\Control/DW_Safety.c **** 	}else
+ 908:..\..\..\Control/DW_Safety.c **** 	{
+ 909:..\..\..\Control/DW_Safety.c **** 		LoadsReq_New[RegDev_Pos[LD_SALT_ACTIVATION_REG_IND]].b = LOAD_ON;
+ 884                             		.loc 1 909 0
+ 885 0029 66 17                   		mov	#1, r7
+ 886 002b FE 04 E7                		mov.B	r7, [r4,r14]
+ 887                             		.balign 2,3,2
+ 888                             	.L144:
+ 910:..\..\..\Control/DW_Safety.c **** 			
+ 911:..\..\..\Control/DW_Safety.c **** 	}
+ 912:..\..\..\Control/DW_Safety.c **** 	
+ 913:..\..\..\Control/DW_Safety.c **** }
+ 889                             		.loc 1 913 0
+ 890 002e 3F 77 01                		rtsd	#4, r7-r7
+ 891                             	.LFE7:
+ 893 0031 03                      		.section	.text.SFT_dry_sincronizyng,"ax",@progbits
+ 894                             		.global	_SFT_dry_sincronizyng
+ 896                             	_SFT_dry_sincronizyng:
+ 897                             	.LFB8:
+ 914:..\..\..\Control/DW_Safety.c **** 
+ 915:..\..\..\Control/DW_Safety.c **** 
+ 916:..\..\..\Control/DW_Safety.c **** /**
+ 917:..\..\..\Control/DW_Safety.c **** Sincronizzazione ventola asciugatura e resistenza asciugatura.
+ 918:..\..\..\Control/DW_Safety.c **** Per evitare shock termici e permettere ai flussi d'aria di stabilizzarsi la resistenza asciugatura 
+ 919:..\..\..\Control/DW_Safety.c **** accendersi solo qualche secondo dopo la ventola di asciugatura.
+ 920:..\..\..\Control/DW_Safety.c **** Se invece la ventola � spenta non pu� accendersi la resistenza.
+ 921:..\..\..\Control/DW_Safety.c **** 
+ 922:..\..\..\Control/DW_Safety.c **** 
+ 923:..\..\..\Control/DW_Safety.c **** -in ( stato ventola, parametro in setting( Dry_SfyTime_Res_On) )
+ 924:..\..\..\Control/DW_Safety.c **** -out stato resistenza 
+ 925:..\..\..\Control/DW_Safety.c **** 
+ 926:..\..\..\Control/DW_Safety.c **** 	
+ 927:..\..\..\Control/DW_Safety.c **** \version		1.0.0
+ 928:..\..\..\Control/DW_Safety.c **** \date 			1/9/2010
+ 929:..\..\..\Control/DW_Safety.c **** \author			Emanuela Antognoli
+ 930:..\..\..\Control/DW_Safety.c **** 
+ 931:..\..\..\Control/DW_Safety.c **** -created
+ 932:..\..\..\Control/DW_Safety.c **** */
+ 933:..\..\..\Control/DW_Safety.c **** 
+ 934:..\..\..\Control/DW_Safety.c **** void SFT_dry_sincronizyng ( void) 
+ 935:..\..\..\Control/DW_Safety.c **** {
+ 898                             		.loc 1 935 0
+ 899 0000 7E A7                   		push.l	r7
+ 900                             	.LCFI5:
+ 936:..\..\..\Control/DW_Safety.c **** 	
+ 937:..\..\..\Control/DW_Safety.c **** 	if ( LoadsReq_New[Fan_Pos[LD_DRY_FAN_IND]].b == 0)
+ 901                             		.loc 1 937 0
+ 902 0002 FB 72 00 00 00 00       		mov.L	#_Fan_Pos, r7
+ 903 0008 58 77                   		movu.B	[r7], r7
+ 904 000a FB E2 00 00 00 00       		mov.L	#_LoadsReq_New, r14
+ 905 0010 FE C7 E4                		movu.B	[r7,r14], r4
+ 906 0013 61 04                   		cmp	#0, r4
+ 907 0015 21 12                   		bne	.L149
+ 938:..\..\..\Control/DW_Safety.c **** 	{/* ventola spenta -> resistenza asciugatura spenta*/
+ 939:..\..\..\Control/DW_Safety.c **** 		LoadsReq_New[Res_Pos[LD_DRY_RES_IND]].b	= RES_OFF;
+ 908                             		.loc 1 939 0
+ 909 0017 FB 72 00 00 00 00       		mov.L	#_Res_Pos, r7
+ 910 001d B0 7F                   		movu.B	1[r7], r7
+ 940:..\..\..\Control/DW_Safety.c **** 	
+ 941:..\..\..\Control/DW_Safety.c **** 		(void)SWTC_Stop((SWTC_CountersType)SFT_DRY_RES_DELAYACT_S_COUNTER);
+ 911                             		.loc 1 941 0
+ 912 001f 75 41 1C                		mov	#28, r1
+ 939:..\..\..\Control/DW_Safety.c **** 		LoadsReq_New[Res_Pos[LD_DRY_RES_IND]].b	= RES_OFF;
+ 913                             		.loc 1 939 0
+ 914 0022 FE 07 E4                		mov.B	r4, [r7,r14]
+ 915 0025 2E 31                   		bra	.L153
+ 916                             	.L149:
+ 942:..\..\..\Control/DW_Safety.c **** 		return;
+ 943:..\..\..\Control/DW_Safety.c **** 	}
+ 944:..\..\..\Control/DW_Safety.c **** 	
+ 945:..\..\..\Control/DW_Safety.c **** 	if (( LoadsReq_Old[Fan_Pos[LD_DRY_FAN_IND]].b ==  LOAD_OFF ) &&  (LoadsReq_New[Fan_Pos[LD_DRY_FAN_
+ 917                             		.loc 1 945 0
+ 918 0027 FB E2 00 00 00 00       		mov.L	#_LoadsReq_Old, r14
+ 919 002d FE C7 E7                		movu.B	[r7,r14], r7
+ 920 0030 61 07                   		cmp	#0, r7
+ 921 0032 21 14                   		bne	.L150
+ 946:..\..\..\Control/DW_Safety.c **** 	{
+ 947:..\..\..\Control/DW_Safety.c **** 		(void)Set_SmallCounter((SWTC_CountersType)SFT_DRY_RES_DELAYACT_S_COUNTER, (SWTC_PrescalerType)COU
+ 922                             		.loc 1 947 0
+ 923 0034 FB 72 00 00 00 00       		mov.L	#_Dry_SfyTime_Res_On, r7
+ 924 003a CC 73                   		mov.B	[r7], r3
+ 925 003c 75 41 1C                		mov	#28, r1
+ 926 003f 66 12                   		mov	#1, r2
+ 927 0041 05 00 00 00             		bsr	_Set_SmallCounter
+ 928 0045 03                      		.balign 2,3,2
+ 929                             	.L150:
+ 948:..\..\..\Control/DW_Safety.c **** 	}
+ 949:..\..\..\Control/DW_Safety.c **** 		  	
+ 950:..\..\..\Control/DW_Safety.c **** 	if  (SWTC_IsExpired((SWTC_CountersType)SFT_DRY_RES_DELAYACT_S_COUNTER) )
+ 930                             		.loc 1 950 0
+ 931 0046 75 41 1C                		mov	#28, r1
+ 932 0049 05 00 00 00             		bsr	_SWTC_IsExpired
+ 933 004d EF 17                   		mov.L	r1, r7
+ 934 004f 61 07                   		cmp	#0, r7
+ 951:..\..\..\Control/DW_Safety.c ****     {/* conteggio transizione OFF -> ON concluso -> La resistenza asciugatura pu� accendersi se v
+ 952:..\..\..\Control/DW_Safety.c ****       
+ 953:..\..\..\Control/DW_Safety.c ****        (void)SWTC_Stop((SWTC_CountersType)SFT_DRY_RES_DELAYACT_S_COUNTER);
+ 935                             		.loc 1 953 0
+ 936 0051 75 41 1C                		mov	#28, r1
+ 950:..\..\..\Control/DW_Safety.c **** 	if  (SWTC_IsExpired((SWTC_CountersType)SFT_DRY_RES_DELAYACT_S_COUNTER) )
+ 937                             		.loc 1 950 0
+ 938 0054 20 08                   		beq	.L151
+ 939                             		.balign 2,3,1
+ 940                             	.L153:
+ 954:..\..\..\Control/DW_Safety.c ****          
+ 955:..\..\..\Control/DW_Safety.c ****     }
+ 956:..\..\..\Control/DW_Safety.c ****     else
+ 957:..\..\..\Control/DW_Safety.c ****     {	/*conteggio in corso*/
+ 958:..\..\..\Control/DW_Safety.c ****         /*  La Resistenza asciugatura deve rimanere spenta  */
+ 959:..\..\..\Control/DW_Safety.c ****          
+ 960:..\..\..\Control/DW_Safety.c ****         (void)SWTC_Run((SWTC_CountersType)SFT_DRY_RES_DELAYACT_S_COUNTER);   
+ 961:..\..\..\Control/DW_Safety.c **** 
+ 962:..\..\..\Control/DW_Safety.c **** 		LoadsReq_New[Res_Pos[LD_DRY_RES_IND]].b= RES_OFF;	
+ 963:..\..\..\Control/DW_Safety.c **** 		 	/*la resistenza deve accendersi, ma solo  tot secondi dopo la ventola.*/ 
+ 964:..\..\..\Control/DW_Safety.c **** 	}      
+ 965:..\..\..\Control/DW_Safety.c **** }
+ 941                             		.loc 1 965 0
+ 942 0056 7E B7                   		pop	r7
+ 953:..\..\..\Control/DW_Safety.c ****        (void)SWTC_Stop((SWTC_CountersType)SFT_DRY_RES_DELAYACT_S_COUNTER);
+ 943                             		.loc 1 953 0
+ 944 0058 04 00 00 00             		bra	_SWTC_Stop
+ 945                             	.L151:
+ 960:..\..\..\Control/DW_Safety.c ****         (void)SWTC_Run((SWTC_CountersType)SFT_DRY_RES_DELAYACT_S_COUNTER);   
+ 946                             		.loc 1 960 0
+ 947 005c 05 00 00 00             		bsr	_SWTC_Run
+ 962:..\..\..\Control/DW_Safety.c **** 		LoadsReq_New[Res_Pos[LD_DRY_RES_IND]].b= RES_OFF;	
+ 948                             		.loc 1 962 0
+ 949 0060 FB E2 00 00 00 00       		mov.L	#_Res_Pos, r14
+ 950 0066 59 EE 01                		movu.B	1[r14], r14
+ 951 0069 FB 42 00 00 00 00       		mov.L	#_LoadsReq_New, r4
+ 952 006f FE 0E 47                		mov.B	r7, [r14,r4]
+ 953                             		.loc 1 965 0
+ 954 0072 3F 77 01                		rtsd	#4, r7-r7
+ 955                             	.LFE8:
+ 957 0075 03                      		.section	.text.SFT_checkGoodZC,"ax",@progbits
+ 958                             		.global	_SFT_checkGoodZC
+ 960                             	_SFT_checkGoodZC:
+ 961                             	.LFB9:
+ 966:..\..\..\Control/DW_Safety.c **** 
+ 967:..\..\..\Control/DW_Safety.c **** 
+ 968:..\..\..\Control/DW_Safety.c **** #ifdef _VERIFY_ZC_GOOD_
+ 969:..\..\..\Control/DW_Safety.c **** /* Verifica la corretta presenza dello ZC per controllare l'oscillatore */
+ 970:..\..\..\Control/DW_Safety.c **** void SFT_checkGoodZC(void)
+ 971:..\..\..\Control/DW_Safety.c **** {
+ 962                             		.loc 1 971 0
+ 963 0000 7E A7                   		push.l	r7
+ 964                             	.LCFI6:
+ 965 0002 71 00 F0                		add	#-16, r0
+ 966                             	.LCFI7:
+ 972:..\..\..\Control/DW_Safety.c **** bool_t goodZC;
+ 973:..\..\..\Control/DW_Safety.c **** static bool_t oldGoodZC = 1;
+ 974:..\..\..\Control/DW_Safety.c **** static uint8_t filterCounter = 0;
+ 975:..\..\..\Control/DW_Safety.c **** static uint8_t old_Sft_FilteredGoodZC = 1;
+ 976:..\..\..\Control/DW_Safety.c **** #if defined(PLATFORM2_SUPPORT)
+ 977:..\..\..\Control/DW_Safety.c **** IO_PhyInitSyncType i2cParam={0};
+ 967                             		.loc 1 977 0
+ 968 0005 EF 01                   		mov.L	r0, r1
+ 969 0007 75 43 10                		mov.L	#16, r3
+ 970 000a 66 02                   		mov	#0, r2
+ 971 000c 7F 88                   		sstr.b
+ 978:..\..\..\Control/DW_Safety.c **** #endif		
+ 979:..\..\..\Control/DW_Safety.c **** 	
+ 980:..\..\..\Control/DW_Safety.c **** 	/* valore corrente dello Zero Crossing*/
+ 981:..\..\..\Control/DW_Safety.c **** 	goodZC = goodZCSignal();
+ 972                             		.loc 1 981 0
+ 973 000e 05 00 00 00             		bsr	_goodZCSignal
+ 974                             	.LVL31:
+ 982:..\..\..\Control/DW_Safety.c **** 	
+ 983:..\..\..\Control/DW_Safety.c **** 	if( goodZC != oldGoodZC )
+ 975                             		.loc 1 983 0
+ 976 0012 FB 72 00 00 00 00       		mov.L	#_oldGoodZC.11666, r7
+ 977 0018 06 84 71                		cmp	[r7].L, r1
+ 978 001b FB E2 00 00 00 00       		mov.L	#_filterCounter.11667, r14
+ 979 0021 20 07                   		beq	.L155
+ 984:..\..\..\Control/DW_Safety.c **** 	{
+ 985:..\..\..\Control/DW_Safety.c **** 		filterCounter = 0;
+ 980                             		.loc 1 985 0
+ 981 0023 F8 E4 00                		mov.B	#0, [r14]
+ 982 0026 2E 1A                   		bra	.L156
+ 983                             	.L155:
+ 986:..\..\..\Control/DW_Safety.c **** 	}
+ 987:..\..\..\Control/DW_Safety.c **** 	else
+ 988:..\..\..\Control/DW_Safety.c **** 	{
+ 989:..\..\..\Control/DW_Safety.c **** 		if( filterCounter < SFT_ZC_GOOD_FILTER_TIME )
+ 984                             		.loc 1 989 0
+ 985 0028 CC E7                   		mov.B	[r14], r7
+ 986 002a 5B 74                   		movu.B	r7, r4
+ 987 002c 75 54 31                		cmp	#49, r4
+ 988 002f 24 08                   		bgtu	.L157
+ 990:..\..\..\Control/DW_Safety.c **** 		{
+ 991:..\..\..\Control/DW_Safety.c **** 			filterCounter ++;
+ 989                             		.loc 1 991 0
+ 990 0031 62 17                   		add	#1, r7
+ 991 0033 C3 E7                   		mov.B	r7, [r14]
+ 992 0035 2E 0B                   		bra	.L156
+ 993                             	.L157:
+ 992:..\..\..\Control/DW_Safety.c **** 		}
+ 993:..\..\..\Control/DW_Safety.c **** 		else
+ 994:..\..\..\Control/DW_Safety.c **** 		{
+ 995:..\..\..\Control/DW_Safety.c **** 			/* Stato filtrato Zero Crossing = stato corrente zero crossing */
+ 996:..\..\..\Control/DW_Safety.c **** 			Sft_FilteredGoodZC = goodZC;
+ 994                             		.loc 1 996 0
+ 995 0037 FB 72 00 00 00 00       		mov.L	#_Sft_FilteredGoodZC, r7
+ 996 003d C3 71                   		mov.B	r1, [r7]
+ 997 003f 03                      		.balign 2,3,5
+ 998                             	.L156:
+ 997:..\..\..\Control/DW_Safety.c **** 		}
+ 998:..\..\..\Control/DW_Safety.c **** 	}
+ 999:..\..\..\Control/DW_Safety.c **** 
+1000:..\..\..\Control/DW_Safety.c **** 	oldGoodZC = goodZC;
+ 999                             		.loc 1 1000 0
+ 1000 0040 FB 72 00 00 00 00       		mov.L	#_oldGoodZC.11666, r7
+ 1001 0046 E3 71                   		mov.L	r1, [r7]
+1001:..\..\..\Control/DW_Safety.c **** 	
+1002:..\..\..\Control/DW_Safety.c **** 
+1003:..\..\..\Control/DW_Safety.c **** 	if( Sft_FilteredGoodZC == 0 )
+ 1002                             		.loc 1 1003 0
+ 1003 0048 FB 72 00 00 00 00       		mov.L	#_Sft_FilteredGoodZC, r7
+ 1004 004e 58 77                   		movu.B	[r7], r7
+ 1005 0050 61 07                   		cmp	#0, r7
+ 1006 0052 21 1E                   		bne	.L158
+1004:..\..\..\Control/DW_Safety.c **** 	{
+1005:..\..\..\Control/DW_Safety.c **** 		/* Stato filtrato: Zero Crossing assente */
+1006:..\..\..\Control/DW_Safety.c **** 
+1007:..\..\..\Control/DW_Safety.c **** 		/* Viene disabilitata la UART */
+1008:..\..\..\Control/DW_Safety.c **** #if defined(PLATFORM2_SUPPORT)
+1009:..\..\..\Control/DW_Safety.c **** 		OCUART_DisableSync();
+ 1007                             		.loc 1 1009 0
+ 1008 0054 05 00 00 00             		bsr	_OCUART_DisableSync
+ 1009                             	.LVL32:
+ 1010                             	.LBB4:
+1010:..\..\..\Control/DW_Safety.c **** #endif /* defined(PLATFORM2_SUPPORT) */
+1011:..\..\..\Control/DW_Safety.c **** 
+1012:..\..\..\Control/DW_Safety.c **** 		/*
+1013:..\..\..\Control/DW_Safety.c **** 		Viene resettato il buffer condiviso (info buffer), in modo da far intervenire la
+1014:..\..\..\Control/DW_Safety.c **** 		sicurezza sul motore
+1015:..\..\..\Control/DW_Safety.c **** 		*/
+1016:..\..\..\Control/DW_Safety.c **** 		/*
+1017:..\..\..\Control/DW_Safety.c **** 		(void) GetResource(ExtBoardInfo_Res);
+1018:..\..\..\Control/DW_Safety.c **** 		*/ /*AE FIXME*/
+1019:..\..\..\Control/DW_Safety.c **** 		{
+1020:..\..\..\Control/DW_Safety.c **** 		   uint8_t cnt;
+1021:..\..\..\Control/DW_Safety.c **** 			for(cnt=0; cnt< NR_OF_BLDC_PUMPS; cnt++)
+1022:..\..\..\Control/DW_Safety.c **** 			{
+1023:..\..\..\Control/DW_Safety.c **** 		      /*_memset_clear_8bitCount(&BLDC_Pump_InfoBuffer[cnt][0],IOM_EXTERNAL_0_INFOBUFFER_SIZE);*/
+1024:..\..\..\Control/DW_Safety.c **** 				memset(&BLDC_Pump_InfoBuffer[cnt][0], 0, IOM_EXTERNAL_0_INFOBUFFER_SIZE);
+ 1011                             		.loc 1 1024 0
+ 1012 0058 FB 12 00 00 00 00       		mov.L	#_BLDC_Pump_InfoBuffer, r1
+ 1013 005e 66 C3                   		mov.L	#12, r3
+ 1014 0060 CF 72                   		mov.B	r7, r2
+ 1015 0062 7F 88                   		sstr.b
+ 1016                             	.LVL33:
+ 1017 0064 FB 12 00 00 00 00       		mov.L	#_BLDC_Pump_InfoBuffer+12, r1
+ 1018 006a 66 C3                   		mov.L	#12, r3
+ 1019 006c 7F 88                   		sstr.b
+ 1020                             	.LVL34:
+ 1021 006e 2E 14                   		bra	.L159
+ 1022                             	.LVL35:
+ 1023                             	.L158:
+ 1024                             	.LBE4:
+1025:..\..\..\Control/DW_Safety.c **** 			}
+1026:..\..\..\Control/DW_Safety.c **** 		}
+1027:..\..\..\Control/DW_Safety.c **** 		
+1028:..\..\..\Control/DW_Safety.c **** 		/*
+1029:..\..\..\Control/DW_Safety.c **** 		(void) ReleaseResource(ExtBoardInfo_Res);
+1030:..\..\..\Control/DW_Safety.c **** 		*/ /*AE FIXME*/
+1031:..\..\..\Control/DW_Safety.c **** 	}
+1032:..\..\..\Control/DW_Safety.c **** 	else
+1033:..\..\..\Control/DW_Safety.c **** 	{
+1034:..\..\..\Control/DW_Safety.c **** 		/* Stato filtrato: Zero Crossing presente */
+1035:..\..\..\Control/DW_Safety.c **** 
+1036:..\..\..\Control/DW_Safety.c **** 		if( old_Sft_FilteredGoodZC == 0 )
+ 1025                             		.loc 1 1036 0
+ 1026 0070 FB 72 00 00 00 00       		mov.L	#_old_Sft_FilteredGoodZC.11668, r7
+ 1027 0076 58 77                   		movu.B	[r7], r7
+ 1028 0078 61 07                   		cmp	#0, r7
+ 1029 007a 21 08                   		bne	.L159
+1037:..\..\..\Control/DW_Safety.c **** 		{
+1038:..\..\..\Control/DW_Safety.c **** 			/*
+1039:..\..\..\Control/DW_Safety.c **** 			Solo se provengo da Zero Crossing assente (==UART disabilitata) riabilito
+1040:..\..\..\Control/DW_Safety.c **** 			la UART, altrimenti starei sempre a resettare la periferica
+1041:..\..\..\Control/DW_Safety.c **** 			*/
+1042:..\..\..\Control/DW_Safety.c **** #if defined(PLATFORM2_SUPPORT)
+1043:..\..\..\Control/DW_Safety.c **** 			/* Riabilito la UART */
+1044:..\..\..\Control/DW_Safety.c **** 			/*
+1045:..\..\..\Control/DW_Safety.c **** 			i2cParam.eventCB=PP_SlaveNotification;
+1046:..\..\..\Control/DW_Safety.c **** 			i2cParam.id=(IO_ChannelType)BCP_UART1_CH_ID;
+1047:..\..\..\Control/DW_Safety.c **** 			*/ /*AE FIXME */
+1048:..\..\..\Control/DW_Safety.c **** 			(void)OCUART_InitSync(&i2cParam);
+ 1030                             		.loc 1 1048 0
+ 1031 007c EF 01                   		mov.L	r0, r1
+ 1032                             	.LVL36:
+ 1033 007e 05 00 00 00             		bsr	_OCUART_InitSync
+ 1034                             	.LVL37:
+ 1035                             		.balign 2,3,5
+ 1036                             	.L159:
+1049:..\..\..\Control/DW_Safety.c **** #endif /* defined(PLATFORM2_SUPPORT) */
+1050:..\..\..\Control/DW_Safety.c **** 		}
+1051:..\..\..\Control/DW_Safety.c **** 	}
+1052:..\..\..\Control/DW_Safety.c **** 	
+1053:..\..\..\Control/DW_Safety.c **** 	old_Sft_FilteredGoodZC = Sft_FilteredGoodZC;
+ 1037                             		.loc 1 1053 0
+ 1038 0082 FB E2 00 00 00 00       		mov.L	#_Sft_FilteredGoodZC, r14
+ 1039 0088 CC EE                   		mov.B	[r14], r14
+ 1040 008a FB 72 00 00 00 00       		mov.L	#_old_Sft_FilteredGoodZC.11668, r7
+ 1041 0090 C3 7E                   		mov.B	r14, [r7]
+1054:..\..\..\Control/DW_Safety.c **** }
+ 1042                             		.loc 1 1054 0
+ 1043 0092 3F 77 05                		rtsd	#20, r7-r7
+ 1044                             	.LFE9:
+ 1046 0095 03                      		.section	.text.SFT_Sensor_EV_Unblock,"ax",@progbits
+ 1047                             		.global	_SFT_Sensor_EV_Unblock
+ 1049                             	_SFT_Sensor_EV_Unblock:
+ 1050                             	.LFB10:
+1055:..\..\..\Control/DW_Safety.c **** #endif /* _VERIFY_ZC_GOOD_ */
+1056:..\..\..\Control/DW_Safety.c **** 
+1057:..\..\..\Control/DW_Safety.c **** 
+1058:..\..\..\Control/DW_Safety.c **** 
+1059:..\..\..\Control/DW_Safety.c **** 
+1060:..\..\..\Control/DW_Safety.c **** /**
+1061:..\..\..\Control/DW_Safety.c **** funzione per la determinazione di acqua in vasca a seguito dell'introduzuione dei sensori virtuali 
+1062:..\..\..\Control/DW_Safety.c **** assenza del pressostato .
+1063:..\..\..\Control/DW_Safety.c **** Se si trova acqua in vasca si fanno i tentativi di sblocco della turbina e poi si va in fault.
+1064:..\..\..\Control/DW_Safety.c **** 
+1065:..\..\..\Control/DW_Safety.c **** 
+1066:..\..\..\Control/DW_Safety.c **** -in ( stato sensore virtuale)
+1067:..\..\..\Control/DW_Safety.c **** -out eventuale fault
+1068:..\..\..\Control/DW_Safety.c **** 
+1069:..\..\..\Control/DW_Safety.c **** 	
+1070:..\..\..\Control/DW_Safety.c **** \version		1.0.0
+1071:..\..\..\Control/DW_Safety.c **** \date 			4/4/2012
+1072:..\..\..\Control/DW_Safety.c **** \author			Emanuela Antognoli
+1073:..\..\..\Control/DW_Safety.c **** 
+1074:..\..\..\Control/DW_Safety.c **** -created
+1075:..\..\..\Control/DW_Safety.c **** */
+1076:..\..\..\Control/DW_Safety.c **** 
+1077:..\..\..\Control/DW_Safety.c **** void SFT_Sensor_EV_Unblock ( void) 
+1078:..\..\..\Control/DW_Safety.c **** {
+ 1051                             		.loc 1 1078 0
+1079:..\..\..\Control/DW_Safety.c **** 	
+1080:..\..\..\Control/DW_Safety.c **** 	if ( (LoadsReq_New[EV_Pos[LD_WASH_EV_IND]].b == EV_OFF )&& ReadVS_Data.ctrl_active)
+ 1052                             		.loc 1 1080 0
+ 1053 0000 FB E2 00 00 00 00       		mov.L	#_EV_Pos, r14
+ 1054 0006 58 EE                   		movu.B	[r14], r14
+ 1055 0008 FB 42 00 00 00 00       		mov.L	#_LoadsReq_New, r4
+ 1056 000e FE CE 4E                		movu.B	[r14,r4], r14
+ 1057 0011 61 0E                   		cmp	#0, r14
+ 1058 0013 3B FC 01                		bne	.L162
+ 1059                             		.loc 1 1080 0 is_stmt 0 discriminator 1
+ 1060 0016 FB E2 00 00 00 00       		mov.L	#_ReadVS_Data, r14
+ 1061 001c DC E3                   		mov.W	[r14], r3
+ 1062 001e EF 34                   		mov.L	r3, r4
+ 1063 0020 76 24 00 40             		and	#0x4000, r4
+ 1064 0024 5F 44                   		movu.W	r4, r4
+ 1065 0026 61 04                   		cmp	#0, r4
+ 1066 0028 3A E7 01                		beq	.L162
+1081:..\..\..\Control/DW_Safety.c **** 	{/* non sto pilotando EV da uP, cio� non sto caricando acqua intenzionalmente , ma neanche sto f
+1082:..\..\..\Control/DW_Safety.c **** 
+1083:..\..\..\Control/DW_Safety.c **** 		if (TESTBIT(ActiveAlgorithmBmp[0],AAL_READVIRTUALSENSOR_ALG)) 
+ 1067                             		.loc 1 1083 0 is_stmt 1
+ 1068 002b FB 42 00 00 00 00       		mov.L	#_ActiveAlgorithmBmp, r4
+ 1069 0031 CC 44                   		mov.B	[r4], r4
+ 1070 0033 75 24 10                		and	#16, r4
+ 1071 0036 5B 44                   		movu.B	r4, r4
+ 1072 0038 61 04                   		cmp	#0, r4
+ 1073 003a 3A B4 00                		beq	.L163
+1084:..\..\..\Control/DW_Safety.c **** 		{	/* questo dovrebbe essere vero solo in run , prima dell'end*/
+1085:..\..\..\Control/DW_Safety.c **** 			if ( TESTBIT(GIValid, (GI_FIRST_VIRTSENSOR_BIT+ReadVS_Data.pumpType)) && (ReadVS_Data.control_do
+ 1074                             		.loc 1 1085 0
+ 1075 003d 5C E4                   		movu.W	[r14], r4
+ 1076 003f FB E2 00 00 00 00       		mov.L	#_GIValid, r14
+ 1077 0045 68 F4                   		shlr	#15, r4
+ 1078 0047 5C EE                   		movu.W	[r14], r14
+ 1079 0049 71 42 0A                		add	#10, r4, r2
+ 1080 004c FD 60 2E                		shlr	r2, r14
+ 1081 004f FD 74 CE 01             		tst	#1, r14
+ 1082 0053 20 5F                   		beq	.L164
+ 1083                             		.loc 1 1085 0 is_stmt 0 discriminator 1
+ 1084 0055 76 23 00 20             		and	#0x2000, r3
+ 1085 0059 5F 33                   		movu.W	r3, r3
+ 1086 005b 61 03                   		cmp	#0, r3
+ 1087 005d 21 55                   		bne	.L164
+1086:..\..\..\Control/DW_Safety.c **** 			{
+1087:..\..\..\Control/DW_Safety.c **** 				if( ( Virtual_Sensor_Value[ReadVS_Data.pumpType]==0 )||(Virtual_Sensor_Value[ReadVS_Data.pumpTy
+ 1088                             		.loc 1 1087 0 is_stmt 1
+ 1089 005f 70 44 00 00 00 00       		add	#_Virtual_Sensor_Value, r4
+ 1090 0065 58 44                   		movu.B	[r4], r4
+ 1091 0067 FB E2 00 00 00 00       		mov.L	#_SftPulseWarn, r14
+ 1092 006d 61 04                   		cmp	#0, r4
+ 1093 006f 20 07                   		beq	.L165
+ 1094                             		.loc 1 1087 0 is_stmt 0 discriminator 1
+ 1095 0071 61 54                   		cmp	#5, r4
+ 1096 0073 21 24                   		bne	.L166
+ 1097 0075 03                      		.balign 2,3,5
+ 1098                             	.L165:
+1088:..\..\..\Control/DW_Safety.c **** 				{
+1089:..\..\..\Control/DW_Safety.c **** 					/* CONTROLLO TERMINATO PER ASSENZA DI ACQUA*/
+1090:..\..\..\Control/DW_Safety.c **** 					SftPulseWarn.vs_presence_h2o = FALSE; 
+ 1099                             		.loc 1 1090 0 is_stmt 1
+ 1100 0076 CC E4                   		mov.B	[r14], r4
+ 1101 0078 7A 34                   		bclr	#3, r4
+ 1102 007a C3 E4                   		mov.B	r4, [r14]
+1091:..\..\..\Control/DW_Safety.c **** 					LoadEVCheck.status_sensor	=LOAD_EV_PILOT_INIT;
+ 1103                             		.loc 1 1091 0
+ 1104 007c FB E2 00 00 00 00       		mov.L	#_LoadEVCheck, r14
+ 1105 0082 CC E4                   		mov.B	[r14], r4
+ 1106 0084 75 24 F0                		and	#-16, r4
+ 1107 0087 C3 E4                   		mov.B	r4, [r14]
+1092:..\..\..\Control/DW_Safety.c **** 					ReadVS_Data.ctrl_active=FALSE;
+ 1108                             		.loc 1 1092 0
+ 1109 0089 FB E2 00 00 00 00       		mov.L	#_ReadVS_Data, r14
+ 1110 008f CC E4                   		mov.B	[r14], r4
+ 1111 0091 7A 64                   		bclr	#6, r4
+ 1112 0093 C3 E4                   		mov.B	r4, [r14]
+ 1113 0095 2E 11                   		bra	.L167
+ 1114                             	.L166:
+1093:..\..\..\Control/DW_Safety.c **** 				}else
+1094:..\..\..\Control/DW_Safety.c **** 				{
+1095:..\..\..\Control/DW_Safety.c **** 					SftPulseWarn.vs_presence_h2o =TRUE ;
+ 1115                             		.loc 1 1095 0
+ 1116 0097 CC E4                   		mov.B	[r14], r4
+1096:..\..\..\Control/DW_Safety.c **** 					FLT_preFaultSet(CODE_LOAD_EV_KO,SUBCODE_LOAD_EV_KO);
+ 1117                             		.loc 1 1096 0
+ 1118 0099 66 21                   		mov	#2, r1
+1095:..\..\..\Control/DW_Safety.c **** 					SftPulseWarn.vs_presence_h2o =TRUE ;
+ 1119                             		.loc 1 1095 0
+ 1120 009b 78 34                   		bset	#3, r4
+ 1121 009d C3 E4                   		mov.B	r4, [r14]
+ 1122                             		.loc 1 1096 0
+ 1123 009f 66 12                   		mov	#1, r2
+ 1124 00a1 05 00 00 00             		bsr	_FLT_preFaultSet
+ 1125                             	.LVL38:
+ 1126 00a5 03                      		.balign 2,3,5
+ 1127                             	.L167:
+1097:..\..\..\Control/DW_Safety.c **** 				}
+1098:..\..\..\Control/DW_Safety.c **** 				ReadVS_Data.control_done=TRUE;
+ 1128                             		.loc 1 1098 0
+ 1129 00a6 FB E2 00 00 00 00       		mov.L	#_ReadVS_Data, r14
+ 1130 00ac CC E4                   		mov.B	[r14], r4
+ 1131 00ae 78 54                   		bset	#5, r4
+ 1132 00b0 2E 62                   		bra	.L196
+ 1133                             	.L164:
+1099:..\..\..\Control/DW_Safety.c **** 			}/* SE NON � VALIDO RIMANE IN ATTESA E NON FA NULLA */
+1100:..\..\..\Control/DW_Safety.c **** 			else
+1101:..\..\..\Control/DW_Safety.c **** 			if (SWTC_IsExpired((SWTC_CountersType)READ_VS_M_TIMER) && (ReadVS_Data.control_done==FALSE) )
+ 1134                             		.loc 1 1101 0
+ 1135 00b2 75 41 2B                		mov	#43, r1
+ 1136 00b5 05 00 00 00             		bsr	_SWTC_IsExpired
+ 1137                             	.LVL39:
+ 1138 00b9 61 01                   		cmp	#0, r1
+ 1139 00bb 20 59                   		beq	.L168
+ 1140                             		.loc 1 1101 0 is_stmt 0 discriminator 1
+ 1141 00bd FB E2 00 00 00 00       		mov.L	#_ReadVS_Data, r14
+ 1142 00c3 DC E4                   		mov.W	[r14], r4
+ 1143 00c5 76 24 00 20             		and	#0x2000, r4
+ 1144 00c9 5F 44                   		movu.W	r4, r4
+ 1145 00cb 61 04                   		cmp	#0, r4
+ 1146 00cd 21 47                   		bne	.L168
+1102:..\..\..\Control/DW_Safety.c **** 			{
+1103:..\..\..\Control/DW_Safety.c **** 				SftPulseWarn.vs_presence_h2o = FALSE; 
+ 1147                             		.loc 1 1103 0 is_stmt 1
+ 1148 00cf FB 42 00 00 00 00       		mov.L	#_SftPulseWarn, r4
+ 1149 00d5 CC 43                   		mov.B	[r4], r3
+ 1150 00d7 7A 33                   		bclr	#3, r3
+ 1151 00d9 C3 43                   		mov.B	r3, [r4]
+1104:..\..\..\Control/DW_Safety.c **** 				LoadEVCheck.status_sensor	=LOAD_EV_PILOT_INIT;
+ 1152                             		.loc 1 1104 0
+ 1153 00db FB 42 00 00 00 00       		mov.L	#_LoadEVCheck, r4
+ 1154 00e1 CC 43                   		mov.B	[r4], r3
+ 1155 00e3 75 23 F0                		and	#-16, r3
+ 1156 00e6 C3 43                   		mov.B	r3, [r4]
+1105:..\..\..\Control/DW_Safety.c **** 				ReadVS_Data.ctrl_active=FALSE;
+ 1157                             		.loc 1 1105 0
+ 1158 00e8 CC E4                   		mov.B	[r14], r4
+ 1159 00ea 7A 64                   		bclr	#6, r4
+ 1160 00ec 2E 26                   		bra	.L196
+ 1161                             	.L163:
+1106:..\..\..\Control/DW_Safety.c **** 			}
+1107:..\..\..\Control/DW_Safety.c **** 		}else
+1108:..\..\..\Control/DW_Safety.c **** 		
+1109:..\..\..\Control/DW_Safety.c **** 		{
+1110:..\..\..\Control/DW_Safety.c **** 			if ( SftPulseWarn.vs_presence_h2o==FALSE)
+ 1162                             		.loc 1 1110 0
+ 1163 00ee FB 42 00 00 00 00       		mov.L	#_SftPulseWarn, r4
+ 1164 00f4 CC 44                   		mov.B	[r4], r4
+ 1165 00f6 64 84                   		and	#8, r4
+ 1166 00f8 5B 44                   		movu.B	r4, r4
+ 1167 00fa 61 04                   		cmp	#0, r4
+ 1168 00fc 21 18                   		bne	.L168
+1111:..\..\..\Control/DW_Safety.c **** 			{/* uP terminato e non ha dato mai un valore valido del sensore */
+1112:..\..\..\Control/DW_Safety.c **** 				ReadVS_Data.ctrl_active=FALSE;
+ 1169                             		.loc 1 1112 0
+ 1170 00fe CC E4                   		mov.B	[r14], r4
+ 1171 0100 7A 64                   		bclr	#6, r4
+1113:..\..\..\Control/DW_Safety.c **** 				ReadVS_Data.control_done=FALSE;	
+ 1172                             		.loc 1 1113 0
+ 1173 0102 7A 54                   		bclr	#5, r4
+ 1174 0104 C3 E4                   		mov.B	r4, [r14]
+1114:..\..\..\Control/DW_Safety.c **** 				LoadEVCheck.status_sensor =LOAD_EV_PILOT_INIT;
+ 1175                             		.loc 1 1114 0
+ 1176 0106 FB E2 00 00 00 00       		mov.L	#_LoadEVCheck, r14
+ 1177 010c CC E4                   		mov.B	[r14], r4
+ 1178 010e 75 24 F0                		and	#-16, r4
+ 1179 0111 03                      		.balign 2,3,1
+ 1180                             	.L196:
+ 1181 0112 C3 E4                   		mov.B	r4, [r14]
+ 1182                             		.balign 2,3,5
+ 1183                             	.L168:
+1115:..\..\..\Control/DW_Safety.c **** 			} 
+1116:..\..\..\Control/DW_Safety.c **** 		}
+1117:..\..\..\Control/DW_Safety.c **** 	
+1118:..\..\..\Control/DW_Safety.c **** 	
+1119:..\..\..\Control/DW_Safety.c **** 		switch ( LoadEVCheck.status_sensor)
+ 1184                             		.loc 1 1119 0
+ 1185 0114 FB E2 00 00 00 00       		mov.L	#_LoadEVCheck, r14
+ 1186 011a CC E4                   		mov.B	[r14], r4
+ 1187 011c EF 43                   		mov.L	r4, r3
+ 1188 011e 64 F3                   		and	#15, r3
+ 1189 0120 61 53                   		cmp	#5, r3
+ 1190 0122 25 05 38 D3 00          		bgtu	.L171
+ 1191 0127 FB E2 00 00 00 00       		mov.L	#.L176, r14
+ 1192 012d FE 63 EE                		mov.L	[r3,r14], r14
+ 1193                             		
+ 1194 0130 7F 0E                   	1:jmp	r14
+ 1195                             		.section	.rodata.SFT_Sensor_EV_Unblock,"a",@progbits
+ 1196                             		.balign 4
+ 1197                             		.balign 4
+ 1198                             	.L176:
+ 1199 0000 00 00 00 00             		.long .L172
+ 1200 0004 00 00 00 00             		.long .L173
+ 1201 0008 00 00 00 00             		.long .L174
+ 1202 000c 00 00 00 00             		.long .L173
+ 1203 0010 00 00 00 00             		.long .L174
+ 1204 0014 00 00 00 00             		.long .L175
+ 1205                             		.section	.text.SFT_Sensor_EV_Unblock
+ 1206                             	.L172:
+1120:..\..\..\Control/DW_Safety.c **** 		{
+1121:..\..\..\Control/DW_Safety.c **** 			case LOAD_EV_PILOT_INIT:
+1122:..\..\..\Control/DW_Safety.c **** 			/*init + config counter per tentativo pilotaggio EV*/
+1123:..\..\..\Control/DW_Safety.c **** 				(void)Set_SmallCounter((SWTC_CountersType)UNBLOCK_4EV_VS_TIMER, (SWTC_PrescalerType)COUNTERS2_T
+ 1207                             		.loc 1 1123 0
+ 1208 0132 FB E2 00 00 00 00       		mov.L	#_LoadFaultData, r14
+ 1209 0138 EC EE                   		mov.L	[r14], r14
+ 1210 013a 75 41 30                		mov	#48, r1
+ 1211 013d CD E3 06                		mov.B	6[r14], r3
+ 1212 0140 66 12                   		mov	#1, r2
+ 1213 0142 75 23 7F                		and	#0x7f, r3
+ 1214 0145 05 00 00 00             		bsr	_Set_SmallCounter
+ 1215                             	.LVL40:
+1124:..\..\..\Control/DW_Safety.c **** 				if (SftPulseWarn.vs_presence_h2o)
+ 1216                             		.loc 1 1124 0
+ 1217 0149 FB E2 00 00 00 00       		mov.L	#_SftPulseWarn, r14
+ 1218 014f CC EE                   		mov.B	[r14], r14
+ 1219 0151 64 8E                   		and	#8, r14
+ 1220 0153 5B EE                   		movu.B	r14, r14
+ 1221 0155 61 0E                   		cmp	#0, r14
+ 1222 0157 3A E5 00                		beq	.L161
+1125:..\..\..\Control/DW_Safety.c **** 				{
+1126:..\..\..\Control/DW_Safety.c **** 					LoadEVCheck.status_sensor = LOAD_EV_PILOT_1;
+ 1223                             		.loc 1 1126 0
+ 1224 015a FB 42 00 00 00 00       		mov.L	#_LoadEVCheck, r4
+ 1225 0160 CC 4E                   		mov.B	[r4], r14
+ 1226 0162 75 2E F0                		and	#-16, r14
+ 1227 0165 65 1E                   		or	#1, r14
+ 1228 0167 38 83 00                		bra	.L198
+ 1229                             	.L173:
+1127:..\..\..\Control/DW_Safety.c **** 				}
+1128:..\..\..\Control/DW_Safety.c **** 
+1129:..\..\..\Control/DW_Safety.c **** 			break;
+1130:..\..\..\Control/DW_Safety.c **** 			/* stati di tentativo di pilotaggio EV per sblocco */
+1131:..\..\..\Control/DW_Safety.c **** 			case LOAD_EV_PILOT_1 :
+1132:..\..\..\Control/DW_Safety.c **** 			case LOAD_EV_PILOT_2 :
+1133:..\..\..\Control/DW_Safety.c **** 		
+1134:..\..\..\Control/DW_Safety.c **** 				(void)SWTC_Run((SWTC_CountersType)UNBLOCK_4EV_VS_TIMER);
+ 1230                             		.loc 1 1134 0
+ 1231 016a 75 41 30                		mov	#48, r1
+ 1232 016d 05 00 00 00             		bsr	_SWTC_Run
+ 1233                             	.LVL41:
+1135:..\..\..\Control/DW_Safety.c **** 
+1136:..\..\..\Control/DW_Safety.c **** 				if ( SWTC_IsExpired((SWTC_CountersType)UNBLOCK_4EV_VS_TIMER))
+ 1234                             		.loc 1 1136 0
+ 1235 0171 75 41 30                		mov	#48, r1
+ 1236 0174 05 00 00 00             		bsr	_SWTC_IsExpired
+ 1237                             	.LVL42:
+ 1238 0178 61 01                   		cmp	#0, r1
+ 1239 017a 20 22                   		beq	.L179
+1137:..\..\..\Control/DW_Safety.c **** 				{/* end counting EV pilot */
+1138:..\..\..\Control/DW_Safety.c **** 
+1139:..\..\..\Control/DW_Safety.c **** 					/* init + config timer per pausa e check EV */
+1140:..\..\..\Control/DW_Safety.c **** 					(void)Set_SmallCounter((SWTC_CountersType)UNBLOCK_4EV_VS_TIMER, (SWTC_PrescalerType)COUNTERS2_
+ 1240                             		.loc 1 1140 0
+ 1241 017c 66 B3                   		mov	#11, r3
+ 1242 017e 75 41 30                		mov	#48, r1
+ 1243 0181 66 12                   		mov	#1, r2
+ 1244 0183 05 00 00 00             		bsr	_Set_SmallCounter
+ 1245                             	.LVL43:
+1141:..\..\..\Control/DW_Safety.c **** 					LoadEVCheck.status_sensor++;      
+ 1246                             		.loc 1 1141 0
+ 1247 0187 FB 42 00 00 00 00       		mov.L	#_LoadEVCheck, r4
+ 1248 018d CC 43                   		mov.B	[r4], r3
+ 1249 018f 71 3E 01                		add	#1, r3, r14
+ 1250 0192 64 FE                   		and	#15, r14
+ 1251 0194 75 23 F0                		and	#-16, r3
+ 1252 0197 57 3E                   		or	r3, r14
+ 1253 0199 C3 4E                   		mov.B	r14, [r4]
+ 1254 019b 03                      		.balign 2,3,5
+ 1255                             	.L179:
+1142:..\..\..\Control/DW_Safety.c **** 				}
+1143:..\..\..\Control/DW_Safety.c **** 
+1144:..\..\..\Control/DW_Safety.c **** 				LoadEVFltReq_New.b= EV_ON;
+ 1256                             		.loc 1 1144 0
+ 1257 019c FB E2 00 00 00 00       		mov.L	#_LoadEVFltReq_New, r14
+ 1258 01a2 F8 E4 01                		mov.B	#1, [r14]
+1145:..\..\..\Control/DW_Safety.c **** 
+1146:..\..\..\Control/DW_Safety.c **** 			break;
+ 1259                             		.loc 1 1146 0
+ 1260 01a5 02                      		rts
+ 1261                             	.L174:
+1147:..\..\..\Control/DW_Safety.c **** 			case LOAD_EV_PILOT_PAUSE_1:
+1148:..\..\..\Control/DW_Safety.c **** 			case LOAD_EV_PILOT_PAUSE_2:
+1149:..\..\..\Control/DW_Safety.c **** 
+1150:..\..\..\Control/DW_Safety.c **** 				(void)SWTC_Run((SWTC_CountersType)UNBLOCK_4EV_VS_TIMER);
+ 1262                             		.loc 1 1150 0
+ 1263 01a6 75 41 30                		mov	#48, r1
+ 1264 01a9 05 00 00 00             		bsr	_SWTC_Run
+ 1265                             	.LVL44:
+1151:..\..\..\Control/DW_Safety.c **** 
+1152:..\..\..\Control/DW_Safety.c **** 				if ( SWTC_IsExpired((SWTC_CountersType)UNBLOCK_4EV_VS_TIMER) )
+ 1266                             		.loc 1 1152 0
+ 1267 01ad 75 41 30                		mov	#48, r1
+ 1268 01b0 05 00 00 00             		bsr	_SWTC_IsExpired
+ 1269                             	.LVL45:
+ 1270 01b4 61 01                   		cmp	#0, r1
+ 1271 01b6 3A 86 00                		beq	.L161
+1153:..\..\..\Control/DW_Safety.c **** 				{/* end conteggio base  */
+1154:..\..\..\Control/DW_Safety.c **** 					(void)Set_SmallCounter((SWTC_CountersType)UNBLOCK_4EV_VS_TIMER, (SWTC_PrescalerType)COUNTERS2_
+ 1272                             		.loc 1 1154 0
+ 1273 01b9 FB E2 00 00 00 00       		mov.L	#_LoadFaultData, r14
+ 1274 01bf EC EE                   		mov.L	[r14], r14
+ 1275 01c1 75 41 30                		mov	#48, r1
+ 1276 01c4 CD E3 06                		mov.B	6[r14], r3
+ 1277 01c7 66 12                   		mov	#1, r2
+ 1278 01c9 75 23 7F                		and	#0x7f, r3
+ 1279 01cc 05 00 00 00             		bsr	_Set_SmallCounter
+ 1280                             	.LVL46:
+1155:..\..\..\Control/DW_Safety.c **** 					(void)SWTC_Stop((SWTC_CountersType)UNBLOCK_4EV_VS_TIMER);
+ 1281                             		.loc 1 1155 0
+ 1282 01d0 75 41 30                		mov	#48, r1
+ 1283 01d3 05 00 00 00             		bsr	_SWTC_Stop
+ 1284                             	.LVL47:
+1156:..\..\..\Control/DW_Safety.c **** 					LoadEVCheck.status_sensor++;  
+ 1285                             		.loc 1 1156 0
+ 1286 01d7 FB 42 00 00 00 00       		mov.L	#_LoadEVCheck, r4
+ 1287 01dd CC 43                   		mov.B	[r4], r3
+ 1288 01df 71 3E 01                		add	#1, r3, r14
+ 1289 01e2 64 FE                   		and	#15, r14
+ 1290 01e4 75 23 F0                		and	#-16, r3
+ 1291 01e7 57 3E                   		or	r3, r14
+ 1292 01e9 03                      		.balign 2,3,1
+ 1293                             	.L198:
+ 1294 01ea C3 4E                   		mov.B	r14, [r4]
+ 1295 01ec 02                      		rts
+ 1296                             	.L175:
+1157:..\..\..\Control/DW_Safety.c **** 				}
+1158:..\..\..\Control/DW_Safety.c **** 		
+1159:..\..\..\Control/DW_Safety.c **** 
+1160:..\..\..\Control/DW_Safety.c **** 			break;
+1161:..\..\..\Control/DW_Safety.c **** 
+1162:..\..\..\Control/DW_Safety.c **** 			case LOAD_EV_PILOT_END:
+1163:..\..\..\Control/DW_Safety.c **** 				FLT_currentFaultSet(CODE_LOAD_EV_KO,SUBCODE_LOAD_EV_KO);
+ 1297                             		.loc 1 1163 0
+ 1298 01ed 66 21                   		mov	#2, r1
+ 1299 01ef 66 12                   		mov	#1, r2
+ 1300 01f1 05 00 00 00             		bsr	_FLT_currentFaultSet
+ 1301                             	.LVL48:
+ 1302 01f5 2E 07                   		bra	.L199
+ 1303                             	.L171:
+1164:..\..\..\Control/DW_Safety.c **** 				(void)SWTC_Stop((SWTC_CountersType)UNBLOCK_4EV_VS_TIMER);
+1165:..\..\..\Control/DW_Safety.c **** 				ReadVS_Data.ctrl_active = FALSE;
+1166:..\..\..\Control/DW_Safety.c **** 		
+1167:..\..\..\Control/DW_Safety.c **** 			break;
+1168:..\..\..\Control/DW_Safety.c **** 
+1169:..\..\..\Control/DW_Safety.c **** 			case LOAD_EV_PILOT_OK:
+1170:..\..\..\Control/DW_Safety.c **** 			default:
+1171:..\..\..\Control/DW_Safety.c **** 				LoadEVCheck.status_sensor=LOAD_EV_PILOT_INIT;
+ 1304                             		.loc 1 1171 0
+ 1305 01f7 75 24 F0                		and	#-16, r4
+ 1306 01fa C3 E4                   		mov.B	r4, [r14]
+ 1307                             		.balign 2,3,2
+ 1308                             	.L199:
+1172:..\..\..\Control/DW_Safety.c **** 				(void)SWTC_Stop((SWTC_CountersType)UNBLOCK_4EV_VS_TIMER);
+ 1309                             		.loc 1 1172 0
+ 1310 01fc 75 41 30                		mov	#48, r1
+ 1311 01ff 05 00 00 00             		bsr	_SWTC_Stop
+ 1312                             	.LVL49:
+1173:..\..\..\Control/DW_Safety.c **** 				ReadVS_Data.ctrl_active = FALSE;
+ 1313                             		.loc 1 1173 0
+ 1314 0203 FB E2 00 00 00 00       		mov.L	#_ReadVS_Data, r14
+ 1315 0209 CC E4                   		mov.B	[r14], r4
+ 1316 020b 7A 64                   		bclr	#6, r4
+ 1317 020d 2E 2D                   		bra	.L197
+ 1318                             	.L162:
+1174:..\..\..\Control/DW_Safety.c **** 			break;
+1175:..\..\..\Control/DW_Safety.c **** 		  
+1176:..\..\..\Control/DW_Safety.c **** 		}
+1177:..\..\..\Control/DW_Safety.c **** 		
+1178:..\..\..\Control/DW_Safety.c **** 	}else
+1179:..\..\..\Control/DW_Safety.c **** 	{
+1180:..\..\..\Control/DW_Safety.c **** 		(void)SWTC_Stop((SWTC_CountersType)UNBLOCK_4EV_VS_TIMER);
+ 1319                             		.loc 1 1180 0
+ 1320 020f 75 41 30                		mov	#48, r1
+ 1321 0212 05 00 00 00             		bsr	_SWTC_Stop
+ 1322                             	.LVL50:
+1181:..\..\..\Control/DW_Safety.c **** 		LoadEVCheck.status_sensor	=LOAD_EV_PILOT_INIT;
+ 1323                             		.loc 1 1181 0
+ 1324 0216 FB E2 00 00 00 00       		mov.L	#_LoadEVCheck, r14
+ 1325 021c CC E4                   		mov.B	[r14], r4
+ 1326 021e 75 24 F0                		and	#-16, r4
+ 1327 0221 C3 E4                   		mov.B	r4, [r14]
+1182:..\..\..\Control/DW_Safety.c **** 		ReadVS_Data.control_done=FALSE;
+ 1328                             		.loc 1 1182 0
+ 1329 0223 FB E2 00 00 00 00       		mov.L	#_ReadVS_Data, r14
+ 1330 0229 CC E4                   		mov.B	[r14], r4
+ 1331 022b 7A 54                   		bclr	#5, r4
+ 1332 022d C3 E4                   		mov.B	r4, [r14]
+1183:..\..\..\Control/DW_Safety.c **** 		SftPulseWarn.vs_presence_h2o= FALSE;	
+ 1333                             		.loc 1 1183 0
+ 1334 022f FB E2 00 00 00 00       		mov.L	#_SftPulseWarn, r14
+ 1335 0235 CC E4                   		mov.B	[r14], r4
+ 1336 0237 7A 34                   		bclr	#3, r4
+ 1337 0239 03                      		.balign 2,3,1
+ 1338                             	.L197:
+ 1339 023a C3 E4                   		mov.B	r4, [r14]
+ 1340                             	.L161:
+ 1341 023c 02                      		rts
+ 1342                             	.LFE10:
+ 1344 023d 03                      		.section	.text.SFT_safetyManagement,"ax",@progbits
+ 1345                             		.global	_SFT_safetyManagement
+ 1347                             	_SFT_safetyManagement:
+ 1348                             	.LFB1:
+ 114:..\..\..\Control/DW_Safety.c **** {
+ 1349                             		.loc 1 114 0
+ 122:..\..\..\Control/DW_Safety.c **** 	if (Res_Pos[LD_WASH_RES_IND] != NO_LD_POS)
+ 1350                             		.loc 1 122 0
+ 1351 0000 FB E2 00 00 00 00       		mov.L	#_Res_Pos, r14
+ 1352 0006 58 EE                   		movu.B	[r14], r14
+ 1353 0008 75 5E FF                		cmp	#0xff, r14
+ 1354 000b 20 27                   		beq	.L202
+ 125:..\..\..\Control/DW_Safety.c **** 		SFT_washResManagement();
+ 1355                             		.loc 1 125 0
+ 1356 000d 05 00 00 00             		bsr	_SFT_washResManagement
+ 1357                             	.LVL51:
+ 128:..\..\..\Control/DW_Safety.c **** 		if( ( HWC_Flags.bit.bldc1 != 0 ) && ( Sft_WashPumpSpeedLow != 0 ) )
+ 1358                             		.loc 1 128 0
+ 1359 0011 FB E2 00 00 00 00       		mov.L	#_HWC_Flags, r14
+ 1360 0017 DC EE                   		mov.W	[r14], r14
+ 1361 0019 64 2E                   		and	#2, r14
+ 1362 001b 5F EE                   		movu.W	r14, r14
+ 1363 001d 61 0E                   		cmp	#0, r14
+ 1364 001f 20 13                   		beq	.L202
+ 128:..\..\..\Control/DW_Safety.c **** 		if( ( HWC_Flags.bit.bldc1 != 0 ) && ( Sft_WashPumpSpeedLow != 0 ) )
+ 1365                             		.loc 1 128 0 is_stmt 0 discriminator 1
+ 1366 0021 FB E2 00 00 00 00       		mov.L	#_Sft_WashPumpSpeedLow, r14
+ 1367 0027 5C EE                   		movu.W	[r14], r14
+ 1368 0029 61 0E                   		cmp	#0, r14
+ 1369 002b 20 07                   		beq	.L202
+ 132:..\..\..\Control/DW_Safety.c **** 			SFT_WashPump_ResSafetymanagement();
+ 1370                             		.loc 1 132 0 is_stmt 1
+ 1371 002d 05 00 00 00             		bsr	_SFT_WashPump_ResSafetymanagement
+ 1372                             	.LVL52:
+ 1373 0031 03                      		.balign 2,3,3
+ 1374                             	.L202:
+ 141:..\..\..\Control/DW_Safety.c ****     SFT_7liter_Mgmt();
+ 1375                             		.loc 1 141 0
+ 1376 0032 05 00 00 00             		bsr	_SFT_7liter_Mgmt
+ 1377                             	.LVL53:
+ 145:..\..\..\Control/DW_Safety.c **** 	SFT_drainPump_Mgmt();
+ 1378                             		.loc 1 145 0
+ 1379 0036 05 00 00 00             		bsr	_SFT_drainPump_Mgmt
+ 1380                             	.LVL54:
+ 148:..\..\..\Control/DW_Safety.c **** 	SFT_LoadEV_Mgmt();
+ 1381                             		.loc 1 148 0
+ 1382 003a 05 00 00 00             		bsr	_SFT_LoadEV_Mgmt
+ 1383                             	.LVL55:
+ 150:..\..\..\Control/DW_Safety.c **** 	if ( RegDev_Pos[LD_SALT_ACTIVATION_REG_IND] != NO_LD_POS)
+ 1384                             		.loc 1 150 0
+ 1385 003e FB E2 00 00 00 00       		mov.L	#_RegDev_Pos, r14
+ 1386 0044 59 EE 03                		movu.B	3[r14], r14
+ 1387 0047 75 5E FF                		cmp	#0xff, r14
+ 1388 004a 20 06                   		beq	.L204
+ 152:..\..\..\Control/DW_Safety.c **** 	  SFT_salt_Activation();
+ 1389                             		.loc 1 152 0
+ 1390 004c 05 00 00 00             		bsr	_SFT_salt_Activation
+ 1391                             	.LVL56:
+ 1392                             		.balign 2,3,5
+ 1393                             	.L204:
+ 156:..\..\..\Control/DW_Safety.c **** 	if (( Fan_Pos[LD_DRY_FAN_IND] != NO_LD_POS) && ( Res_Pos[LD_DRY_RES_IND] != NO_LD_POS) )
+ 1394                             		.loc 1 156 0
+ 1395 0050 FB E2 00 00 00 00       		mov.L	#_Fan_Pos, r14
+ 1396 0056 58 EE                   		movu.B	[r14], r14
+ 1397 0058 75 5E FF                		cmp	#0xff, r14
+ 1398 005b 20 15                   		beq	.L205
+ 156:..\..\..\Control/DW_Safety.c **** 	if (( Fan_Pos[LD_DRY_FAN_IND] != NO_LD_POS) && ( Res_Pos[LD_DRY_RES_IND] != NO_LD_POS) )
+ 1399                             		.loc 1 156 0 is_stmt 0 discriminator 1
+ 1400 005d FB E2 00 00 00 00       		mov.L	#_Res_Pos, r14
+ 1401 0063 59 EE 01                		movu.B	1[r14], r14
+ 1402 0066 75 5E FF                		cmp	#0xff, r14
+ 1403 0069 20 07                   		beq	.L205
+ 158:..\..\..\Control/DW_Safety.c **** 		SFT_dry_sincronizyng();
+ 1404                             		.loc 1 158 0 is_stmt 1
+ 1405 006b 05 00 00 00             		bsr	_SFT_dry_sincronizyng
+ 1406                             	.LVL57:
+ 1407 006f 03                      		.balign 2,3,3
+ 1408                             	.L205:
+ 165:..\..\..\Control/DW_Safety.c **** 	SFT_checkGoodZC();
+ 1409                             		.loc 1 165 0
+ 1410 0070 05 00 00 00             		bsr	_SFT_checkGoodZC
+ 1411                             	.LVL58:
+ 168:..\..\..\Control/DW_Safety.c **** 	if ( HWC_Flags.bit.vs_wash_presence )
+ 1412                             		.loc 1 168 0
+ 1413 0074 FB E2 00 00 00 00       		mov.L	#_HWC_Flags, r14
+ 1414 007a DC EE                   		mov.W	[r14], r14
+ 1415 007c 76 2E 00 08             		and	#0x800, r14
+ 1416 0080 5F EE                   		movu.W	r14, r14
+ 1417 0082 61 0E                   		cmp	#0, r14
+ 1418 0084 20 06                   		beq	.L206
+ 170:..\..\..\Control/DW_Safety.c **** 		SFT_Sensor_EV_Unblock();
+ 1419                             		.loc 1 170 0
+ 1420 0086 05 00 00 00             		bsr	_SFT_Sensor_EV_Unblock
+ 1421                             	.LVL59:
+ 1422                             		.balign 2,3,5
+ 1423                             	.L206:
+ 172:..\..\..\Control/DW_Safety.c **** 	OldCycleLabel = Interpreter_Data[0].completeLabel.s.label; 
+ 1424                             		.loc 1 172 0
+ 1425 008a FB E2 00 00 00 00       		mov.L	#_Interpreter_Data, r14
+ 1426 0090 CC E4                   		mov.B	[r14], r4
+ 1427 0092 FB E2 00 00 00 00       		mov.L	#_OldCycleLabel, r14
+ 1428 0098 64 F4                   		and	#15, r4
+ 1429 009a C3 E4                   		mov.B	r4, [r14]
+ 1430 009c 02                      		rts
+ 1431                             	.LFE1:
+ 1433 009d 03                      		.section	.bss.pressStatus_Old.11629,"aw",@nobits
+ 1436                             	_pressStatus_Old.11629:
+ 1437 0000 00                      		.zero	1
+ 1438                             		.section	.data.speedUnderThreshold.11641,"aw",@progbits
+ 1441                             	_speedUnderThreshold.11641:
+ 1442 0000 01                      		.byte	1
+ 1443                             		.section	.data.giDoorOld.11655,"aw",@progbits
+ 1446                             	_giDoorOld.11655:
+ 1447 0000 04                      		.byte	4
+ 1448                             		.section	.data.oldGoodZC.11666,"aw",@progbits
+ 1449                             		.balign 4
+ 1452                             	_oldGoodZC.11666:
+ 1453 0000 00 00 00 01             		.long	1
+ 1454                             		.section	.bss.filterCounter.11667,"aw",@nobits
+ 1457                             	_filterCounter.11667:
+ 1458 0000 00                      		.zero	1
+ 1459                             		.section	.data.old_Sft_FilteredGoodZC.11668,"aw",@progbits
+ 1462                             	_old_Sft_FilteredGoodZC.11668:
+ 1463 0000 01                      		.byte	1
+ 1630                             	.Letext0:
+ 1631                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 1632                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_SwTimersCounters/SwTimersCounter
+ 1633                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmDefines.h"
+ 1634                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_Types.h"
+ 1635                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmTypes.h"
+ 1636                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_IOManager/OutputManagerExp.h"
+ 1637                             		.file 8 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmGlobal.h"
+ 1638                             		.file 9 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers/IO_driver.h"
+ 1639                             		.file 10 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_Global.h"
+ 1640                             		.file 11 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_FuncLib.h"
+ 1641                             		.file 12 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmFuncLib.h"
+ 1642                             		.file 13 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers\\OCUART/OCUART_drv.h"
+ 1643                             		.file 14 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\Control/DW_Fault.h"
+ 1644                             		.file 15 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_ZeroCrossing/LIB_ZeroCrossing

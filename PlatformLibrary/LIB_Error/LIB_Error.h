@@ -1,0 +1,233 @@
+/*
+ * LIB_Error.h
+ *
+ *  Created on: 18/mar/2013
+ *      Author: marco
+ */
+
+#ifndef LIB_ERROR_H_
+#define LIB_ERROR_H_
+#include "Config.h"
+
+/**
+ * Errors definitions
+ */
+typedef enum {
+
+/* 0x00 */
+PLT_ERROR_NONE,
+PLT_ERROR_ANALOG_1,
+PLT_ERROR_ANALOG_2,
+PLT_ERROR_BACKUP_1,
+PLT_ERROR_BACKUP_2,
+PLT_ERROR_DIG_IN_1,
+PLT_ERROR_DIG_OUT_1,
+PLT_ERROR_FEEDBACK_1,
+PLT_ERROR_FEEDBACK_2,											/** invalid, or unsupported, or wrong pilot Type,*/
+PLT_ERROR_IOM_EXT_OUTMNG_INVALID_PILOTTYPE_ERR,					/** maximum number of external loads has bee reached */
+PLT_ERROR_IOM_EXT_OUTMNG_MAX_NUM_EXTERNAL_LOADS_REACHED_ERR, 	/** output table not found */
+PLT_ERROR_IOM_EXT_OUTMNG_OUTPUT_TABPTR_NOT_FOUND_ERR,			/** param in output table not found*/
+PLT_ERROR_IOM_EXT_OUTMNG_OUTPUT_PARAM_NOT_FOUND_ERR,			/** invalid pilot type offset*/
+PLT_ERROR_IOM_EXT_OUTMNG_INVALID_PILOTTYPE_OFFSET_ERR,			/** invalid pilot type params*/
+PLT_ERROR_IOM_EXT_OUTMNG_INVALID_PILOTTYPE_PARAMS_ERR,			/** too many channels*/
+PLT_ERROR_IOM_EXT_OUTMNG_MAX_CHANNEL_NUM_REACHED_ERR,			/** overflow in command buffer, increase its size*/
+
+/* 0x10 */
+PLT_ERROR_IOM_EXT_OUTMNG_TOOMANY_BYTES_CMDBUFFER_ERR,			/** read ram missing data*/
+PLT_ERROR_IOM_EXT_OUTMNG_MISSINGDATA_SETREADRAM_ERR,
+PLT_ERROR_INPUT_MNGR_1,
+PLT_ERROR_INPUT_MNGR_2,
+PLT_ERROR_INPUT_MNGR_3,
+PLT_ERROR_INPUT_MNGR_4,
+PLT_ERROR_INPUT_MNGR_5,
+PLT_ERROR_INPUT_MNGR_6,
+PLT_ERROR_INPUT_MNGR_7,
+PLT_ERROR_INPUT_MNGR_8,
+PLT_ERROR_OUTPUT_MNGR_1,
+PLT_ERROR_OUTPUT_MNGR_2,
+PLT_ERROR_OUTPUT_MNGR_3,
+PLT_ERROR_OUTPUT_MNGR_5,
+PLT_ERROR_OUTPUT_MNGR_6,
+PLT_ERROR_OUTPUT_MNGR_7,
+
+/* 0x20 */
+PLT_ERROR_OUTPUT_MNGR_8,
+PLT_ERROR_OUTPUT_MNGR_9,
+PLT_ERROR_OUTPUT_MNGR_10,
+PLT_ERROR_OUTPUT_MNGR_11,
+PLT_ERROR_OUTPUT_MNGR_12,
+PLT_ERROR_OUTPUT_MNGR_13,
+PLT_ERROR_OUTPUT_MNGR_14,
+PLT_ERROR_OUTPUT_MNGR_SET_LOAD_FAIL,
+PLT_ERROR_OUTPUT_MNGR_16,
+PLT_ERROR_OUTPUT_MNGR_17,
+PLT_ERROR_OUTPUT_MNGR_LOAD_DATA,
+PLT_ERROR_OUTPUT_MNGR_UNMANAGED_LOAD,
+PLT_ERROR_OUTPUT_MNGR_LOAD_NOT_FOUND,
+PLT_ERROR_ZC_LOADS_1,
+PLT_ERROR_DATACORRUPTION_1,
+PLT_ERROR_LIB_ZC_1,
+
+/* 0x30 */
+PLT_ERROR_HAL_1,
+PLT_ERROR_OS_1,
+PLT_ERROR_CLASSBCHECK_WDTEST,
+PLT_ERROR_CLASSBCHECK_RAM,
+PLT_ERROR_CLASSBCHECK_FLASH,
+PLT_ERROR_CLASSBCHECK_ADC,
+PLT_ERROR_CLASSBCHECK_TASKMONITORING,
+PLT_ERROR_CLASSBCHECK_CLOCK,
+PLT_ERROR_CLASSBCHECK_CPU,
+PLT_ERROR_CONSISTENCY_NOT_SUPPORTED,
+PLT_ERROR_CONSISTENCY_LOAD_DATA,
+PLT_ERROR_DOORLOCK_CONFIG,
+PLT_ERROR_LINKEDLOADS_NO_ROOM,                        /**< not enough space */
+PLT_ERROR_LINKEDLOADS_LOAD_ALREADY_PRESENT,           /**< load already present */
+PLT_ERROR_LINKEDLOADS_LOAD_NOT_FOUND,                 /**< primary load not found */
+PLT_ERROR_LINKEDLOADS_LOAD_NOT_FOUND2,                /**< seondary load not found */
+
+/* 0x40 */
+PLT_ERROR_LINKEDLOADS_LOAD_NOT_INIT,                  /**< load not init */
+PLT_ERROR_LINKEDLOADS_LOAD_SET_LOAD,                  /**< set load error */
+PLT_ERROR_SWTC_INVALID_COUNTER,
+PLT_ERROR_SWTC_INVALID_PS,
+PLT_ERROR_SWAL_INVALID,
+PLT_ERROR_PM_FREQUENCY_FEEDBACKS,
+PM_FREQUENCY_FEEDBACKS_NOINIT_ERR,						/** tried to use too many feedbacks */
+PM_FREQUENCY_FEEDBACKS_TOOMANY_ERR,						/** pin doesn't match any tpm channel*/
+PM_FREQUENCY_FEEDBACKS_CANNOTRETRIEVETPMCH_ERR,			/** invalid interrupt notification */
+PM_FREQUENCY_FEEDBACKS_INVALIDNOTIFICATION_ERR,			/** number of max samples exceeds maximum */
+PM_FREQUENCY_FEEDBACKS_EXCEEDINGMAXSAMPLE_ERR,			/** invalid position was specified */
+PM_FREQUENCY_FEEDBACKS_INVALIDPOSITION_ERR,				/** retrieved an invalid index from specified position */
+PM_FREQUENCY_FEEDBACKS_INVALIDINDEXRETRIEVED_ERR,		/** invalid reference to feedback */
+PM_FREQUENCY_FEEDBACKS_INVALIDFEEDBACKPNT_ERR,
+PLT_ERROR_OCFLS_BAD_PARAMS,
+PLT_ERROR_OCFLS_BAD_PROGRAMMING,
+
+/* 0x50 */
+PLT_ERROR_OCFLS_BAD_ERASE,
+PLT_ERROR_OCWDT_NOSTART,
+PLT_ERROR_OCTPM_INVALID_PARAMS,
+PLT_ERROR_OCTPM_INVALID_INDEX,
+PLT_ERROR_EXCEPT_SVR_INSTR,
+PLT_ERROR_EXCEPT_UNDEF_INSTR,
+PLT_ERROR_EXCEPT_NMI,
+PLT_ERROR_EXCEPT_ILLEGAL,
+PLT_ERROR_IRQMON_TOO_MANY,
+PLT_ERROR_IRQMON_TOO_FEW,
+PLT_ERROR_IRQMON_EXEC_FAIL,
+PLT_ERROR_MR_PARAMS_EMPTY,
+
+} PltError_t;
+
+/**
+ *  error handlers
+ */
+extern void LIB_Error_Warning_Handler( PltError_t err);
+extern void LIB_Error_Fatal_Handler(PltError_t err);
+
+/**
+ * configure error handling of a the module
+ */
+#if defined(CONFIG_ERROR_LIB_ANALOG) && defined(MODULE_BODY_LIB_ANALOG)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_LIB_BACKUP) && defined(MODULE_BODY_LIB_BACKUP)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_LIB_DIGITAL_IO) && defined(MODULE_BODY_LIB_DIGITAL_IO)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_LIB_FEEDBACKS) && defined(MODULE_BODY_LIB_FEEDBACKS)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_LIB_IOMANAGER) && defined(MODULE_BODY_LIB_IOMANAGER)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_LIB_ZCLOADS) && defined(MODULE_BODY_LIB_ZCLOADS)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_LIB_CLASSBVAR) && defined(MODULE_BODY_CLASSBVAR)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_HAL) && defined(MODULE_BODY_HAL)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_OS) && defined(MODULE_BODY_OS_ERROR)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_CLASSBCHECK) && defined(MODULE_BODY_CLASSBCHECK)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_CONSISTENCY) && defined(MODULE_BODY_CONSISTENCY)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_DOORLOCK) && defined(MODULE_BODY_DOORLOCK)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_LINKEDLOADS) && defined(MODULE_BODY_LINKEDLOADS)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_SWTIMERS) && defined(MODULE_BODY_SWTIMERS)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_SWALARMS) && defined(MODULE_BODY_SWALARMS)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_FREQFB) && defined(MODULE_BODY_FREQFB)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_OCFLS) && defined(MODULE_BODY_OCFLS)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_OCWDT) && defined(MODULE_BODY_OCWDT)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+#if defined(CONFIG_ERROR_OCTPM) && defined(MODULE_BODY_OCTPM)
+#define _ENABLE_ERROR_HANDLING_
+#endif
+
+
+/**
+ * expand error handling macro
+ */
+#if defined(_ENABLE_ERROR_HANDLING_)
+	#define PLT_ERROR_WARNING( err ) 	LIB_Error_Warning_Handler(err)
+	#define PLT_ERROR_WARNING_IF(cond, err ) 	if( cond ) { LIB_Error_Warning_Handler(err); }
+	#define PLT_ERROR_FATAL( err )		LIB_Error_Fatal_Handler(err)
+	#define PLT_ERROR_FATAL_IF( cond, err )		if( cond ) { LIB_Error_Fatal_Handler(err); }
+#else
+	#define PLT_ERROR_WARNING( err )
+	#define PLT_ERROR_WARNING_IF( cond, err )
+	#define PLT_ERROR_FATAL( err )
+	#define PLT_ERROR_FATAL_IF( cond, err )
+
+	#if defined(CHECK_LIB_ERROR)
+		#define PLT_ERROR_WARNING( err )			xxxxx
+		#define PLT_ERROR_WARNING_IF( cond, err )	yyyyy
+		#define PLT_ERROR_FATAL( err )				zzzzz
+		#define PLT_ERROR_FATAL_IF( cond, err )		kkkkk
+	#endif
+
+#endif
+
+
+#endif /* LIB_ERROR_H_ */

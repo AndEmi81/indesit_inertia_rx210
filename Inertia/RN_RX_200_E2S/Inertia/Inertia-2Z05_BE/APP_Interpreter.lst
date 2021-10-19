@@ -1,0 +1,2175 @@
+   1                             		.file	"APP_Interpreter.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.ITP_interpreterFlagsInit,"ax",@progbits
+   5                             		.global	_ITP_interpreterFlagsInit
+   7                             	_ITP_interpreterFlagsInit:
+   8                             	.LFB1:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Application_Platform/APP_Interpreter.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /**
+   2:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \defgroup	APP_Interpreter Modulo Interprete
+   3:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \ingroup	ApplPlatform
+   4:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+   5:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** Il modulo processa l'esecuzione dei microprogrammi per i cicli scritti
+   6:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** nel file di setting.
+   7:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** */
+   8:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+   9:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /**
+  10:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** Source file del modulo Interprete
+  11:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  12:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \file		APP_Interpreter.c
+  13:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \ingroup	APP_Interpreter
+  14:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \date		23/07/2008
+  15:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \version	01.00.00
+  16:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \author		Valeria Catani, Simone Costantini, Stefano Ughi, Marco Quintini
+  17:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  18:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \par		History
+  19:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  20:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \par		PCLint
+  21:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			Report 16/01/2009: 0 Errors, 0 Warnings, 0 Info
+  22:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  23:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** */
+  24:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  25:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /*
+  26:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** Copyright (c) 2004-2007, Indesit Company, EDT.
+  27:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** Tutti i diritti sono riservati. All rights reserved.
+  28:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** */
+  29:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  30:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* ******** */
+  31:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* Includes */
+  32:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* ******** */
+  33:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #include "CstmHeaders.h"
+  34:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  35:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* ****************** */
+  36:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* Defines and Macros */
+  37:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* ****************** */
+  38:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /**
+  39:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \name Posizione bit interruzione flusso interprete (per JumpIf o Reset)
+  40:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** */
+  41:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /*@{*/ 
+  42:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #define B_JUMPIF_FLAG		0	/**< Bit interruzione per JumpIf */
+  43:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #define B_RESET_FLAG		1	/**< Bit interruzione per Reset */
+  44:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if ( ITP_JIF_RET_ENABLE == 1 )
+  45:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	#define B_RETURN_FLAG   2	/**< Bit Return JumpIF */
+  46:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* ( ITP_JIF_RET_ENABLE == 1 ) */
+  47:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  48:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_UI_PHASE_TRAKER_ENABLE == 1)
+  49:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* Posizione nel buffer dei dati di backup UI del ciclo corrente*/
+  50:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	#define ITP_CYCLE_ACTIVE_POS		4
+  51:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* (ITP_UI_PHASE_TRAKER_ENABLE == 1) */
+  52:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  53:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /*@}*/ 
+  54:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  55:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* *************************** */
+  56:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* Typedef, Structs and Unions */
+  57:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* *************************** */
+  58:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  59:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* **************************** */
+  60:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* Prototype of local functions */
+  61:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* **************************** */
+  62:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if ( ITP_JIF_RET_ENABLE == 1 )
+  63:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t ITP_saveReturnPoint(uint8_t compartment);
+  64:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t ITP_getReturnPoint(uint8_t compartment);
+  65:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* ( ITP_JIF_RET_ENABLE == 1 ) */
+  66:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  67:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* ****************** */
+  68:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* Exported variables */
+  69:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* ****************** */
+  70:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  71:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* **************** */
+  72:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* Global variables */
+  73:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* **************** */
+  74:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  75:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_UI_PHASE_TRAKER_ENABLE == 1)
+  76:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  77:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	const uint8_t Tab_phase2byte[] = {
+  78:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*0*/ 1,	/* Phase: 0..7 */
+  79:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*1*/ 0,	/* Phase: 8..15 */
+  80:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*2*/ 3,	/* Phase: 16..23 */
+  81:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*3*/ 2,	/* Phase: 24..31 */
+  82:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*4*/ 7,	/* Phase: 32..39 */
+  83:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*5*/ 6,	/* Phase: 40..47 */
+  84:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*6*/ 9,	/* Phase: 48..55 */
+  85:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*7*/ 8,	/* Phase: 56..63 */
+  86:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	};
+  87:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  88:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* (ITP_UI_PHASE_TRAKER_ENABLE == 1) */
+  89:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  90:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /** Struttura per il caricamento dei dati della fase corrente */
+  91:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** static PhaseLoader_Struct TableData[APP_N_COMP];
+  92:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /** Puntatore agli High Statement per il passo corrente */
+  93:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** static uint8_t *pStepHigh[APP_N_COMP];
+  94:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /** Puntatore ai Low Statement per il passo corrente */
+  95:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** static uint8_t *pStepLow[APP_N_COMP];
+  96:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+  97:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_JIF_RET_ENABLE == 1)
+  98:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /** Variabile lunghezza passo corrente */
+  99:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** static uint8_t StepLength[APP_N_COMP];
+ 100:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* (ITP_JIF_RET_ENABLE == 1) */
+ 101:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 102:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /** Buffer delle funzioni che implementano i vari microprogrammi (definito in CstmGlobal.c)*/
+ 103:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** extern const MICROPROG Microprog_array[N_MAX_MICROPROG];
+ 104:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 105:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* ***************** */
+ 106:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* Exported function */
+ 107:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* ***************** */
+ 108:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 109:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /**
+ 110:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** E' il cuore dell'applicazione: gestisce il flusso e l'esecuzione dei microprogrammi.
+ 111:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 112:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \param [in]		compartment e' il vano di cui si esegue l'interprete ( se MULTI_COMPARTMENT_APPL == 1 
+ 113:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \attention		Interpreter_Data (global, struttura con i dati sullo stato
+ 114:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				corrente dell'interprete) e' usata come input/output
+ 115:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 116:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \attention		TableData (global, struttura per il caricamento dei dati della
+ 117:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				fase corrente) e' usata come input/output
+ 118:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \attention		pStepHigh (global, puntatore agli High Statement per il passo
+ 119:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				corrente) e' usata come input/output
+ 120:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \attention		pStepLow (global, puntatore ai Low Statement per il passo
+ 121:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				corrente) e' usata come input/output
+ 122:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \attention		Microprog_array (global, buffer delle funzioni che implementano
+ 123:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				i vari microprogrammi) e' usata come input
+ 124:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \attention		Table_JumpIf (global, buffer tabelle destinazione Jump If per i
+ 125:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				diversi vani) e' usata come input
+ 126:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 127:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \return			un codice che specifica lo stato di esecuzione del passo/fase/ciclo o
+ 128:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				eventualmente l'errore incontrato
+ 129:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 130:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \warning		none		
+ 131:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 132:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \version		1.1.0
+ 133:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \date			06/03/2008
+ 134:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \author			Valeria Catani - Marco Quintini
+ 135:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** */
+ 136:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 137:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /*lint -save -e946 */ /* Suppress messages about operation on pointers for ITP_programFlowInterpret
+ 138:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 139:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (MULTI_COMPARTMENT_APPL == 1)	
+ 140:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****   uint8_t ITP_programFlowInterpreter(uint8_t compartment)
+ 141:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #else
+ 142:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****   uint8_t ITP_programFlowInterpreter(void)
+ 143:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* (MULTI_COMPARTMENT_APPL == 1) */
+ 144:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** {
+ 145:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t phLoader_Result;
+ 146:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t *pTempHighStat, *pTempLowStat;
+ 147:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t *pEndPhaseHighStat;
+ 148:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t T_Flag, phaseFlags, newStep;
+ 149:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t opCode, completeOpcode;
+ 150:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t resultStm = S_FALSE;
+ 151:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 152:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (MULTI_COMPARTMENT_APPL == 0)
+ 153:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****   uint8_t compartment = 0;
+ 154:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* (MULTI_COMPARTMENT_APPL == 0) */  	
+ 155:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 156:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_JIF_PHASE_ENABLE == 1)
+ 157:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****   uint8_t i;
+ 158:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****   bool_t jumpAlreadyIn;
+ 159:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****   JumpIfPhase_Struct *pCompJmpPhase = &JmpPhase[compartment];
+ 160:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif  /* (ITP_JIF_PHASE_ENABLE == 1) */
+ 161:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 162:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** PhaseLoader_Struct *pCompTableData = &TableData[compartment];
+ 163:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** Interpreter_Struct *pCompItpData = &Interpreter_Data[compartment];
+ 164:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t **ppCompStepHigh = &pStepHigh[compartment];
+ 165:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t **ppCompStepLow = &pStepLow[compartment];
+ 166:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 167:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_JIF_RET_ENABLE == 1) 
+ 168:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** RetPoint_Struct *pCompRetPoint = &ReturnPoint[compartment];
+ 169:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* ITP_JIF_RET_ENABLE == 1 */
+ 170:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 171:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/* 
+ 172:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	---------------------------------------------------------------
+ 173:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		Caricamento dei dati della fase indicata dal Supervisor
+ 174:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	---------------------------------------------------------------
+ 175:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	 */
+ 176:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*lint -save -e912 */
+ 177:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if( pCompItpData->phaseDataInitialized == 0)
+ 178:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*lint -restore */
+ 179:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{ 
+ 180:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 181:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_JIF_PHASE_ENABLE == 1)
+ 182:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****     	
+ 183:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/* Gestione JumpIF valido per fase in init */    	
+ 184:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( pCompItpData->jumpIF_phase_ctrl == 0 )
+ 185:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{/*Reset condizioni JumpIF valide per fase*/ 
+ 186:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			for( i=0; i<MAX_NUM_JIF_PHASE; i++ )
+ 187:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			{	
+ 188:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****   				pCompJmpPhase->statements[i][0] = (0xFF - UP_JUMPIF);	
+ 189:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				pCompJmpPhase->statements[i][1] = 0xFF;			/* High Statement a 0xFF not possible !! */		
+ 190:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			}
+ 191:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			pCompJmpPhase->index = 0; 		 	
+ 192:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 193:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****     	
+ 194:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****     	pCompItpData->jumpIF_phase_ctrl = 0;
+ 195:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****     	
+ 196:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /*INT_JIF_PHASE_ENABLE	*/
+ 197:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 198:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (MULTI_COMPARTMENT_APPL == 1)	
+ 199:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		phLoader_Result = LDR_phaseLoader(compartment, pCompItpData->cycle, pCompItpData->phase, pCompItp
+ 200:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #else
+ 201:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****     phLoader_Result = LDR_phaseLoader(pCompItpData->cycle, pCompItpData->phase, pCompItpData->mSett
+ 202:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* (MULTI_COMPARTMENT_APPL == 1) */    
+ 203:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 204:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( phLoader_Result != S_OK )
+ 205:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{
+ 206:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #ifdef _ITP_CHECKERRORS_	
+ 207:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			DBG_CheckErr(phLoader_Result);
+ 208:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* _ITP_CHECKERRORS_ */
+ 209:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 210:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			return ITP_ERR_PHASE_LOADER;
+ 211:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 212:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		
+ 213:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/* Inizializzazione puntatori del passo corrente (con puntatori iniziali fase) */
+ 214:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*ppCompStepHigh = pCompTableData->pHiStat;
+ 215:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*ppCompStepLow = pCompTableData->pLoStat;
+ 216:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		
+ 217:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if(pCompItpData->first_statement < pCompTableData->nPhaseStatements)
+ 218:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{
+ 219:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			/*
+ 220:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			Statement iniziale del passo in range rispetto al numero di statement
+ 221:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			previsti per la fase corrente, i puntatori al passo vengono allineati
+ 222:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			allo statement iniziale dello stesso.
+ 223:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			*/
+ 224:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		 	*ppCompStepHigh += pCompItpData->first_statement;
+ 225:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		 	*ppCompStepLow += pCompItpData->first_statement;
+ 226:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 227:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		else
+ 228:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{
+ 229:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			/* Errore: statement iniziale del passo out of range */
+ 230:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #ifdef _ITP_CHECKERRORS_	
+ 231:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			DBG_CheckErr(ITP_ERR_PH_STAT_OUT_OF_RANGE);
+ 232:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* _ITP_CHECKERRORS_ */
+ 233:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 234:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			return ITP_ERR_PH_STAT_OUT_OF_RANGE;
+ 235:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 236:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 237:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_UI_PHASE_TRAKER_ENABLE == 1)
+ 238:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* attualmente solo per applicazioni mono-vano*/
+ 239:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	
+ 240:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		ITP_syncUICyclePos(compartment); /* comune */
+ 241:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			
+ 242:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		ITP_phaseTrackerUI(); /* custom*/
+ 243:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		
+ 244:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif		
+ 245:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		
+ 246:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->phaseDataInitialized = 1;
+ 247:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 248:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/* End caricamento dati fase */
+ 249:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 250:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*
+ 251:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	Callback per funzioni specifiche dell'applicazione da eseguire
+ 252:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	prima di processare il passo
+ 253:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	*/
+ 254:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	ITP_preStepInit();
+ 255:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	 
+ 256:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*
+ 257:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	I puntatori allo statement corrente vengono inizializzati allo statement
+ 258:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	iniziale del passo corrente
+ 259:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	*/
+ 260:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pTempHighStat = *ppCompStepHigh;
+ 261:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pTempLowStat = *ppCompStepLow;
+ 262:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 263:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*
+ 264:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	Di default è sempre abilitato l'avanzamento di passo (newStep = TRUE)
+ 265:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****    	solo un microprogramma con N a '1' e ritorno FALSE può bloccare tale avanzamento
+ 266:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****    	*/ 
+ 267:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	newStep = TRUE;
+ 268:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	phaseFlags = 0;
+ 269:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 270:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/* Get T Flag per il passo corrente */	
+ 271:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	T_Flag = ( *pTempHighStat & T_MASK ); 
+ 272:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 273:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/* Viene calcolato il puntatore all'ultimo statement della fase */
+ 274:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pEndPhaseHighStat = pCompTableData->pHiStat + (pCompTableData->nPhaseStatements - 1);
+ 275:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 276:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_JIF_RET_ENABLE == 1) 
+ 277:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/* Inizializzazione variabile lunghezza passo corrente */	
+ 278:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	StepLength[compartment] = 0;
+ 279:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* (ITP_JIF_RET_ENABLE == 1) */  
+ 280:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 281:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/* 
+ 282:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	----------------------------------------------------------------------
+ 283:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		Esecuzione del passo corrente: microprogrammi con stesso T Flag
+ 284:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	----------------------------------------------------------------------
+ 285:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	*/
+ 286:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	while( ( pTempHighStat <= pEndPhaseHighStat ) && ( ( ( *pTempHighStat ) & T_MASK ) == T_Flag ) )
+ 287:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 288:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 289:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		opCode = OPCODE(*pTempHighStat);
+ 290:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		completeOpcode = COMPLETE_OPCODE(*pTempHighStat);	/* Opcode + Flags F0-F1 */
+ 291:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 292:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/*lint -save -e912 */
+ 293:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if ( opCode < SIZE(Microprog_array) )
+ 294:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/*lint -restore */
+ 295:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{
+ 296:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_JIF_PHASE_ENABLE ==1)
+ 297:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 298:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			if ( completeOpcode == UP_JUMPIF_PHASE )
+ 299:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			{/*JumpIF valido per fase */
+ 300:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			
+ 301:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				if ( pCompItpData->stepInitialized == 0 )
+ 302:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				{/*Init uP del passo : la prima volta che incontro il uP vengono sistemate le strutture dati*/
+ 303:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				
+ 304:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 					if( pCompJmpPhase->index < MAX_NUM_JIF_PHASE )
+ 305:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 					{
+ 306:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 						jumpAlreadyIn = FALSE;
+ 307:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 						/* Controllo che il Jump If non sia già presente */
+ 308:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 						for( i=0; i < pCompJmpPhase->index; i++ )
+ 309:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 						{
+ 310:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 							if( pCompJmpPhase->statements[i][1] == *pTempLowStat )
+ 311:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 							{
+ 312:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 								jumpAlreadyIn = TRUE;	
+ 313:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 							}
+ 314:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 						
+ 315:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 						}
+ 316:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 						if( jumpAlreadyIn == FALSE )
+ 317:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 						{/*Nuovo JumpIF : Salvo HighStatment e LowStatment */
+ 318:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 							pCompJmpPhase->statements[pCompJmpPhase->index][0] = *pTempHighStat;	 
+ 319:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 							pCompJmpPhase->statements[pCompJmpPhase->index][1] = *pTempLowStat;
+ 320:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 							pCompJmpPhase->index ++;
+ 321:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 						}
+ 322:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 					}
+ 323:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				}
+ 324:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			}
+ 325:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			else if ( completeOpcode == UP_JUMPIF_PHASE_RESET )
+ 326:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			{/*Reset JumpIF valido per fase - prima volta che lo incontro elimino le strutture dati*/
+ 327:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			
+ 328:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				if (pCompItpData->stepInitialized == 0)
+ 329:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				{/*Init uP del passo : la prima volta che incontro il uP vengono sistemate le strutture dati*/
+ 330:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				
+ 331:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 					if( pCompJmpPhase->index != 0 )
+ 332:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 					{/*un Jump IF è presente nell'array*/
+ 333:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 						pCompJmpPhase->index --;
+ 334:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 						pCompJmpPhase->statements[pCompJmpPhase->index][0] = (0xFF - UP_JUMPIF);	
+ 335:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 						pCompJmpPhase->statements[pCompJmpPhase->index][1] = 0xFF;
+ 336:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 					}
+ 337:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				}	
+ 338:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			}
+ 339:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			else
+ 340:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			{
+ 341:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* ITP_JIF_PHASE_ENABLE == 1	*/
+ 342:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				
+ 343:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			/* Eseguo nel loop tutti i uP tranne JumpIF e Reset JumpIF valido per fase */	
+ 344:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 345:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			/* Esecuzione uP individuato da pTempHighStat */
+ 346:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (MULTI_COMPARTMENT_APPL == 1)
+ 347:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			resultStm = Microprog_array[opCode](*pTempHighStat, *pTempLowStat, compartment);
+ 348:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #else
+ 349:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			resultStm = Microprog_array[opCode](*pTempHighStat, *pTempLowStat);
+ 350:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* (MULTI_COMPARTMENT_APPL == 1) */
+ 351:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 352:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_JIF_PHASE_ENABLE == 1)
+ 353:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			}		
+ 354:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* ITP_JIF_PHASE_ENABLE == 1*/
+ 355:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			
+ 356:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			/* Gestione uP particolari */
+ 357:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			if( completeOpcode == UP_SETSTATE_RESET )	/* uP RESET */
+ 358:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			{
+ 359:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				/* SetState->Reset -> si esce dall'esecuzione del passo */
+ 360:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				/*
+ 361:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				N.B.A.: resultStm vale sicuramente S_OK perchè UP_SETSTATE_RESET può
+ 362:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				restituire solo questo valore
+ 363:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				*/
+ 364:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				pTempHighStat = pEndPhaseHighStat;	/* sufficiente pEndPhaseHighStat perchè ho ++ al termine del
+ 365:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				SETBIT(phaseFlags, B_RESET_FLAG);
+ 366:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				
+ 367:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				newStep = TRUE;	
+ 368:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			}
+ 369:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			
+ 370:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_JIF_RET_ENABLE == 1)
+ 371:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			else if ( completeOpcode == UP_SETSTATE_RETURN )	 
+ 372:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			{/* RICORDA: IL RETURN DEVE ESSERE INSERITO IN UN PASSO COME UNICO UP!! */
+ 373:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 374:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				/* resultStm = TRUE;	//mi serve solo se non lo processo come uP, ma nell'array c'è */
+ 375:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 376:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				pTempHighStat = pEndPhaseHighStat;
+ 377:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 378:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				SETBIT(phaseFlags, B_RETURN_FLAG);
+ 379:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 380:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				newStep = TRUE;
+ 381:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			}
+ 382:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* (ITP_JIF_RET_ENABLE == 1) */		
+ 383:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	
+ 384:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			else if ( (completeOpcode == UP_JUMPIF_STEP) && (resultStm == S_OK) )	/* uP JUMPIF valido per PA
+ 385:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			{
+ 386:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				/* JumpIf OK -> si esce dall'esecuzione del passo */
+ 387:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				/*
+ 388:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				N.B.A.: se nello stesso passo sono presenti un JumpIf e un SetState->Reset,
+ 389:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				il JumpIf non viene valutato perchè posto (dall'Editor) sempre dopo
+ 390:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				il SetState->Reset.
+ 391:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				*/
+ 392:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				pTempHighStat = pEndPhaseHighStat;	/* sufficiente pEndPhaseHighStat perchè ho ++ al termine del
+ 393:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				SETBIT(phaseFlags, B_JUMPIF_FLAG);
+ 394:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 395:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				newStep = TRUE;		
+ 396:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			}
+ 397:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			else
+ 398:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			{
+ 399:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				/* Nothing to do */
+ 400:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			}
+ 401:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 402:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		else
+ 403:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{
+ 404:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			/*
+ 405:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			Il codice del uP non è tra quelli noti: se il uP ha l'N-flag settato
+ 406:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			non viene abilitato l'avanzamento del passo, ma in generale il
+ 407:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			processamento del passo prosegue
+ 408:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			*/
+ 409:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #ifdef _ITP_CHECKERRORS_			    	
+ 410:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			DBG_CheckErr(ITP_ERR_UNKNOWN_OPCODE);
+ 411:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* _ITP_CHECKERRORS_ */
+ 412:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 413:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			resultStm = S_FALSE;
+ 414:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 415:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 416:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( ( resultStm != S_OK ) && ((( *pTempHighStat ) & N_MASK ) != 0 ) )
+ 417:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{	
+ 418:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			/* uP bloccante (N=1) && resultStm!=S_OK => non abilita avanzamento passo */
+ 419:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			newStep = FALSE;		
+ 420:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 421:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		else
+ 422:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{
+ 423:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			/* newStep rimane TRUE => abilitato il passaggio allo step successivo */
+ 424:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 425:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 426:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pTempHighStat ++;	
+ 427:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pTempLowStat ++;
+ 428:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		
+ 429:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_JIF_RET_ENABLE == 1) 
+ 430:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/* incremento var. lunghezza passo corrente */
+ 431:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		StepLength[compartment]++;
+ 432:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* (ITP_JIF_RET_ENABLE == 1) */		
+ 433:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		
+ 434:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 435:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/* Scansione dei microprogrammi con identico T (passo) effettuata */
+ 436:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 437:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 438:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_JIF_PHASE_ENABLE == 1)
+ 439:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*
+ 440:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	Controlla se ci sono JumpIF validi per fase da processare prioritari rispetto a quelli
+ 441:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	del passo.
+ 442:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	Per ora N flag non viene preso in considerazione.
+ 443:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	*/
+ 444:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 445:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	for( i=0; i<MAX_NUM_JIF_PHASE; i++ )
+ 446:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 447:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( (COMPLETE_OPCODE (pCompJmpPhase->statements[i][0])) == UP_JUMPIF_PHASE )
+ 448:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{/*Esecuzione uP JumpIF con gli statement salvati da JumpIF valido per Fase*/
+ 449:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 450:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (MULTI_COMPARTMENT_APPL == 1) 			
+ 451:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			resultStm = JIF_JumpIf_Exe(pCompJmpPhase->statements[i][0],pCompJmpPhase->statements[i][1],compa
+ 452:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #else
+ 453:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			resultStm = JIF_JumpIf_Exe(pCompJmpPhase->statements[i][0],pCompJmpPhase->statements[i][1]);
+ 454:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* (MULTI_COMPARTMENT_APPL == 1)  */			
+ 455:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 456:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			if ( resultStm == S_OK )
+ 457:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			{/*condizione ok: salto abilitato*/
+ 458:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				pTempHighStat = (pEndPhaseHighStat+1);
+ 459:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 460:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				SETBIT(phaseFlags, B_JUMPIF_FLAG);
+ 461:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 462:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				newStep = TRUE;
+ 463:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			}
+ 464:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}	
+ 465:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	} 
+ 466:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	
+ 467:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* ITP_JIF_PHASE_ENABLE == 1	*/
+ 468:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 469:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_LOADS_MGMT_ENABLE == 1)
+ 470:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*lint -save -e912 */
+ 471:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if ( pCompItpData->stepInitialized == FALSE )
+ 472:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*lint -restore */
+ 473:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{/* continuità dei carichi nella prima iterazione del passo rispetto al passo precedente (new = ol
+ 474:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 475:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->loads_mgmt_activation = TRUE;	
+ 476:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (MULTI_COMPARTMENT_APPL == 1) 		    
+ 477:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		ITP_loadsMgmt(compartment);		
+ 478:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #else
+ 479:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		ITP_loadsMgmt();	
+ 480:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif
+ 481:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 482:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* (ITP_LOADS_MGMT_ENABLE == 1) */	
+ 483:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 484:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/* Inizializzazione eseguita per tutti i uProgrammi del passo corrente	*/
+ 485:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pCompItpData->optionalStepInitialized = 1;
+ 486:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 487:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if( newStep == FALSE )
+ 488:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 489:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/* Il passo non è terminato */
+ 490:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->stepInitialized = 1;	
+ 491:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 492:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return SAME_STEP;    
+ 493:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 494:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 495:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/* Il passo è terminato (newStep = TRUE => abilitazione a processare nuovo passo) */
+ 496:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 497:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*
+ 498:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	Si forza la richiesta di inizializzazione dei uProgrammi del nuovo passo.
+ 499:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	Non serve azzerare anche optionalStepInitialized, se un uProgramma processa
+ 500:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	optionalStepInitialized processa anche stepInitialized (non è vero il viceversa).
+ 501:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	*/	
+ 502:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pCompItpData->stepInitialized = 0;
+ 503:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	
+ 504:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/* Callback per inizializzazione variabili nel passaggio ad un nuovo step */
+ 505:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	ITP_newStepInit();
+ 506:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	
+ 507:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if( pTempHighStat <= pEndPhaseHighStat )
+ 508:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 509:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/* La Fase corrente NON è stata processata completamente */
+ 510:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 511:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/* Avanzamento al nuovo passo */
+ 512:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/* Aggiornamento puntatori al passo (HighStat, LowStat) */
+ 513:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*ppCompStepHigh = pTempHighStat;
+ 514:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*ppCompStepLow = pTempLowStat; 
+ 515:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		
+ 516:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/* Aggiornamento indice statement iniziale del passo */
+ 517:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->first_statement = (uint8_t)(*ppCompStepHigh - pCompTableData->pHiStat);
+ 518:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 519:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return END_STEP;
+ 520:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 521:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 522:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/*
+ 523:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	La Fase corrente è stata processata completamente: conclusione naturale,
+ 524:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	o per JumpIF o per Reset.
+ 525:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	*/
+ 526:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 527:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if( TESTBIT(phaseFlags, B_RESET_FLAG) )
+ 528:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 529:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/*
+ 530:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		Sarebbe superfluo, phaseFlags è locale e non viene più usata.
+ 531:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		Infatti il compilatore ottimizza eliminandola.
+ 532:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*/
+ 533:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		CLRBIT(phaseFlags, B_RESET_FLAG);
+ 534:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		
+ 535:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/*
+ 536:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		Il ciclo termina forzatamente.
+ 537:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		N.B.A.: questo codice di ritorno deve essere necessariamente processato dalla
+ 538:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		funzione che chiama ITP_programFlowInterpreter, perchè va stabilito il
+ 539:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		nuovo ciclo da eseguire (non può essere l'Interprete a farlo): in quel
+ 540:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		punto va anche opportunamente reimpostata la fase (non necessariamente
+ 541:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		azzerata), e di conseguenza va azzerato phaseDataInitialized.
+ 542:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		Per questo phaseDataInitialized non viene esplicitamente azzerato in questo punto.
+ 543:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*/
+ 544:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return END_CYCLE_RESET;	
+ 545:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 546:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 547:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/* Gestione fase conclusa per Jump IF */
+ 548:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 549:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if (TESTBIT(phaseFlags, B_JUMPIF_FLAG))
+ 550:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 551:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_JIF_RET_ENABLE == 1)
+ 552:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 553:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( Table_JumpIf[compartment].ret == TRUE )
+ 554:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{/* Processato un JumpIF con ritorno */
+ 555:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		
+ 556:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			Table_JumpIf[compartment].ret = FALSE;	/*resetto la variabile (VEDI SE SPOSTARE IL RESET NEL UP)
+ 557:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 558:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			if( ( Table_JumpIf[compartment].cycle == pCompItpData->cycle) && ( Table_JumpIf[compartment].pha
+ 559:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			{/* è stato richiesto un JSR allo stesso ciclo/fase: non ammesso! */
+ 560:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 561:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				return ITP_ERR_WRONG_COMMAND;	
+ 562:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			}
+ 563:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			
+ 564:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			if ( ITP_saveReturnPoint(compartment)!= S_OK )
+ 565:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			{/* Salvataggio punto di ritorno nella var Jsr */
+ 566:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 567:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				return ITP_ERR_WRONG_COMMAND;
+ 568:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			}
+ 569:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 570:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if ( ITP_JIF_PHASE_ENABLE == 1)
+ 571:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			
+ 572:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			JmpPhase_Return[compartment] = JmpPhase[compartment];
+ 573:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 					
+ 574:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* ITP_JIF_PHASE_ENABLE == 1 */
+ 575:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 576:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 577:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* ITP_JIF_RET_ENABLE == 1 */
+ 578:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 579:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if ( ITP_JIF_PHASE_ENABLE == 1)
+ 580:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 581:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( (Table_JumpIf[compartment].cycle == pCompItpData->cycle ) && (Table_JumpIf[compartment].phase
+ 582:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{/* se, con un JumpIF valido per passo, salto ad un passo interno al ciclo-fase corrente,
+ 583:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			non devo resettare JumpIF valido per fase eventualmente presente, 
+ 584:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			nel momento dell'inizializzazione del passo di destinazione */
+ 585:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 586:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			pCompItpData->jumpIF_phase_ctrl = 1;
+ 587:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 588:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 589:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* ITP_JIF_PHASE_ENABLE == 1 */		
+ 590:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 591:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #ifdef CONFIG_PM_POWER_PROFILE_SUPPORT
+ 592:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****         /* Backup poichè nel caso in cui si deve attivare il Timeout tra le fasi e riportarsi alla
+ 593:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****            "fase precedente" saranno questi i valori corretti da caricare */
+ 594:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****         bkp_CompItpDataCycle = Interpreter_Data[0].cycle;
+ 595:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****         bkp_CompItpDataPhase = Interpreter_Data[0].phase;
+ 596:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****         bkp_CompItpDataPhase = Interpreter_Data[0].mSetting;
+ 597:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****         bkp_CompItpDataFirstStatement = Interpreter_Data[0].first_statement;
+ 598:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* CONFIG_PM_POWER_PROFILE_SUPPORT */
+ 599:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	
+ 600:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/*
+ 601:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		Fase conclusa per JumpIF
+ 602:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		Aggiornamento indici di Ciclo/Fase/Passo in base alle indic. del up Jump If
+ 603:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*/
+ 604:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->cycle = Table_JumpIf[compartment].cycle;
+ 605:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->phase = Table_JumpIf[compartment].phase;
+ 606:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->first_statement = Table_JumpIf[compartment].first_statement;
+ 607:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 608:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/*
+ 609:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		Viene richiesto comunque di ricaricare i dati della fase, anche se nel
+ 610:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		caso di salto ad un altro passo della stessa ciclo+fase basterebbe
+ 611:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		aggiornare first_statement.
+ 612:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*/	
+ 613:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->phaseDataInitialized = 0;
+ 614:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 615:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/*
+ 616:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		Sarebbe superfluo, phaseFlags è locale e non viene più usata. 
+ 617:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		Infatti il compilatore ottimizza eliminandola.
+ 618:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*/
+ 619:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		CLRBIT(phaseFlags, B_JUMPIF_FLAG);
+ 620:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 621:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/* 
+ 622:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		E' utile ritornare un codice diverso dal semplice END_PHASE, in generale 
+ 623:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		il Supervisor potrebbe aver bisogno di distinguere questa sistuazione (ad esempio
+ 624:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		nella gestione delle fasi dei cicli di PROGRAMMING, END, ecc, per le applicazioni
+ 625:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		in cui sono presenti)
+ 626:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*/
+ 627:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****   		return PROGRAM_FLOW_BREAK;
+ 628:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 629:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/* END gestione fase conclusa per Jump IF */
+ 630:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 631:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if ( ITP_JIF_RET_ENABLE == 1 )
+ 632:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 633:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/* Gestione fase conclusa con RETURN */
+ 634:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 635:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if ( TESTBIT(phaseFlags, B_RETURN_FLAG) )
+ 636:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 637:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if ( ITP_getReturnPoint(compartment)!= S_OK )
+ 638:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{/* Recupero punto di ritorno nella var ReturnPoint */
+ 639:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 640:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			return ITP_ERR_WRONG_COMMAND;		
+ 641:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 642:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		
+ 643:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( ( pCompRetPoint->cycle == pCompItpData->cycle ) && ( pCompRetPoint->phase == pCompItpData->ph
+ 644:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{/* Non ammesso Return allo stesso ciclo-fase */
+ 645:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 646:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			return ITP_ERR_WRONG_COMMAND;
+ 647:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 648:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 649:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if (pCompRetPoint->cycle == RETURN_END_CYCLE)
+ 650:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{/* Return point dopo ultima fase: vado in END */
+ 651:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 652:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			CLRBIT(phaseFlags, B_RETURN_FLAG);
+ 653:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 654:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			return END_CYCLE;
+ 655:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 656:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 657:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/*Aggiornamento indici di Ciclo/Fase/Passo in base a quanto salvato in Return Point*/
+ 658:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->cycle = pCompRetPoint->cycle;
+ 659:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->phase = pCompRetPoint->phase;
+ 660:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->first_statement = pCompRetPoint->first_statement;
+ 661:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		
+ 662:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->phaseDataInitialized = 0;	/* ritorno nell'inizializzazione ciclo-fase
+ 663:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 													per richiamare il PhaseLoader alla prox iterazione */
+ 664:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 665:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_JIF_PHASE_ENABLE == 1)
+ 666:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		JmpPhase[compartment] = JmpPhase_Return[compartment];  /* ripristino dati relativi al JumpIF vali
+ 667:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 668:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->jumpIF_phase_ctrl = 1;	/* non devo cancellare i dati relativi al JUMPIF 
+ 669:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 												valido per fase eventualmente presente */			
+ 670:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* ITP_JIF_PHASE_ENABLE == 1 */
+ 671:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 672:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		CLRBIT(phaseFlags, B_RETURN_FLAG);
+ 673:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 674:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return PROGRAM_FLOW_BREAK;
+ 675:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 676:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/* END Gestione fase conclusa con RETURN */	
+ 677:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 678:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* ITP_JIF_RET_ENABLE == 1 */
+ 679:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	
+ 680:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if (pCompItpData->phase >= (pCompTableData->nCyclePhases - 1) )
+ 681:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 682:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/*
+ 683:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		Il ciclo termina naturalmente.
+ 684:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		Vedi nota a prposito di END_CYCLE_RESET.
+ 685:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*/
+ 686:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return END_CYCLE;
+ 687:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 688:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 689:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/* Avanzamento alla Fase successiva */
+ 690:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pCompItpData->phase ++;
+ 691:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pCompItpData->first_statement = 0;
+ 692:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 693:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pCompItpData->phaseDataInitialized = 0;
+ 694:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 695:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	return END_PHASE;
+ 696:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** }
+ 697:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /*lint -restore */
+ 698:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 699:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 700:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /**
+ 701:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** Viene eseguita quando occorre inizializzare l'interprete. Impone sempre di
+ 702:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** ricaricare la fase. E' possibile indicare in ingresso se l'inizializzazione
+ 703:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** della fase comporti anche la ripartenza dallo statement iniziale o no.
+ 704:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****  
+ 705:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \param [in]		compartment e' il vano in cui viene eseguito l'interprete (solo per ( MULTI_COMPARTMEN
+ 706:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \param [in] 	mode specifica la modalita' di inizializzazione (ITP_FULL_INIT o ITP_PARTIAL_INIT)
+ 707:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \attention		Interpreter_Data (global, struttura con i dati sullo stato
+ 708:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				corrente dell'interprete) e' usata come output
+ 709:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 710:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \return			none
+ 711:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 712:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \warning		ATTENZIONE all'uso di ITP_PARTIAL_INIT se nella deviazione del flusso
+ 713:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				di esecuzione ci puo' essere una sovrapposizione tra dati di uP con
+ 714:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				lo stesso OpCode.!!!!
+ 715:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 716:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \version		1.0.0
+ 717:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \date			30/07/2009
+ 718:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \author			Valeria Catani
+ 719:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** */
+ 720:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if ( MULTI_COMPARTMENT_APPL == 1)
+ 721:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** void ITP_interpreterFlagsInit(uint8_t compartment, uint8_t mode)
+ 722:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #else
+ 723:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** void ITP_interpreterFlagsInit(uint8_t mode)
+ 724:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* MULTI_COMPARTMENT_APPL == 1 */
+ 725:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** {
+  10                             		.loc 1 725 0
+  11                             	.LVL0:
+ 726:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (MULTI_COMPARTMENT_APPL == 0)
+ 727:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t compartment = 0;
+ 728:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* (MULTI_COMPARTMENT_APPL == 0) */  	
+ 729:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** Interpreter_Struct *pCompItpData = &Interpreter_Data[compartment];
+ 730:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 731:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/* Forza il caricamento della fase */
+ 732:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pCompItpData->phaseDataInitialized = 0;
+  12                             		.loc 1 732 0
+  13 0000 FB E2 00 00 00 00       		mov.L	#_Interpreter_Data, r14
+  14 0006 CD E4 04                		mov.B	4[r14], r4
+ 733:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 734:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if( mode == ITP_FULL_INIT )
+  15                             		.loc 1 734 0
+  16 0009 5B 13                   		movu.B	r1, r3
+ 732:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pCompItpData->phaseDataInitialized = 0;
+  17                             		.loc 1 732 0
+  18 000b 7A 04                   		bclr	#0, r4
+  19 000d C7 E4 04                		mov.B	r4, 4[r14]
+  20                             		.loc 1 734 0
+  21 0010 61 03                   		cmp	#0, r3
+  22 0012 21 0B                   		bne	.L2
+ 735:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 736:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/* Per ripartire dal passo 0 */
+ 737:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->first_statement = 0;
+ 738:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/* Forza l'inizializzazione dei uProgrammi: processato da tutti */
+ 739:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->stepInitialized = 0;
+  23                             		.loc 1 739 0
+  24 0014 7A 14                   		bclr	#1, r4
+ 737:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->first_statement = 0;
+  25                             		.loc 1 737 0
+  26 0016 C7 E1 03                		mov.B	r1, 3[r14]
+ 740:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/*
+ 741:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		Non serve azzerare optionalStepInitialized se già stepInitialized = 0.
+ 742:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		Infatti tutti i uProgrammi che processano optionalStepInitialized processano
+ 743:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		anche stepInitialized, mentre non è vero il viceversa.
+ 744:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*/
+ 745:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 746:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_JIF_PHASE_ENABLE == 1)
+ 747:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->jumpIF_phase_ctrl = 0;
+  27                             		.loc 1 747 0
+  28 0019 7A 34                   		bclr	#3, r4
+  29 001b 2E 09                   		bra	.L4
+  30                             	.L2:
+ 748:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* ITP_JIF_PHASE_ENABLE == 1 */
+ 749:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****     }
+ 750:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	else if( mode == ITP_PARTIAL_INIT )
+  31                             		.loc 1 750 0
+  32 001d 61 13                   		cmp	#1, r3
+  33 001f 21 08                   		bne	.L1
+ 751:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 752:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/* Forza l'inizializzazione dei uProgrammi: potrebbe non essere processato da tutti */
+ 753:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	  pCompItpData->optionalStepInitialized = 0;
+  34                             		.loc 1 753 0
+  35 0021 7A 24                   		bclr	#2, r4
+  36 0023 03                      		.balign 2,3,5
+  37                             	.L4:
+  38 0024 C7 E4 04                		mov.B	r4, 4[r14]
+  39                             	.L1:
+  40 0027 02                      		rts
+  41                             	.LFE1:
+  43                             		.section	.text.DummyMP,"ax",@progbits
+  44                             		.global	_DummyMP
+  46                             	_DummyMP:
+  47                             	.LFB2:
+ 754:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 755:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	else
+ 756:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 757:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/* Do nothing */
+ 758:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 759:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 760:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (SST_COOLSTATE_ENABLE == 1)
+ 761:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 762:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	/* stato di OFF */
+ 763:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 764:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	Cool_Status = COOLSTATE_OFF;
+ 765:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 766:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* (SST_COOLSTATE_ENABLE == 1) */
+ 767:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** }
+ 768:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 769:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 770:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /**
+ 771:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** Viene eseguita nel caso in cui l'interprete incontri un microprogramma con
+ 772:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** un codice sconosciuto, dunque normalmente mai.
+ 773:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** In caso contrario significa che il file di setting presenta dei problemi.
+ 774:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 775:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \param [in]		highStatement e' l'High Statement del microprogramma (T flag +
+ 776:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				N flag + modificatori F1-F0 + opcode).
+ 777:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \param [in]		lowStatement e' il Low Statement del microprogramma (indice
+ 778:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				dello spiazzamento della tabella dati associata)
+ 779:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \param [in]		compartment e' il vano in cui viene eseguito il microprogramma (solo per ( MULTI_COMPA
+ 780:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 781:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \return			S_FALSE
+ 782:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 783:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \warning		none		
+ 784:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 785:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \version		1.1.0
+ 786:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \date			08/05/2008
+ 787:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \author			Marco Quintini
+ 788:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** */
+ 789:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /*lint -save -e715 */
+ 790:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (MULTI_COMPARTMENT_APPL == 1)		
+ 791:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t DummyMP( uint8_t highStatement, uint8_t lowStatement, uint8_t compartment)
+ 792:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #else
+ 793:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t DummyMP( uint8_t highStatement, uint8_t lowStatement)
+ 794:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* (MULTI_COMPARTMENT_APPL == 1) */
+ 795:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** {
+  48                             		.loc 1 795 0
+  49                             	.LVL1:
+ 796:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #ifdef _ITP_CHECKERRORS_			    	
+ 797:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	DBG_CheckErr(ITP_ERR_UNKNOWN_OPCODE);
+ 798:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* _ITP_CHECKERRORS_ */
+ 799:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 800:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	return S_FALSE;
+ 801:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** }
+  50                             		.loc 1 801 0
+  51 0000 66 11                   		mov.L	#1, r1
+  52                             	.LVL2:
+  53 0002 02                      		rts
+  54                             	.LFE2:
+  56                             		.section	.text.ITP_saveReturnPoint,"ax",@progbits
+  57                             		.global	_ITP_saveReturnPoint
+  59                             	_ITP_saveReturnPoint:
+  60                             	.LFB3:
+ 802:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /*lint -restore */
+ 803:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 804:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 805:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* ************** */
+ 806:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* Local Function */
+ 807:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /* ************** */
+ 808:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 809:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if ( ITP_JIF_RET_ENABLE == 1 )
+ 810:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /**
+ 811:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** Questa funzione salva il punto di ritorno (ciclo, fase, passo)
+ 812:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** per un microprogramma JumpIF con ritorno (JSR).
+ 813:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** Viene gestito uno Stack di possibili JSR.
+ 814:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** Si ritornerà al punto salvato incontrando il uP dedicato RETURN
+ 815:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 816:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \param [in]		compartment e' il vano/ cavità che si sta processando 
+ 817:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \(per funzioni mono vano compartment =0)
+ 818:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 819:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \param [out] (global) Jsr[compartment]
+ 820:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 821:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \return		S_OK o S_FALSE in caso di out of range rispetto allo stack dedicato
+ 822:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****  
+ 823:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \version	1.0.0
+ 824:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \date 		30/07/2009
+ 825:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \author	Valeria Catani
+ 826:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** */
+ 827:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t ITP_saveReturnPoint(uint8_t compartment)
+ 828:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** {
+  61                             		.loc 1 828 0
+ 829:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t endPhaseReturn,endCycleReturn;
+ 830:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** JsrStack_Struct *pCompJsr = &Jsr[compartment];
+  62                             		.loc 1 830 0
+  63 0000 5B 11                   		movu.B	r1, r1
+  64 0002 EF 1E                   		mov.L	r1, r14
+  65 0004 63 7E                   		mul	#7, r14
+  66 0006 70 EE 00 00 00 00       		add	#_Jsr, r14
+ 831:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** Interpreter_Struct *pCompItpData = &Interpreter_Data[compartment];
+ 832:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** PhaseLoader_Struct *pCompTableData = &TableData[compartment];
+ 833:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t *pStepLength = &StepLength[compartment];
+ 834:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 835:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	endPhaseReturn = FALSE;
+ 836:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	endCycleReturn = FALSE;
+ 837:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 838:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if( pCompJsr->index < sizeof( pCompJsr->stack ) )
+  67                             		.loc 1 838 0
+  68 000c CD E4 06                		mov.B	6[r14], r4
+  69 000f 5B 43                   		movu.B	r4, r3
+  70 0011 61 53                   		cmp	#5, r3
+  71 0013 25 0A                   		bleu	.L7
+  72 0015 38 9E 00                		bra	.L24
+  73                             	.L11:
+  74                             	.LCFI0:
+ 839:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 840:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/*
+ 841:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		Salva statement iniziale passo successivo per avere immediatamente
+ 842:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		il punto di ritorno
+ 843:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*/
+ 844:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 845:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if ( (pCompItpData->first_statement + *pStepLength) ==  pCompTableData->nPhaseStatements )	/* ver
+ 846:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{/* return point al termine della fase -> punto alla fase successiva */
+ 847:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 848:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			pCompJsr->stack[pCompJsr->index] = 0;
+ 849:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 850:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			endPhaseReturn = TRUE;
+ 851:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 852:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		else
+ 853:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{
+ 854:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			pCompJsr->stack[pCompJsr->index] = ( pCompItpData->first_statement + *pStepLength );	/* verifica
+ 855:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 856:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 857:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompJsr->index ++;
+ 858:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 859:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	else
+ 860:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 861:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return S_FALSE;
+  75                             		.loc 1 861 0
+  76 0018 66 11                   		mov	#1, r1
+  77 001a 38 94 00                		bra	.L8
+  78                             	.L7:
+  79                             	.LCFI1:
+ 831:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** Interpreter_Struct *pCompItpData = &Interpreter_Data[compartment];
+  80                             		.loc 1 831 0
+  81 001d EF 12                   		mov.L	r1, r2
+  82 001f 63 62                   		mul	#6, r2
+ 828:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** {
+  83                             		.loc 1 828 0
+  84 0021 6E 7A                   		pushm	r7-r10
+  85                             	.LCFI2:
+ 831:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** Interpreter_Struct *pCompItpData = &Interpreter_Data[compartment];
+  86                             		.loc 1 831 0
+  87 0023 70 22 00 00 00 00       		add	#_Interpreter_Data, r2
+ 845:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if ( (pCompItpData->first_statement + *pStepLength) ==  pCompTableData->nPhaseStatements )	/* ver
+  88                             		.loc 1 845 0
+  89 0029 FB 72 00 00 00 00       		mov.L	#_StepLength, r7
+ 832:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** PhaseLoader_Struct *pCompTableData = &TableData[compartment];
+  90                             		.loc 1 832 0
+  91 002f EF 1F                   		mov.L	r1, r15
+ 845:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if ( (pCompItpData->first_statement + *pStepLength) ==  pCompTableData->nPhaseStatements )	/* ver
+  92                             		.loc 1 845 0
+  93 0031 88 AD                   		mov.B	3[r2], r5
+  94 0033 FE 41 71                		mov.B	[r1,r7], r1
+ 832:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** PhaseLoader_Struct *pCompTableData = &TableData[compartment];
+  95                             		.loc 1 832 0
+  96 0036 63 CF                   		mul	#12, r15
+ 845:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if ( (pCompItpData->first_statement + *pStepLength) ==  pCompTableData->nPhaseStatements )	/* ver
+  97                             		.loc 1 845 0
+  98 0038 5B 5A                   		movu.B	r5, r10
+  99 003a 5B 17                   		movu.B	r1, r7
+ 832:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** PhaseLoader_Struct *pCompTableData = &TableData[compartment];
+ 100                             		.loc 1 832 0
+ 101 003c 70 FF 00 00 00 00       		add	#_TableData, r15
+ 845:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if ( (pCompItpData->first_statement + *pStepLength) ==  pCompTableData->nPhaseStatements )	/* ver
+ 102                             		.loc 1 845 0
+ 103 0042 4B 7A                   		add	r7, r10
+ 104 0044 45 FA 01                		cmp	1[r15].UB, r10
+ 105 0047 21 0B                   		bne	.L9
+ 848:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			pCompJsr->stack[pCompJsr->index] = 0;
+ 106                             		.loc 1 848 0
+ 107 0049 66 07                   		mov	#0, r7
+ 108 004b FE 03 E7                		mov.B	r7, [r3,r14]
+ 850:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			endPhaseReturn = TRUE;
+ 109                             		.loc 1 850 0
+ 110 004e 66 11                   		mov	#1, r1
+ 111 0050 2E 0A                   		bra	.L10
+ 112                             	.L9:
+ 854:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			pCompJsr->stack[pCompJsr->index] = ( pCompItpData->first_statement + *pStepLength );	/* verifica
+ 113                             		.loc 1 854 0
+ 114 0052 4B 15                   		add	r1, r5
+ 115 0054 FE 03 E5                		mov.B	r5, [r3,r14]
+ 835:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	endPhaseReturn = FALSE;
+ 116                             		.loc 1 835 0
+ 117 0057 66 01                   		mov	#0, r1
+ 118 0059 03                      		.balign 2,3,2
+ 119                             	.L10:
+ 857:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompJsr->index ++;
+ 120                             		.loc 1 857 0
+ 121 005a 71 43 01                		add	#1, r4, r3
+ 122 005d C7 E3 06                		mov.B	r3, 6[r14]
+ 862:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 863:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 864:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if( pCompJsr->index < sizeof( pCompJsr->stack ) )
+ 123                             		.loc 1 864 0
+ 124 0060 5B 33                   		movu.B	r3, r3
+ 125 0062 61 63                   		cmp	#6, r3
+ 126 0064 20 B4                   		beq	.L11
+ 865:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 866:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/* Salva fase di ritorno */
+ 867:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 868:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if (endPhaseReturn == TRUE)
+ 127                             		.loc 1 868 0
+ 128 0066 5B 11                   		movu.B	r1, r1
+ 129 0068 61 11                   		cmp	#1, r1
+ 130 006a 88 A5                   		mov.B	2[r2], r5
+ 131 006c 21 14                   		bne	.L12
+ 869:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{/* return point al termine della fase -> punto alla fase successiva */
+ 870:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			if ( (pCompItpData->phase + 1) == pCompTableData->nCyclePhases )
+ 132                             		.loc 1 870 0
+ 133 006e 5B 57                   		movu.B	r5, r7
+ 134 0070 62 17                   		add	#1, r7
+ 135 0072 44 F7                   		cmp	[r15].UB, r7
+ 136 0074 21 09                   		bne	.L13
+ 871:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			{/* return point al termine del ciclo -> devo andare in END */
+ 872:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 873:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				pCompJsr->stack[pCompJsr->index] = 0;
+ 137                             		.loc 1 873 0
+ 138 0076 66 07                   		mov	#0, r7
+ 139 0078 FE 03 E7                		mov.B	r7, [r3,r14]
+ 140 007b 2E 0B                   		bra	.L14
+ 141                             	.L13:
+ 874:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				endCycleReturn = TRUE;
+ 875:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			}
+ 876:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			else
+ 877:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			{/* posso incrementare la fase */
+ 878:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				pCompJsr->stack[pCompJsr->index] = (pCompItpData->phase + 1);
+ 142                             		.loc 1 878 0
+ 143 007d 62 15                   		add	#1, r5
+ 144 007f 03                      		.balign 2,3,5
+ 145                             	.L12:
+ 879:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			}
+ 880:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 881:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		else
+ 882:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{
+ 883:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			pCompJsr->stack[pCompJsr->index] = pCompItpData->phase;
+ 146                             		.loc 1 883 0
+ 147 0080 FE 03 E5                		mov.B	r5, [r3,r14]
+ 836:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	endCycleReturn = FALSE;
+ 148                             		.loc 1 836 0
+ 149 0083 66 01                   		mov	#0, r1
+ 150 0085 03                      		.balign 2,3,2
+ 151                             	.L14:
+ 884:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 885:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 886:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompJsr->index ++;
+ 152                             		.loc 1 886 0
+ 153 0086 71 43 02                		add	#2, r4, r3
+ 154 0089 C7 E3 06                		mov.B	r3, 6[r14]
+ 887:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}					   
+ 888:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	else
+ 889:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 890:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return S_FALSE;
+ 891:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 892:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 893:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if( pCompJsr->index < sizeof( pCompJsr->stack ) )
+ 155                             		.loc 1 893 0
+ 156 008c 5B 33                   		movu.B	r3, r3
+ 157 008e 61 63                   		cmp	#6, r3
+ 158 0090 20 88                   		beq	.L11
+ 894:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 895:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		/* Salva ciclo di ritorno */
+ 896:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 897:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if (endCycleReturn == TRUE)
+ 159                             		.loc 1 897 0
+ 160 0092 5B 11                   		movu.B	r1, r1
+ 161 0094 61 11                   		cmp	#1, r1
+ 162 0096 21 0A                   		bne	.L15
+ 898:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{
+ 899:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			pCompJsr->stack[pCompJsr->index] = RETURN_END_CYCLE;
+ 163                             		.loc 1 899 0
+ 164 0098 FB 76 FF                		mov	#-1, r7
+ 165 009b FE 03 E7                		mov.B	r7, [r3,r14]
+ 166 009e 2E 08                   		bra	.L16
+ 167                             	.L15:
+ 900:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 901:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		else
+ 902:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		{
+ 903:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			pCompJsr->stack[pCompJsr->index] = pCompItpData->cycle;
+ 168                             		.loc 1 903 0
+ 169 00a0 88 2A                   		mov.B	1[r2], r2
+ 170 00a2 FE 03 E2                		mov.B	r2, [r3,r14]
+ 171 00a5 03                      		.balign 2,3,1
+ 172                             	.L16:
+ 904:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		}
+ 905:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 906:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompJsr->index ++;
+ 173                             		.loc 1 906 0
+ 174 00a6 62 34                   		add	#3, r4
+ 175 00a8 C7 E4 06                		mov.B	r4, 6[r14]
+ 907:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	    
+ 908:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return S_OK;
+ 176                             		.loc 1 908 0
+ 177 00ab 66 01                   		mov	#0, r1
+ 178 00ad 03                      		.balign 2,3,1
+ 179                             	.L8:
+ 909:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 910:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	else
+ 911:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 912:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return S_FALSE;
+ 913:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 914:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** }
+ 180                             		.loc 1 914 0
+ 181 00ae 64 11                   		and	#1, r1
+ 182 00b0 3F 7A 04                		rtsd	#16, r7-r10
+ 183                             	.L24:
+ 184                             	.LCFI3:
+ 861:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return S_FALSE;
+ 185                             		.loc 1 861 0
+ 186 00b3 66 11                   		mov	#1, r1
+ 187                             		.loc 1 914 0
+ 188 00b5 64 11                   		and	#1, r1
+ 189 00b7 02                      		rts
+ 190                             	.LFE3:
+ 192                             		.section	.text.ITP_getReturnPoint,"ax",@progbits
+ 193                             		.global	_ITP_getReturnPoint
+ 195                             	_ITP_getReturnPoint:
+ 196                             	.LFB4:
+ 915:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 916:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 917:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /**
+ 918:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** Questa funzione restituisce il punto di ritorno (ciclo, fase, passo)
+ 919:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** in corrispondenza del microprogramma RETURN, conseguenza di un JSR.
+ 920:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** Viene gestito uno Stack di possibili JSR.
+ 921:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****  
+ 922:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \param [in]		compartment e' il vano/ cavità che si sta processando 
+ 923:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \(per funzioni mono vano compartment =0)
+ 924:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****  
+ 925:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \param [out] (global) ReturnPoint[compartment]
+ 926:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 927:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \return		S_OK o S_FALSE in caso di out of range rispetto allo stack dedicato
+ 928:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****  
+ 929:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \version    	1.0.0
+ 930:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \date 			30/07/2009
+ 931:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \author			Valeria Catani
+ 932:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** */
+ 933:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t ITP_getReturnPoint(uint8_t compartment)
+ 934:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** {
+ 197                             		.loc 1 934 0
+ 935:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** JsrStack_Struct *pCompJsr = &Jsr[compartment];
+ 198                             		.loc 1 935 0
+ 199 0000 5B 11                   		movu.B	r1, r1
+ 200 0002 EF 1E                   		mov.L	r1, r14
+ 201 0004 63 7E                   		mul	#7, r14
+ 202 0006 70 EE 00 00 00 00       		add	#_Jsr, r14
+ 936:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** RetPoint_Struct *pCompRetPoint = &ReturnPoint[compartment];
+ 937:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 938:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if( pCompJsr->index )
+ 203                             		.loc 1 938 0
+ 204 000c CD E4 06                		mov.B	6[r14], r4
+ 205 000f 5B 43                   		movu.B	r4, r3
+ 206 0011 61 03                   		cmp	#0, r3
+ 207 0013 21 08                   		bne	.L26
+ 208 0015 2E 48                   		bra	.L36
+ 209                             	.L28:
+ 210                             	.LCFI4:
+ 939:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 940:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompJsr->index --;
+ 941:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompRetPoint->cycle = pCompJsr->stack[pCompJsr->index];
+ 942:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 943:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	else
+ 944:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 945:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return S_FALSE;
+ 211                             		.loc 1 945 0
+ 212 0017 66 11                   		mov	#1, r1
+ 213 0019 2E 3F                   		bra	.L27
+ 214                             	.L26:
+ 215                             	.LCFI5:
+ 934:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** {
+ 216                             		.loc 1 934 0
+ 217 001b 7E A7                   		push.l	r7
+ 218                             	.LCFI6:
+ 940:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompJsr->index --;
+ 219                             		.loc 1 940 0
+ 220 001d 71 42 FF                		add	#-1, r4, r2
+ 936:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** RetPoint_Struct *pCompRetPoint = &ReturnPoint[compartment];
+ 221                             		.loc 1 936 0
+ 222 0020 EF 13                   		mov.L	r1, r3
+ 940:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompJsr->index --;
+ 223                             		.loc 1 940 0
+ 224 0022 C7 E2 06                		mov.B	r2, 6[r14]
+ 941:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompRetPoint->cycle = pCompJsr->stack[pCompJsr->index];
+ 225                             		.loc 1 941 0
+ 226 0025 5B 22                   		movu.B	r2, r2
+ 936:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** RetPoint_Struct *pCompRetPoint = &ReturnPoint[compartment];
+ 227                             		.loc 1 936 0
+ 228 0027 63 33                   		mul	#3, r3
+ 941:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompRetPoint->cycle = pCompJsr->stack[pCompJsr->index];
+ 229                             		.loc 1 941 0
+ 230 0029 FE 42 E7                		mov.B	[r2,r14], r7
+ 936:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** RetPoint_Struct *pCompRetPoint = &ReturnPoint[compartment];
+ 231                             		.loc 1 936 0
+ 232 002c 70 33 00 00 00 00       		add	#_ReturnPoint, r3
+ 941:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompRetPoint->cycle = pCompJsr->stack[pCompJsr->index];
+ 233                             		.loc 1 941 0
+ 234 0032 C3 37                   		mov.B	r7, [r3]
+ 946:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 947:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 948:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if( pCompJsr->index )
+ 235                             		.loc 1 948 0
+ 236 0034 61 02                   		cmp	#0, r2
+ 237 0036 20 E1                   		beq	.L28
+ 949:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 950:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompJsr->index --;
+ 238                             		.loc 1 950 0
+ 239 0038 71 42 FE                		add	#-2, r4, r2
+ 240 003b C7 E2 06                		mov.B	r2, 6[r14]
+ 951:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompRetPoint->phase = pCompJsr->stack[pCompJsr->index];
+ 241                             		.loc 1 951 0
+ 242 003e 5B 22                   		movu.B	r2, r2
+ 243 0040 FE 42 E7                		mov.B	[r2,r14], r7
+ 952:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 953:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	else
+ 954:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 955:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return S_FALSE;
+ 956:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}	
+ 957:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 958:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if( pCompJsr->index )
+ 244                             		.loc 1 958 0
+ 245 0043 61 02                   		cmp	#0, r2
+ 951:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompRetPoint->phase = pCompJsr->stack[pCompJsr->index];
+ 246                             		.loc 1 951 0
+ 247 0045 80 3F                   		mov.B	r7, 1[r3]
+ 248                             		.loc 1 958 0
+ 249 0047 20 D0                   		beq	.L28
+ 959:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 960:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompJsr->index --;
+ 250                             		.loc 1 960 0
+ 251 0049 60 34                   		sub	#3, r4
+ 252 004b C7 E4 06                		mov.B	r4, 6[r14]
+ 961:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompRetPoint->first_statement = pCompJsr->stack[pCompJsr->index];
+ 253                             		.loc 1 961 0
+ 254 004e 5B 44                   		movu.B	r4, r4
+ 255 0050 FE 44 E4                		mov.B	[r4,r14], r4
+ 962:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 963:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return S_OK;
+ 256                             		.loc 1 963 0
+ 257 0053 66 01                   		mov	#0, r1
+ 961:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompRetPoint->first_statement = pCompJsr->stack[pCompJsr->index];
+ 258                             		.loc 1 961 0
+ 259 0055 80 B4                   		mov.B	r4, 2[r3]
+ 260 0057 03                      		.balign 2,3,1
+ 261                             	.L27:
+ 964:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 965:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	else
+ 966:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	{
+ 967:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return S_FALSE;
+ 968:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	}
+ 969:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** }
+ 262                             		.loc 1 969 0
+ 263 0058 64 11                   		and	#1, r1
+ 264 005a 3F 77 01                		rtsd	#4, r7-r7
+ 265                             	.L36:
+ 266                             	.LCFI7:
+ 945:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return S_FALSE;
+ 267                             		.loc 1 945 0
+ 268 005d 66 11                   		mov	#1, r1
+ 269                             		.loc 1 969 0
+ 270 005f 64 11                   		and	#1, r1
+ 271 0061 02                      		rts
+ 272                             	.LFE4:
+ 274                             		.section	.text.ITP_syncUICyclePos,"ax",@progbits
+ 275                             		.global	_ITP_syncUICyclePos
+ 277                             	_ITP_syncUICyclePos:
+ 278                             	.LFB5:
+ 970:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #endif /* ( ITP_JIF_RET_ENABLE == 1 ) */
+ 971:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 972:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 973:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** #if (ITP_UI_PHASE_TRAKER_ENABLE == 1)
+ 974:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 975:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /**
+ 976:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** Sincronizza ciclo e fase che vengono passati alla UI
+ 977:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** con quelli dell'Interprete.
+ 978:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 979:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \param [in]		compartment e' il vano/ cavità che si sta processando 
+ 980:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \(per funzioni mono vano compartment =0)
+ 981:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 982:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \param [out] (global) UICycle
+ 983:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \param [out] (global) UIPhase
+ 984:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 985:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \return     	none
+ 986:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 987:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \version    	1.0.0
+ 988:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \date   		24/09/2009
+ 989:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \author			Valeria Catani
+ 990:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** */
+ 991:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** void ITP_syncUICyclePos(uint8_t compartment)
+ 992:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** {
+ 279                             		.loc 1 992 0
+ 280                             	.LVL3:
+ 993:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	UICycle = Interpreter_Data[compartment].cycle;
+ 281                             		.loc 1 993 0
+ 282 0000 5B 11                   		movu.B	r1, r1
+ 283 0002 63 61                   		mul	#6, r1
+ 284                             	.LVL4:
+ 992:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** {
+ 285                             		.loc 1 992 0
+ 286 0004 7E A7                   		push.l	r7
+ 287                             	.LCFI8:
+ 288                             		.loc 1 993 0
+ 289 0006 70 11 00 00 00 00       		add	#_Interpreter_Data, r1
+ 290 000c 88 1F                   		mov.B	1[r1], r7
+ 291 000e FB E2 00 00 00 00       		mov.L	#_UICycle, r14
+ 994:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	UIPhase = Interpreter_Data[compartment].phase;
+ 292                             		.loc 1 994 0
+ 293 0014 88 91                   		mov.B	2[r1], r1
+ 993:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	UICycle = Interpreter_Data[compartment].cycle;
+ 294                             		.loc 1 993 0
+ 295 0016 C3 E7                   		mov.B	r7, [r14]
+ 296                             		.loc 1 994 0
+ 297 0018 FB E2 00 00 00 00       		mov.L	#_UIPhase, r14
+ 298 001e C3 E1                   		mov.B	r1, [r14]
+ 995:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** }
+ 299                             		.loc 1 995 0
+ 300 0020 3F 77 01                		rtsd	#4, r7-r7
+ 301                             	.LFE5:
+ 303                             		.section	.text.ITP_programFlowInterpreter,"ax",@progbits
+ 304                             		.global	_ITP_programFlowInterpreter
+ 306                             	_ITP_programFlowInterpreter:
+ 307                             	.LFB0:
+ 144:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** {
+ 308                             		.loc 1 144 0
+ 309                             	.LVL5:
+ 310 0000 6E 6D                   		pushm	r6-r13
+ 311                             	.LCFI9:
+ 177:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if( pCompItpData->phaseDataInitialized == 0)
+ 312                             		.loc 1 177 0
+ 313 0002 FB 72 00 00 00 00       		mov.L	#_Interpreter_Data, r7
+ 314 0008 CD 7A 04                		mov.B	4[r7], r10
+ 315 000b FD 74 CA 01             		tst	#1, r10
+ 316 000f 3B 83 00                		bne	.L40
+ 184:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( pCompItpData->jumpIF_phase_ctrl == 0 )
+ 317                             		.loc 1 184 0
+ 318 0012 64 8A                   		and	#8, r10
+ 319 0014 21 1A                   		bne	.L41
+ 320                             	.LVL6:
+ 188:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****   				pCompJmpPhase->statements[i][0] = (0xFF - UP_JUMPIF);	
+ 321                             		.loc 1 188 0 discriminator 1
+ 322 0016 FB 72 00 00 00 00       		mov.L	#_JmpPhase, r7
+ 323 001c F8 74 F4                		mov.B	#-12, [r7]
+ 189:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				pCompJmpPhase->statements[i][1] = 0xFF;			/* High Statement a 0xFF not possible !! */		
+ 324                             		.loc 1 189 0 discriminator 1
+ 325 001f F9 74 01 FF             		mov.B	#-1, 1[r7]
+ 326                             	.LVL7:
+ 188:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****   				pCompJmpPhase->statements[i][0] = (0xFF - UP_JUMPIF);	
+ 327                             		.loc 1 188 0 discriminator 1
+ 328 0023 F9 74 02 F4             		mov.B	#-12, 2[r7]
+ 189:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				pCompJmpPhase->statements[i][1] = 0xFF;			/* High Statement a 0xFF not possible !! */		
+ 329                             		.loc 1 189 0 discriminator 1
+ 330 0027 F9 74 03 FF             		mov.B	#-1, 3[r7]
+ 331                             	.LVL8:
+ 191:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			pCompJmpPhase->index = 0; 		 	
+ 332                             		.loc 1 191 0 discriminator 1
+ 333 002b C7 7A 04                		mov.B	r10, 4[r7]
+ 334                             	.LVL9:
+ 335                             		.balign 2,3,5
+ 336                             	.L41:
+ 194:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****     	pCompItpData->jumpIF_phase_ctrl = 0;
+ 337                             		.loc 1 194 0
+ 338 002e FB 72 00 00 00 00       		mov.L	#_Interpreter_Data, r7
+ 339 0034 CD 7A 04                		mov.B	4[r7], r10
+ 201:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****     phLoader_Result = LDR_phaseLoader(pCompItpData->cycle, pCompItpData->phase, pCompItpData->mSett
+ 340                             		.loc 1 201 0
+ 341 0037 88 79                   		mov.B	1[r7], r1
+ 194:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****     	pCompItpData->jumpIF_phase_ctrl = 0;
+ 342                             		.loc 1 194 0
+ 343 0039 7A 3A                   		bclr	#3, r10
+ 201:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****     phLoader_Result = LDR_phaseLoader(pCompItpData->cycle, pCompItpData->phase, pCompItpData->mSett
+ 344                             		.loc 1 201 0
+ 345 003b 88 F2                   		mov.B	2[r7], r2
+ 346 003d 89 7B                   		mov.B	5[r7], r3
+ 194:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****     	pCompItpData->jumpIF_phase_ctrl = 0;
+ 347                             		.loc 1 194 0
+ 348 003f C7 7A 04                		mov.B	r10, 4[r7]
+ 201:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c ****     phLoader_Result = LDR_phaseLoader(pCompItpData->cycle, pCompItpData->phase, pCompItpData->mSett
+ 349                             		.loc 1 201 0
+ 350 0042 FB 42 00 00 00 00       		mov.L	#_TableData, r4
+ 351 0048 05 00 00 00             		bsr	_LDR_phaseLoader
+ 352                             	.LVL10:
+ 204:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( phLoader_Result != S_OK )
+ 353                             		.loc 1 204 0
+ 354 004c 5B 11                   		movu.B	r1, r1
+ 355 004e 61 01                   		cmp	#0, r1
+ 356 0050 3B 68 03                		bne	.L74
+ 214:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*ppCompStepHigh = pCompTableData->pHiStat;
+ 357                             		.loc 1 214 0
+ 358 0053 FB B2 00 00 00 00       		mov.L	#_TableData, r11
+ 359 0059 ED B4 01                		mov.L	4[r11], r4
+ 215:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*ppCompStepLow = pCompTableData->pLoStat;
+ 360                             		.loc 1 215 0
+ 361 005c ED BD 02                		mov.L	8[r11], r13
+ 217:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if(pCompItpData->first_statement < pCompTableData->nPhaseStatements)
+ 362                             		.loc 1 217 0
+ 363 005f 59 7A 03                		movu.B	3[r7], r10
+ 214:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*ppCompStepHigh = pCompTableData->pHiStat;
+ 364                             		.loc 1 214 0
+ 365 0062 FB E2 00 00 00 00       		mov.L	#_pStepHigh, r14
+ 215:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*ppCompStepLow = pCompTableData->pLoStat;
+ 366                             		.loc 1 215 0
+ 367 0068 FB C2 00 00 00 00       		mov.L	#_pStepLow, r12
+ 214:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*ppCompStepHigh = pCompTableData->pHiStat;
+ 368                             		.loc 1 214 0
+ 369 006e E3 E4                   		mov.L	r4, [r14]
+ 215:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*ppCompStepLow = pCompTableData->pLoStat;
+ 370                             		.loc 1 215 0
+ 371 0070 E3 CD                   		mov.L	r13, [r12]
+ 217:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if(pCompItpData->first_statement < pCompTableData->nPhaseStatements)
+ 372                             		.loc 1 217 0
+ 373 0072 45 BA 01                		cmp	1[r11].UB, r10
+ 374 0075 23 05 38 46 03          		bgeu	.L75
+ 224:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		 	*ppCompStepHigh += pCompItpData->first_statement;
+ 375                             		.loc 1 224 0
+ 376 007a 4B A4                   		add	r10, r4
+ 225:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		 	*ppCompStepLow += pCompItpData->first_statement;
+ 377                             		.loc 1 225 0
+ 378 007c 4B DA                   		add	r13, r10
+ 224:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		 	*ppCompStepHigh += pCompItpData->first_statement;
+ 379                             		.loc 1 224 0
+ 380 007e E3 E4                   		mov.L	r4, [r14]
+ 225:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		 	*ppCompStepLow += pCompItpData->first_statement;
+ 381                             		.loc 1 225 0
+ 382 0080 E3 CA                   		mov.L	r10, [r12]
+ 240:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		ITP_syncUICyclePos(compartment); /* comune */
+ 383                             		.loc 1 240 0
+ 384 0082 05 00 00 00             		bsr	_ITP_syncUICyclePos
+ 385                             	.LVL11:
+ 242:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		ITP_phaseTrackerUI(); /* custom*/
+ 386                             		.loc 1 242 0
+ 387 0086 05 00 00 00             		bsr	_ITP_phaseTrackerUI
+ 388                             	.LVL12:
+ 246:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->phaseDataInitialized = 1;
+ 389                             		.loc 1 246 0
+ 390 008a CD 7A 04                		mov.B	4[r7], r10
+ 391 008d 78 0A                   		bset	#0, r10
+ 392 008f C7 7A 04                		mov.B	r10, 4[r7]
+ 393                             		.balign 2,3,5
+ 394                             	.L40:
+ 261:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pTempLowStat = *ppCompStepLow;
+ 395                             		.loc 1 261 0
+ 396 0092 FB A2 00 00 00 00       		mov.L	#_pStepLow, r10
+ 260:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pTempHighStat = *ppCompStepHigh;
+ 397                             		.loc 1 260 0
+ 398 0098 FB 72 00 00 00 00       		mov.L	#_pStepHigh, r7
+ 254:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	ITP_preStepInit();
+ 399                             		.loc 1 254 0
+ 400 009e 05 00 00 00             		bsr	_ITP_preStepInit
+ 401                             	.LVL13:
+ 261:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pTempLowStat = *ppCompStepLow;
+ 402                             		.loc 1 261 0
+ 403 00a2 EC A9                   		mov.L	[r10], r9
+ 260:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pTempHighStat = *ppCompStepHigh;
+ 404                             		.loc 1 260 0
+ 405 00a4 EC 77                   		mov.L	[r7], r7
+ 406                             	.LVL14:
+ 274:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pEndPhaseHighStat = pCompTableData->pHiStat + (pCompTableData->nPhaseStatements - 1);
+ 407                             		.loc 1 274 0
+ 408 00a6 FB A2 00 00 00 00       		mov.L	#_TableData, r10
+ 409 00ac 59 AD 01                		movu.B	1[r10], r13
+ 271:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	T_Flag = ( *pTempHighStat & T_MASK ); 
+ 410                             		.loc 1 271 0
+ 411 00af CC 78                   		mov.B	[r7], r8
+ 274:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pEndPhaseHighStat = pCompTableData->pHiStat + (pCompTableData->nPhaseStatements - 1);
+ 412                             		.loc 1 274 0
+ 413 00b1 ED AA 01                		mov.L	4[r10], r10
+ 414 00b4 60 1D                   		sub	#1, r13
+ 271:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	T_Flag = ( *pTempHighStat & T_MASK ); 
+ 415                             		.loc 1 271 0
+ 416 00b6 76 28 80 00             		and	#0x80, r8
+ 417                             	.LVL15:
+ 274:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pEndPhaseHighStat = pCompTableData->pHiStat + (pCompTableData->nPhaseStatements - 1);
+ 418                             		.loc 1 274 0
+ 419 00ba 4B AD                   		add	r10, r13
+ 420                             	.LVL16:
+ 150:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** uint8_t resultStm = S_FALSE;
+ 421                             		.loc 1 150 0
+ 422 00bc 66 11                   		mov	#1, r1
+ 278:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	StepLength[compartment] = 0;
+ 423                             		.loc 1 278 0
+ 424 00be FB A2 00 00 00 00       		mov.L	#_StepLength, r10
+ 425 00c4 F8 A4 00                		mov.B	#0, [r10]
+ 267:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	newStep = TRUE;
+ 426                             		.loc 1 267 0
+ 427 00c7 CF 1C                   		mov.B	r1, r12
+ 268:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	phaseFlags = 0;
+ 428                             		.loc 1 268 0
+ 429 00c9 66 0A                   		mov	#0, r10
+ 286:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	while( ( pTempHighStat <= pEndPhaseHighStat ) && ( ( ( *pTempHighStat ) & T_MASK ) == T_Flag ) )
+ 430                             		.loc 1 286 0
+ 431 00cb 5B 88                   		movu.B	r8, r8
+ 349:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			resultStm = Microprog_array[opCode](*pTempHighStat, *pTempLowStat);
+ 432                             		.loc 1 349 0
+ 433 00cd FB 62 00 00 00 00       		mov.L	#_Microprog_array, r6
+ 286:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	while( ( pTempHighStat <= pEndPhaseHighStat ) && ( ( ( *pTempHighStat ) & T_MASK ) == T_Flag ) )
+ 434                             		.loc 1 286 0
+ 435 00d3 38 F5 00                		bra	.L43
+ 436                             	.LVL17:
+ 437                             	.L60:
+ 298:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			if ( completeOpcode == UP_JUMPIF_PHASE )
+ 438                             		.loc 1 298 0
+ 439 00d6 EF EB                   		mov.L	r14, r11
+ 440 00d8 75 2B 3F                		and	#63, r11
+ 441 00db 61 BB                   		cmp	#11, r11
+ 442 00dd 21 56                   		bne	.L44
+ 301:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				if ( pCompItpData->stepInitialized == 0 )
+ 443                             		.loc 1 301 0
+ 444 00df FB B2 00 00 00 00       		mov.L	#_Interpreter_Data, r11
+ 445 00e5 CD BB 04                		mov.B	4[r11], r11
+ 446 00e8 64 2B                   		and	#2, r11
+ 447 00ea 5B BB                   		movu.B	r11, r11
+ 448 00ec 61 0B                   		cmp	#0, r11
+ 449 00ee 3B B5 00                		bne	.L52
+ 304:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 					if( pCompJmpPhase->index < MAX_NUM_JIF_PHASE )
+ 450                             		.loc 1 304 0
+ 451 00f1 FB 32 00 00 00 00       		mov.L	#_JmpPhase, r3
+ 452 00f7 CD 3B 04                		mov.B	4[r3], r11
+ 453 00fa 5B B4                   		movu.B	r11, r4
+ 454 00fc 61 14                   		cmp	#1, r4
+ 455 00fe 25 05 38 A3 00          		bgtu	.L52
+ 456 0103 2E 0B                   		bra	.L46
+ 457                             	.LVL18:
+ 458                             	.L48:
+ 316:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 						if( jumpAlreadyIn == FALSE )
+ 459                             		.loc 1 316 0
+ 460 0105 B0 3B                   		movu.B	1[r3], r3
+ 461 0107 44 93                   		cmp	[r9].UB, r3
+ 462 0109 3A 9A 00                		beq	.L52
+ 463 010c 2E 06                   		bra	.L47
+ 464                             	.LVL19:
+ 465                             	.L46:
+ 308:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 						for( i=0; i < pCompJmpPhase->index; i++ )
+ 466                             		.loc 1 308 0 discriminator 1
+ 467 010e 61 04                   		cmp	#0, r4
+ 468 0110 21 F5                   		bne	.L48
+ 469                             	.LVL20:
+ 470                             		.balign 2,3,1
+ 471                             	.L47:
+ 318:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 							pCompJmpPhase->statements[pCompJmpPhase->index][0] = *pTempHighStat;	 
+ 472                             		.loc 1 318 0
+ 473 0112 5B B3                   		movu.B	r11, r3
+ 474 0114 FB 42 00 00 00 00       		mov.L	#_JmpPhase, r4
+ 475 011a 4B 33                   		add	r3, r3
+ 476 011c 4B 43                   		add	r4, r3
+ 477 011e C3 3E                   		mov.B	r14, [r3]
+ 319:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 							pCompJmpPhase->statements[pCompJmpPhase->index][1] = *pTempLowStat;
+ 478                             		.loc 1 319 0
+ 479 0120 59 4E 04                		movu.B	4[r4], r14
+ 480                             	.LVL21:
+ 481 0123 CC 93                   		mov.B	[r9], r3
+ 482                             	.LVL22:
+ 483 0125 4B EE                   		add	r14, r14
+ 484 0127 4B 4E                   		add	r4, r14
+ 320:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 							pCompJmpPhase->index ++;
+ 485                             		.loc 1 320 0
+ 486 0129 62 1B                   		add	#1, r11
+ 487                             	.LVL23:
+ 319:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 							pCompJmpPhase->statements[pCompJmpPhase->index][1] = *pTempLowStat;
+ 488                             		.loc 1 319 0
+ 489 012b C7 E3 01                		mov.B	r3, 1[r14]
+ 320:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 							pCompJmpPhase->index ++;
+ 490                             		.loc 1 320 0
+ 491 012e C7 4B 04                		mov.B	r11, 4[r4]
+ 492 0131 2E 72                   		bra	.L52
+ 493                             	.LVL24:
+ 494                             	.L44:
+ 325:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			else if ( completeOpcode == UP_JUMPIF_PHASE_RESET )
+ 495                             		.loc 1 325 0
+ 496 0133 75 5B 2B                		cmp	#43, r11
+ 497 0136 21 36                   		bne	.L49
+ 328:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				if (pCompItpData->stepInitialized == 0)
+ 498                             		.loc 1 328 0
+ 499 0138 FB B2 00 00 00 00       		mov.L	#_Interpreter_Data, r11
+ 500 013e CD BB 04                		mov.B	4[r11], r11
+ 501 0141 64 2B                   		and	#2, r11
+ 502 0143 5B BB                   		movu.B	r11, r11
+ 503 0145 61 0B                   		cmp	#0, r11
+ 504 0147 21 5C                   		bne	.L52
+ 331:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 					if( pCompJmpPhase->index != 0 )
+ 505                             		.loc 1 331 0
+ 506 0149 FB E2 00 00 00 00       		mov.L	#_JmpPhase, r14
+ 507                             	.LVL25:
+ 508 014f CD EB 04                		mov.B	4[r14], r11
+ 509 0152 5B B4                   		movu.B	r11, r4
+ 510 0154 61 04                   		cmp	#0, r4
+ 511 0156 20 4D                   		beq	.L52
+ 333:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 						pCompJmpPhase->index --;
+ 512                             		.loc 1 333 0
+ 513 0158 60 1B                   		sub	#1, r11
+ 514 015a C7 EB 04                		mov.B	r11, 4[r14]
+ 334:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 						pCompJmpPhase->statements[pCompJmpPhase->index][0] = (0xFF - UP_JUMPIF);	
+ 515                             		.loc 1 334 0
+ 516 015d 5B BB                   		movu.B	r11, r11
+ 517 015f 4B BB                   		add	r11, r11
+ 518 0161 4B EB                   		add	r14, r11
+ 519 0163 F8 B4 F4                		mov.B	#-12, [r11]
+ 335:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 						pCompJmpPhase->statements[pCompJmpPhase->index][1] = 0xFF;
+ 520                             		.loc 1 335 0
+ 521 0166 F9 B4 01 FF             		mov.B	#-1, 1[r11]
+ 522 016a 2E 39                   		bra	.L52
+ 523                             	.LVL26:
+ 524                             	.L49:
+ 349:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			resultStm = Microprog_array[opCode](*pTempHighStat, *pTempLowStat);
+ 525                             		.loc 1 349 0
+ 526 016c EF E4                   		mov.L	r14, r4
+ 527 016e 64 F4                   		and	#15, r4
+ 528 0170 FE 64 64                		mov.L	[r4,r6], r4
+ 529 0173 CC 92                   		mov.B	[r9], r2
+ 530 0175 CF E1                   		mov.B	r14, r1
+ 531                             	.LVL27:
+ 532 0177 7F 14                   		jsr	r4
+ 533                             	.LVL28:
+ 357:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			if( completeOpcode == UP_SETSTATE_RESET )	/* uP RESET */
+ 534                             		.loc 1 357 0
+ 535 0179 75 5B 10                		cmp	#16, r11
+ 536 017c 21 06                   		bne	.L51
+ 537                             	.LVL29:
+ 365:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				SETBIT(phaseFlags, B_RESET_FLAG);
+ 538                             		.loc 1 365 0
+ 539 017e 65 2A                   		or	#2, r10
+ 540                             	.LVL30:
+ 541 0180 2E 0A                   		bra	.L85
+ 542                             	.LVL31:
+ 543                             	.L51:
+ 371:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			else if ( completeOpcode == UP_SETSTATE_RETURN )	 
+ 544                             		.loc 1 371 0
+ 545 0182 75 5B 20                		cmp	#32, r11
+ 546 0185 21 0B                   		bne	.L53
+ 547                             	.LVL32:
+ 378:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				SETBIT(phaseFlags, B_RETURN_FLAG);
+ 548                             		.loc 1 378 0
+ 549 0187 65 4A                   		or	#4, r10
+ 550                             	.LVL33:
+ 551 0189 03                      		.balign 2,3,1
+ 552                             	.L85:
+ 553 018a EF D7                   		mov.L	r13, r7
+ 380:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				newStep = TRUE;
+ 554                             		.loc 1 380 0
+ 555 018c 66 1C                   		mov	#1, r12
+ 556 018e 2E 15                   		bra	.L52
+ 557                             	.LVL34:
+ 558                             	.L53:
+ 384:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			else if ( (completeOpcode == UP_JUMPIF_STEP) && (resultStm == S_OK) )	/* uP JUMPIF valido per PA
+ 559                             		.loc 1 384 0
+ 560 0190 75 5B 1B                		cmp	#27, r11
+ 561 0193 21 10                   		bne	.L52
+ 384:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			else if ( (completeOpcode == UP_JUMPIF_STEP) && (resultStm == S_OK) )	/* uP JUMPIF valido per PA
+ 562                             		.loc 1 384 0 is_stmt 0 discriminator 1
+ 563 0195 5B 1B                   		movu.B	r1, r11
+ 564 0197 61 0B                   		cmp	#0, r11
+ 565 0199 21 11                   		bne	.L54
+ 566                             	.LVL35:
+ 393:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				SETBIT(phaseFlags, B_JUMPIF_FLAG);
+ 567                             		.loc 1 393 0 is_stmt 1
+ 568 019b 65 1A                   		or	#1, r10
+ 569                             	.LVL36:
+ 570 019d EF D7                   		mov.L	r13, r7
+ 395:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				newStep = TRUE;		
+ 571                             		.loc 1 395 0
+ 572 019f 66 1C                   		mov	#1, r12
+ 573 01a1 2E 17                   		bra	.L55
+ 574                             	.LVL37:
+ 575                             	.L52:
+ 416:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( ( resultStm != S_OK ) && ((( *pTempHighStat ) & N_MASK ) != 0 ) )
+ 576                             		.loc 1 416 0
+ 577 01a3 5B 1B                   		movu.B	r1, r11
+ 578 01a5 61 0B                   		cmp	#0, r11
+ 579 01a7 20 11                   		beq	.L55
+ 580 01a9 03                      		.balign 2,3,5
+ 581                             	.L54:
+ 416:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( ( resultStm != S_OK ) && ((( *pTempHighStat ) & N_MASK ) != 0 ) )
+ 582                             		.loc 1 416 0 is_stmt 0 discriminator 1
+ 583 01aa CC 7B                   		mov.B	[r7], r11
+ 584 01ac 75 2B 40                		and	#64, r11
+ 585 01af 5B BB                   		movu.B	r11, r11
+ 586 01b1 61 0B                   		cmp	#0, r11
+ 587 01b3 20 05                   		beq	.L55
+ 419:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			newStep = FALSE;		
+ 588                             		.loc 1 419 0 is_stmt 1
+ 589 01b5 66 0C                   		mov	#0, r12
+ 590                             	.LVL38:
+ 591 01b7 03                      		.balign 2,3,5
+ 592                             	.L55:
+ 431:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		StepLength[compartment]++;
+ 593                             		.loc 1 431 0
+ 594 01b8 FB B2 00 00 00 00       		mov.L	#_StepLength, r11
+ 595 01be CC BE                   		mov.B	[r11], r14
+ 426:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pTempHighStat ++;	
+ 596                             		.loc 1 426 0
+ 597 01c0 62 17                   		add	#1, r7
+ 598                             	.LVL39:
+ 431:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		StepLength[compartment]++;
+ 599                             		.loc 1 431 0
+ 600 01c2 62 1E                   		add	#1, r14
+ 427:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pTempLowStat ++;
+ 601                             		.loc 1 427 0
+ 602 01c4 62 19                   		add	#1, r9
+ 603                             	.LVL40:
+ 431:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		StepLength[compartment]++;
+ 604                             		.loc 1 431 0
+ 605 01c6 C3 BE                   		mov.B	r14, [r11]
+ 606                             	.LVL41:
+ 607                             		.balign 2,3,1
+ 608                             	.L43:
+ 286:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	while( ( pTempHighStat <= pEndPhaseHighStat ) && ( ( ( *pTempHighStat ) & T_MASK ) == T_Flag ) )
+ 609                             		.loc 1 286 0 discriminator 1
+ 610 01c8 47 D7                   		cmp	r13, r7
+ 611 01ca 25 3C                   		bleu	.L56
+ 612                             		.balign 2,3,5
+ 613                             	.L61:
+ 614                             	.LVL42:
+ 447:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( (COMPLETE_OPCODE (pCompJmpPhase->statements[i][0])) == UP_JUMPIF_PHASE )
+ 615                             		.loc 1 447 0
+ 616 01cc FB B2 00 00 00 00       		mov.L	#_JmpPhase, r11
+ 617 01d2 CC B1                   		mov.B	[r11], r1
+ 618                             	.LVL43:
+ 619 01d4 EF 1E                   		mov.L	r1, r14
+ 620 01d6 75 2E 3F                		and	#63, r14
+ 621 01d9 61 BE                   		cmp	#11, r14
+ 622 01db 21 17                   		bne	.L57
+ 453:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			resultStm = JIF_JumpIf_Exe(pCompJmpPhase->statements[i][0],pCompJmpPhase->statements[i][1]);
+ 623                             		.loc 1 453 0
+ 624 01dd CD B2 01                		mov.B	1[r11], r2
+ 625 01e0 05 00 00 00             		bsr	_JIF_JumpIf_Exe
+ 626                             	.LVL44:
+ 456:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			if ( resultStm == S_OK )
+ 627                             		.loc 1 456 0
+ 628 01e4 5B 11                   		movu.B	r1, r1
+ 629 01e6 61 01                   		cmp	#0, r1
+ 630 01e8 21 0A                   		bne	.L57
+ 458:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				pTempHighStat = (pEndPhaseHighStat+1);
+ 631                             		.loc 1 458 0
+ 632 01ea 71 D7 01                		add	#1, r13, r7
+ 633                             	.LVL45:
+ 460:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				SETBIT(phaseFlags, B_JUMPIF_FLAG);
+ 634                             		.loc 1 460 0
+ 635 01ed 65 1A                   		or	#1, r10
+ 636                             	.LVL46:
+ 462:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				newStep = TRUE;
+ 637                             		.loc 1 462 0
+ 638 01ef 66 1C                   		mov	#1, r12
+ 639                             	.LVL47:
+ 640 01f1 03                      		.balign 2,3,5
+ 641                             	.L57:
+ 447:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( (COMPLETE_OPCODE (pCompJmpPhase->statements[i][0])) == UP_JUMPIF_PHASE )
+ 642                             		.loc 1 447 0
+ 643 01f2 FB B2 00 00 00 00       		mov.L	#_JmpPhase, r11
+ 644 01f8 CD B1 02                		mov.B	2[r11], r1
+ 645 01fb EF 1E                   		mov.L	r1, r14
+ 646 01fd 75 2E 3F                		and	#63, r14
+ 647 0200 61 BE                   		cmp	#11, r14
+ 648 0202 21 28                   		bne	.L59
+ 649 0204 2E 11                   		bra	.L58
+ 650                             	.LVL48:
+ 651                             	.L56:
+ 286:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	while( ( pTempHighStat <= pEndPhaseHighStat ) && ( ( ( *pTempHighStat ) & T_MASK ) == T_Flag ) )
+ 652                             		.loc 1 286 0 discriminator 2
+ 653 0206 CC 7E                   		mov.B	[r7], r14
+ 654 0208 EF EB                   		mov.L	r14, r11
+ 655 020a 76 2B 80 00             		and	#0x80, r11
+ 656 020e 47 8B                   		cmp	r8, r11
+ 657 0210 3A C6 FE                		beq	.L60
+ 658 0213 2E B9                   		bra	.L61
+ 659                             	.LVL49:
+ 660                             	.L58:
+ 453:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			resultStm = JIF_JumpIf_Exe(pCompJmpPhase->statements[i][0],pCompJmpPhase->statements[i][1]);
+ 661                             		.loc 1 453 0
+ 662 0215 CD B2 03                		mov.B	3[r11], r2
+ 663 0218 05 00 00 00             		bsr	_JIF_JumpIf_Exe
+ 664                             	.LVL50:
+ 456:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			if ( resultStm == S_OK )
+ 665                             		.loc 1 456 0
+ 666 021c 5B 11                   		movu.B	r1, r1
+ 667 021e 61 01                   		cmp	#0, r1
+ 668 0220 21 0A                   		bne	.L59
+ 458:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				pTempHighStat = (pEndPhaseHighStat+1);
+ 669                             		.loc 1 458 0
+ 670 0222 71 D7 01                		add	#1, r13, r7
+ 671                             	.LVL51:
+ 460:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				SETBIT(phaseFlags, B_JUMPIF_FLAG);
+ 672                             		.loc 1 460 0
+ 673 0225 65 1A                   		or	#1, r10
+ 674                             	.LVL52:
+ 462:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				newStep = TRUE;
+ 675                             		.loc 1 462 0
+ 676 0227 66 1C                   		mov	#1, r12
+ 677                             	.LVL53:
+ 678 0229 03                      		.balign 2,3,5
+ 679                             	.L59:
+ 471:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if ( pCompItpData->stepInitialized == FALSE )
+ 680                             		.loc 1 471 0
+ 681 022a FB B2 00 00 00 00       		mov.L	#_Interpreter_Data, r11
+ 682 0230 CD BE 04                		mov.B	4[r11], r14
+ 683 0233 EF E4                   		mov.L	r14, r4
+ 684 0235 64 24                   		and	#2, r4
+ 685 0237 5B 44                   		movu.B	r4, r4
+ 686 0239 61 04                   		cmp	#0, r4
+ 687 023b 21 0B                   		bne	.L62
+ 475:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->loads_mgmt_activation = TRUE;	
+ 688                             		.loc 1 475 0
+ 689 023d 78 5E                   		bset	#5, r14
+ 690 023f C7 BE 04                		mov.B	r14, 4[r11]
+ 479:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		ITP_loadsMgmt();	
+ 691                             		.loc 1 479 0
+ 692 0242 05 00 00 00             		bsr	_ITP_loadsMgmt
+ 693                             	.LVL54:
+ 694                             		.balign 2,3,5
+ 695                             	.L62:
+ 485:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pCompItpData->optionalStepInitialized = 1;
+ 696                             		.loc 1 485 0
+ 697 0246 FB B2 00 00 00 00       		mov.L	#_Interpreter_Data, r11
+ 698 024c CD BE 04                		mov.B	4[r11], r14
+ 487:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if( newStep == FALSE )
+ 699                             		.loc 1 487 0
+ 700 024f 5B CC                   		movu.B	r12, r12
+ 701 0251 61 0C                   		cmp	#0, r12
+ 485:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pCompItpData->optionalStepInitialized = 1;
+ 702                             		.loc 1 485 0
+ 703 0253 78 2E                   		bset	#2, r14
+ 487:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if( newStep == FALSE )
+ 704                             		.loc 1 487 0
+ 705 0255 21 0C                   		bne	.L63
+ 490:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->stepInitialized = 1;	
+ 706                             		.loc 1 490 0
+ 707 0257 78 1E                   		bset	#1, r14
+ 708 0259 C7 BE 04                		mov.B	r14, 4[r11]
+ 492:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return SAME_STEP;    
+ 709                             		.loc 1 492 0
+ 710 025c 66 41                   		mov	#4, r1
+ 711 025e 38 66 01                		bra	.L42
+ 712                             	.L63:
+ 502:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pCompItpData->stepInitialized = 0;
+ 713                             		.loc 1 502 0
+ 714 0261 7A 1E                   		bclr	#1, r14
+ 715 0263 C7 BE 04                		mov.B	r14, 4[r11]
+ 505:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	ITP_newStepInit();
+ 716                             		.loc 1 505 0
+ 717 0266 05 00 00 00             		bsr	_ITP_newStepInit
+ 718                             	.LVL55:
+ 507:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if( pTempHighStat <= pEndPhaseHighStat )
+ 719                             		.loc 1 507 0
+ 720 026a 47 D7                   		cmp	r13, r7
+ 721 026c 24 24                   		bgtu	.L64
+ 513:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*ppCompStepHigh = pTempHighStat;
+ 722                             		.loc 1 513 0
+ 723 026e FB A2 00 00 00 00       		mov.L	#_pStepHigh, r10
+ 724                             	.LVL56:
+ 725 0274 E3 A7                   		mov.L	r7, [r10]
+ 514:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		*ppCompStepLow = pTempLowStat; 
+ 726                             		.loc 1 514 0
+ 727 0276 FB A2 00 00 00 00       		mov.L	#_pStepLow, r10
+ 728 027c E3 A9                   		mov.L	r9, [r10]
+ 517:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->first_statement = (uint8_t)(*ppCompStepHigh - pCompTableData->pHiStat);
+ 729                             		.loc 1 517 0
+ 730 027e FB A2 00 00 00 00       		mov.L	#_TableData, r10
+ 731 0284 06 81 A7 01             		sub	4[r10].L, r7
+ 732                             	.LVL57:
+ 733 0288 C7 B7 03                		mov.B	r7, 3[r11]
+ 519:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return END_STEP;
+ 734                             		.loc 1 519 0
+ 735 028b 66 01                   		mov	#0, r1
+ 736 028d 38 37 01                		bra	.L42
+ 737                             	.LVL58:
+ 738                             	.L64:
+ 527:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if( TESTBIT(phaseFlags, B_RESET_FLAG) )
+ 739                             		.loc 1 527 0
+ 740 0290 EF AC                   		mov.L	r10, r12
+ 741                             	.LVL59:
+ 742 0292 64 2C                   		and	#2, r12
+ 743 0294 3B 2E 01                		bne	.L77
+ 549:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if (TESTBIT(phaseFlags, B_JUMPIF_FLAG))
+ 744                             		.loc 1 549 0
+ 745 0297 EF A1                   		mov.L	r10, r1
+ 746 0299 64 11                   		and	#1, r1
+ 747 029b 3A 87 00                		beq	.L65
+ 553:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( Table_JumpIf[compartment].ret == TRUE )
+ 748                             		.loc 1 553 0
+ 749 029e FB 72 00 00 00 00       		mov.L	#_Table_JumpIf, r7
+ 750                             	.LVL60:
+ 751 02a4 59 7A 03                		movu.B	3[r7], r10
+ 752                             	.LVL61:
+ 753 02a7 61 1A                   		cmp	#1, r10
+ 754 02a9 21 37                   		bne	.L66
+ 556:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			Table_JumpIf[compartment].ret = FALSE;	/*resetto la variabile (VEDI SE SPOSTARE IL RESET NEL UP)
+ 755                             		.loc 1 556 0
+ 756 02ab C7 7C 03                		mov.B	r12, 3[r7]
+ 558:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			if( ( Table_JumpIf[compartment].cycle == pCompItpData->cycle) && ( Table_JumpIf[compartment].pha
+ 757                             		.loc 1 558 0
+ 758 02ae 58 7C                   		movu.B	[r7], r12
+ 759 02b0 45 BC 01                		cmp	1[r11].UB, r12
+ 760 02b3 21 11                   		bne	.L67
+ 558:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			if( ( Table_JumpIf[compartment].cycle == pCompItpData->cycle) && ( Table_JumpIf[compartment].pha
+ 761                             		.loc 1 558 0 is_stmt 0 discriminator 1
+ 762 02b5 59 7A 01                		movu.B	1[r7], r10
+ 763 02b8 45 BA 02                		cmp	2[r11].UB, r10
+ 764 02bb 21 09                   		bne	.L67
+ 765 02bd 03                      		.balign 2,3,2
+ 766                             	.L68:
+ 561:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 				return ITP_ERR_WRONG_COMMAND;	
+ 767                             		.loc 1 561 0 is_stmt 1
+ 768 02be FB 16 8F                		mov	#0xffffff8f, r1
+ 769 02c1 38 03 01                		bra	.L42
+ 770                             	.L67:
+ 564:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			if ( ITP_saveReturnPoint(compartment)!= S_OK )
+ 771                             		.loc 1 564 0
+ 772 02c4 66 01                   		mov	#0, r1
+ 773 02c6 05 00 00 00             		bsr	_ITP_saveReturnPoint
+ 774                             	.LVL62:
+ 775 02ca 5B 11                   		movu.B	r1, r1
+ 776 02cc 61 01                   		cmp	#0, r1
+ 777 02ce 21 F0                   		bne	.L68
+ 572:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			JmpPhase_Return[compartment] = JmpPhase[compartment];
+ 778                             		.loc 1 572 0
+ 779 02d0 FB 12 00 00 00 00       		mov.L	#_JmpPhase_Return, r1
+ 780 02d6 FB 22 00 00 00 00       		mov.L	#_JmpPhase, r2
+ 781 02dc 66 53                   		mov.L	#5, r3
+ 782 02de 7F 8F                   		smovf
+ 783                             		.balign 2,3,5
+ 784                             	.L66:
+ 581:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( (Table_JumpIf[compartment].cycle == pCompItpData->cycle ) && (Table_JumpIf[compartment].phase
+ 785                             		.loc 1 581 0
+ 786 02e0 FB B2 00 00 00 00       		mov.L	#_Table_JumpIf, r11
+ 787 02e6 CC BA                   		mov.B	[r11], r10
+ 788 02e8 FB 72 00 00 00 00       		mov.L	#_Interpreter_Data, r7
+ 789 02ee 5B AD                   		movu.B	r10, r13
+ 790                             	.LVL63:
+ 791 02f0 45 7D 01                		cmp	1[r7].UB, r13
+ 792 02f3 21 13                   		bne	.L69
+ 581:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( (Table_JumpIf[compartment].cycle == pCompItpData->cycle ) && (Table_JumpIf[compartment].phase
+ 793                             		.loc 1 581 0 is_stmt 0 discriminator 1
+ 794 02f5 59 BC 01                		movu.B	1[r11], r12
+ 795 02f8 45 7C 02                		cmp	2[r7].UB, r12
+ 796 02fb 21 0B                   		bne	.L69
+ 586:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			pCompItpData->jumpIF_phase_ctrl = 1;
+ 797                             		.loc 1 586 0 is_stmt 1
+ 798 02fd CD 7B 04                		mov.B	4[r7], r11
+ 799 0300 78 3B                   		bset	#3, r11
+ 800 0302 C7 7B 04                		mov.B	r11, 4[r7]
+ 801 0305 03                      		.balign 2,3,5
+ 802                             	.L69:
+ 604:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->cycle = Table_JumpIf[compartment].cycle;
+ 803                             		.loc 1 604 0
+ 804 0306 C7 7A 01                		mov.B	r10, 1[r7]
+ 605:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->phase = Table_JumpIf[compartment].phase;
+ 805                             		.loc 1 605 0
+ 806 0309 FB A2 00 00 00 00       		mov.L	#_Table_JumpIf, r10
+ 807 030f CD AB 01                		mov.B	1[r10], r11
+ 606:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->first_statement = Table_JumpIf[compartment].first_statement;
+ 808                             		.loc 1 606 0
+ 809 0312 CD AA 02                		mov.B	2[r10], r10
+ 605:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->phase = Table_JumpIf[compartment].phase;
+ 810                             		.loc 1 605 0
+ 811 0315 C7 7B 02                		mov.B	r11, 2[r7]
+ 606:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->first_statement = Table_JumpIf[compartment].first_statement;
+ 812                             		.loc 1 606 0
+ 813 0318 C7 7A 03                		mov.B	r10, 3[r7]
+ 613:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->phaseDataInitialized = 0;
+ 814                             		.loc 1 613 0
+ 815 031b CD 7A 04                		mov.B	4[r7], r10
+ 816 031e 7A 0A                   		bclr	#0, r10
+ 817 0320 2E 6A                   		bra	.L86
+ 818                             	.LVL64:
+ 819                             	.L65:
+ 635:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if ( TESTBIT(phaseFlags, B_RETURN_FLAG) )
+ 820                             		.loc 1 635 0
+ 821 0322 64 4A                   		and	#4, r10
+ 822                             	.LVL65:
+ 823 0324 20 6D                   		beq	.L70
+ 637:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if ( ITP_getReturnPoint(compartment)!= S_OK )
+ 824                             		.loc 1 637 0
+ 825 0326 05 00 00 00             		bsr	_ITP_getReturnPoint
+ 826                             	.LVL66:
+ 827 032a 5B 11                   		movu.B	r1, r1
+ 828 032c 61 01                   		cmp	#0, r1
+ 829 032e 21 90                   		bne	.L68
+ 643:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( ( pCompRetPoint->cycle == pCompItpData->cycle ) && ( pCompRetPoint->phase == pCompItpData->ph
+ 830                             		.loc 1 643 0
+ 831 0330 FB C2 00 00 00 00       		mov.L	#_ReturnPoint, r12
+ 832 0336 CC CA                   		mov.B	[r12], r10
+ 833 0338 5B A7                   		movu.B	r10, r7
+ 834                             	.LVL67:
+ 835 033a 45 B7 01                		cmp	1[r11].UB, r7
+ 836 033d 21 0B                   		bne	.L71
+ 643:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if( ( pCompRetPoint->cycle == pCompItpData->cycle ) && ( pCompRetPoint->phase == pCompItpData->ph
+ 837                             		.loc 1 643 0 is_stmt 0 discriminator 1
+ 838 033f 59 CC 01                		movu.B	1[r12], r12
+ 839 0342 45 BC 02                		cmp	2[r11].UB, r12
+ 840 0345 3A 79 FF                		beq	.L68
+ 841                             		.balign 2,3,2
+ 842                             	.L71:
+ 649:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		if (pCompRetPoint->cycle == RETURN_END_CYCLE)
+ 843                             		.loc 1 649 0 is_stmt 1
+ 844 0348 75 57 FF                		cmp	#0xff, r7
+ 845 034b 21 07                   		bne	.L72
+ 846                             	.LVL68:
+ 847 034d 03                      		.balign 2,3,1
+ 848                             	.L73:
+ 654:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			return END_CYCLE;
+ 849                             		.loc 1 654 0
+ 850 034e 66 21                   		mov	#2, r1
+ 851 0350 2E 74                   		bra	.L42
+ 852                             	.LVL69:
+ 853                             	.L72:
+ 658:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->cycle = pCompRetPoint->cycle;
+ 854                             		.loc 1 658 0
+ 855 0352 FB 72 00 00 00 00       		mov.L	#_Interpreter_Data, r7
+ 856 0358 C7 7A 01                		mov.B	r10, 1[r7]
+ 659:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->phase = pCompRetPoint->phase;
+ 857                             		.loc 1 659 0
+ 858 035b FB A2 00 00 00 00       		mov.L	#_ReturnPoint, r10
+ 859 0361 CD A3 01                		mov.B	1[r10], r3
+ 660:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->first_statement = pCompRetPoint->first_statement;
+ 860                             		.loc 1 660 0
+ 861 0364 CD AA 02                		mov.B	2[r10], r10
+ 659:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->phase = pCompRetPoint->phase;
+ 862                             		.loc 1 659 0
+ 863 0367 80 F3                   		mov.B	r3, 2[r7]
+ 660:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->first_statement = pCompRetPoint->first_statement;
+ 864                             		.loc 1 660 0
+ 865 0369 C7 7A 03                		mov.B	r10, 3[r7]
+ 662:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->phaseDataInitialized = 0;	/* ritorno nell'inizializzazione ciclo-fase
+ 866                             		.loc 1 662 0
+ 867 036c CD 7A 04                		mov.B	4[r7], r10
+ 666:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		JmpPhase[compartment] = JmpPhase_Return[compartment];  /* ripristino dati relativi al JumpIF vali
+ 868                             		.loc 1 666 0
+ 869 036f FB 12 00 00 00 00       		mov.L	#_JmpPhase, r1
+ 662:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->phaseDataInitialized = 0;	/* ritorno nell'inizializzazione ciclo-fase
+ 870                             		.loc 1 662 0
+ 871 0375 7A 0A                   		bclr	#0, r10
+ 666:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		JmpPhase[compartment] = JmpPhase_Return[compartment];  /* ripristino dati relativi al JumpIF vali
+ 872                             		.loc 1 666 0
+ 873 0377 FB 22 00 00 00 00       		mov.L	#_JmpPhase_Return, r2
+ 874 037d 66 53                   		mov.L	#5, r3
+ 662:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->phaseDataInitialized = 0;	/* ritorno nell'inizializzazione ciclo-fase
+ 875                             		.loc 1 662 0
+ 876 037f C7 7A 04                		mov.B	r10, 4[r7]
+ 666:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		JmpPhase[compartment] = JmpPhase_Return[compartment];  /* ripristino dati relativi al JumpIF vali
+ 877                             		.loc 1 666 0
+ 878 0382 7F 8F                   		smovf
+ 668:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		pCompItpData->jumpIF_phase_ctrl = 1;	/* non devo cancellare i dati relativi al JUMPIF 
+ 879                             		.loc 1 668 0
+ 880 0384 CD 7A 04                		mov.B	4[r7], r10
+ 881 0387 78 3A                   		bset	#3, r10
+ 882                             	.LVL70:
+ 883 0389 03                      		.balign 2,3,5
+ 884                             	.L86:
+ 885 038a C7 7A 04                		mov.B	r10, 4[r7]
+ 674:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return PROGRAM_FLOW_BREAK;
+ 886                             		.loc 1 674 0
+ 887 038d 66 51                   		mov	#5, r1
+ 888 038f 2E 35                   		bra	.L42
+ 889                             	.LVL71:
+ 890                             	.L70:
+ 680:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	if (pCompItpData->phase >= (pCompTableData->nCyclePhases - 1) )
+ 891                             		.loc 1 680 0
+ 892 0391 FB C2 00 00 00 00       		mov.L	#_TableData, r12
+ 893 0397 CD B7 02                		mov.B	2[r11], r7
+ 894                             	.LVL72:
+ 895 039a 58 CC                   		movu.B	[r12], r12
+ 896 039c 5B 7D                   		movu.B	r7, r13
+ 897                             	.LVL73:
+ 898 039e 60 1C                   		sub	#1, r12
+ 899 03a0 47 CD                   		cmp	r12, r13
+ 900 03a2 28 AC                   		bge	.L73
+ 690:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pCompItpData->phase ++;
+ 901                             		.loc 1 690 0
+ 902 03a4 62 17                   		add	#1, r7
+ 903 03a6 C7 B7 02                		mov.B	r7, 2[r11]
+ 693:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pCompItpData->phaseDataInitialized = 0;
+ 904                             		.loc 1 693 0
+ 905 03a9 CD B7 04                		mov.B	4[r11], r7
+ 691:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pCompItpData->first_statement = 0;
+ 906                             		.loc 1 691 0
+ 907 03ac C7 BA 03                		mov.B	r10, 3[r11]
+ 693:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	pCompItpData->phaseDataInitialized = 0;
+ 908                             		.loc 1 693 0
+ 909 03af 7A 07                   		bclr	#0, r7
+ 910 03b1 C7 B7 04                		mov.B	r7, 4[r11]
+ 695:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	return END_PHASE;
+ 911                             		.loc 1 695 0
+ 912 03b4 66 11                   		mov	#1, r1
+ 913 03b6 2E 0E                   		bra	.L42
+ 914                             	.LVL74:
+ 915                             	.L74:
+ 210:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			return ITP_ERR_PHASE_LOADER;
+ 916                             		.loc 1 210 0
+ 917 03b8 FB 16 8E                		mov	#0xffffff8e, r1
+ 918                             	.LVL75:
+ 919 03bb 2E 09                   		bra	.L42
+ 920                             	.LVL76:
+ 921                             	.L75:
+ 234:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 			return ITP_ERR_PH_STAT_OUT_OF_RANGE;
+ 922                             		.loc 1 234 0
+ 923 03bd FB 16 8D                		mov	#0xffffff8d, r1
+ 924                             	.LVL77:
+ 925 03c0 2E 04                   		bra	.L42
+ 926                             	.LVL78:
+ 927                             	.L77:
+ 544:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 		return END_CYCLE_RESET;	
+ 928                             		.loc 1 544 0
+ 929 03c2 66 31                   		mov	#3, r1
+ 930                             	.LVL79:
+ 931                             		.balign 2,3,3
+ 932                             	.L42:
+ 696:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** }
+ 933                             		.loc 1 696 0
+ 934 03c4 76 21 8F 00             		and	#0x8f, r1
+ 935 03c8 3F 6D 08                		rtsd	#32, r6-r13
+ 936                             	.LFE0:
+ 938 03cb 03                      		.section	.text.ITP_phaseTrackerReset,"ax",@progbits
+ 939                             		.global	_ITP_phaseTrackerReset
+ 941                             	_ITP_phaseTrackerReset:
+ 942                             	.LFB6:
+ 996:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /**/
+ 997:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 998:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+ 999:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** /**
+1000:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+1001:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \return     	none
+1002:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 
+1003:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \version    	1.0.0
+1004:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \date   		24/09/2009
+1005:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** \author			Valeria Catani
+1006:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** */
+1007:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** void ITP_phaseTrackerReset(void)
+1008:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** {
+ 943                             		.loc 1 1008 0
+1009:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Interpreter.c **** 	memset(&UIBackupData[0], 0, N_UI_PHASE_BMP);
+ 944                             		.loc 1 1009 0
+ 945 0000 FB 12 00 00 00 00       		mov.L	#_UIBackupData, r1
+ 946 0006 66 A3                   		mov.L	#10, r3
+ 947 0008 66 02                   		mov	#0, r2
+ 948 000a 7F 88                   		sstr.b
+ 949 000c 02                      		rts
+ 950                             	.LFE6:
+ 952                             		.global	_Tab_phase2byte
+ 953                             		.section	.rodata.Tab_phase2byte,"a",@progbits
+ 956                             	_Tab_phase2byte:
+ 957 0000 01                      		.byte	1
+ 958 0001 00                      		.byte	0
+ 959 0002 03                      		.byte	3
+ 960 0003 02                      		.byte	2
+ 961 0004 07                      		.byte	7
+ 962 0005 06                      		.byte	6
+ 963 0006 09                      		.byte	9
+ 964 0007 08                      		.byte	8
+ 965                             		.section	.bss.TableData,"aw",@nobits
+ 966                             		.balign 4
+ 969                             	_TableData:
+ 970 0000 00 00 00 00 00 00 00 00 		.zero	12
+ 970      00 00 00 00 
+ 971                             		.section	.bss.pStepHigh,"aw",@nobits
+ 972                             		.balign 4
+ 975                             	_pStepHigh:
+ 976 0000 00 00 00 00             		.zero	4
+ 977                             		.section	.bss.pStepLow,"aw",@nobits
+ 978                             		.balign 4
+ 981                             	_pStepLow:
+ 982 0000 00 00 00 00             		.zero	4
+ 983                             		.section	.bss.StepLength,"aw",@nobits
+ 986                             	_StepLength:
+ 987 0000 00                      		.zero	1
+ 1150                             	.Letext0:
+ 1151                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 1152                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\CFG_DishWasher\\CFG_Inertia/ProductSafety_cfg.h"
+ 1153                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmDefines.h"
+ 1154                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_Types.h"
+ 1155                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmTypes.h"
+ 1156                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_Global.h"
+ 1157                             		.file 8 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmGlobal.h"
+ 1158                             		.file 9 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_callback.h"
+ 1159                             		.file 10 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_Loader.h"
+ 1160                             		.file 11 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_JumpIf.h"

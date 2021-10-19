@@ -1,0 +1,1107 @@
+   1                             		.file	"LIB_ProductSafety.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.LIB_SFT_SafetySupervisorInit,"ax",@progbits
+   5                             		.global	_LIB_SFT_SafetySupervisorInit
+   7                             	_LIB_SFT_SafetySupervisorInit:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck/LIB_ProductSafety.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** Copyright (c) 2004-2013, Indesit Company
+   3:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+   7:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \par	ProductSafety
+   8:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n	This module contains Safety Supervisor and Safety Action manager modules
+   9:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n
+  10:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \file		LIB_ProductSafety.c
+  11:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \ingroup        LIB_ProductSafety
+  12:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date	    2013-01-17
+  13:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	01.00.00
+  14:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author		 Alessandro Sabbatini
+  15:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n
+  16:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n
+  17:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \par	History:
+  18:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n
+  19:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n 		01.00.00
+  20:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n		2013-01-17
+  21:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n		Alessandro Sabbatini
+  22:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n		changes
+  23:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n 			Creation
+  24:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n
+  25:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+  26:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  27:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #define MODULE_BODY_PRODUCTSAFETY
+  28:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  29:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* ******** */
+  30:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* Includes */
+  31:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* ******** */
+  32:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  33:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #include "StandardTypes.h"
+  34:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #include "Config.h"
+  35:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #include "LIB_ProductSafety.h"
+  36:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #include "LIB_UTilities.h"
+  37:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #include "LIB_ClassBVar.h"
+  38:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #include "LIB_TaskMonitoring.h"
+  39:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  40:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+  41:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  42:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #define		SFT_ACTIONS_FULLBMP		((1ul << SFT_NUM_SAFETY_ACTIONS) - 1ul)
+  43:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  44:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if !defined(SFT_CUSTOM_FAULT_PRIO)
+  45:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #define SFT_CUSTOM_FAULT_PRIO SFT_PRIO_NONE
+  46:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+  47:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  48:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* ******** */
+  49:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* typedefs */
+  50:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* ******** */
+  51:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** typedef struct sft_safetyAction_status_s {
+  52:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	sft_safety_action_bmp_t sftActionReq;
+  53:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	sft_safety_action_bmp_t sftActionExec;
+  54:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	sft_safety_action_bmp_t sftActionDone;
+  55:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** } sft_safetyAction_status_t;
+  56:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  57:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** typedef struct sft_supervisor_status_s
+  58:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  59:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	sft_module_status_t moduleStatus[SFT_NUM_SAFETY_MODULES];
+  60:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	sft_safety_action_bmp_t	sftApplReq;
+  61:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t status;
+  62:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t highFaultSrc;
+  63:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t reqFlags;
+  64:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** } sft_supervisor_status_t;
+  65:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  66:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* ******** */
+  67:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* Globals  */
+  68:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /* ******** */
+  69:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /** Safety Action Status */
+  70:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** static sft_safetyAction_status_t SafetyActionStatus;
+  71:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /** Safety Supervisor Status - contains overall and per-module status */
+  72:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** static sft_supervisor_status_t SafetySupervisorStatus;
+  73:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /** Safety Module Status Flag - status change notification, last item is used by supervisor
+  74:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c ****  *  Not necessary for safety */
+  75:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** static uint8_t SafetyModuleStatusFlags[SFT_NUM_SAFETY_MODULES+1];
+  76:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  77:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** uint16_t	SafetyModuleTimerCntr[SFT_NUM_SAFETY_MODULES];
+  78:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  79:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+  80:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  81:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** static uint8_t LIB_SFT_GetSafetyPriorityByFaultSrc(uint8_t faultSrcID, uint8_t *prio);
+  82:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** static uint8_t LIB_SFT_GetFaultSrcByModuleFaultSrc(uint8_t reqModule, uint8_t reqModFaultSrc);
+  83:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** static void LIB_SFT_SafetyActionAllReset(void);
+  84:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  85:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  86:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  87:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+  88:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Safety Supervisor init module; initializes Safety Supervisor and modules
+  89:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  90:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		none
+  91:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  92:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	none
+  93:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  94:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  95:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+  96:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+  97:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+  98:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+  99:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 100:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 101:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 102:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 103:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_SafetySupervisorInit(void)
+ 104:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  10                             		.loc 1 104 0
+  11 0000 02                      		rts
+  12                             	.LFE0:
+  14                             		.section	.text.LIB_SFT_SafetySupervisor,"ax",@progbits
+  15                             		.global	_LIB_SFT_SafetySupervisor
+  17                             	_LIB_SFT_SafetySupervisor:
+  18                             	.LFB1:
+ 105:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t i;
+ 106:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t tmpPrio;
+ 107:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 108:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 109:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 110:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	PLT_ASSERT((sizeof(SafetyModuleInitFuncs)/sizeof(SFT_SafetyModuleInit_t)) == SFT_NUM_SAFETY_MODULE
+ 111:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	PLT_ASSERT((sizeof(SafetyModuleFuncs)/sizeof(SFT_SafetyModuleExec_t)) == SFT_NUM_SAFETY_MODULES )
+ 112:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 113:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_REGION_START();
+ 114:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 115:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	LIB_SFT_SafetySupervisorCommonCfgInit();
+ 116:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 117:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SafetySupervisorStatus.sftApplReq = 0;
+ 118:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 119:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if (LIB_SFT_GetSafetyPriorityByFaultSrc(SFT_FLT_SUPERVISOR_BAD_SETTING, &tmpPrio) != SF_OK)
+ 120:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 121:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.status = SFT_MODULE_FAULT;
+ 122:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.highFaultSrc = SFT_FLT_SUPERVISOR_BAD_SETTING;
+ 123:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetyModuleStatusFlags[SFT_NUM_SAFETY_MODULES] = TRUE;
+ 124:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 125:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	else
+ 126:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 127:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.status = SFT_MODULE_IDLE;
+ 128:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.highFaultSrc = SFT_NO_FAULT_SRC;
+ 129:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetyModuleStatusFlags[SFT_NUM_SAFETY_MODULES] = FALSE;
+ 130:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 131:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 132:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	for (i = 0; i < SFT_NUM_SAFETY_MODULES; i++)
+ 133:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 134:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.moduleStatus[i].status = SafetySupervisorStatus.status;
+ 135:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.moduleStatus[i].faultSrc = SFT_NO_FAULT_SRC;
+ 136:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetyModuleStatusFlags[i] = SafetyModuleStatusFlags[SFT_NUM_SAFETY_MODULES];
+ 137:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 138:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		if ((SafetySupervisorStatus.status != SFT_MODULE_FAULT) && (SafetyModuleInitFuncs[i] != NULL))
+ 139:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 140:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/* Initialization module - may not be used in all modules! */
+ 141:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			SafetyModuleInitFuncs[i](&SafetySupervisorStatus.moduleStatus[i]);
+ 142:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			SafetyModuleTimerCntr[i] = 0;
+ 143:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 144:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 145:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 146:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	CONFIG_LIB_PRODUCTSAFETY_TASK_MONITORING();
+ 147:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 148:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_DATA_UPDATE(SafetySupervisorStatus);
+ 149:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_REGION_END();
+ 150:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 151:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 152:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 153:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 154:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 155:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 156:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Safety Supervisor core module; it handles call and check of each safety module
+ 157:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n defined according to priority set.
+ 158:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 159:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		newLoads	pointer to a structure containing all loads request/override pointers
+ 160:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 161:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	none
+ 162:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 163:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 164:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 165:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+ 166:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 167:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 168:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 169:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 170:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 171:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 172:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_SafetySupervisor(iom_loads_struct_t *newLoads)
+ 173:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  19                             		.loc 1 173 0
+  20                             	.LVL0:
+  21 0000 02                      		rts
+  22                             	.LFE1:
+  24                             		.section	.text.LIB_SFT_SafetyActionRequest,"ax",@progbits
+  25                             		.global	_LIB_SFT_SafetyActionRequest
+  27                             	_LIB_SFT_SafetyActionRequest:
+  28                             	.LFB2:
+ 174:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 175:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 176:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 177:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	LIB_PRODUCTSAFETY_TASK__MONITOR_IN();
+ 178:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 179:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if (!(Main_IsRemoteEnabled() && SAFETY_CHECK_ISDISABLED()))
+ 180:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 181:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		uint8_t i;
+ 182:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		uint8_t curPrio, newPrio;
+ 183:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		uint8_t  curFaultSrc = SFT_NO_FAULT_SRC, curStatus = SFT_MODULE_IDLE;
+ 184:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		sft_module_status_t tmpStatus;
+ 185:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		sft_safety_action_bmp_t tmpSafetyActionsBmp = SafetySupervisorStatus.sftApplReq;
+ 186:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		sft_safety_action_bmp_t tmpSafetyActionsClrBmp = 0;
+ 187:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 188:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		curPrio = SFT_PRIO_NONE;
+ 189:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SAFETY_DATA_CHECK(SafetySupervisorStatus);
+ 190:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 191:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		if ((SafetySupervisorStatus.status != SFT_MODULE_FAULT) ||
+ 192:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			(SafetySupervisorStatus.highFaultSrc != SFT_FLT_SUPERVISOR_BAD_SETTING))
+ 193:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 194:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			uint8_t tmpSftReqFlags = SafetySupervisorStatus.reqFlags &
+ 195:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					~(((LIB_SFT_GetPendingSafetyActionBmp() & SFT_ACTION_RESET_CHK_MASK) == 0) ? SFT_FLAGS_NONE : 
+ 196:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 197:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/* Execution of all safety modules */
+ 198:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			for (i = 0; i < SFT_NUM_SAFETY_MODULES; i++)
+ 199:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 200:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				uint8_t newFaultSrc;
+ 201:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				uint8_t newStatus;
+ 202:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 203:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				SAFETY_REGION_START();
+ 204:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 205:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				memcpy (&tmpStatus, &SafetySupervisorStatus.moduleStatus[i], sizeof(tmpStatus));
+ 206:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if(SafetyModuleFuncs[i] != 0)
+ 207:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 208:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					/* Execute current Safety Module */
+ 209:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					SafetyModuleFuncs[i](newLoads, &SafetySupervisorStatus.moduleStatus[i], tmpSftReqFlags);
+ 210:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 211:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				newStatus = SafetySupervisorStatus.moduleStatus[i].status;
+ 212:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				newFaultSrc = LIB_SFT_GetFaultSrcByModuleFaultSrc(i, SafetySupervisorStatus.moduleStatus[i].fau
+ 213:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 214:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				SafetyModuleTimerCntr[i] = SafetyModuleTimer[i](&SafetySupervisorStatus.moduleStatus[i]);
+ 215:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 216:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/* If module is in idle state, any Loads Override set will be discarded */
+ 217:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if (newStatus == SFT_MODULE_IDLE)
+ 218:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 219:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					SafetySupervisorStatus.moduleStatus[i].faultSrc = SFT_NO_FAULT_SRC;
+ 220:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 221:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 222:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/* If priority of a fault is not present...
+ 223:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				 * choose! default or go to Setting file fault state? Depends on SFT_DEFAULT_PRIORITY */
+ 224:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if (LIB_SFT_GetSafetyPriorityByFaultSrc(newFaultSrc, &newPrio) != SF_OK)
+ 225:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 226:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(SFT_DEFAULT_PRIORITY)
+ 227:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					newPrio = SFT_DEFAULT_PRIORITY;
+ 228:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #else
+ 229:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 230:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					LIB_SFT_GetSafetyPriorityByFaultSrc(SFT_FLT_SUPERVISOR_BAD_SETTING, &newPrio);
+ 231:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					curStatus = SFT_MODULE_FAULT;
+ 232:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					curFaultSrc = SFT_FLT_SUPERVISOR_BAD_SETTING;
+ 233:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 234:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 235:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 236:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 237:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/* If priority code is lowest, disable fault status at all */
+ 238:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if ((newPrio == SFT_PRIO_NONE) && (newStatus == SFT_MODULE_FAULT))
+ 239:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 240:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					newStatus = SFT_MODULE_PREFAULT;
+ 241:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 242:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 243:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				SAFETY_DATA_UPDATE(SafetySupervisorStatus);
+ 244:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 245:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if (newStatus != tmpStatus.status)
+ 246:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 247:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					SafetyModuleStatusFlags[i] = TRUE;
+ 248:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 249:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 250:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/* New priority lower than current - previous overrides set take precedence than new ones */
+ 251:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if ((newStatus > curStatus) || ((newStatus == curStatus) && (newPrio >curPrio)))
+ 252:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 253:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 254:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					curPrio = newPrio;
+ 255:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					curStatus = newStatus;
+ 256:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					curFaultSrc = newFaultSrc;
+ 257:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 258:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 259:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if (SafetySupervisorStatus.status != curStatus)
+ 260:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 261:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					SafetyModuleStatusFlags[SFT_NUM_SAFETY_MODULES] = TRUE;
+ 262:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 263:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 264:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				SAFETY_REGION_END();
+ 265:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 266:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 267:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 268:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		else
+ 269:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 270:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			curStatus = SFT_MODULE_FAULT;
+ 271:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			curFaultSrc = SFT_FLT_SUPERVISOR_BAD_SETTING;
+ 272:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 273:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 274:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(SFT_NUM_STATUS_ACTIONS)
+ 275:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 276:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		for (i = 0; i < SFT_NUM_SAFETY_MODULES; i++)
+ 277:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 278:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			uint8_t newStatus;
+ 279:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			uint8_t curModule = i;
+ 280:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 281:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			if ((SafetySupervisorStatus.status == SFT_MODULE_FAULT) &&
+ 282:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				(SafetySupervisorStatus.highFaultSrc == SFT_FLT_SUPERVISOR_BAD_SETTING))
+ 283:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 284:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				newStatus = SFT_MODULE_FAULT;
+ 285:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				curModule = 0xff;
+ 286:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 287:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			else
+ 288:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 289:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				newStatus = SafetySupervisorStatus.moduleStatus[i].status;
+ 290:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 291:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 292:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/* If module is not in IDLE state, it may request some safety actions according to configuration
+ 293:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			if (newStatus != SFT_MODULE_IDLE)
+ 294:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 295:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				uint8_t tmpExecuteItem = SFT_ID_ANY;
+ 296:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				uint8_t j;
+ 297:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 298:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/* Check if a safety action has to be executed */
+ 299:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				for (j = 0; (tmpExecuteItem == SFT_ID_ANY) && (j < SFT_NUM_STATUS_ACTIONS); j++)
+ 300:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 301:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					uint8_t tmpModuleID = SafetyModulesStatusActions[j].moduleID;
+ 302:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					uint8_t tmpFaultSrc = SafetyModulesStatusActions[j].faultSrcID;
+ 303:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 304:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					if (SafetyModulesStatusActions[j].moduleStatus == newStatus)
+ 305:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					{
+ 306:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 						/* SF_ID_ANY wild card case for module ID */
+ 307:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 						if (tmpModuleID == SFT_ID_ANY)
+ 308:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 						{
+ 309:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 							/* SF_ID_ANY wild card case for module fault source */
+ 310:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 							if ( (tmpFaultSrc == SFT_ID_ANY) ||
+ 311:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 									( (SafetySupervisorStatus.highFaultSrc == SFT_FLT_SUPERVISOR_BAD_SETTING) &&
+ 312:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 											(tmpFaultSrc == SFT_FLT_SUPERVISOR_BAD_SETTING) ) )
+ 313:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 							{
+ 314:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 								/* Overrides application request by any safety action requested here */
+ 315:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 								tmpExecuteItem = j;
+ 316:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 							}
+ 317:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 						}
+ 318:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 						else
+ 319:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 						{
+ 320:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 							if (tmpModuleID == curModule)
+ 321:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 							{
+ 322:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 								/* SF_ID_ANY wild card case for module fault source or current fault source matches */
+ 323:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 								if ((tmpFaultSrc == SFT_ID_ANY) ||
+ 324:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 									(tmpFaultSrc == SafetySupervisorStatus.moduleStatus[curModule].faultSrc))
+ 325:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 								{
+ 326:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 									/* Overrides application request by any safety action requested here */
+ 327:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 									tmpExecuteItem = j;
+ 328:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 								}
+ 329:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 							}
+ 330:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 						}
+ 331:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					}
+ 332:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 333:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 334:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 335:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/* If a safety action is found and priority is not null, melt it with others previously set */
+ 336:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if ( (tmpExecuteItem != SFT_ID_ANY) && (newPrio != SFT_PRIO_NONE))
+ 337:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 338:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					tmpSafetyActionsClrBmp |= SafetyModulesStatusActions[tmpExecuteItem].sfyActionReqClrBmp;
+ 339:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					tmpSafetyActionsBmp |= SafetyModulesStatusActions[tmpExecuteItem].sfyActionReqBmp;
+ 340:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 341:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 342:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 343:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 344:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 345:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 346:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 347:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		tmpSafetyActionsBmp &= ~tmpSafetyActionsClrBmp;
+ 348:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 349:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		/* Merge tmpSafetyActionsClrBmp and tmpSafetyActionsBmp
+ 350:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		 * All of these actions must be kept to avoid unwanted resets */
+ 351:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		tmpSafetyActionsClrBmp |= tmpSafetyActionsBmp;
+ 352:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 353:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SAFETY_REGION_START();
+ 354:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.status = curStatus;
+ 355:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.highFaultSrc = curFaultSrc;
+ 356:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetySupervisorStatus.reqFlags = SFT_FLAGS_NONE;
+ 357:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SAFETY_DATA_UPDATE(SafetySupervisorStatus);
+ 358:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SAFETY_REGION_END();
+ 359:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 360:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		/* Call Safety Action Manager */
+ 361:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		LIB_SFT_SafetyActionMgr(tmpSafetyActionsBmp, tmpSafetyActionsClrBmp, newLoads);
+ 362:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 363:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 364:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 365:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	LIB_PRODUCTSAFETY_TASK__MONITOR_OUT();
+ 366:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 367:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 368:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 369:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 370:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 371:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 372:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 373:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 374:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Safety Actions manager core module; it handles call of safety actions as
+ 375:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n their request.
+ 376:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 377:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		newSafetyActionBmp			Bitmap of new safety action requests
+ 378:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		keepDoneSafetyActionBmp		Bitmap of safety action not requested but need to be kept (e.g. ap
+ 379:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		newLoads					pointer to a structure containing all loads request/override pointers
+ 380:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 381:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	none
+ 382:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 383:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 384:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 385:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+ 386:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 387:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 388:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 389:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 390:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 391:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 392:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_SafetyActionMgr(sft_safety_action_bmp_t newSafetyActionBmp, sft_safety_action_bmp_t ke
+ 393:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 394:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** uint32_t i;
+ 395:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** static uint8_t initRequest = _DISABLE_;
+ 396:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** static uint8_t localRet;
+ 397:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 398:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 399:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	/*NTBI Se SW relativo alla sicurezza è nello stato "DISABLE":] */
+ 400:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	/*NTBI	return	*/
+ 401:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	/*NTBI else:	*/
+ 402:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	/*NTBI	niente	*/
+ 403:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 404:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	/*	la bit-map che indica il set di nuove azioni di sicurezza da fare viene subito	*/
+ 405:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	/*	notificata come "richiesta"														*/
+ 406:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SafetyActionStatus.sftActionReq = (newSafetyActionBmp & SFT_ACTIONS_FULLBMP);
+ 407:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 408:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	/*	Per ciascuno dei bits che indicano il pilotaggio di un carico:	*/
+ 409:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	for (i=0; i<SFT_NUM_SAFETY_ACTIONS; i++)
+ 410:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 411:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		sft_safety_action_bmp_t tmpCurrSftAction = ((sft_safety_action_bmp_t)(1) << i);
+ 412:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 413:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		/*	Se è stata richiesta almeno una procedura safety di pilotaggio carico:	*/
+ 414:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		if (SafetyActionStatus.sftActionReq & tmpCurrSftAction)
+ 415:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 416:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/*	Se la corrispondente azione di sicurezza è stata inizializzata:	*/
+ 417:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/*	il relativo bit risulta settato; NON si ripete l'esecuzione		*/
+ 418:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/*	della init														*/
+ 419:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			if (SafetyActionStatus.sftActionExec & ((sft_safety_action_bmp_t)(1) << i))
+ 420:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 421:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				initRequest = _DISABLE_;
+ 422:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 423:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/*	Se la corrispondente azione di sicurezza NON è stata inizializzata:	*/
+ 424:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/*	il relativo bit risulta nullo; si esegue la init in modo one-shot	*/
+ 425:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			else
+ 426:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 427:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				initRequest = _ENABLE_;
+ 428:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/*	La init della azione di sicurezza corrisponde alla condizione 	*/
+ 429:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/*	di START per la esecuzione della stessa							*/
+ 430:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				SafetyActionStatus.sftActionExec |= tmpCurrSftAction;
+ 431:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 432:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 433:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/*	Esecuzione vera e propria della singola procedura individuata dalla bit-map	*/
+ 434:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			localRet = SafetyActionFuncs[i](newLoads, initRequest);
+ 435:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/*	Se Check ritorno della procedura NON è OK:	*/
+ 436:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			if (localRet != TRUE)
+ 437:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/*	Si interrompe immediatamente l'esecuzione del ciclo for:	*/
+ 438:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				break;
+ 439:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			else
+ 440:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 441:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				SafetyActionStatus.sftActionDone |= tmpCurrSftAction;
+ 442:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 443:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 444:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		/*	Se NON è stata richiesta alcuna procedura safety di pilotaggio carico:	*/
+ 445:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		else
+ 446:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 447:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/* Viene azzerata nel caso non sia presente nella keepDoneSafetyActionBmp */
+ 448:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			if ((keepDoneSafetyActionBmp  & tmpCurrSftAction) == 0)
+ 449:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 450:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				SafetyActionStatus.sftActionExec &= ~tmpCurrSftAction;
+ 451:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				SafetyActionStatus.sftActionDone &= ~tmpCurrSftAction;
+ 452:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 453:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 454:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 455:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 456:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 457:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 458:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 459:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 460:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif	/* defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT) */
+ 461:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 462:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 463:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function to get safety action requests from application
+ 464:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 465:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		newApplSafetyReqBmp	Bitmap of safety actions requested
+ 466:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 467:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	none
+ 468:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 469:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 470:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 471:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+ 472:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 473:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 474:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 475:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 476:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 477:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 478:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_SafetyActionRequest(sft_safety_action_bmp_t newApplSafetyReqBmp)
+ 479:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  29                             		.loc 1 479 0
+  30                             	.LVL1:
+  31 0000 02                      		rts
+  32                             	.LFE2:
+  34                             		.section	.text.LIB_SFT_SafetyFlagsRequest,"ax",@progbits
+  35                             		.global	_LIB_SFT_SafetyFlagsRequest
+  37                             	_LIB_SFT_SafetyFlagsRequest:
+  38                             	.LFB3:
+ 480:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 481:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_REGION_START();
+ 482:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_DATA_CHECK(SafetySupervisorStatus);
+ 483:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SafetySupervisorStatus.sftApplReq = (newApplSafetyReqBmp & SFT_ACTIONS_FULLBMP);
+ 484:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_DATA_UPDATE(SafetySupervisorStatus);
+ 485:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_REGION_END();
+ 486:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 487:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 488:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 489:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 490:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function to get safety flag requests from application
+ 491:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 492:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		newApplSafetyFlagsBmp	Bitmap of safety flags requested
+ 493:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 494:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	none
+ 495:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 496:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 497:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 498:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Feb 13, 2013
+ 499:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 500:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 501:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 502:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 503:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 504:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 505:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_SafetyFlagsRequest(uint8_t newApplSafetyFlagsBmp)
+ 506:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  39                             		.loc 1 506 0
+  40                             	.LVL2:
+  41 0000 02                      		rts
+  42                             	.LFE3:
+  44                             		.section	.text.LIB_SFT_GetAllSafetyFaultStatus,"ax",@progbits
+  45                             		.global	_LIB_SFT_GetAllSafetyFaultStatus
+  47                             	_LIB_SFT_GetAllSafetyFaultStatus:
+  48                             	.LFB4:
+ 507:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 508:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_REGION_START();
+ 509:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_DATA_CHECK(SafetySupervisorStatus);
+ 510:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SafetySupervisorStatus.reqFlags = newApplSafetyFlagsBmp;
+ 511:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_DATA_UPDATE(SafetySupervisorStatus);
+ 512:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	SAFETY_REGION_END();
+ 513:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 514:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 515:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 516:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 517:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 518:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that copies all safety modules status; fault sources is related to SafetyFaultSources
+ 519:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** items (visible to Application) instead of internal fault source.
+ 520:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 521:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[out] newSafetyStatus	Pointer to array where all safety modules status will be saved
+ 522:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 523:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	none
+ 524:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 525:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 526:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 527:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+ 528:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 529:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 530:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 531:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 532:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 533:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 534:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_GetAllSafetyFaultStatus(sft_module_faults_t *newSafetyStatus)
+ 535:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  49                             		.loc 1 535 0
+  50                             	.LVL3:
+  51 0000 02                      		rts
+  52                             	.LFE4:
+  54                             		.section	.text.LIB_SFT_GetResetChangedFaultStatus,"ax",@progbits
+  55                             		.global	_LIB_SFT_GetResetChangedFaultStatus
+  57                             	_LIB_SFT_GetResetChangedFaultStatus:
+  58                             	.LFB5:
+ 536:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 537:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t i;
+ 538:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 539:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	for (i = 0; i < SFT_NUM_SAFETY_MODULES; i++)
+ 540:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 541:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		(void) LIB_SFT_GetSafetyModFaultStatus(i, &newSafetyStatus[i]);
+ 542:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 543:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 544:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 545:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 546:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 547:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 548:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 549:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 550:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that copies safety modules status of changed modules each call, and reset changed statu
+ 551:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** fault sources is related to SafetyFaultSources items (visible to Application) instead of internal f
+ 552:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 553:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[out] newSafetyStatus	Pointer to array where all safety modules status will be saved
+ 554:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 555:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	FALSE					if there are no changes found
+ 556:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	TRUE					if there is a fault status change - update it
+ 557:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 558:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 559:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 560:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+ 561:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 562:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 563:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 564:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 565:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 566:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 567:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** bool_t LIB_SFT_GetResetChangedFaultStatus(sft_module_faults_t *newSafetyStatus)
+ 568:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  59                             		.loc 1 568 0
+  60                             	.LVL4:
+ 569:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 570:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 571:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t i;
+ 572:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	bool_t foundChange = FALSE;
+ 573:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 574:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 575:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	for (i = 0; i < SFT_NUM_SAFETY_MODULES; i++)
+ 576:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 577:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		if (SafetyModuleStatusFlags[i])
+ 578:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 579:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			(void) LIB_SFT_GetSafetyModFaultStatus(i, newSafetyStatus);
+ 580:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			SafetyModuleStatusFlags[i] = 0;
+ 581:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			foundChange = TRUE;
+ 582:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 583:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 584:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 585:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if (!foundChange)
+ 586:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 587:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetyModuleStatusFlags[SFT_NUM_SAFETY_MODULES] = FALSE;
+ 588:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 589:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 590:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return foundChange;
+ 591:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 592:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #else
+ 593:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return FALSE;
+ 594:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 595:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 596:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+  61                             		.loc 1 596 0
+  62 0000 66 01                   		mov.L	#0, r1
+  63                             	.LVL5:
+  64 0002 02                      		rts
+  65                             	.LFE5:
+  67                             		.section	.text.LIB_SFT_ResetStatusChangeNotification,"ax",@progbits
+  68                             		.global	_LIB_SFT_ResetStatusChangeNotification
+  70                             	_LIB_SFT_ResetStatusChangeNotification:
+  71                             	.LFB6:
+ 597:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 598:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 599:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 600:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that resets status change notifications
+ 601:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 602:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		none
+ 603:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 604:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	none
+ 605:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 606:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 607:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 608:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+ 609:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 610:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 611:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 612:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 613:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 614:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 615:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_ResetStatusChangeNotification(void)
+ 616:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  72                             		.loc 1 616 0
+  73 0000 02                      		rts
+  74                             	.LFE6:
+  76                             		.section	.text.LIB_SFT_GetOverallFaultStatus,"ax",@progbits
+  77                             		.global	_LIB_SFT_GetOverallFaultStatus
+  79                             	_LIB_SFT_GetOverallFaultStatus:
+  80                             	.LFB7:
+ 617:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 618:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t i;
+ 619:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 620:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	for (i=0; i < (SFT_NUM_SAFETY_MODULES+1); i++)
+ 621:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 622:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		SafetyModuleStatusFlags[i] = FALSE;
+ 623:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 624:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 625:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 626:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 627:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 628:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 629:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that copies safety Supervisor status
+ 630:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 631:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[out] newSafetyStatus	Pointer to array where all safety modules status will be saved
+ 632:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 633:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	none
+ 634:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 635:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 636:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 637:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+ 638:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 639:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 640:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 641:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 642:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 643:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** void LIB_SFT_GetOverallFaultStatus(sft_module_faults_t *newSafetyStatus)
+ 644:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  81                             		.loc 1 644 0
+  82                             	.LVL6:
+ 645:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 646:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t tmpStatus = SFT_MODULE_IDLE;
+ 647:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t tmpFaultSrc = SafetySupervisorStatus.highFaultSrc;
+ 648:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t tmpIsChanged = SafetyModuleStatusFlags[SFT_NUM_SAFETY_MODULES];
+ 649:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t tmpFaultCode = 0;
+ 650:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t tmpFaultSubCode = 0;
+ 651:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 652:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if (LIB_SFT_GetSafetyFaultCode(tmpFaultSrc, &tmpFaultCode, &tmpFaultSubCode) == SF_OK)
+ 653:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 654:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		tmpStatus = SafetySupervisorStatus.status;
+ 655:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 656:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 657:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	newSafetyStatus->status = (tmpStatus & 0x7f) | ((tmpIsChanged != 0) ? 0x80 : 0 );
+ 658:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	newSafetyStatus->fault.code = tmpFaultCode;
+ 659:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	newSafetyStatus->fault.subCode = tmpFaultSubCode;
+ 660:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 661:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #else
+ 662:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	newSafetyStatus->status = SFT_MODULE_IDLE;
+  83                             		.loc 1 662 0
+  84 0000 3C 12 00                		mov.B	#0, 2[r1]
+ 663:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	newSafetyStatus->fault.code = 0;
+  85                             		.loc 1 663 0
+  86 0003 3C 10 00                		mov.B	#0, [r1]
+ 664:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	newSafetyStatus->fault.subCode = 0;
+  87                             		.loc 1 664 0
+  88 0006 3C 11 00                		mov.B	#0, 1[r1]
+  89 0009 02                      		rts
+  90                             	.LFE7:
+  92                             		.section	.text.LIB_SFT_GetFaultSourceStatus,"ax",@progbits
+  93                             		.global	_LIB_SFT_GetFaultSourceStatus
+  95                             	_LIB_SFT_GetFaultSourceStatus:
+  96                             	.LFB8:
+ 665:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 666:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 667:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 668:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 669:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 670:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 671:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 672:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that gives status of a specific fault source
+ 673:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 674:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[in] faultSrcItem	Fault source item from array SafetyFaultSources
+ 675:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 676:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	status				Status of requested fault source; SFT_MODULE_IDLE if fault source has no errors
+ 677:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 678:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 679:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 680:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Feb 111, 2013
+ 681:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 682:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 683:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 684:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 685:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 686:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 687:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** uint8_t LIB_SFT_GetFaultSourceStatus(uint8_t faultSrcItem)
+ 688:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+  97                             		.loc 1 688 0
+  98                             	.LVL7:
+ 689:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t tmpCurStatus = SFT_MODULE_IDLE;
+ 690:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 691:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 692:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if ((faultSrcItem != SFT_NO_FAULT_SRC) && (faultSrcItem < SFT_NUM_FAULT_SOURCES))
+ 693:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 694:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		if (SafetyFaultSources[faultSrcItem].moduleFaultSrcID ==
+ 695:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			SafetySupervisorStatus.moduleStatus[SafetyFaultSources[faultSrcItem].moduleID].faultSrc)
+ 696:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 697:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			tmpCurStatus = SafetySupervisorStatus.moduleStatus[SafetyFaultSources[faultSrcItem].moduleID].st
+ 698:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 699:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 700:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 701:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 702:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return tmpCurStatus;
+ 703:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 704:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+  99                             		.loc 1 704 0
+ 100 0000 66 01                   		mov.L	#0, r1
+ 101                             	.LVL8:
+ 102 0002 02                      		rts
+ 103                             	.LFE8:
+ 105                             		.section	.text.LIB_SFT_GetSafetyFaultCode,"ax",@progbits
+ 106                             		.global	_LIB_SFT_GetSafetyFaultCode
+ 108                             	_LIB_SFT_GetSafetyFaultCode:
+ 109                             	.LFB9:
+ 705:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 706:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 707:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that gives status of a specific fault source
+ 708:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 709:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		 [in] faultSrcItem	Fault source item from array SafetyFaultSources
+ 710:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[out] faultCode		Fault code of fault source requested (if exists)
+ 711:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[out] faultSubCode	Fault sub code of fault source requested (if exists)
+ 712:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 713:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return		Returns if fault source is found or not
+ 714:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 715:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	== 0				if fault source is found
+ 716:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	!= 0				if fault source is not found - result codes are unchanged
+ 717:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 718:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 719:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Feb 111, 2013
+ 720:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 721:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 722:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 723:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 724:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 725:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 726:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** uint8_t LIB_SFT_GetSafetyFaultCode(uint8_t faultSrcItem, uint8_t *faultCode, uint8_t *faultSubcode)
+ 727:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 110                             		.loc 1 727 0
+ 111                             	.LVL9:
+ 728:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t tmpNotFound = TRUE;
+ 729:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 730:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 731:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if (faultSrcItem < SFT_NUM_FAULT_SOURCES)
+ 732:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 733:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(SFT_NUM_CUSTOM_FAULTCODES)
+ 734:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		uint8_t i;
+ 735:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 736:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		for (i = 0; (tmpNotFound && (i< SFT_NUM_CUSTOM_FAULTCODES)) ; i++)
+ 737:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 738:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			/* Looks for a custom fault code */
+ 739:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			if (SafetyCustomCodeFaultSrc[i] == faultSrcItem)
+ 740:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			{
+ 741:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				/* If function returns TRUE, values are updated */
+ 742:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				if (SafetyCustomCodeFuncs[i](faultCode, faultSubcode) == FALSE)
+ 743:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				{
+ 744:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					faultCode = 0;
+ 745:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 					faultSubcode = 0;
+ 746:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				}
+ 747:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 				tmpNotFound = FALSE;
+ 748:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			}
+ 749:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 750:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 751:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 752:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		if (tmpNotFound)
+ 753:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 754:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			*faultCode = SafetyFaultSources[faultSrcItem].faultCode;
+ 755:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			*faultSubcode = SafetyFaultSources[faultSrcItem].faultSubcode;
+ 756:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			tmpNotFound = FALSE;
+ 757:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 758:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 759:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 760:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 761:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return tmpNotFound;
+ 762:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 763:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 112                             		.loc 1 763 0
+ 113 0000 66 11                   		mov.L	#1, r1
+ 114                             	.LVL10:
+ 115 0002 02                      		rts
+ 116                             	.LFE9:
+ 118                             		.section	.text.LIB_SFT_GetSafetyModFaultStatus,"ax",@progbits
+ 119                             		.global	_LIB_SFT_GetSafetyModFaultStatus
+ 121                             	_LIB_SFT_GetSafetyModFaultStatus:
+ 122                             	.LFB10:
+ 764:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 765:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 766:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that copies fault code and status of a given safety module
+ 767:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 768:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[in] safetyModule		Safety module ID to get status
+ 769:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[out] newSafetyStatus	Pointer to array where all modules status will be saved
+ 770:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 771:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	== 0 if success
+ 772:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	!= 0 if an error occurred
+ 773:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 774:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 775:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Jan 22, 2013
+ 776:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 777:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 778:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 779:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 780:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 781:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 782:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** uint8_t LIB_SFT_GetSafetyModFaultStatus(uint8_t safetyModuleID, sft_module_faults_t *newSafetyStatu
+ 783:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 123                             		.loc 1 783 0
+ 124                             	.LVL11:
+ 784:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t retVal = 0xff;
+ 785:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 786:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined CONFIG_LIB_PRODUCTSAFETY_SUPPORT
+ 787:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	sft_module_status_t tmpSafetyStatus;
+ 788:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 789:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if (0 == LIB_SFT_GetSafetyModStatus(safetyModuleID, &tmpSafetyStatus))
+ 790:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 791:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		uint8_t tmpFaultCode = 0;
+ 792:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		uint8_t tmpFaultSubCode = 0;
+ 793:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 794:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		if (LIB_SFT_GetSafetyFaultCode(tmpSafetyStatus.faultSrc, &tmpFaultCode, &tmpFaultSubCode) == SF_O
+ 795:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		{
+ 796:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			newSafetyStatus->status = tmpSafetyStatus.status | ((SafetyModuleStatusFlags[safetyModuleID] != 
+ 797:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			newSafetyStatus->fault.code = tmpFaultCode;
+ 798:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			newSafetyStatus->fault.subCode = tmpFaultSubCode;
+ 799:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			retVal = 0;
+ 800:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		}
+ 801:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 802:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 803:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 804:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 805:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 806:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return retVal;
+ 807:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 125                             		.loc 1 807 0
+ 126 0000 75 41 FF                		mov.L	#0xff, r1
+ 127                             	.LVL12:
+ 128 0003 02                      		rts
+ 129                             	.LFE10:
+ 131                             		.section	.text.LIB_SFT_GetSafetyModStatus,"ax",@progbits
+ 132                             		.global	_LIB_SFT_GetSafetyModStatus
+ 134                             	_LIB_SFT_GetSafetyModStatus:
+ 135                             	.LFB11:
+ 808:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 809:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 810:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that copies fault source and status of a given safety module
+ 811:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 812:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[in] safetyModule		Safety module ID to get status
+ 813:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		[out] newSafetyStatus	Pointer to array where all modules status will be saved;
+ 814:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 									FaultSrc field is get from SafetyFaultSources, not from module itself.
+ 815:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 816:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	== 0 if success, newSafetyStatus has been updated
+ 817:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	!= 0 if an error occurred
+ 818:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 819:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 820:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Mar 08, 2013
+ 821:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 822:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 823:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 824:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 825:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 826:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 827:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** uint8_t LIB_SFT_GetSafetyModStatus(uint8_t safetyModuleID, sft_module_status_t *newSafetyStatus)
+ 828:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 136                             		.loc 1 828 0
+ 137                             	.LVL13:
+ 829:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	uint8_t retVal = 0xff;
+ 830:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 831:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined CONFIG_LIB_PRODUCTSAFETY_SUPPORT
+ 832:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 833:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	if (SafetySupervisorStatus.highFaultSrc == SFT_FLT_SUPERVISOR_BAD_SETTING)
+ 834:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 835:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		newSafetyStatus->status = SFT_MODULE_FAULT;
+ 836:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		newSafetyStatus->faultSrc = SFT_FLT_SUPERVISOR_BAD_SETTING;
+ 837:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		retVal = 0;
+ 838:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 839:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	else if (safetyModuleID < SFT_NUM_SAFETY_MODULES)
+ 840:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 841:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		newSafetyStatus->status = SafetySupervisorStatus.moduleStatus[safetyModuleID].status;
+ 842:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		newSafetyStatus->faultSrc = LIB_SFT_GetFaultSrcByModuleFaultSrc(safetyModuleID, SafetySupervisorS
+ 843:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		retVal = 0;
+ 844:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 845:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	else
+ 846:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	{
+ 847:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 		/* Do nothing */
+ 848:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	}
+ 849:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 850:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 851:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return retVal;
+ 852:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 138                             		.loc 1 852 0
+ 139 0000 75 41 FF                		mov.L	#0xff, r1
+ 140                             	.LVL14:
+ 141 0003 02                      		rts
+ 142                             	.LFE11:
+ 144                             		.section	.text.LIB_SFT_GetPendingSafetyActionBmp,"ax",@progbits
+ 145                             		.global	_LIB_SFT_GetPendingSafetyActionBmp
+ 147                             	_LIB_SFT_GetPendingSafetyActionBmp:
+ 148                             	.LFB12:
+ 853:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 854:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 855:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that return which safety actions are pending
+ 856:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 857:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		none
+ 858:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 859:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	== 0 		if all safety actions have been completed
+ 860:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	!= 0 		A bitmap of pending safety actions
+ 861:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 862:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 863:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Feb 15, 2013
+ 864:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 865:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 866:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 867:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 868:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 869:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** sft_safety_action_bmp_t LIB_SFT_GetPendingSafetyActionBmp(void)
+ 870:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 149                             		.loc 1 870 0
+ 871:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 872:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return ((SafetyActionStatus.sftActionReq ^ SafetyActionStatus.sftActionDone) & ( SafetyActionStatu
+ 873:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #else
+ 874:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return 0;
+ 875:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 876:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 150                             		.loc 1 876 0
+ 151 0000 66 01                   		mov.L	#0, r1
+ 152 0002 02                      		rts
+ 153                             	.LFE12:
+ 155                             		.section	.text.LIB_SFT_GetRequestSafetyActionBmp,"ax",@progbits
+ 156                             		.global	_LIB_SFT_GetRequestSafetyActionBmp
+ 158                             	_LIB_SFT_GetRequestSafetyActionBmp:
+ 159                             	.LFB13:
+ 877:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 878:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 879:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that return which safety actions are under request
+ 880:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 881:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		none
+ 882:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 883:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return		sft_safety_action_bmp_t		Bitmap of current safety actions requested
+ 884:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 885:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Francesco Barletta
+ 886:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Feb 19, 2013
+ 887:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 888:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 889:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 890:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Francesco Barletta
+ 891:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 892:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 893:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** sft_safety_action_bmp_t LIB_SFT_GetRequestSafetyActionBmp(void)
+ 894:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 160                             		.loc 1 894 0
+ 895:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 896:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return ( SafetyActionStatus.sftActionReq & SFT_ACTIONS_FULLBMP );
+ 897:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #else
+ 898:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return 0;
+ 899:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 900:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 161                             		.loc 1 900 0
+ 162 0000 66 01                   		mov.L	#0, r1
+ 163 0002 02                      		rts
+ 164                             	.LFE13:
+ 166                             		.section	.text.LIB_SFT_GetSafetyActionDoneBmp,"ax",@progbits
+ 167                             		.global	_LIB_SFT_GetSafetyActionDoneBmp
+ 169                             	_LIB_SFT_GetSafetyActionDoneBmp:
+ 170                             	.LFB14:
+ 901:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 902:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 903:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that return which safety actions are pending
+ 904:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 905:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		none
+ 906:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 907:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	== 0 		if all safety actions have been completed
+ 908:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	!= 0 		A bitmap of pending safety actions
+ 909:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 910:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 911:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		Feb 15, 2013
+ 912:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 913:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 914:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 915:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 916:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 917:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** sft_safety_action_bmp_t LIB_SFT_GetSafetyActionDoneBmp(void)
+ 918:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 171                             		.loc 1 918 0
+ 919:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 920:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return (SafetyActionStatus.sftActionDone & SFT_ACTIONS_FULLBMP);
+ 921:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #else
+ 922:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return 0;
+ 923:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 924:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 172                             		.loc 1 924 0
+ 173 0000 66 01                   		mov.L	#0, r1
+ 174 0002 02                      		rts
+ 175                             	.LFE14:
+ 177                             		.section	.text.LIB_SFT_GetSafetyActionExecBmp,"ax",@progbits
+ 178                             		.global	_LIB_SFT_GetSafetyActionExecBmp
+ 180                             	_LIB_SFT_GetSafetyActionExecBmp:
+ 181                             	.LFB15:
+ 925:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 926:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** /**
+ 927:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \n Function that return which safety actions are executing
+ 928:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 929:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \param		none
+ 930:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 931:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	== 0 		if no safety actions are executing
+ 932:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \return 	!= 0 		A bitmap of executing safety actions
+ 933:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 934:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \author 	Alessandro Sabbatini
+ 935:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \date		May 14, 2013
+ 936:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \version	1.0.0
+ 937:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 
+ 938:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** \note		\par \b Nota 1:
+ 939:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 			documentation by Alessandro Sabbatini
+ 940:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** */
+ 941:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** sft_safety_action_bmp_t LIB_SFT_GetSafetyActionExecBmp(void)
+ 942:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** {
+ 182                             		.loc 1 942 0
+ 943:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #if defined(CONFIG_LIB_PRODUCTSAFETY_SUPPORT)
+ 944:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return (SafetyActionStatus.sftActionExec & SFT_ACTIONS_FULLBMP);
+ 945:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #else
+ 946:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** 	return 0;
+ 947:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** #endif
+ 948:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck\LIB_ProductSafety.c **** }
+ 183                             		.loc 1 948 0
+ 184 0000 66 01                   		mov.L	#0, r1
+ 185 0002 02                      		rts
+ 186                             	.LFE15:
+ 334                             	.Letext0:
+ 335                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 336                             		.file 3 "C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_SecurityCheck/LIB_ProductSafetyExp.
+ 337                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_IOManager/LoadsRequest.h"

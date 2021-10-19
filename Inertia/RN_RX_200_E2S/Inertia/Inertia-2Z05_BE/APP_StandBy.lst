@@ -1,0 +1,939 @@
+   1                             		.file	"APP_StandBy.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.STB_HarakiriManager,"ax",@progbits
+   5                             		.global	_STB_HarakiriManager
+   7                             	_STB_HarakiriManager:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Application_Platform/APP_StandBy.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+   2:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /*
+   3:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** ** **************************************************************************
+   4:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** ** **************************************************************************
+   5:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** */ 
+   6:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /**
+   7:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c ****  
+   8:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** Si occupa della gestione dello stand by dell'elettrodomestico
+   9:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c ****  
+  10:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \file    	APP_StandBy.c
+  11:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  12:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \version 	1.0.0
+  13:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \date    	27/03/2008
+  14:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \authors	Simone Costantini
+  15:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** */ 
+  16:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /*
+  17:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** ** **************************************************************************
+  18:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** ** **************************************************************************
+  19:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** */
+  20:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  21:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /*
+  22:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** Copyright (c) 2004-2006, Indesit Company, EDT.
+  23:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** Tutti i diritti sono riservati. All rights reserved.
+  24:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** */
+  25:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  26:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* Old Versions
+  27:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \version
+  28:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \date
+  29:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \author
+  30:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** */
+  31:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  32:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* ******** */
+  33:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* Includes */
+  34:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* ******** */
+  35:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #include "CstmHeaders.h"
+  36:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #include "LIB_BackUpExp.h"
+  37:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #include "LIB_ResetExp.h"
+  38:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  39:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  40:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #if	(SBY_STANDBY_ENABLE == 1)
+  41:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  42:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* ****************** */
+  43:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* Defines and Macros */
+  44:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* ****************** */
+  45:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  46:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* *************************** */
+  47:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* Typedef, Structs and Unions */
+  48:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* *************************** */
+  49:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  50:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* **************************** */
+  51:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* Prototype of local functions */
+  52:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* **************************** */
+  53:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** static uint8_t STB_CheckStandByFlags(uint8_t flag);
+  54:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  55:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* ****************** */
+  56:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* Exported variables */
+  57:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* ****************** */
+  58:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  59:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* **************** */
+  60:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* Global variables */
+  61:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* **************** */
+  62:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /**
+  63:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** DUMMY & DEBUG
+  64:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** */
+  65:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  66:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #ifdef _STANDBY_DBG
+  67:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** _WM_GLOBAL_ bool_t DBG_seppukuEnabled;
+  68:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #endif
+  69:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  70:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* ***************** */
+  71:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* Exported function */
+  72:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /* ***************** */
+  73:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /**
+  74:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** Processa la variabile ExternalRequest e a seconda del suo valore
+  75:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** attiva la modalità di standby.
+  76:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  77:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \param [in,out]	ExternalRequest (global) è la modalità speciale di funzionamento richiesta
+  78:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  79:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \return			none
+  80:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  81:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \notes:
+  82:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  83:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \author			Simone Costantini
+  84:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \date			27/03/2008
+  85:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \version		1.0.0
+  86:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  87:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \review 		Valeria Catani
+  88:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \date 			11/12/09
+  89:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \notes			pilotaggio pin solo in presenza del pin Autokill in Output Map
+  90:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  91:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \review 		Emanuela Antognoli
+  92:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \date 			19/03/10
+  93:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \notes			inserimento numeri di tentativi se fallisce lo standby con cella Hw (autotaratura stile ar
+  94:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+  95:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** */
+  96:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** void STB_HarakiriManager(void)
+  97:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** {
+  10                             		.loc 1 97 0
+  11 0000 7E A7                   		push.l	r7
+  12                             	.LCFI0:
+  13                             	.LBB6:
+  14                             	.LBB7:
+  98:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** L_PARAM load;
+  99:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** static bool_t backupDisabled = FALSE;
+ 100:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 101:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	/*lint -save -e960 */
+ 102:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	if(
+ 103:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		( STB_CheckStandByFlags((uint8_t) SBY_DISABLE_FLAG) == 0 )
+ 104:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		&&
+ 105:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		(!( (STB_CheckStandByFlags((uint8_t) SBY_WAIT_DISABLE_FLAG) != 0) && (RegDev_Pos[LD_STANDBY_REG_I
+ 106:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	  )
+ 107:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	/*lint -restore */
+ 108:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	{/* Standby abilitato */
+ 109:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 110:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		load.b = LOAD_OFF; /* SbyLowPow 14.12.09: inizializzato a LOAD_ON 
+ 111:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 							per essere a FALSE nel controllo successivo
+ 112:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 							se RegDev_Pos[LD_STANDBY_REG_IND] = NO_LD_POS */
+ 113:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	
+ 114:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		if(RegDev_Pos[LD_STANDBY_REG_IND] != NO_LD_POS)	/* 11.12.09 SbyLowPow*/
+ 115:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		{
+ 116:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			/* Non viene resettato ExternalRequest: finchè non avviene un reset freddo
+ 117:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			la Main continua a pilotare il pin */
+ 118:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			/* ExternalRequest = 0; */
+ 119:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		 	load = LoadsReq_New[RegDev_Pos[LD_STANDBY_REG_IND]]; /* SS - TODO verificare quando avviene la 
+ 120:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		}
+ 121:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 122:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		if (
+ 123:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		(( ExternalRequest == SYSTEM_NORMAL_FAST_STANDBY_MODE) || (LOAD_ON == load.b)  )
+ 124:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #ifdef _STANDBY_DBG
+ 125:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			|| (DBG_seppukuEnabled)
+ 126:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #endif /* _STANDBY_DBG */
+ 127:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		)
+ 128:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		{
+ 129:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			/* StandBy Fast */
+ 130:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			HarakiriRequired = HKM_FAST_SB_ON;
+ 131:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+ 132:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		}
+ 133:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		else if(SYSTEM_NORMAL_STANDBY_MODE == ExternalRequest)
+ 134:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		{
+ 135:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			/* StandBy Full */
+ 136:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			if(HKM_SB_RESET == HarakiriRequired)
+ 137:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			{
+ 138:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				/* Setta il counter prima di mandare il comando di harakiri */
+ 139:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriRequired = HKM_SB_ON;
+ 140:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+ 141:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #if ( SW_TIMER_NORM_MODE ==	FALSE)
+ 142:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+ 143:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				                (SWTC_PrescalerType)COUNTERS2_TBASE_100MS,
+ 144:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				                TOUT_PRE_STANDBY(Tab_SFTStandByData.Data));
+ 145:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #else
+ 146:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				Set_DownCounter((uint8_t) MEDIUM_COUNTER, (SWTC_CountersType) STB_HARAKIRI_COUNTER_M, (SWTC_Pre
+ 147:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #endif				
+ 148:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				SWTC_Run((SWTC_CountersType)STB_HARAKIRI_COUNTER_M);
+ 149:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			}
+ 150:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			else if ( SWTC_IsExpired((SWTC_CountersType)STB_HARAKIRI_COUNTER_M) )
+ 151:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			{
+ 152:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				/* Terminato il tempo di attesa */
+ 153:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriRequired = HKM_FAST_SB_ON;
+ 154:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			}
+ 155:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			else
+ 156:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			{
+ 157:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				/* do nothing... */
+ 158:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			}
+ 159:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		}
+ 160:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		else if(ExternalRequest == SYSTEM_NORMAL_RESET_STANDBY_MODE)
+ 161:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		{
+ 162:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			/* Pacchetto Reset StandBy */
+ 163:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+ 164:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			HarakiriRequired = HKM_SB_RESET;
+ 165:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			SWTC_Stop((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 166:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		}
+ 167:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		else
+ 168:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		{
+ 169:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			/* Ricevuto altro Normal Mode o ExternalRequest = 0 dopo RESET FREDDO */
+ 170:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			if(HarakiriLowPower.Req !=  HKM_LOW_POWER_REQ )
+ 171:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			{
+ 172:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				/* non siamo in attesa della comunicazione UI,
+ 173:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				potrebbe essere un caso di Wait disabilitato da setting (vecchia gestione con cella)
+ 174:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				o un qualsiasi altro stato della macchina a stati Standby - Wait */
+ 175:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+ 176:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriRequired = HKM_SB_RESET;
+ 177:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				SWTC_Stop((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 178:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			}
+ 179:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		}
+ 180:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		
+ 181:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		/* SbyLowPow 15.12.09 */
+ 182:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		if(HarakiriLowPower.Req == HKM_LOW_POWER_REQ)
+ 183:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		{
+ 184:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			/* attesa comunicazione UI dopo RESET FREDDO in Standby Low Power */
+ 185:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			if(SWTC_IsExpired((SWTC_CountersType) STB_HARAKIRI_COUNTER_M))
+ 186:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			{
+ 187:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				/* conteggio attesa comunicazione UI concluso -> auto -standby */
+ 188:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriRequired = HKM_FAST_SB_ON;	/* rientro nello stato FAST_SBY_ON ma con stato HarakiriLowP
+ 189:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			}
+ 190:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		}
+ 191:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	
+ 192:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		if(HarakiriRequired == HKM_FAST_SB_ON)
+ 193:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		{
+ 194:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			/* StandBy Attivato */
+ 195:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #if defined(SLEEP_MODE_ENABLE)
+ 196:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			if(STB_CheckStandByFlags(SBY_WAIT_DISABLE_FLAG) == 0)
+ 197:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			{
+ 198:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				if(RegDev_Pos[LD_STANDBY_REG_IND] != NO_LD_POS)	/* 11.12.09 SbyLowPow*/
+ 199:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				{
+ 200:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					/* stanby con cella di memoria HW */
+ 201:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					if(HarakiriLowPower.Hitpoints < HKM_N_MAX_HITPOINTS)
+ 202:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					{
+ 203:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 						HarakiriLowPower.Mode = HKM_SBY_HW_MODE;	
+ 204:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					}
+ 205:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					else
+ 206:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					{
+ 207:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 						HarakiriLowPower.Mode = HKM_SBY_LOW_POWER_MODE;
+ 208:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					}
+ 209:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				}
+ 210:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				else
+ 211:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				{
+ 212:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					/* wait mode*/
+ 213:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					HarakiriLowPower.Mode = HKM_SBY_LOW_POWER_MODE;
+ 214:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				}
+ 215:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			}
+ 216:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			else
+ 217:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #endif /* SLEEP_MODE_ENABLE */
+ 218:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			{
+ 219:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				/* NB: il caso in cui il flag wait disable sia impostato ma non sia definito il pin è stato co
+ 220:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				 * standby in qualche modo.
+ 221:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				 */
+ 222:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				/* stanby con cella Hw ma senza tentativi di sleep*/
+ 223:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Mode = HKM_SBY_NO_SLEEP_MODE;
+ 224:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			}
+ 225:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 226:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			if (!backupDisabled)
+ 227:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			{
+ 228:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				backupDisabled = TRUE;
+ 229:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 230:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Req =  HKM_LOW_POWER_REQ;
+ 231:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				/* Config+init timer reset post StandBy */
+ 232:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #if ( SW_TIMER_NORM_MODE ==	FALSE)
+ 233:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+ 234:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				                (SWTC_PrescalerType)COUNTERS2_TBASE_100MS,
+ 235:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				                (2*TOUT_RESET_STANDBY(Tab_SFTStandByData.Data)));
+ 236:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #else
+ 237:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				Set_DownCounter((uint8_t) MEDIUM_COUNTER, (SWTC_CountersType) STB_HARAKIRI_COUNTER_M, (SWTC_Pre
+ 238:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #endif				
+ 239:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				/* Disables futher backups */
+ 240:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				LIB_Backup_SetBackupControlMonitor(BACKUP_NO_SOURCE);
+ 241:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				/* Force backup */
+ 242:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				LIB_Backup_ForceBackup();
+ 243:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			}
+ 244:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 245:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			SWTC_Run((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 246:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 247:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			if((HarakiriLowPower.Mode == HKM_SBY_NO_SLEEP_MODE) || (HarakiriLowPower.Hitpoints < HKM_N_MAX_H
+ 248:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			{
+ 249:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				if(RegDev_Pos[LD_STANDBY_REG_IND] != NO_LD_POS)	/* 11.12.09 SbyLowPow*/
+ 250:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				{
+ 251:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					load.b = LOAD_ON;
+ 252:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #if ( PILOT_NORM_STANDBY_PIN ==  1) 
+ 253:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					/* MQ AN Tutta da verificare */
+ 254:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					LoadsReq_New[RegDev_Pos[LD_STANDBY_REG_IND]] = load;
+ 255:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #else
+ 256:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					(void)LIB_IOM_SetLoad(RegDev_Pos[LD_STANDBY_REG_IND], load);
+ 257:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #endif /* PILOT_NORM_STANDBY_PIN ==   1 */
+ 258:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				}
+ 259:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			}
+ 260:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		}
+ 261:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	}
+ 262:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	else
+ 263:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	{
+ 264:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		/* Standby disabilitato */
+ 265:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+ 266:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		HarakiriRequired = HKM_SB_RESET;
+ 267:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		SWTC_Stop((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 268:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	}
+ 269:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** } /* END: STB_HarakiriManager */
+ 270:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 271:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /**
+ 272:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** Forza un reset quando il count-down impostato
+ 273:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** dallo StandBy è scaduto.
+ 274:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 275:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \return			none
+ 276:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 277:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \notes:			
+ 278:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 279:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \author			Simone Costantini
+ 280:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \date			04/04/2008
+ 281:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \version		1.0.0
+ 282:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 283:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \review			Emanuela Antognoli
+ 284:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \date			19/03/10
+ 285:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \notes			inserimento doppio backup stile arcadia se fallisce il pilotaggio della cella di standby
+ 286:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 287:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** */
+ 288:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** void STB_CheckStandByCounter(void)
+ 289:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** {
+ 290:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #if defined(SLEEP_MODE_ENABLE)
+ 291:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** WAKEUPTYPE wakeUpRequest;
+ 292:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #endif /* defined(SLEEP_MODE_ENABLE) */
+ 293:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #if(STANDBY_EXCEPTION_PROCEDURE == 1)
+ 294:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	STB_Standby_Exception_Proc();
+ 295:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #endif /*STANDBY_EXCEPTION_PROCEDURE */	
+ 296:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	if(HarakiriRequired == HKM_FAST_SB_ON)
+ 297:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	{
+ 298:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		/* Andando in Off... */
+ 299:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		if(!(SWTC_IsStopped((SWTC_CountersType) STB_HARAKIRI_COUNTER_M)))
+ 300:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		{
+ 301:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			if(SWTC_IsExpired((SWTC_CountersType) STB_HARAKIRI_COUNTER_M))
+ 302:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			{
+ 303:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				/* TimeOut scaduto */
+ 304:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				if(HarakiriLowPower.Mode == HKM_SBY_NO_SLEEP_MODE)
+ 305:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				{
+ 306:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					/* non posso andare in sleep mode*/
+ 307:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					LIB_Reset_ForceColdReset();
+ 308:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				}
+ 309:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				else
+ 310:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				{
+ 311:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					/* posso andare in sleep mode*/
+ 312:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					if( HarakiriLowPower.Mode == HKM_SBY_HW_MODE)
+ 313:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					{
+ 314:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 						/* Sby con cella di memoria -> Sby HW abilitato ->! */
+ 315:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 						if(HarakiriLowPower.Hitpoints < HKM_N_MAX_HITPOINTS)
+ 316:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 						{
+ 317:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 							/* Entra qui solo le prime volta dopo la ripogrammazione del setting
+ 318:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 							e in caso di RESET FREDDI con mancato backup */
+ 319:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 							HarakiriLowPower.Mode= HKM_SBY_LOW_POWER_MODE;
+ 320:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 							HarakiriLowPower.Hitpoints++;
+ 321:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 							HarakiriLowPower.Req = HKM_LOW_POWER_REQ;
+ 322:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 323:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 							/* Forza cancellazione pagina + Backup - da questo momento la modalità di
+ 324:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 							Wait è fissa e sarà ribadita ad ogni salvataggio in Backup */
+ 325:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 							(void)LIB_Backup_InvalidateBackupArea();
+ 326:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 							LIB_Backup_ForceBackup();	/* backup dello stato di Wait */
+ 327:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 						}
+ 328:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					}
+ 329:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					/* Sby Wait abilitato -> Wait Mode Request! */
+ 330:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #if defined(SLEEP_MODE_ENABLE) /* SS - FIXME MQ PA Manca la parte di piattaforma che gestisce lo sl
+ 331:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					wakeUpRequest.I2C = 1;
+ 332:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					Plt_Sleep_Request(&wakeUpRequest);		/* SS - TODO sostituire funzioni con PLT */
+ 333:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #endif				
+ 334:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				}
+ 335:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			}
+ 336:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		}
+ 337:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	}
+ 338:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** } /* END: STB_CheckStandByCounter */
+ 339:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 340:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /**
+ 341:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** Verifica disabilitazione Standby - disabilitazione Wait Mode
+ 342:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \return			codice che indica quale tipo di Standby è disabilitato
+ 343:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 344:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \notes:			in mancanza di RAM si usa la Flash
+ 345:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				(routine chiamata più volte che lavora su variabili locali)
+ 346:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 347:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \author			Valeria Catani
+ 348:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \date			14/12/2009
+ 349:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \version		1.0.0
+ 350:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 351:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \review 		Emanuela Antognoli
+ 352:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \date 			1/03/10
+ 353:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \notes			Hottima già si carica i flag in ram , quindi la gestionne è diversa.
+ 354:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** */
+ 355:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** static uint8_t STB_CheckStandByFlags(uint8_t flag )
+ 356:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** {
+ 357:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #if defined (CK_HOTTIMA) 
+ 358:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	return (TESTBIT(N_Application, flag)? TRUE:FALSE);
+ 359:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #elif defined (DW_DISHWASHER) || defined (CK_HOOD)
+ 360:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	return (TESTBIT(HWC_Flags.flags, flag)? TRUE: FALSE);	
+  15                             		.loc 1 360 0
+  16 0002 FB 72 00 00 00 00       		mov.L	#_HWC_Flags, r7
+  17 0008 5C 7E                   		movu.W	[r7], r14
+  18                             	.LBE7:
+  19                             	.LBE6:
+  97:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** {
+  20                             		.loc 1 97 0
+  21 000a 60 40                   		sub	#4, r0
+  22                             	.LCFI1:
+ 102:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	if(
+  23                             		.loc 1 102 0
+  24 000c FD 78 CE 00 08          		tst	#0x800, r14
+  25 0011 3B 7D 01                		bne	.L2
+ 104:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		&&
+  26                             		.loc 1 104 0
+  27 0014 FD 78 CE 00 04          		tst	#0x400, r14
+  28 0019 FB 72 00 00 00 00       		mov.L	#_RegDev_Pos, r7
+  29 001f 20 0B                   		beq	.L3
+ 105:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		(!( (STB_CheckStandByFlags((uint8_t) SBY_WAIT_DISABLE_FLAG) != 0) && (RegDev_Pos[LD_STANDBY_REG_I
+  30                             		.loc 1 105 0
+  31 0021 59 7E 01                		movu.B	1[r7], r14
+  32 0024 75 5E FF                		cmp	#0xff, r14
+  33 0027 3A 67 01                		beq	.L2
+  34                             		.balign 2,3,3
+  35                             	.L3:
+ 114:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		if(RegDev_Pos[LD_STANDBY_REG_IND] != NO_LD_POS)	/* 11.12.09 SbyLowPow*/
+  36                             		.loc 1 114 0
+  37 002a B0 7F                   		movu.B	1[r7], r7
+  38 002c 75 57 FF                		cmp	#0xff, r7
+  39 002f 20 0C                   		beq	.L23
+ 119:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		 	load = LoadsReq_New[RegDev_Pos[LD_STANDBY_REG_IND]]; /* SS - TODO verificare quando avviene la 
+  40                             		.loc 1 119 0
+  41 0031 70 77 00 00 00 00       		add	#_LoadsReq_New, r7
+  42 0037 CC 7E                   		mov.B	[r7], r14
+  43 0039 2E 05                   		bra	.L4
+  44                             	.L23:
+ 110:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		load.b = LOAD_OFF; /* SbyLowPow 14.12.09: inizializzato a LOAD_ON 
+  45                             		.loc 1 110 0
+  46 003b 66 0E                   		mov	#0, r14
+  47 003d 03                      		.balign 2,3,5
+  48                             	.L4:
+ 122:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		if (
+  49                             		.loc 1 122 0
+  50 003e FB 72 00 00 00 00       		mov.L	#_ExternalRequest, r7
+  51 0044 58 74                   		movu.B	[r7], r4
+  52 0046 FB 72 00 00 00 00       		mov.L	#_HarakiriRequired, r7
+  53 004c 61 84                   		cmp	#8, r4
+  54 004e 20 08                   		beq	.L5
+ 123:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		(( ExternalRequest == SYSTEM_NORMAL_FAST_STANDBY_MODE) || (LOAD_ON == load.b)  )
+  55                             		.loc 1 123 0
+  56 0050 5B EE                   		movu.B	r14, r14
+  57 0052 61 1E                   		cmp	#1, r14
+  58 0054 21 14                   		bne	.L6
+  59                             		.balign 2,3,4
+  60                             	.L5:
+ 130:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			HarakiriRequired = HKM_FAST_SB_ON;
+  61                             		.loc 1 130 0
+  62 0056 3C 70 02                		mov.B	#2, [r7]
+ 131:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+  63                             		.loc 1 131 0
+  64 0059 FB 72 00 00 00 00       		mov.L	#_HarakiriLowPower, r7
+  65 005f CC 7E                   		mov.B	[r7], r14
+  66 0061 75 2E F8                		and	#-8, r14
+  67 0064 C3 7E                   		mov.B	r14, [r7]
+  68 0066 2E 74                   		bra	.L7
+  69                             	.L6:
+ 133:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		else if(SYSTEM_NORMAL_STANDBY_MODE == ExternalRequest)
+  70                             		.loc 1 133 0
+  71 0068 61 64                   		cmp	#6, r4
+  72 006a 21 4B                   		bne	.L8
+ 136:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			if(HKM_SB_RESET == HarakiriRequired)
+  73                             		.loc 1 136 0
+  74 006c 58 7E                   		movu.B	[r7], r14
+  75 006e 61 0E                   		cmp	#0, r14
+  76 0070 21 36                   		bne	.L9
+ 139:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriRequired = HKM_SB_ON;
+  77                             		.loc 1 139 0
+  78 0072 3C 70 01                		mov.B	#1, [r7]
+ 140:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+  79                             		.loc 1 140 0
+  80 0075 FB 72 00 00 00 00       		mov.L	#_HarakiriLowPower, r7
+  81 007b CC 7E                   		mov.B	[r7], r14
+  82 007d 75 2E F8                		and	#-8, r14
+  83 0080 C3 7E                   		mov.B	r14, [r7]
+ 144:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				                TOUT_PRE_STANDBY(Tab_SFTStandByData.Data));
+  84                             		.loc 1 144 0
+  85 0082 FB 72 00 00 00 00       		mov.L	#_Tab_SFTStandByData, r7
+  86 0088 EC 77                   		mov.L	[r7], r7
+ 142:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+  87                             		.loc 1 142 0
+  88 008a 61 07                   		cmp	#0, r7
+  89 008c 20 06                   		beq	.L24
+  90 008e B0 7B                   		movu.B	1[r7], r3
+  91 0090 2E 06                   		bra	.L10
+  92                             	.L24:
+  93 0092 75 43 96                		mov	#0x96, r3
+  94 0095 03                      		.balign 2,3,1
+  95                             	.L10:
+ 142:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+  96                             		.loc 1 142 0 is_stmt 0 discriminator 2
+  97 0096 66 01                   		mov	#0, r1
+  98 0098 66 12                   		mov	#1, r2
+  99 009a 05 00 00 00             		bsr	_Set_MediumCounter
+ 148:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				SWTC_Run((SWTC_CountersType)STB_HARAKIRI_COUNTER_M);
+ 100                             		.loc 1 148 0 is_stmt 1 discriminator 2
+ 101 009e 66 01                   		mov	#0, r1
+ 102 00a0 05 00 00 00             		bsr	_SWTC_Run
+ 103 00a4 2E 36                   		bra	.L7
+ 104                             	.L9:
+ 150:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			else if ( SWTC_IsExpired((SWTC_CountersType)STB_HARAKIRI_COUNTER_M) )
+ 105                             		.loc 1 150 0
+ 106 00a6 66 01                   		mov	#0, r1
+ 107 00a8 05 00 00 00             		bsr	_SWTC_IsExpired
+ 108 00ac 61 01                   		cmp	#0, r1
+ 109 00ae 20 2C                   		beq	.L7
+ 153:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriRequired = HKM_FAST_SB_ON;
+ 110                             		.loc 1 153 0
+ 111 00b0 3C 70 02                		mov.B	#2, [r7]
+ 112 00b3 2E 27                   		bra	.L7
+ 113                             	.L8:
+ 114 00b5 FB E2 00 00 00 00       		mov.L	#_HarakiriLowPower, r14
+ 160:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		else if(ExternalRequest == SYSTEM_NORMAL_RESET_STANDBY_MODE)
+ 115                             		.loc 1 160 0
+ 116 00bb 61 74                   		cmp	#7, r4
+ 163:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+ 117                             		.loc 1 163 0
+ 118 00bd CC E4                   		mov.B	[r14], r4
+ 160:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		else if(ExternalRequest == SYSTEM_NORMAL_RESET_STANDBY_MODE)
+ 119                             		.loc 1 160 0
+ 120 00bf 21 04                   		bne	.L12
+ 121 00c1 2E 0B                   		bra	.L48
+ 122                             	.L12:
+ 170:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			if(HarakiriLowPower.Req !=  HKM_LOW_POWER_REQ )
+ 123                             		.loc 1 170 0
+ 124 00c3 EF 43                   		mov.L	r4, r3
+ 125 00c5 64 73                   		and	#7, r3
+ 126 00c7 61 13                   		cmp	#1, r3
+ 127 00c9 20 11                   		beq	.L7
+ 128 00cb 03                      		.balign 2,3,2
+ 129                             	.L48:
+ 175:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+ 130                             		.loc 1 175 0
+ 131 00cc 75 24 F8                		and	#-8, r4
+ 132 00cf C3 E4                   		mov.B	r4, [r14]
+ 177:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				SWTC_Stop((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 133                             		.loc 1 177 0
+ 134 00d1 66 01                   		mov	#0, r1
+ 176:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriRequired = HKM_SB_RESET;
+ 135                             		.loc 1 176 0
+ 136 00d3 3C 70 00                		mov.B	#0, [r7]
+ 177:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				SWTC_Stop((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 137                             		.loc 1 177 0
+ 138 00d6 05 00 00 00             		bsr	_SWTC_Stop
+ 139                             		.balign 2,3,5
+ 140                             	.L7:
+ 182:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		if(HarakiriLowPower.Req == HKM_LOW_POWER_REQ)
+ 141                             		.loc 1 182 0
+ 142 00da FB 72 00 00 00 00       		mov.L	#_HarakiriLowPower, r7
+ 143 00e0 CC 77                   		mov.B	[r7], r7
+ 144 00e2 64 77                   		and	#7, r7
+ 145 00e4 61 17                   		cmp	#1, r7
+ 146 00e6 21 16                   		bne	.L15
+ 185:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			if(SWTC_IsExpired((SWTC_CountersType) STB_HARAKIRI_COUNTER_M))
+ 147                             		.loc 1 185 0
+ 148 00e8 66 01                   		mov	#0, r1
+ 149 00ea 05 00 00 00             		bsr	_SWTC_IsExpired
+ 150 00ee 61 01                   		cmp	#0, r1
+ 151 00f0 20 0C                   		beq	.L15
+ 188:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriRequired = HKM_FAST_SB_ON;	/* rientro nello stato FAST_SBY_ON ma con stato HarakiriLowP
+ 152                             		.loc 1 188 0
+ 153 00f2 FB 72 00 00 00 00       		mov.L	#_HarakiriRequired, r7
+ 154 00f8 3C 70 02                		mov.B	#2, [r7]
+ 155 00fb 03                      		.balign 2,3,5
+ 156                             	.L15:
+ 192:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		if(HarakiriRequired == HKM_FAST_SB_ON)
+ 157                             		.loc 1 192 0
+ 158 00fc FB 72 00 00 00 00       		mov.L	#_HarakiriRequired, r7
+ 159 0102 58 77                   		movu.B	[r7], r7
+ 160 0104 61 27                   		cmp	#2, r7
+ 161 0106 3B A8 00                		bne	.L1
+ 223:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Mode = HKM_SBY_NO_SLEEP_MODE;
+ 162                             		.loc 1 223 0
+ 163 0109 FB 72 00 00 00 00       		mov.L	#_HarakiriLowPower, r7
+ 164 010f CC 7E                   		mov.B	[r7], r14
+ 226:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			if (!backupDisabled)
+ 165                             		.loc 1 226 0
+ 166 0111 FB 42 00 00 00 00       		mov.L	#_backupDisabled.11127, r4
+ 223:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Mode = HKM_SBY_NO_SLEEP_MODE;
+ 167                             		.loc 1 223 0
+ 168 0117 75 3E C0                		or	#-64, r14
+ 169 011a C3 7E                   		mov.B	r14, [r7]
+ 226:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			if (!backupDisabled)
+ 170                             		.loc 1 226 0
+ 171 011c EC 43                   		mov.L	[r4], r3
+ 172 011e 61 03                   		cmp	#0, r3
+ 173 0120 21 34                   		bne	.L19
+ 230:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Req =  HKM_LOW_POWER_REQ;
+ 174                             		.loc 1 230 0
+ 175 0122 75 2E F8                		and	#-8, r14
+ 176 0125 65 1E                   		or	#1, r14
+ 228:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				backupDisabled = TRUE;
+ 177                             		.loc 1 228 0
+ 178 0127 3E 40 01                		mov.L	#1, [r4]
+ 230:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				HarakiriLowPower.Req =  HKM_LOW_POWER_REQ;
+ 179                             		.loc 1 230 0
+ 180 012a C3 7E                   		mov.B	r14, [r7]
+ 235:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				                (2*TOUT_RESET_STANDBY(Tab_SFTStandByData.Data)));
+ 181                             		.loc 1 235 0
+ 182 012c FB 72 00 00 00 00       		mov.L	#_Tab_SFTStandByData, r7
+ 183 0132 EC 77                   		mov.L	[r7], r7
+ 233:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+ 184                             		.loc 1 233 0
+ 185 0134 61 07                   		cmp	#0, r7
+ 186 0136 20 08                   		beq	.L25
+ 187 0138 58 73                   		movu.B	[r7], r3
+ 188 013a 4B 33                   		add	r3, r3
+ 189 013c 2E 06                   		bra	.L20
+ 190                             	.L25:
+ 191 013e 75 43 14                		mov	#20, r3
+ 192 0141 03                      		.balign 2,3,1
+ 193                             	.L20:
+ 233:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+ 194                             		.loc 1 233 0 is_stmt 0 discriminator 2
+ 195 0142 66 01                   		mov	#0, r1
+ 196 0144 66 12                   		mov	#1, r2
+ 197 0146 05 00 00 00             		bsr	_Set_MediumCounter
+ 240:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				LIB_Backup_SetBackupControlMonitor(BACKUP_NO_SOURCE);
+ 198                             		.loc 1 240 0 is_stmt 1 discriminator 2
+ 199 014a 66 01                   		mov	#0, r1
+ 200 014c 05 00 00 00             		bsr	_LIB_Backup_SetBackupControlMonitor
+ 242:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				LIB_Backup_ForceBackup();
+ 201                             		.loc 1 242 0 discriminator 2
+ 202 0150 05 00 00 00             		bsr	_LIB_Backup_ForceBackup
+ 203                             		.balign 2,3,1
+ 204                             	.L19:
+ 245:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			SWTC_Run((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 205                             		.loc 1 245 0
+ 206 0154 66 01                   		mov	#0, r1
+ 207 0156 05 00 00 00             		bsr	_SWTC_Run
+ 247:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			if((HarakiriLowPower.Mode == HKM_SBY_NO_SLEEP_MODE) || (HarakiriLowPower.Hitpoints < HKM_N_MAX_H
+ 208                             		.loc 1 247 0
+ 209 015a FB 72 00 00 00 00       		mov.L	#_HarakiriLowPower, r7
+ 210 0160 CC 7E                   		mov.B	[r7], r14
+ 211 0162 76 2E C0 00             		and	#0xc0, r14
+ 212 0166 75 5E C0                		cmp	#0xc0, r14
+ 213 0169 20 0D                   		beq	.L21
+ 247:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			if((HarakiriLowPower.Mode == HKM_SBY_NO_SLEEP_MODE) || (HarakiriLowPower.Hitpoints < HKM_N_MAX_H
+ 214                             		.loc 1 247 0 is_stmt 0 discriminator 1
+ 215 016b 58 77                   		movu.B	[r7], r7
+ 216 016d 68 37                   		shlr	#3, r7
+ 217 016f 64 77                   		and	#7, r7
+ 218 0171 61 27                   		cmp	#2, r7
+ 219 0173 2A 3B                   		bgt	.L1
+ 220 0175 03                      		.balign 2,3,5
+ 221                             	.L21:
+ 249:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				if(RegDev_Pos[LD_STANDBY_REG_IND] != NO_LD_POS)	/* 11.12.09 SbyLowPow*/
+ 222                             		.loc 1 249 0 is_stmt 1
+ 223 0176 FB 72 00 00 00 00       		mov.L	#_RegDev_Pos, r7
+ 224 017c 88 79                   		mov.B	1[r7], r1
+ 225 017e 5B 17                   		movu.B	r1, r7
+ 226 0180 75 57 FF                		cmp	#0xff, r7
+ 227 0183 20 2B                   		beq	.L1
+ 256:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					(void)LIB_IOM_SetLoad(RegDev_Pos[LD_STANDBY_REG_IND], load);
+ 228                             		.loc 1 256 0
+ 229 0185 3C 00 01                		mov.B	#1, [r0]
+ 230 0188 05 00 00 00             		bsr	_LIB_IOM_SetLoad
+ 231 018c 2E 22                   		bra	.L1
+ 232                             	.L2:
+ 265:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+ 233                             		.loc 1 265 0
+ 234 018e FB 72 00 00 00 00       		mov.L	#_HarakiriLowPower, r7
+ 235 0194 CC 7E                   		mov.B	[r7], r14
+ 269:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** } /* END: STB_HarakiriManager */
+ 236                             		.loc 1 269 0
+ 237 0196 62 40                   		add	#4, r0
+ 265:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		HarakiriLowPower.Req = HKM_LOW_POWER_RESET;	/* SbyLowPow 21.01.10 */
+ 238                             		.loc 1 265 0
+ 239 0198 75 2E F8                		and	#-8, r14
+ 240 019b C3 7E                   		mov.B	r14, [r7]
+ 266:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		HarakiriRequired = HKM_SB_RESET;
+ 241                             		.loc 1 266 0
+ 242 019d FB 72 00 00 00 00       		mov.L	#_HarakiriRequired, r7
+ 243 01a3 3C 70 00                		mov.B	#0, [r7]
+ 269:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** } /* END: STB_HarakiriManager */
+ 244                             		.loc 1 269 0
+ 245 01a6 7E B7                   		pop	r7
+ 267:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		SWTC_Stop((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 246                             		.loc 1 267 0
+ 247 01a8 66 01                   		mov	#0, r1
+ 248 01aa 04 00 00 00             		bra	_SWTC_Stop
+ 249                             	.L1:
+ 269:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** } /* END: STB_HarakiriManager */
+ 250                             		.loc 1 269 0
+ 251 01ae 3F 77 02                		rtsd	#8, r7-r7
+ 252                             	.LFE0:
+ 254 01b1 03                      		.section	.text.STB_CheckStandByCounter,"ax",@progbits
+ 255                             		.global	_STB_CheckStandByCounter
+ 257                             	_STB_CheckStandByCounter:
+ 258                             	.LFB1:
+ 289:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** {
+ 259                             		.loc 1 289 0
+ 296:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	if(HarakiriRequired == HKM_FAST_SB_ON)
+ 260                             		.loc 1 296 0
+ 261 0000 FB E2 00 00 00 00       		mov.L	#_HarakiriRequired, r14
+ 262 0006 58 EE                   		movu.B	[r14], r14
+ 263 0008 61 2E                   		cmp	#2, r14
+ 264 000a 21 4B                   		bne	.L49
+ 299:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		if(!(SWTC_IsStopped((SWTC_CountersType) STB_HARAKIRI_COUNTER_M)))
+ 265                             		.loc 1 299 0
+ 266 000c 66 01                   		mov	#0, r1
+ 267 000e 05 00 00 00             		bsr	_SWTC_IsStopped
+ 268                             	.LVL0:
+ 269 0012 61 01                   		cmp	#0, r1
+ 270 0014 21 41                   		bne	.L49
+ 301:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			if(SWTC_IsExpired((SWTC_CountersType) STB_HARAKIRI_COUNTER_M))
+ 271                             		.loc 1 301 0
+ 272 0016 05 00 00 00             		bsr	_SWTC_IsExpired
+ 273                             	.LVL1:
+ 274 001a 61 01                   		cmp	#0, r1
+ 275 001c 20 39                   		beq	.L49
+ 304:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				if(HarakiriLowPower.Mode == HKM_SBY_NO_SLEEP_MODE)
+ 276                             		.loc 1 304 0
+ 277 001e FB 42 00 00 00 00       		mov.L	#_HarakiriLowPower, r4
+ 278 0024 CC 4E                   		mov.B	[r4], r14
+ 279 0026 76 2E C0 00             		and	#0xc0, r14
+ 280 002a 75 5E C0                		cmp	#0xc0, r14
+ 281 002d 21 06                   		bne	.L53
+ 307:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					LIB_Reset_ForceColdReset();
+ 282                             		.loc 1 307 0
+ 283 002f 04 00 00 00             		bra	_LIB_Reset_ForceColdReset
+ 284                             	.LVL2:
+ 285                             	.L53:
+ 312:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 					if( HarakiriLowPower.Mode == HKM_SBY_HW_MODE)
+ 286                             		.loc 1 312 0
+ 287 0033 75 5E 80                		cmp	#0x80, r14
+ 288 0036 21 1F                   		bne	.L49
+ 315:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 						if(HarakiriLowPower.Hitpoints < HKM_N_MAX_HITPOINTS)
+ 289                             		.loc 1 315 0
+ 290 0038 58 4E                   		movu.B	[r4], r14
+ 291 003a 68 3E                   		shlr	#3, r14
+ 292 003c 64 7E                   		and	#7, r14
+ 293 003e 61 2E                   		cmp	#2, r14
+ 294 0040 2A 15                   		bgt	.L49
+ 320:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 							HarakiriLowPower.Hitpoints++;
+ 295                             		.loc 1 320 0
+ 296 0042 62 1E                   		add	#1, r14
+ 297 0044 64 7E                   		and	#7, r14
+ 298 0046 6C 3E                   		shll	#3, r14
+ 321:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 							HarakiriLowPower.Req = HKM_LOW_POWER_REQ;
+ 299                             		.loc 1 321 0
+ 300 0048 75 3E 41                		or	#0x41, r14
+ 301 004b C3 4E                   		mov.B	r14, [r4]
+ 325:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 							(void)LIB_Backup_InvalidateBackupArea();
+ 302                             		.loc 1 325 0
+ 303 004d 05 00 00 00             		bsr	_LIB_Backup_InvalidateBackupArea
+ 304                             	.LVL3:
+ 326:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 							LIB_Backup_ForceBackup();	/* backup dello stato di Wait */
+ 305                             		.loc 1 326 0
+ 306 0051 04 00 00 00             		bra	_LIB_Backup_ForceBackup
+ 307                             	.LVL4:
+ 308                             	.L49:
+ 309 0055 02                      		rts
+ 310                             	.LFE1:
+ 312                             		.section	.text.STB_InitStandBy_AfterBackUp,"ax",@progbits
+ 313                             		.global	_STB_InitStandBy_AfterBackUp
+ 315                             	_STB_InitStandBy_AfterBackUp:
+ 316                             	.LFB3:
+ 361:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #else
+ 362:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** Loader_Struct flagData;	/* SbyLowPow 11.12.09 */
+ 363:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** uint8_t standbyFlags = 0; /* Default: flag SBY_WAIT_DISABLE_FLAG e SBY_DISABLE_FLAG entrambi 0 */
+ 364:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	
+ 365:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	if(BasicLoader(PTR_HW_CONFIG_DATA, FLAG_DISPL, &flagData) == S_OK)
+ 366:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	{
+ 367:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		standbyFlags = (OFFS_B(flagData.Data, 0) & SBY_FLAGS_BITMASK);
+ 368:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	}
+ 369:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	/* else non necessario perchè la validità del campo dati è verificata in Hound */
+ 370:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 371:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	if(TESTBIT(standbyFlags,flag) == 0)
+ 372:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	{
+ 373:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		return FALSE;
+ 374:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	}
+ 375:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	else
+ 376:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	{
+ 377:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		return TRUE;
+ 378:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	}
+ 379:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #endif
+ 380:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** } /* END: STB_CheckStandByFlags */
+ 381:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 382:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** /**
+ 383:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** Init dello standby dopo backup
+ 384:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 385:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \param			none
+ 386:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 387:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \return			none
+ 388:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 389:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \notes:			
+ 390:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 391:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \author			Emanuela Antognoli
+ 392:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \date			17/03/2010
+ 393:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** \version		1.0.0
+ 394:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** */
+ 395:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** void STB_InitStandBy_AfterBackUp (void)
+ 396:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** {
+ 317                             		.loc 1 396 0
+ 318                             	.LVL5:
+ 319                             	.LBB10:
+ 320                             	.LBB11:
+ 360:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	return (TESTBIT(HWC_Flags.flags, flag)? TRUE: FALSE);	
+ 321                             		.loc 1 360 0
+ 322 0000 FB E2 00 00 00 00       		mov.L	#_HWC_Flags, r14
+ 323 0006 5C E4                   		movu.W	[r14], r4
+ 324 0008 FB E2 00 00 00 00       		mov.L	#_HarakiriLowPower, r14
+ 325                             	.LBE11:
+ 326                             	.LBE10:
+ 397:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	if(STB_CheckStandByFlags((uint8_t) SBY_DISABLE_FLAG) == 0)
+ 327                             		.loc 1 397 0
+ 328 000e FD 78 C4 00 08          		tst	#0x800, r4
+ 398:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	{
+ 399:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		/* Standby abilitato */
+ 400:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		if(HarakiriLowPower.Mode == HKM_SBY_HW_MODE)
+ 329                             		.loc 1 400 0
+ 330 0013 CC E4                   		mov.B	[r14], r4
+ 397:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	if(STB_CheckStandByFlags((uint8_t) SBY_DISABLE_FLAG) == 0)
+ 331                             		.loc 1 397 0
+ 332 0015 21 6F                   		bne	.L58
+ 333                             		.loc 1 400 0
+ 334 0017 EF 43                   		mov.L	r4, r3
+ 335 0019 76 23 C0 00             		and	#0xc0, r3
+ 336 001d 75 53 80                		cmp	#0x80, r3
+ 337 0020 21 08                   		bne	.L59
+ 401:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		{
+ 402:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			/* venivo da uno standby Hw quindi andato a buon fine -> resetto il numero di tentativi */
+ 403:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			HarakiriLowPower.Hitpoints = 0;
+ 338                             		.loc 1 403 0
+ 339 0022 75 24 C7                		and	#-57, r4
+ 340 0025 C3 E4                   		mov.B	r4, [r14]
+ 341 0027 03                      		.balign 2,3,3
+ 342                             	.L59:
+ 404:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		}
+ 405:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 
+ 406:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		if(
+ 407:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			STB_getStatusAppliance()
+ 343                             		.loc 1 407 0
+ 344 0028 05 00 00 00             		bsr	_STB_getStatusAppliance
+ 345                             	.LVL6:
+ 406:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		if(
+ 346                             		.loc 1 406 0
+ 347 002c 5B 11                   		movu.B	r1, r1
+ 348 002e 61 01                   		cmp	#0, r1
+ 349 0030 20 3E                   		beq	.L60
+ 408:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #if(STANDBY_RESTORE_ONLY_IN_SLEEP == 1)
+ 409:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			&& (HarakiriLowPower.Mode == HKM_SBY_LOW_POWER_MODE)
+ 350                             		.loc 1 409 0
+ 351 0032 FB E2 00 00 00 00       		mov.L	#_HarakiriLowPower, r14
+ 352 0038 CC EE                   		mov.B	[r14], r14
+ 353 003a EF E4                   		mov.L	r14, r4
+ 354 003c 76 24 C0 00             		and	#0xc0, r4
+ 355 0040 75 54 40                		cmp	#64, r4
+ 356 0043 21 2B                   		bne	.L60
+ 410:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #else
+ 411:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			/* questa condizione copre il caso di Hottima in cui
+ 412:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			lo stato di sleep non è presente: in questo caso se la
+ 413:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			cella è rotta la scheda non va in standby.
+ 414:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			Vale anche per gli altri prodotti, la cui condizione sopra,
+ 415:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			però, risulta ancora più stringente */
+ 416:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			&&( (HarakiriLowPower.Mode != HKM_SBY_NO_SLEEP_MODE)
+ 417:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #ifdef STANDBY_EXCEPTION_PROCEDURE
+ 418:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			|| (STB_Standby_Exception_Restore()  )
+ 419:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #endif
+ 420:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			 )
+ 421:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #endif /*STANDBY_RESTORE_ONLY_IN_SLEEP == 1  */
+ 422:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		)
+ 423:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		{
+ 424:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			/* cioè sono in PROGRAMMING o END : stati in cui lo Standby - Wait è ammesso */
+ 425:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			if(HarakiriLowPower.Req == HKM_LOW_POWER_REQ)
+ 357                             		.loc 1 425 0
+ 358 0045 64 7E                   		and	#7, r14
+ 359 0047 61 1E                   		cmp	#1, r14
+ 360 0049 21 49                   		bne	.L57
+ 426:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			{
+ 427:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				/* provengo dallo stato di Wait -> check comunicazione con UI */
+ 428:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				/* Init + Enable Standby Delay Counter per check su comunicazione UI */
+ 429:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #if ( SW_TIMER_NORM_MODE ==	FALSE)				
+ 430:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	        	Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+ 431:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	        	                (SWTC_PrescalerType)COUNTERS2_TBASE_100MS,
+ 432:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	        	                TOUT_PRE_STANDBY(Tab_SFTStandByData.Data));
+ 361                             		.loc 1 432 0
+ 362 004b FB E2 00 00 00 00       		mov.L	#_Tab_SFTStandByData, r14
+ 363 0051 EC EE                   		mov.L	[r14], r14
+ 430:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	        	Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+ 364                             		.loc 1 430 0
+ 365 0053 61 0E                   		cmp	#0, r14
+ 366 0055 20 07                   		beq	.L63
+ 367 0057 59 E3 01                		movu.B	1[r14], r3
+ 368 005a 2E 06                   		bra	.L62
+ 369                             	.L63:
+ 370 005c 75 43 96                		mov	#0x96, r3
+ 371 005f 03                      		.balign 2,3,1
+ 372                             	.L62:
+ 430:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	        	Set_MediumCounter((SWTC_CountersType)STB_HARAKIRI_COUNTER_M,
+ 373                             		.loc 1 430 0 is_stmt 0 discriminator 2
+ 374 0060 66 01                   		mov	#0, r1
+ 375 0062 66 12                   		mov	#1, r2
+ 376 0064 05 00 00 00             		bsr	_Set_MediumCounter
+ 377                             	.LVL7:
+ 433:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #else
+ 434:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				Set_DownCounter((uint8_t) MEDIUM_COUNTER, (SWTC_CountersType) STB_HARAKIRI_COUNTER_M, (SWTC_Pre
+ 435:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** #endif
+ 436:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 				SWTC_Run((SWTC_CountersType) STB_HARAKIRI_COUNTER_M);
+ 378                             		.loc 1 436 0 is_stmt 1 discriminator 2
+ 379 0068 66 01                   		mov	#0, r1
+ 380 006a 04 00 00 00             		bra	_SWTC_Run
+ 381                             	.LVL8:
+ 382                             	.L60:
+ 437:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			}
+ 438:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		}
+ 439:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		else
+ 440:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		{
+ 441:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			/* RUN, PAUSE, DELAY, FAULT : stati in cui NON è ammesso lo Standby */
+ 442:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			HarakiriRequired = HKM_SB_RESET;
+ 383                             		.loc 1 442 0
+ 384 006e FB E2 00 00 00 00       		mov.L	#_HarakiriRequired, r14
+ 385 0074 F8 E4 00                		mov.B	#0, [r14]
+ 443:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 			HarakiriLowPower.Req = HKM_LOW_POWER_RESET;
+ 386                             		.loc 1 443 0
+ 387 0077 FB E2 00 00 00 00       		mov.L	#_HarakiriLowPower, r14
+ 388 007d CC E4                   		mov.B	[r14], r4
+ 389 007f 75 24 F8                		and	#-8, r4
+ 390 0082 2E 0E                   		bra	.L67
+ 391                             	.L58:
+ 444:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		}
+ 445:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	}
+ 446:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	else
+ 447:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 	{
+ 448:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		/* Standby disabilitato */
+ 449:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		HarakiriLowPower.Mode = HKM_SBY_OFF_MODE;
+ 450:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		HarakiriRequired = HKM_SB_RESET;
+ 392                             		.loc 1 450 0
+ 393 0084 FB 32 00 00 00 00       		mov.L	#_HarakiriRequired, r3
+ 394 008a 3C 30 00                		mov.B	#0, [r3]
+ 451:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_StandBy.c **** 		HarakiriLowPower.Req = HKM_LOW_POWER_RESET;
+ 395                             		.loc 1 451 0
+ 396 008d 75 24 38                		and	#56, r4
+ 397                             		.balign 2,3,1
+ 398                             	.L67:
+ 399 0090 C3 E4                   		mov.B	r4, [r14]
+ 400                             	.L57:
+ 401 0092 02                      		rts
+ 402                             	.LFE3:
+ 404 0093 03                      		.section	.bss.backupDisabled.11127,"aw",@nobits
+ 405                             		.balign 4
+ 408                             	_backupDisabled.11127:
+ 409 0000 00 00 00 00             		.zero	4
+ 462                             	.Letext0:
+ 463                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 464                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_SwTimersCounters/SwTimersCounter
+ 465                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_Types.h"
+ 466                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmTypes.h"
+ 467                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_IOManager/OutputManagerExp.h"
+ 468                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_Global.h"
+ 469                             		.file 8 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmGlobal.h"
+ 470                             		.file 9 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Reset/LIB_ResetExp.h"
+ 471                             		.file 10 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_BackUp/LIB_BackUpExp.h"
+ 472                             		.file 11 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_callback.h"
+ 473                             		.file 12 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmDefines.h"
+ 474                             		.file 13 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_FuncLib.h"

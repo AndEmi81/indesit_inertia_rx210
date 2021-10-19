@@ -1,0 +1,661 @@
+   1                             		.file	"OCCLK_drv.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.OCCLK_EngageClkRefSync,"ax",@progbits
+   5                             		.global	_OCCLK_EngageClkRefSync
+   7                             	_OCCLK_EngageClkRefSync:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK/OCCLK_drv.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** Copyright (c) 2004-2009, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n
+   8:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \par		    OCCLK - On Clock Synthesis Driver Source file
+   9:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n			    Contains implementation of the OCCLK driver
+  10:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n
+  11:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \file		    OCCLK_drv.c
+  12:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \ingroup	    OCCLK
+  13:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \date		    11/03/2010
+  14:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \version	    00.00.04
+  15:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \author		    Jaroslav Musil
+  16:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n
+  17:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n
+  18:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \Par\b	History:
+  19:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n
+  20:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n 		        00.00.04
+  21:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n          	11/03/2010
+  22:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n          	Stefano Ughi
+  23:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n            - Changed uint16_t with CLK_TrimmingType M.C.U. dependent.
+  24:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n            - Added comments on properties that the user must setup in CLKconfig.h
+  25:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n            - Put in order Doxygen documentation
+  26:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n
+  27:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n 		        00.00.03
+  28:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n          	16/02/2010
+  29:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n          	Jaroslav Musil
+  30:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n            - The function corps depended on chip moved to hal.
+  31:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n
+  32:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n 		        00.00.02
+  33:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n          	15/02/2010
+  34:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n          	Jaroslav Musil
+  35:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n            - The OCCLK_EngageClkRefSync lines moved to hal.
+  36:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n
+  37:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n 		        00.00.01
+  38:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n          	3/02/2010
+  39:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n          	Jaroslav Musil
+  40:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n            - Creation
+  41:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n
+  42:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** */
+  43:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  44:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  45:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* ******** */
+  46:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* Includes */
+  47:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* ******** */
+  48:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  49:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  50:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** #include "OCCLK_drv.h"
+  51:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  52:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  53:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* ****************** */
+  54:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* Defines and Macros */
+  55:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* ****************** */
+  56:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  57:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* *************************** */
+  58:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* Typedef, Structs and Unions */
+  59:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* *************************** */
+  60:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  61:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* ********* */
+  62:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* Variables */
+  63:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* ********* */
+  64:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  65:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* Exported */
+  66:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  67:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* Static */
+  68:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  69:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* ******************** */
+  70:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* Functions Prototypes */
+  71:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* ******************** */
+  72:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  73:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* *************** */
+  74:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* Function Bodies */
+  75:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* *************** */
+  76:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  77:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /* Exported function */
+  78:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  79:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  80:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /**
+  81:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** Engage the selected clock signals. The configuration is set up by
+  82:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** the commands in CLKconfig.h.
+  83:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  84:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \return 	IO_ErrorType
+  85:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  86:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \retval		IO_E_OK
+  87:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  88:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \author 	Jaroslav Musil
+  89:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \date		5/02/2010
+  90:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \version	1.0.0
+  91:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  92:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \note		\par \b Nota 1:
+  93:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 			If the crystal is turned on, it requires some init
+  94:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 			time. Use the OCCLK_IsExtRefClockReady function
+  95:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 			to check that the crystal is ready.
+  96:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  97:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** */
+  98:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+  99:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** IO_ErrorType OCCLK_EngageClkRefSync(void)
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** {
+  10                             		.loc 1 100 0
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	CLK_EngageClkRefSync();
+  11                             		.loc 1 101 0
+  12 0000 05 00 00 00             		bsr	_CLK_EngageClkRefSync
+  13                             	.LVL0:
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** }
+  14                             		.loc 1 104 0
+  15 0004 66 01                   		mov.L	#0, r1
+  16 0006 02                      		rts
+  17                             	.LFE0:
+  19                             		.section	.text.OCCLK_SetInternalClockSync,"ax",@progbits
+  20                             		.global	_OCCLK_SetInternalClockSync
+  22                             	_OCCLK_SetInternalClockSync:
+  23                             	.LFB1:
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /**
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** Sets up the system clock frequency as close to the desiredClock
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** value as possible. The system will run on the internal
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** reference clock in the FLL bypass mode.
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \param  [in]		desiredClock 32-bit value of the desired system clock in Hz.
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \return 	IO_ErrorType
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \retval		IO_E_OK
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \retval     IO_E_INVALID_VALUE  incorrect value of the desired clock
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \author 	Jaroslav Musil
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \date		5/02/2010
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \version	1.0.0
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** */
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** IO_ErrorType OCCLK_SetInternalClockSync(uint32_t desiredClock)
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** {
+  24                             		.loc 1 125 0
+  25                             	.LVL1:
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	/* If wrong desired frequency */
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	if ((desiredClock == 0) || (desiredClock > CLK_MAX_DEVICE_FREQ))
+  26                             		.loc 1 128 0
+  27 0000 71 1E FF                		add	#-1, r1, r14
+  28 0003 74 0E 7F F0 FA 02       		cmp	#0x2faf07f, r14
+  29 0009 24 0C                   		bgtu	.L4
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	{
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	}
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	if (CLK_SetInternalClockSync(desiredClock))
+  30                             		.loc 1 133 0
+  31 000b 05 00 00 00             		bsr	_CLK_SetInternalClockSync
+  32                             	.LVL2:
+  33 000f 61 01                   		cmp	#0, r1
+  34 0011 10                      		beq	.L5
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	{
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_OK;
+  35                             		.loc 1 135 0
+  36 0012 66 01                   		mov	#0, r1
+  37 0014 08                      		bra	.L3
+  38                             	.LVL3:
+  39                             	.L4:
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_VALUE;
+  40                             		.loc 1 130 0
+  41 0015 75 41 13                		mov	#19, r1
+  42                             	.LVL4:
+  43 0018 0C                      		bra	.L3
+  44                             	.LVL5:
+  45                             	.L5:
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	}
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	else
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	{
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+  46                             		.loc 1 139 0
+  47 0019 75 41 17                		mov	#23, r1
+  48                             		.balign 2,3,2
+  49                             	.L3:
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	}
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** }
+  50                             		.loc 1 141 0
+  51 001c 75 21 17                		and #23, r1
+  52 001f 02                      		rts
+  53                             	.LFE1:
+  55                             		.section	.text.OCCLK_SetExternalClockSync,"ax",@progbits
+  56                             		.global	_OCCLK_SetExternalClockSync
+  58                             	_OCCLK_SetExternalClockSync:
+  59                             	.LFB2:
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /**
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** Sets up the system clock frequency as close to the desiredClock
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** value as possible. The system will run on the external
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** reference clock in the FLL bypass mode.
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \param  [in]		desiredClock 32-bit value of the desired system clock in Hz.
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \return 	IO_ErrorType
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \retval		IO_E_OK
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \retval     IO_E_INVALID_VALUE incorrect value of the desired clock
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \retval     IO_E_UNEXPECTED_CONDITION the external reference signal is not present.
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \author 	Jaroslav Musil
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \date		5/02/2010
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \version	1.0.0
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** */
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** IO_ErrorType OCCLK_SetExternalClockSync(uint32_t desiredClock)
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** {
+  60                             		.loc 1 162 0
+  61                             	.LVL6:
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	/* If wrong desired frequency */
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	if ((desiredClock == 0) || (desiredClock > CLK_MAX_DEVICE_FREQ))
+  62                             		.loc 1 164 0
+  63 0000 71 1E FF                		add	#-1, r1, r14
+  64 0003 74 0E 7F F0 FA 02       		cmp	#0x2faf07f, r14
+  65 0009 24 0C                   		bgtu	.L8
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	{
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	}
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	/* If the crystal is not active */
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	if (!CLK_IsOscillatorReady())
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	{
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	}
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	if (CLK_SetExternalClockSync(desiredClock))
+  66                             		.loc 1 175 0
+  67 000b 05 00 00 00             		bsr	_CLK_SetExternalClockSync
+  68                             	.LVL7:
+  69 000f 61 01                   		cmp	#0, r1
+  70 0011 10                      		beq	.L9
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	{
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_OK;
+  71                             		.loc 1 177 0
+  72 0012 66 01                   		mov	#0, r1
+  73 0014 08                      		bra	.L7
+  74                             	.LVL8:
+  75                             	.L8:
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_VALUE;
+  76                             		.loc 1 166 0
+  77 0015 75 41 13                		mov	#19, r1
+  78                             	.LVL9:
+  79 0018 0C                      		bra	.L7
+  80                             	.LVL10:
+  81                             	.L9:
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	}
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	else
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	{
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+  82                             		.loc 1 181 0
+  83 0019 75 41 17                		mov	#23, r1
+  84                             		.balign 2,3,2
+  85                             	.L7:
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	}
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** }
+  86                             		.loc 1 183 0
+  87 001c 75 21 17                		and #23, r1
+  88 001f 02                      		rts
+  89                             	.LFE2:
+  91                             		.section	.text.OCCLK_SetFLLExternalClockSync,"ax",@progbits
+  92                             		.global	_OCCLK_SetFLLExternalClockSync
+  94                             	_OCCLK_SetFLLExternalClockSync:
+  95                             	.LFB3:
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /**
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** Sets up the system clock frequency as close to the desiredClock
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** value as possible. The system will run on with FLL on the external
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** reference clock.
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \param  [in]		desiredClock 32-bit value of the desired system clock in Hz.
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \return 	IO_ErrorType
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \retval		IO_E_OK
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \retval     IO_E_INVALID_VALUE  incorrect value of the desired clock
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \retval     IO_E_UNEXPECTED_CONDITION the external reference signal is not present or
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c ****             the frequency range of the clock for FLL not reached
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \author 	Jaroslav Musil
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \date		5/02/2010
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \version	1.0.0
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** */
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** IO_ErrorType OCCLK_SetFLLExternalClockSync(uint32_t desiredClock)
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** {
+  96                             		.loc 1 205 0
+  97                             	.LVL11:
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	/* If wrong desired frequency */
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	if ((desiredClock == 0) || (desiredClock > CLK_MAX_DEVICE_FREQ))
+  98                             		.loc 1 207 0
+  99 0000 71 1E FF                		add	#-1, r1, r14
+ 100 0003 74 0E 7F F0 FA 02       		cmp	#0x2faf07f, r14
+ 101 0009 24 0C                   		bgtu	.L12
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	{
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	}
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	/* If the crystal is not active */
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	if (!CLK_IsOscillatorReady())
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	{
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	}
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	if (CLK_SetFLLExternalClockSync(desiredClock))
+ 102                             		.loc 1 218 0
+ 103 000b 05 00 00 00             		bsr	_CLK_SetFLLExternalClockSync
+ 104                             	.LVL12:
+ 105 000f 61 01                   		cmp	#0, r1
+ 106 0011 10                      		beq	.L13
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	{
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_OK;
+ 107                             		.loc 1 220 0
+ 108 0012 66 01                   		mov	#0, r1
+ 109 0014 08                      		bra	.L11
+ 110                             	.LVL13:
+ 111                             	.L12:
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 112                             		.loc 1 209 0
+ 113 0015 75 41 13                		mov	#19, r1
+ 114                             	.LVL14:
+ 115 0018 0C                      		bra	.L11
+ 116                             	.LVL15:
+ 117                             	.L13:
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	}
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	else
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	{
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+ 118                             		.loc 1 224 0
+ 119 0019 75 41 17                		mov	#23, r1
+ 120                             		.balign 2,3,2
+ 121                             	.L11:
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	}
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** }
+ 122                             		.loc 1 226 0
+ 123 001c 75 21 17                		and #23, r1
+ 124 001f 02                      		rts
+ 125                             	.LFE3:
+ 127                             		.section	.text.OCCLK_SetFLLInternalClockSync,"ax",@progbits
+ 128                             		.global	_OCCLK_SetFLLInternalClockSync
+ 130                             	_OCCLK_SetFLLInternalClockSync:
+ 131                             	.LFB4:
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /**
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** Sets up the system clock frequency as close to the desiredClock
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** value as possible. The system will run on with FLL on the internal
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** reference clock.
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \param  [in]	desiredClock 32-bit value of the desired system clock in Hz.
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \return 	IO_ErrorType
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \retval		IO_E_OK
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \retval     IO_E_INVALID_VALUE incorrect value of the desired clock
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \retval     IO_E_UNEXPECTED_CONDITION  the frequency range of the clock for FLL not reached
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \author 	Jaroslav Musil
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \date		5/02/2010
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \version	1.0.0
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** */
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** IO_ErrorType OCCLK_SetFLLInternalClockSync(uint32_t desiredClock)
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** {
+ 132                             		.loc 1 247 0
+ 133                             	.LVL16:
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	/* If wrong desired frequency */
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	if ((desiredClock == 0) || (desiredClock > CLK_MAX_DEVICE_FREQ))
+ 134                             		.loc 1 249 0
+ 135 0000 71 1E FF                		add	#-1, r1, r14
+ 136 0003 74 0E 7F F0 FA 02       		cmp	#0x2faf07f, r14
+ 137 0009 24 0C                   		bgtu	.L16
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	{
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	}
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	if (CLK_SetFLLInternalClockSync(desiredClock))
+ 138                             		.loc 1 254 0
+ 139 000b 05 00 00 00             		bsr	_CLK_SetFLLInternalClockSync
+ 140                             	.LVL17:
+ 141 000f 61 01                   		cmp	#0, r1
+ 142 0011 10                      		beq	.L17
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	{
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_OK;
+ 143                             		.loc 1 256 0
+ 144 0012 66 01                   		mov	#0, r1
+ 145 0014 08                      		bra	.L15
+ 146                             	.LVL18:
+ 147                             	.L16:
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 148                             		.loc 1 251 0
+ 149 0015 75 41 13                		mov	#19, r1
+ 150                             	.LVL19:
+ 151 0018 0C                      		bra	.L15
+ 152                             	.LVL20:
+ 153                             	.L17:
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	}
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	else
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	{
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 		return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+ 154                             		.loc 1 260 0
+ 155 0019 75 41 17                		mov	#23, r1
+ 156                             		.balign 2,3,2
+ 157                             	.L15:
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	}
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** }
+ 158                             		.loc 1 262 0
+ 159 001c 75 21 17                		and #23, r1
+ 160 001f 02                      		rts
+ 161                             	.LFE4:
+ 163                             		.section	.text.OCCLK_IsExtRefClockReady,"ax",@progbits
+ 164                             		.global	_OCCLK_IsExtRefClockReady
+ 166                             	_OCCLK_IsExtRefClockReady:
+ 167                             	.LFB5:
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /**
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** Checks if the external reference signal is ready.
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 268:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \return 	bool_t
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \retval		1 - ready, 0 - not ready
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \author 	Jaroslav Musil
+ 273:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \date		5/02/2010
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \version	1.0.0
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** */
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** bool_t OCCLK_IsExtRefClockReady(void)
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** {
+ 168                             		.loc 1 278 0
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	return (bool_t)(CLK_IsOscillatorReady());
+ 280:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** }
+ 169                             		.loc 1 280 0
+ 170 0000 66 11                   		mov.L	#1, r1
+ 171 0002 02                      		rts
+ 172                             	.LFE5:
+ 174                             		.section	.text.OCCLK_SetTrimSync,"ax",@progbits
+ 175                             		.global	_OCCLK_SetTrimSync
+ 177                             	_OCCLK_SetTrimSync:
+ 178                             	.LFB6:
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 282:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /**
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** Sets up the trimming value.
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n\li AG128 The function feeds both the trimming register and the fine trimming bit.
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n\li GB60  The function feeds the trimming register
+ 286:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \param  [in]	desiredTrim
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n\li   AG128 16-bit value where the trim value is the higher 8 bits
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n      and the fine trim bit is the highest bit of the lower 8 bits.
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n\     i.e. trim bit 8 - 15, fine trim bit 7, unused bits 0 - 6.
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n\li   GB60 8 bit value.
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \return 	IO_ErrorType
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \retval		IO_E_OK
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 297:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \author 	Stefano Ughi
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \date		09/03/2010
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \version	1.0.1
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n typedef input param changed from uint16_t to CLK_TrimmingType
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 302:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \author 	Jaroslav Musil
+ 303:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \date		5/02/2010
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \version	1.0.0
+ 305:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 306:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** */
+ 307:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** IO_ErrorType OCCLK_SetTrimSync(CLK_TrimmingType desiredTrim)
+ 308:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** {
+ 179                             		.loc 1 308 0
+ 180                             	.LVL21:
+ 309:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	CLK_SetTrimSync(desiredTrim);
+ 181                             		.loc 1 309 0
+ 182 0000 5B 11                   		movu.B	r1, r1
+ 183 0002 05 00 00 00             		bsr	_CLK_SetTrimSync
+ 184                             	.LVL22:
+ 310:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 311:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** }
+ 185                             		.loc 1 312 0
+ 186 0006 66 01                   		mov.L	#0, r1
+ 187 0008 02                      		rts
+ 188                             	.LFE6:
+ 190                             		.section	.text.OCCLK_GetTrimSync,"ax",@progbits
+ 191                             		.global	_OCCLK_GetTrimSync
+ 193                             	_OCCLK_GetTrimSync:
+ 194                             	.LFB7:
+ 313:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 314:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** /**
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n Gets the trimming value.
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n\li AG128 The function reads both the trimming register and the fine trimming bit.
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \n\li GB60  The function reads the trimming register
+ 318:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \return 	CLK_TrimmingType
+ 320:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 321:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \retval		trimming value
+ 322:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 323:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \author 	Jaroslav Musil
+ 324:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \date		5/02/2010
+ 325:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** \version	1.0.0
+ 326:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 
+ 327:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** */
+ 328:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** CLK_TrimmingType OCCLK_GetTrimSync(void)
+ 329:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** {
+ 195                             		.loc 1 329 0
+ 330:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** 	return CLK_GetTrimSync();
+ 331:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCCLK\OCCLK_drv.c **** }
+ 196                             		.loc 1 331 0
+ 197 0000 66 01                   		mov.L	#0, r1
+ 198 0002 02                      		rts
+ 199                             	.LFE7:
+ 283                             	.Letext0:
+ 284                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 285                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\RN_RX200/RN_RX200_cfg.h"
+ 286                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Drivers/IO_driver.h"
+ 287                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\RN_RX200/RN_RX200_hal.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 OCCLK_drv.c
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:7      .text.OCCLK_EngageClkRefSync:00000000 _OCCLK_EngageClkRefSync
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:12     .text.OCCLK_EngageClkRefSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:22     .text.OCCLK_SetInternalClockSync:00000000 _OCCLK_SetInternalClockSync
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:27     .text.OCCLK_SetInternalClockSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:58     .text.OCCLK_SetExternalClockSync:00000000 _OCCLK_SetExternalClockSync
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:63     .text.OCCLK_SetExternalClockSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:94     .text.OCCLK_SetFLLExternalClockSync:00000000 _OCCLK_SetFLLExternalClockSync
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:99     .text.OCCLK_SetFLLExternalClockSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:130    .text.OCCLK_SetFLLInternalClockSync:00000000 _OCCLK_SetFLLInternalClockSync
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:135    .text.OCCLK_SetFLLInternalClockSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:166    .text.OCCLK_IsExtRefClockReady:00000000 _OCCLK_IsExtRefClockReady
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:170    .text.OCCLK_IsExtRefClockReady:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:177    .text.OCCLK_SetTrimSync:00000000 _OCCLK_SetTrimSync
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:182    .text.OCCLK_SetTrimSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:193    .text.OCCLK_GetTrimSync:00000000 _OCCLK_GetTrimSync
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:197    .text.OCCLK_GetTrimSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:202    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:8      .text.OCCLK_EngageClkRefSync:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:23     .text.OCCLK_SetInternalClockSync:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:59     .text.OCCLK_SetExternalClockSync:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:95     .text.OCCLK_SetFLLExternalClockSync:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:131    .text.OCCLK_SetFLLInternalClockSync:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:167    .text.OCCLK_IsExtRefClockReady:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:178    .text.OCCLK_SetTrimSync:00000000 .LFB6
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:194    .text.OCCLK_GetTrimSync:00000000 .LFB7
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:739    .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1279   .debug_str:0000025e .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1273   .debug_str:000001f8 .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1197   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1217   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1321   .debug_str:000003bd .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1325   .debug_str:000003d4 .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1259   .debug_str:00000164 .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1329   .debug_str:000003fb .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1285   .debug_str:000002a4 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1331   .debug_str:00000404 .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1245   .debug_str:000000cf .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1219   .debug_str:00000000 .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1295   .debug_str:000002ea .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1269   .debug_str:000001d5 .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1335   .debug_str:00000425 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1237   .debug_str:0000007d .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1235   .debug_str:00000070 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1309   .debug_str:00000362 .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1293   .debug_str:000002e5 .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1283   .debug_str:00000293 .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1225   .debug_str:0000002a .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1311   .debug_str:0000036b .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1319   .debug_str:000003b3 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1227   .debug_str:00000034 .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1341   .debug_str:00000457 .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1233   .debug_str:0000005d .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1253   .debug_str:0000012a .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1291   .debug_str:000002cd .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1261   .debug_str:00000177 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1231   .debug_str:0000004b .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1239   .debug_str:00000084 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1333   .debug_str:0000040d .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1243   .debug_str:000000b5 .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1247   .debug_str:000000e6 .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1307   .debug_str:00000352 .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1229   .debug_str:00000041 .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1271   .debug_str:000001e3 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1297   .debug_str:000002f2 .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1289   .debug_str:000002c1 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1301   .debug_str:00000319 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1287   .debug_str:000002b6 .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1277   .debug_str:0000024b .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1251   .debug_str:00000117 .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1281   .debug_str:00000284 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1265   .debug_str:000001a6 .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1255   .debug_str:0000013d .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1317   .debug_str:0000039e .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1323   .debug_str:000003c7 .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1303   .debug_str:00000326 .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:17     .text.OCCLK_EngageClkRefSync:00000007 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:13     .text.OCCLK_EngageClkRefSync:00000004 .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1241   .debug_str:0000009a .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:53     .text.OCCLK_SetInternalClockSync:00000020 .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1339   .debug_str:0000044a .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1032   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:32     .text.OCCLK_SetInternalClockSync:0000000f .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1257   .debug_str:00000149 .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:89     .text.OCCLK_SetExternalClockSync:00000020 .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1063   .debug_loc:00000047 .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:68     .text.OCCLK_SetExternalClockSync:0000000f .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1267   .debug_str:000001b7 .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:125    .text.OCCLK_SetFLLExternalClockSync:00000020 .LFE3
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1094   .debug_loc:0000008e .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:104    .text.OCCLK_SetFLLExternalClockSync:0000000f .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1327   .debug_str:000003dd .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:161    .text.OCCLK_SetFLLInternalClockSync:00000020 .LFE4
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1125   .debug_loc:000000d5 .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:140    .text.OCCLK_SetFLLInternalClockSync:0000000f .LVL17
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1313   .debug_str:00000373 .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:172    .text.OCCLK_IsExtRefClockReady:00000003 .LFE5
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1315   .debug_str:0000038c .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:188    .text.OCCLK_SetTrimSync:00000009 .LFE6
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1223   .debug_str:0000001e .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1156   .debug_loc:0000011c .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:184    .text.OCCLK_SetTrimSync:00000006 .LVL22
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1275   .debug_str:00000239 .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:199    .text.OCCLK_GetTrimSync:00000003 .LFE7
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1305   .debug_str:0000033d .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1337   .debug_str:00000431 .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1299   .debug_str:00000300 .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1263   .debug_str:0000018a .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1249   .debug_str:000000fb .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:1221   .debug_str:0000000e .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:25     .text.OCCLK_SetInternalClockSync:00000000 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:38     .text.OCCLK_SetInternalClockSync:00000015 .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:42     .text.OCCLK_SetInternalClockSync:00000018 .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:44     .text.OCCLK_SetInternalClockSync:00000019 .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:61     .text.OCCLK_SetExternalClockSync:00000000 .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:74     .text.OCCLK_SetExternalClockSync:00000015 .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:78     .text.OCCLK_SetExternalClockSync:00000018 .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:80     .text.OCCLK_SetExternalClockSync:00000019 .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:97     .text.OCCLK_SetFLLExternalClockSync:00000000 .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:110    .text.OCCLK_SetFLLExternalClockSync:00000015 .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:114    .text.OCCLK_SetFLLExternalClockSync:00000018 .LVL14
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:116    .text.OCCLK_SetFLLExternalClockSync:00000019 .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:133    .text.OCCLK_SetFLLInternalClockSync:00000000 .LVL16
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:146    .text.OCCLK_SetFLLInternalClockSync:00000015 .LVL18
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:150    .text.OCCLK_SetFLLInternalClockSync:00000018 .LVL19
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:152    .text.OCCLK_SetFLLInternalClockSync:00000019 .LVL20
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:180    .text.OCCLK_SetTrimSync:00000000 .LVL21
+C:\Users\Andrea\AppData\Local\Temp\ccTVeH75.s:289    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_CLK_EngageClkRefSync
+_CLK_SetInternalClockSync
+_CLK_SetExternalClockSync
+_CLK_SetFLLExternalClockSync
+_CLK_SetFLLInternalClockSync
+_CLK_SetTrimSync

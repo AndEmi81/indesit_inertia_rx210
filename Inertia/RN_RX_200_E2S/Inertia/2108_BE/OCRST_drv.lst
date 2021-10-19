@@ -1,0 +1,1048 @@
+   1                             		.file	"OCRST_drv.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.OCRST_GetResetSourceSync,"ax",@progbits
+   5                             		.global	_OCRST_GetResetSourceSync
+   7                             	_OCRST_GetResetSourceSync:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST/OCRST_drv.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \n
+   8:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \Par		OCRST_drv.c
+   9:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \n			Implementation of all functions necessary to achieve the aim.
+  10:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \n
+  11:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \file		OCRST_drv.c
+  12:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \ingroup	OCRST
+  13:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \date		May 4, 2010
+  14:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \version	00.00.01
+  15:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \author		Jaroslav Musil, Alessandro Sabbatini
+  16:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \n
+  17:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \n
+  18:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \Par\b	History:
+  19:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \n
+  20:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \n 		00.00.01
+  21:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \n		04/05/2010
+  22:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \n		Jaroslav Musil
+  23:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \n		First Insertion
+  24:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \n
+  25:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \n
+  26:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \n etc.
+  27:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** */
+  28:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+  29:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* ******** */
+  30:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* Includes */
+  31:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* ******** */
+  32:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #include "OCRST_drv.h"
+  33:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+  34:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* ****************** */
+  35:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* Defines and Macros */
+  36:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* ****************** */
+  37:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #if !defined (NO_BOOT_LOADER)
+  38:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #define NO_BOOT_LOADER FALSE
+  39:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #endif
+  40:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /** Must be other than 0 */
+  41:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #define USER_RST_KEYWORD    0xAABB
+  42:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+  43:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* *************************** */
+  44:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* Typedef, Structs and Unions */
+  45:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* *************************** */
+  46:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+  47:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+  48:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* ********* */
+  49:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* Variables */
+  50:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* ********* */
+  51:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+  52:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* Global */
+  53:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+  54:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* Static */
+  55:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /** This is a keyword used to detect an user reset */
+  56:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #if defined (__CWCC__)     
+  57:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #pragma define_section noinit ".noinit" far_absolute
+  58:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #if _lint
+  59:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #define NO_INIT_VAR
+  60:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #else   /* _lint */
+  61:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #define NO_INIT_VAR __declspec(noinit)
+  62:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #endif  /* _lint */
+  63:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /** This variable contains ID reset's source */
+  64:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** NO_INIT_VAR uint16_t UserResetKeyWord;
+  65:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+  66:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #elif defined(__ICCARM__)
+  67:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #define __ram_initialization __iar_data_init3
+  68:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #pragma location = ".noinit"
+  69:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /** This variable contains ID reset's source */
+  70:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c ****  __no_init uint16_t UserResetKeyWord;
+  71:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #elif defined(__GNUC__)
+  72:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** uint16_t UserResetKeyWord __attribute__ ((section (".noinit")));
+  73:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #else
+  74:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #error "No IDE defined"
+  75:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** uint16_t UserResetKeyWord;
+  76:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** #endif
+  77:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* ******************* */
+  78:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* Functions Prototype */
+  79:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* ******************* */
+  80:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+  81:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* Exported function */
+  82:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+  83:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* Local Function */
+  84:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+  85:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* *************** */
+  86:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* Function Bodies */
+  87:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* *************** */
+  88:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+  89:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /* Exported function */
+  90:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+  91:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /**
+  92:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** Determines the reset source comparing the reset source register and its copy
+  93:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \n provided by BootLoader.
+  94:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \n If Boot Loader is not present in your application, please insert #define NO_BOOT_LOADER TRUE in 
+  95:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+  96:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \return 	RST_Type
+  97:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \retval		reset source identification
+  98:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+  99:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvRST_2
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** */
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** RST_Type OCRST_GetResetSourceSync(void)
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** {
+  10                             		.loc 1 102 0
+  11 0000 7E A7                   		push.l	r7
+  12                             	.LCFI0:
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	resetSource_t rstSrc = _RST_COPY_VALUE;
+  13                             		.loc 1 104 0
+  14 0002 FB 72 00 00 00 00       		mov.L	#_ResetInfo, r7
+  15 0008 A8 7F                   		mov.L	4[r7], r7
+  16                             	.LVL0:
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	RST_Type rstID;
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	if ( (SYS_UserReset(rstSrc)) && ( USER_RST_KEYWORD == UserResetKeyWord ) )
+  17                             		.loc 1 107 0
+  18 000a EF 71                   		mov.L	r7, r1
+  19 000c 05 00 00 00             		bsr	_SYS_UserReset
+  20                             	.LVL1:
+  21 0010 61 01                   		cmp	#0, r1
+  22 0012 20 12                   		beq	.L2
+  23                             		.loc 1 107 0 is_stmt 0 discriminator 1
+  24 0014 FB E2 00 00 00 00       		mov.L	#_UserResetKeyWord, r14
+  25 001a 5C EE                   		movu.W	[r14], r14
+  26 001c 77 0E BB AA 00          		cmp	#0xaabb, r14
+  27 0021 20 57                   		beq	.L4
+  28 0023 03                      		.balign 2,3,1
+  29                             	.L2:
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	{
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_USER;
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	}
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	else if (SYS_PowerOnReset(rstSrc))
+  30                             		.loc 1 111 0 is_stmt 1
+  31 0024 EF 71                   		mov.L	r7, r1
+  32 0026 05 00 00 00             		bsr	_SYS_PowerOnReset
+  33                             	.LVL2:
+  34 002a 61 01                   		cmp	#0, r1
+  35 002c 21 50                   		bne	.L5
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	{
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_POWER_ON;
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	}
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	else if (SYS_ExternalPinReset(rstSrc))
+  36                             		.loc 1 115 0
+  37 002e EF 71                   		mov.L	r7, r1
+  38 0030 05 00 00 00             		bsr	_SYS_ExternalPinReset
+  39                             	.LVL3:
+  40 0034 61 01                   		cmp	#0, r1
+  41 0036 21 4A                   		bne	.L6
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	{
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_PIN;
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	}
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	else if (SYS_WatchdogReset(rstSrc))
+  42                             		.loc 1 119 0
+  43 0038 EF 71                   		mov.L	r7, r1
+  44 003a 05 00 00 00             		bsr	_SYS_WatchdogReset
+  45                             	.LVL4:
+  46 003e 61 01                   		cmp	#0, r1
+  47 0040 21 44                   		bne	.L7
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	{
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_WATCHDOG;
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	}
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	else if (SYS_LowVoltageReset(rstSrc))
+  48                             		.loc 1 123 0
+  49 0042 EF 71                   		mov.L	r7, r1
+  50 0044 05 00 00 00             		bsr	_SYS_LowVoltageReset
+  51                             	.LVL5:
+  52 0048 61 01                   		cmp	#0, r1
+  53 004a 21 3E                   		bne	.L8
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	{
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_LOW_VOLT_DETECT;
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	}
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	else if (SYS_LossOfClockReset(rstSrc))
+  54                             		.loc 1 127 0
+  55 004c EF 71                   		mov.L	r7, r1
+  56 004e 05 00 00 00             		bsr	_SYS_LossOfClockReset
+  57                             	.LVL6:
+  58 0052 61 01                   		cmp	#0, r1
+  59 0054 21 37                   		bne	.L9
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	{
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_LOSS_OF_CLOCK;
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	}
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	else if (SYS_IllegalOpcodeReset(rstSrc))
+  60                             		.loc 1 131 0
+  61 0056 EF 71                   		mov.L	r7, r1
+  62 0058 05 00 00 00             		bsr	_SYS_IllegalOpcodeReset
+  63                             	.LVL7:
+  64 005c 61 01                   		cmp	#0, r1
+  65 005e 21 30                   		bne	.L10
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	{
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_ILLEGAL_OPCODE;
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	}
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	else if (SYS_IllegalAddressReset(rstSrc))
+  66                             		.loc 1 135 0
+  67 0060 EF 71                   		mov.L	r7, r1
+  68 0062 05 00 00 00             		bsr	_SYS_IllegalAddressReset
+  69                             	.LVL8:
+  70 0066 61 01                   		cmp	#0, r1
+  71 0068 21 29                   		bne	.L11
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	{
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_ILLEGAL_ADDR_ACCESS;
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	}
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	else if (SYS_DebuggerReset(rstSrc))
+  72                             		.loc 1 139 0
+  73 006a EF 71                   		mov.L	r7, r1
+  74 006c 05 00 00 00             		bsr	_SYS_DebuggerReset
+  75                             	.LVL9:
+  76 0070 61 01                   		cmp	#0, r1
+  77 0072 20 22                   		beq	.L3
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	{
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_DEBUGGER;
+  78                             		.loc 1 141 0
+  79 0074 66 91                   		mov	#9, r1
+  80 0076 2E 1E                   		bra	.L3
+  81                             	.L4:
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_USER;
+  82                             		.loc 1 109 0
+  83 0078 66 81                   		mov	#8, r1
+  84 007a 2E 1A                   		bra	.L3
+  85                             	.L5:
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_POWER_ON;
+  86                             		.loc 1 113 0
+  87 007c 66 11                   		mov	#1, r1
+  88 007e 2E 16                   		bra	.L3
+  89                             	.L6:
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_PIN;
+  90                             		.loc 1 117 0
+  91 0080 66 21                   		mov	#2, r1
+  92 0082 2E 12                   		bra	.L3
+  93                             	.L7:
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_WATCHDOG;
+  94                             		.loc 1 121 0
+  95 0084 66 31                   		mov	#3, r1
+  96 0086 2E 0E                   		bra	.L3
+  97                             	.L8:
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_LOW_VOLT_DETECT;
+  98                             		.loc 1 125 0
+  99 0088 66 41                   		mov	#4, r1
+ 100 008a 0A                      		bra	.L3
+ 101                             	.L9:
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_LOSS_OF_CLOCK;
+ 102                             		.loc 1 129 0
+ 103 008b 66 51                   		mov	#5, r1
+ 104 008d 0F                      		bra	.L3
+ 105                             	.L10:
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_ILLEGAL_OPCODE;
+ 106                             		.loc 1 133 0
+ 107 008e 66 61                   		mov	#6, r1
+ 108 0090 0C                      		bra	.L3
+ 109                             	.L11:
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_BY_ILLEGAL_ADDR_ACCESS;
+ 110                             		.loc 1 137 0
+ 111 0091 66 71                   		mov	#7, r1
+ 112 0093 03                      		.balign 2,3,5
+ 113                             	.L3:
+ 114                             	.LVL10:
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	}
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	else
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	{
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		rstID = RST_UNKNOWN;
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	}
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	UserResetKeyWord = 0;
+ 115                             		.loc 1 147 0
+ 116 0094 FB 72 00 00 00 00       		mov.L	#_UserResetKeyWord, r7
+ 117                             	.LVL11:
+ 118 009a 3D 70 00                		mov.W	#0, [r7]
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	return (rstID);
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** }
+ 119                             		.loc 1 150 0
+ 120 009d 5B 11                   		movu.B	r1, r1
+ 121 009f 3F 77 01                		rtsd	#4, r7-r7
+ 122                             	.LFE0:
+ 124                             		.section	.text.OCRST_SetSync,"ax",@progbits
+ 125                             		.global	_OCRST_SetSync
+ 127                             	_OCRST_SetSync:
+ 128                             	.LFB1:
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /**
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** Sets the reset source, according to rstValue, either by the reset source register or by its copy.
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \param  [in]	rstValue id of reset
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \return 	IO_ErrorType
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \retval		IO_E_OK
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \note		Writing the reset source register might not be available on every core
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** */
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** IO_ErrorType OCRST_SetSync(RST_Type rstValue)
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** {
+ 129                             		.loc 1 164 0
+ 130                             	.LVL12:
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	volatile resetSource_t *pRstSrc = (&_RST_COPY_VALUE);
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	IO_ErrorType err = (IO_ErrorType)IO_E_OK;
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	switch(rstValue)
+ 131                             		.loc 1 168 0
+ 132 0000 5B 11                   		movu.B	r1, r1
+ 133 0002 61 81                   		cmp	#8, r1
+ 134 0004 20 10                   		beq	.L20
+ 135 0006 24 08                   		bgtu	.L21
+ 136 0008 61 01                   		cmp	#0, r1
+ 137 000a 20 17                   		beq	.L22
+ 138 000c 2E 12                   		bra	.L29
+ 139                             	.L21:
+ 140 000e 61 91                   		cmp	#9, r1
+ 141 0010 21 11                   		bne	.L22
+ 142 0012 2E 0C                   		bra	.L29
+ 143                             	.L20:
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	{
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_POWER_ON:
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetPowerOnReset(*pRstSrc);
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_PIN:
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetExternalPinReset(*pRstSrc);
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_WATCHDOG:
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetWatchdogReset(*pRstSrc);
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_LOW_VOLT_DETECT:
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetLowVoltageReset(*pRstSrc);
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_LOSS_OF_CLOCK:
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetLossOfClockReset(*pRstSrc);
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_ILLEGAL_OPCODE:
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetIllegalOpcodeReset(*pRstSrc);
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_ILLEGAL_ADDR_ACCESS:
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetIllegalAddressReset(*pRstSrc);
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_USER:
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		UserResetKeyWord = USER_RST_KEYWORD;
+ 144                             		.loc 1 192 0
+ 145 0014 FB E2 00 00 00 00       		mov.L	#_UserResetKeyWord, r14
+ 146 001a F8 E9 BB AA             		mov.W	#0xffffaabb, [r14]
+ 147                             		.balign 2,3,1
+ 148                             	.L29:
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	IO_ErrorType err = (IO_ErrorType)IO_E_OK;
+ 149                             		.loc 1 166 0
+ 150 001e 66 01                   		mov	#0, r1
+ 151                             	.LVL13:
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetUserReset(*pRstSrc);
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 152                             		.loc 1 194 0
+ 153 0020 0C                      		bra	.L18
+ 154                             	.L22:
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	case RST_BY_DEBUGGER:
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		SYS_SetDebuggerReset(*pRstSrc);
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	default:
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		err = (IO_ErrorType)IO_E_UNKNOWN_MODE;
+ 155                             		.loc 1 199 0
+ 156 0021 66 31                   		mov	#3, r1
+ 157 0023 03                      		.balign 2,3,1
+ 158                             	.L18:
+ 159                             	.LVL14:
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		break;
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	}
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	return (err);
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** }
+ 160                             		.loc 1 205 0
+ 161 0024 64 31                   		and #3, r1
+ 162                             	.LVL15:
+ 163 0026 02                      		rts
+ 164                             	.LFE1:
+ 166 0027 03                      		.section	.text.OCRST_GenerateUserResetSync,"ax",@progbits
+ 167                             		.global	_OCRST_GenerateUserResetSync
+ 169                             	_OCRST_GenerateUserResetSync:
+ 170                             	.LFB2:
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /**
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** This function generates an user reset.
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** */
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** void OCRST_GenerateUserResetSync(void)
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** {
+ 171                             		.loc 1 211 0
+ 172 0000 60 40                   		sub	#4, r0
+ 173                             	.LCFI1:
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	EnterCriticalSection();
+ 174                             		.loc 1 212 0
+ 175 0002 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 176                             	.LVL16:
+ 177 0006 FB E2 00 00 00 00       		mov.L	#_OS_Global, r14
+ 178 000c CD E4 01                		mov.B	1[r14], r4
+ 179 000f 62 14                   		add	#1, r4
+ 180 0011 C7 E4 01                		mov.B	r4, 1[r14]
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	UserResetKeyWord = USER_RST_KEYWORD;
+ 181                             		.loc 1 214 0
+ 182 0014 FB E2 00 00 00 00       		mov.L	#_UserResetKeyWord, r14
+ 183 001a F8 E9 BB AA             		mov.W	#0xffffaabb, [r14]
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	UserReset();
+ 184                             		.loc 1 215 0
+ 185 001e FB EE 00 00 08          		mov.L	#0x80000, r14
+ 186 0023 FA E9 FF 01 0F A5       		mov.W	#0xffffa50f, 1022[r14]
+ 187 0029 F9 E9 61 01 A5          		mov.W	#0xffffa501, 194[r14]
+ 188                             	.LVL17:
+ 189                             		.balign 2,3,4
+ 190                             	.L31:
+ 191                             	.LBB2:
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	/* Fallback to watchdog reset if User Reset fails */
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	while(1) {
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		volatile int foo=0;
+ 192                             		.loc 1 219 0 discriminator 1
+ 193 002e 3E 00 00                		mov.L	#0, [r0]
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		foo++;
+ 194                             		.loc 1 220 0 discriminator 1
+ 195 0031 EC 0E                   		mov.L	[r0], r14
+ 196 0033 62 1E                   		add	#1, r14
+ 197                             	.LVL18:
+ 198 0035 E3 0E                   		mov.L	r14, [r0]
+ 199                             	.LVL19:
+ 200 0037 2E F7                   		bra	.L31
+ 201                             	.LBE2:
+ 202                             	.LFE2:
+ 204 0039 03                      		.section	.text.OCRST_MCU_RequiresResetAfterPOR,"ax",@progbits
+ 205                             		.global	_OCRST_MCU_RequiresResetAfterPOR
+ 207                             	_OCRST_MCU_RequiresResetAfterPOR:
+ 208                             	.LFB3:
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	}
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** }
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /**
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** Checks if MCU requires a reset under some conditions.
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \return 	bool_t
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \retval		TRUE MCU requires reset
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \retval		FALSE MCU doesn't requires reset
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** */
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** bool_t OCRST_MCU_RequiresResetAfterPOR(void)
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** {
+ 209                             		.loc 1 233 0
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	if ((BootShortInfo.signature != BOOT_SIGNATURE) && (MCU_RequiresResetAfterPOR()))
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	{
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		return TRUE;
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	}
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	else
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	{
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		return FALSE;
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	}
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** }
+ 210                             		.loc 1 243 0
+ 211 0000 66 01                   		mov.L	#0, r1
+ 212 0002 02                      		rts
+ 213                             	.LFE3:
+ 215                             		.section	.text.OCRST_SaveResetValue,"ax",@progbits
+ 216                             		.global	_OCRST_SaveResetValue
+ 218                             	_OCRST_SaveResetValue:
+ 219                             	.LFB4:
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /**
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** Provides resetSource value to save.
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** Used to preserve value during required reset (e.g. ClassB WD Check)
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \return 	resetSource_t
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \retval		ResetSrc value (registers map)
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** */
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** resetSource_t OCRST_SaveResetValue(void)
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** {
+ 220                             		.loc 1 255 0
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	return _RST_COPY_VALUE;
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** }
+ 221                             		.loc 1 257 0
+ 222 0000 FB E2 00 00 00 00       		mov.L	#_ResetInfo, r14
+ 223 0006 ED E1 01                		mov.L	4[r14], r1
+ 224 0009 02                      		rts
+ 225                             	.LFE4:
+ 227                             		.section	.text.OCRST_RestoreResetValue,"ax",@progbits
+ 228                             		.global	_OCRST_RestoreResetValue
+ 230                             	_OCRST_RestoreResetValue:
+ 231                             	.LFB5:
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /**
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** Set resetSource value saved previously.
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** Used to preserve value during required reset (e.g. ClassB WD Check);
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** it restores UserResetKeyWord if an user reset occurred.
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \param  [in]	resetSource_t ResetSrc value (registers map)
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \return	none
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** */
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** void OCRST_RestoreResetValue(resetSource_t resetCopyVal)
+ 268:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** {
+ 232                             		.loc 1 268 0
+ 233                             	.LVL20:
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	_RST_COPY_VALUE = resetCopyVal;
+ 234                             		.loc 1 269 0
+ 235 0000 FB E2 00 00 00 00       		mov.L	#_ResetInfo, r14
+ 236 0006 E7 E1 01                		mov.L	r1, 4[r14]
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	if (SYS_UserReset(resetCopyVal))
+ 237                             		.loc 1 271 0
+ 238 0009 05 00 00 00             		bsr	_SYS_UserReset
+ 239                             	.LVL21:
+ 240 000d 61 01                   		cmp	#0, r1
+ 241 000f 20 0C                   		beq	.L35
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	{
+ 273:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 		UserResetKeyWord = USER_RST_KEYWORD;
+ 242                             		.loc 1 273 0
+ 243 0011 FB E2 00 00 00 00       		mov.L	#_UserResetKeyWord, r14
+ 244 0017 F8 E9 BB AA             		mov.W	#0xffffaabb, [r14]
+ 245                             	.L35:
+ 246 001b 02                      		rts
+ 247                             	.LFE5:
+ 249                             		.section	.text.OCRST_CopyFromRealResetSrc,"ax",@progbits
+ 250                             		.global	_OCRST_CopyFromRealResetSrc
+ 252                             	_OCRST_CopyFromRealResetSrc:
+ 253                             	.LFB6:
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	}
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** }
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /**
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** Copy resetSource from real registers.
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** Used to simulate Bootloader ResetSource copy when bootloader is missing
+ 280:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \param  none
+ 282:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \return	none
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** */
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** void OCRST_CopyFromRealResetSrc(void)
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** {
+ 254                             		.loc 1 285 0
+ 286:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	OCRST_RestoreResetValue(SYS_GetResetSrcVal());
+ 255                             		.loc 1 286 0
+ 256 0000 05 00 00 00             		bsr	_SYS_GetResetSrcVal
+ 257                             	.LVL22:
+ 258 0004 04 00 00 00             		bra	_OCRST_RestoreResetValue
+ 259                             	.LVL23:
+ 260                             	.LFE6:
+ 262                             		.section	.text.OCRST_WriteBootKeywordArea,"ax",@progbits
+ 263                             		.global	_OCRST_WriteBootKeywordArea
+ 265                             	_OCRST_WriteBootKeywordArea:
+ 266                             	.LFB7:
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** }
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** /**
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** Set BootStartKey
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \param  none
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** \return	none
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** */
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** void OCRST_WriteBootKeywordArea(void)
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** {
+ 267                             		.loc 1 296 0
+ 297:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	ResetInfo.BootStartKey= BOOT_START_KEY;
+ 268                             		.loc 1 297 0
+ 269 0000 FB E2 00 00 00 00       		mov.L	#_ResetInfo, r14
+ 270 0006 F8 E2 45 F4 78 E0       		mov.L	#0xe078f445, [r14]
+ 271 000c 02                      		rts
+ 272                             	.LFE7:
+ 274                             		.section	.text.OCRST_WriteBootSettingKeywordArea,"ax",@progbits
+ 275                             		.global	_OCRST_WriteBootSettingKeywordArea
+ 277                             	_OCRST_WriteBootSettingKeywordArea:
+ 278                             	.LFB8:
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** }
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** void OCRST_WriteBootSettingKeywordArea(void)
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** {
+ 279                             		.loc 1 300 0
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCRST\OCRST_drv.c **** 	ResetInfo.BootStartKey= BOOT_SETTING_START_KEY;
+ 280                             		.loc 1 301 0
+ 281 0000 FB E2 00 00 00 00       		mov.L	#_ResetInfo, r14
+ 282 0006 F8 E2 2C A9 45 F1       		mov.L	#0xf145a92c, [r14]
+ 283 000c 02                      		rts
+ 284                             	.LFE8:
+ 286                             		.global	_UserResetKeyWord
+ 287                             		.section	.noinit,"aw",@progbits
+ 288                             		.balign 2
+ 291                             	_UserResetKeyWord:
+ 292 0000 00 00                   		.zero	2
+ 393                             	.Letext0:
+ 394                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 395                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 396                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\RN_RX200/RN_RX200_reg.h"
+ 397                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\RN_RX200/RN_RX200_cfg.h"
+ 398                             		.file 6 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Drivers/IO_driver.h"
+ 399                             		.file 7 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\RN_RX200/RN_RX200_hal.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 OCRST_drv.c
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7      .text.OCRST_GetResetSourceSync:00000000 _OCRST_GetResetSourceSync
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:11     .text.OCRST_GetResetSourceSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:291    .noinit:00000000 _UserResetKeyWord
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:127    .text.OCRST_SetSync:00000000 _OCRST_SetSync
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:132    .text.OCRST_SetSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:169    .text.OCRST_GenerateUserResetSync:00000000 _OCRST_GenerateUserResetSync
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:172    .text.OCRST_GenerateUserResetSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:207    .text.OCRST_MCU_RequiresResetAfterPOR:00000000 _OCRST_MCU_RequiresResetAfterPOR
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:211    .text.OCRST_MCU_RequiresResetAfterPOR:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:218    .text.OCRST_SaveResetValue:00000000 _OCRST_SaveResetValue
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:222    .text.OCRST_SaveResetValue:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:230    .text.OCRST_RestoreResetValue:00000000 _OCRST_RestoreResetValue
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:235    .text.OCRST_RestoreResetValue:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:252    .text.OCRST_CopyFromRealResetSrc:00000000 _OCRST_CopyFromRealResetSrc
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:256    .text.OCRST_CopyFromRealResetSrc:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:265    .text.OCRST_WriteBootKeywordArea:00000000 _OCRST_WriteBootKeywordArea
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:269    .text.OCRST_WriteBootKeywordArea:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:277    .text.OCRST_WriteBootSettingKeywordArea:00000000 _OCRST_WriteBootSettingKeywordArea
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:281    .text.OCRST_WriteBootSettingKeywordArea:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:294    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:8      .text.OCRST_GetResetSourceSync:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:128    .text.OCRST_SetSync:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:170    .text.OCRST_GenerateUserResetSync:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:208    .text.OCRST_MCU_RequiresResetAfterPOR:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:219    .text.OCRST_SaveResetValue:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:231    .text.OCRST_RestoreResetValue:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:253    .text.OCRST_CopyFromRealResetSrc:00000000 .LFB6
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:266    .text.OCRST_WriteBootKeywordArea:00000000 .LFB7
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:278    .text.OCRST_WriteBootSettingKeywordArea:00000000 .LFB8
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:5422   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7014   .debug_str:00000d2b .LASF360
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6918   .debug_str:00000b34 .LASF361
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6304   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6326   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6414   .debug_str:00000182 .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6794   .debug_str:000008f4 .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7012   .debug_str:00000d18 .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6468   .debug_str:000002b2 .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6914   .debug_str:00000b06 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6846   .debug_str:000009db .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6484   .debug_str:000002f3 .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6628   .debug_str:000005c3 .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6674   .debug_str:00000696 .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6952   .debug_str:00000bf4 .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6460   .debug_str:00000287 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6582   .debug_str:000004ef .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6896   .debug_str:00000ab5 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6912   .debug_str:00000afd .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6672   .debug_str:00000684 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6594   .debug_str:0000051a .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6906   .debug_str:00000ae5 .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6514   .debug_str:0000038e .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6380   .debug_str:000000e7 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6920   .debug_str:00000b75 .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6676   .debug_str:0000069e .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6666   .debug_str:00000656 .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6386   .debug_str:000000ff .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6658   .debug_str:00000635 .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6888   .debug_str:00000a91 .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6506   .debug_str:00000371 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6624   .debug_str:000005b5 .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6422   .debug_str:000001a1 .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6330   .debug_str:00000011 .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7026   .debug_str:00000d7f .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6412   .debug_str:00000179 .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6876   .debug_str:00000a62 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6776   .debug_str:00000892 .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6552   .debug_str:0000045d .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6748   .debug_str:00000804 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6742   .debug_str:000007e5 .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6708   .debug_str:00000752 .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6690   .debug_str:000006f6 .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6702   .debug_str:0000072b .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6342   .debug_str:0000004a .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6724   .debug_str:000007a1 .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6706   .debug_str:0000074c .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6640   .debug_str:000005f1 .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6722   .debug_str:0000078e .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6450   .debug_str:00000254 .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6692   .debug_str:00000703 .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6832   .debug_str:00000989 .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6654   .debug_str:00000625 .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6880   .debug_str:00000a71 .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6444   .debug_str:00000225 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6494   .debug_str:00000340 .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6860   .debug_str:00000a22 .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6774   .debug_str:0000088b .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6548   .debug_str:0000044a .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6704   .debug_str:0000073f .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6636   .debug_str:000005e7 .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7000   .debug_str:00000ce1 .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6810   .debug_str:00000931 .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6754   .debug_str:0000081c .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7032   .debug_str:00000dae .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6684   .debug_str:000006d1 .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6678   .debug_str:000006aa .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6820   .debug_str:00000960 .LASF62
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6660   .debug_str:0000063d .LASF63
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6378   .debug_str:000000de .LASF64
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6726   .debug_str:000007aa .LASF65
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6740   .debug_str:000007de .LASF66
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6922   .debug_str:00000b82 .LASF67
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6736   .debug_str:000007d0 .LASF68
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6530   .debug_str:000003f9 .LASF69
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6388   .debug_str:00000107 .LASF70
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6538   .debug_str:00000421 .LASF71
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6730   .debug_str:000007b4 .LASF72
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6960   .debug_str:00000c1b .LASF73
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6524   .debug_str:000003d1 .LASF74
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6442   .debug_str:0000021a .LASF75
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6750   .debug_str:0000080e .LASF76
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6614   .debug_str:0000056f .LASF77
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6758   .debug_str:00000840 .LASF78
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6682   .debug_str:000006cc .LASF79
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6844   .debug_str:000009d6 .LASF80
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6580   .debug_str:000004ea .LASF81
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6904   .debug_str:00000ae0 .LASF82
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6596   .debug_str:00000524 .LASF83
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6438   .debug_str:00000208 .LASF84
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6818   .debug_str:00000958 .LASF85
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6816   .debug_str:00000950 .LASF86
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6616   .debug_str:00000574 .LASF87
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6812   .debug_str:00000942 .LASF88
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6766   .debug_str:0000086a .LASF89
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6764   .debug_str:00000862 .LASF90
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6510   .debug_str:00000381 .LASF91
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6760   .debug_str:00000845 .LASF92
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6870   .debug_str:00000a4e .LASF93
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6866   .debug_str:00000a3d .LASF94
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6566   .debug_str:000004a0 .LASF95
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7020   .debug_str:00000d6b .LASF96
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6392   .debug_str:0000011b .LASF97
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6390   .debug_str:00000113 .LASF98
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6354   .debug_str:00000076 .LASF99
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6352   .debug_str:0000006e .LASF100
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6350   .debug_str:00000066 .LASF101
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6346   .debug_str:00000057 .LASF102
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7044   .debug_str:00000ddf .LASF103
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7036   .debug_str:00000dba .LASF104
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6910   .debug_str:00000af6 .LASF105
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6908   .debug_str:00000aef .LASF106
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6714   .debug_str:0000076f .LASF107
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6710   .debug_str:00000761 .LASF108
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6664   .debug_str:0000064e .LASF109
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6662   .debug_str:00000646 .LASF110
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6612   .debug_str:00000567 .LASF111
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6956   .debug_str:00000c08 .LASF112
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6400   .debug_str:0000014f .LASF113
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6540   .debug_str:0000042c .LASF114
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6544   .debug_str:00000438 .LASF115
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6632   .debug_str:000005db .LASF116
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6644   .debug_str:00000605 .LASF117
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6836   .debug_str:000009a4 .LASF118
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6728   .debug_str:000007af .LASF119
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6700   .debug_str:00000723 .LASF120
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6480   .debug_str:000002e5 .LASF121
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6410   .debug_str:00000173 .LASF122
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6800   .debug_str:0000090a .LASF123
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6598   .debug_str:00000529 .LASF124
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6340   .debug_str:00000044 .LASF125
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6882   .debug_str:00000a7e .LASF126
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6434   .debug_str:000001fc .LASF127
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6830   .debug_str:00000982 .LASF128
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6436   .debug_str:00000202 .LASF129
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6982   .debug_str:00000cab .LASF130
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6590   .debug_str:0000050b .LASF131
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6472   .debug_str:000002c4 .LASF132
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6930   .debug_str:00000ba7 .LASF133
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6570   .debug_str:000004af .LASF134
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7034   .debug_str:00000db5 .LASF135
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6716   .debug_str:00000776 .LASF136
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6446   .debug_str:0000022c .LASF137
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6756   .debug_str:0000083a .LASF138
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6638   .debug_str:000005ec .LASF139
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6796   .debug_str:000008fd .LASF140
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6554   .debug_str:00000462 .LASF141
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6962   .debug_str:00000c26 .LASF142
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6680   .debug_str:000006c1 .LASF143
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6534   .debug_str:00000408 .LASF144
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6368   .debug_str:000000b7 .LASF145
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6718   .debug_str:0000077b .LASF146
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6338   .debug_str:00000039 .LASF147
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7018   .debug_str:00000d63 .LASF148
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6642   .debug_str:000005fd .LASF149
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6884   .debug_str:00000a84 .LASF150
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6854   .debug_str:000009fb .LASF151
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6420   .debug_str:0000019c .LASF152
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6850   .debug_str:000009ec .LASF153
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6890   .debug_str:00000aa0 .LASF154
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6646   .debug_str:0000060c .LASF155
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6734   .debug_str:000007c7 .LASF156
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6608   .debug_str:00000559 .LASF157
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6562   .debug_str:0000048b .LASF158
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6504   .debug_str:0000036a .LASF159
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6452   .debug_str:00000260 .LASF160
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6406   .debug_str:00000165 .LASF161
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6358   .debug_str:00000092 .LASF162
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7046   .debug_str:00000de7 .LASF163
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7008   .debug_str:00000d0a .LASF164
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6526   .debug_str:000003d6 .LASF165
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6822   .debug_str:00000965 .LASF166
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6824   .debug_str:0000096d .LASF167
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6332   .debug_str:00000019 .LASF168
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6496   .debug_str:00000347 .LASF169
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6604   .debug_str:00000549 .LASF170
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7038   .debug_str:00000dc2 .LASF171
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6610   .debug_str:00000560 .LASF172
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6886   .debug_str:00000a8a .LASF173
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6786   .debug_str:000008d9 .LASF174
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6454   .debug_str:00000267 .LASF175
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6408   .debug_str:0000016c .LASF176
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6360   .debug_str:00000099 .LASF177
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7048   .debug_str:00000dee .LASF178
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7010   .debug_str:00000d11 .LASF179
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6926   .debug_str:00000b91 .LASF180
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6470   .debug_str:000002bb .LASF181
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6826   .debug_str:00000973 .LASF182
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6376   .debug_str:000000d6 .LASF183
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6498   .debug_str:0000034f .LASF184
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6606   .debug_str:00000551 .LASF185
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7040   .debug_str:00000dca .LASF186
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6588   .debug_str:00000503 .LASF187
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6744   .debug_str:000007ef .LASF188
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6620   .debug_str:00000595 .LASF189
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7052   .debug_str:00000dfd .LASF190
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6772   .debug_str:00000883 .LASF191
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6464   .debug_str:00000298 .LASF192
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6732   .debug_str:000007bf .LASF193
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6878   .debug_str:00000a69 .LASF194
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6752   .debug_str:00000813 .LASF195
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7024   .debug_str:00000d76 .LASF196
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6698   .debug_str:0000071c .LASF197
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6404   .debug_str:0000015d .LASF198
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6864   .debug_str:00000a35 .LASF199
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6998   .debug_str:00000cd9 .LASF200
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6892   .debug_str:00000aa6 .LASF201
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6558   .debug_str:0000047d .LASF202
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6798   .debug_str:00000903 .LASF203
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6500   .debug_str:00000357 .LASF204
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6336   .debug_str:00000034 .LASF205
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6512   .debug_str:00000389 .LASF206
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6488   .debug_str:0000031d .LASF207
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6362   .debug_str:000000a0 .LASF208
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6418   .debug_str:00000196 .LASF209
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6894   .debug_str:00000aae .LASF210
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6804   .debug_str:00000917 .LASF211
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6634   .debug_str:000005e1 .LASF212
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6586   .debug_str:000004fd .LASF213
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6416   .debug_str:0000018c .LASF214
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6784   .debug_str:000008ce .LASF215
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6592   .debug_str:00000510 .LASF216
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6782   .debug_str:000008c3 .LASF217
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7006   .debug_str:00000d02 .LASF218
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6568   .debug_str:000004a7 .LASF219
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6808   .debug_str:0000092a .LASF220
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6802   .debug_str:00000910 .LASF221
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6398   .debug_str:00000145 .LASF222
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6828   .debug_str:00000979 .LASF223
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6694   .debug_str:0000070d .LASF224
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6966   .debug_str:00000c43 .LASF225
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6348   .debug_str:0000005f .LASF226
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6344   .debug_str:00000050 .LASF227
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6806   .debug_str:00000920 .LASF228
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6476   .debug_str:000002d4 .LASF229
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6900   .debug_str:00000acb .LASF230
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6656   .debug_str:0000062d .LASF231
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6852   .debug_str:000009f1 .LASF232
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6626   .debug_str:000005bc .LASF233
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6696   .debug_str:00000717 .LASF234
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6788   .debug_str:000008e0 .LASF235
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6790   .debug_str:000008e7 .LASF236
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6814   .debug_str:0000094a .LASF237
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6478   .debug_str:000002dd .LASF238
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6976   .debug_str:00000c7a .LASF239
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6482   .debug_str:000002eb .LASF240
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7002   .debug_str:00000ce9 .LASF241
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6842   .debug_str:000009cf .LASF242
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6648   .debug_str:00000613 .LASF243
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6560   .debug_str:00000484 .LASF244
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6954   .debug_str:00000c02 .LASF245
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6738   .debug_str:000007d7 .LASF246
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6432   .debug_str:000001f5 .LASF247
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6652   .debug_str:0000061e .LASF248
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6474   .debug_str:000002cc .LASF249
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6384   .debug_str:000000f8 .LASF250
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6872   .debug_str:00000a55 .LASF251
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6542   .debug_str:00000431 .LASF252
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6584   .debug_str:000004f6 .LASF253
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6792   .debug_str:000008ee .LASF254
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6382   .debug_str:000000f0 .LASF255
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6670   .debug_str:0000067b .LASF256
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6770   .debug_str:0000087a .LASF257
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6768   .debug_str:00000872 .LASF258
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6932   .debug_str:00000bb0 .LASF259
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6972   .debug_str:00000c5b .LASF260
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6868   .debug_str:00000a44 .LASF261
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6934   .debug_str:00000bb5 .LASF262
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7058   .debug_str:00000e13 .LASF263
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6936   .debug_str:00000bba .LASF264
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6650   .debug_str:00000619 .LASF265
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6938   .debug_str:00000bbf .LASF266
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6720   .debug_str:00000786 .LASF267
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6862   .debug_str:00000a2e .LASF268
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6366   .debug_str:000000af .LASF269
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6402   .debug_str:00000156 .LASF270
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6940   .debug_str:00000bc4 .LASF271
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6874   .debug_str:00000a5d .LASF272
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6942   .debug_str:00000bc9 .LASF273
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6924   .debug_str:00000b89 .LASF274
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6550   .debug_str:00000458 .LASF275
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6968   .debug_str:00000c4b .LASF276
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6374   .debug_str:000000d1 .LASF277
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6970   .debug_str:00000c53 .LASF278
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6948   .debug_str:00000bea .LASF279
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6518   .debug_str:000003b3 .LASF280
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6950   .debug_str:00000bef .LASF281
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6520   .debug_str:000003bb .LASF282
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6986   .debug_str:00000cbb .LASF283
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6370   .debug_str:000000bf .LASF284
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6988   .debug_str:00000cc0 .LASF285
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6372   .debug_str:000000c8 .LASF286
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6990   .debug_str:00000cc5 .LASF287
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6532   .debug_str:000003ff .LASF288
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7054   .debug_str:00000e05 .LASF289
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7056   .debug_str:00000e0c .LASF290
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6992   .debug_str:00000cca .LASF291
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7022   .debug_str:00000d70 .LASF292
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7050   .debug_str:00000df5 .LASF293
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6994   .debug_str:00000ccf .LASF294
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6458   .debug_str:0000027f .LASF295
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6490   .debug_str:00000323 .LASF296
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6996   .debug_str:00000cd4 .LASF297
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6686   .debug_str:000006db .LASF298
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6364   .debug_str:000000a7 .LASF299
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6462   .debug_str:00000293 .LASF300
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6712   .debug_str:00000768 .LASF301
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6602   .debug_str:0000053e .LASF302
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6746   .debug_str:000007f7 .LASF303
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6958   .debug_str:00000c0f .LASF304
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6430   .debug_str:000001eb .LASF362
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6848   .debug_str:000009e4 .LASF305
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6856   .debug_str:00000a00 .LASF306
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6440   .debug_str:0000020d .LASF307
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6964   .debug_str:00000c31 .LASF308
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6486   .debug_str:0000030a .LASF309
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6688   .debug_str:000006e3 .LASF310
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6428   .debug_str:000001d3 .LASF311
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6516   .debug_str:000003a0 .LASF312
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6394   .debug_str:00000123 .LASF313
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6980   .debug_str:00000c95 .LASF314
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6858   .debug_str:00000a0a .LASF315
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6426   .debug_str:000001b9 .LASF316
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6974   .debug_str:00000c65 .LASF317
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6396   .debug_str:00000135 .LASF318
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6630   .debug_str:000005d1 .LASF319
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6492   .debug_str:0000032b .LASF320
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6838   .debug_str:000009aa .LASF321
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6778   .debug_str:0000089c .LASF322
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6546   .debug_str:0000043d .LASF323
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6902   .debug_str:00000ad5 .LASF324
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7004   .debug_str:00000cef .LASF325
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6334   .debug_str:00000021 .LASF326
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6574   .debug_str:000004bd .LASF327
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6536   .debug_str:00000410 .LASF328
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6502   .debug_str:0000035e .LASF329
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7030   .debug_str:00000d99 .LASF330
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6572   .debug_str:000004b4 .LASF331
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6928   .debug_str:00000b9a .LASF332
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6424   .debug_str:000001ab .LASF333
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6618   .debug_str:0000057c .LASF336
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:122    .text.OCRST_GetResetSourceSync:000000a2 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6190   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6944   .debug_str:00000bce .LASF334
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6203   .debug_loc:00000020 .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6576   .debug_str:000004cc .LASF335
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:20     .text.OCRST_GetResetSourceSync:00000010 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:33     .text.OCRST_GetResetSourceSync:0000002a .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:39     .text.OCRST_GetResetSourceSync:00000034 .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:45     .text.OCRST_GetResetSourceSync:0000003e .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:51     .text.OCRST_GetResetSourceSync:00000048 .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:57     .text.OCRST_GetResetSourceSync:00000052 .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:63     .text.OCRST_GetResetSourceSync:0000005c .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:69     .text.OCRST_GetResetSourceSync:00000066 .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:75     .text.OCRST_GetResetSourceSync:00000070 .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6522   .debug_str:000003c3 .LASF337
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:164    .text.OCRST_SetSync:00000027 .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6898   .debug_str:00000ac2 .LASF342
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6210   .debug_loc:00000033 .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6984   .debug_str:00000cb3 .LASF363
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6224   .debug_loc:00000054 .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6916   .debug_str:00000b18 .LASF340
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:202    .text.OCRST_GenerateUserResetSync:00000039 .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6236   .debug_loc:00000073 .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:191    .text.OCRST_GenerateUserResetSync:0000002e .LBB2
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:201    .text.OCRST_GenerateUserResetSync:00000039 .LBE2
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6249   .debug_loc:00000093 .LLST5
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:176    .text.OCRST_GenerateUserResetSync:00000006 .LVL16
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6668   .debug_str:0000065b .LASF338
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:213    .text.OCRST_MCU_RequiresResetAfterPOR:00000003 .LFE3
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7028   .debug_str:00000d84 .LASF339
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:225    .text.OCRST_SaveResetValue:0000000a .LFE4
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6622   .debug_str:0000059d .LASF341
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:247    .text.OCRST_RestoreResetValue:0000001c .LFE5
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7042   .debug_str:00000dd2 .LASF343
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6261   .debug_loc:000000b2 .LLST6
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:239    .text.OCRST_RestoreResetValue:0000000d .LVL21
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6780   .debug_str:000008a8 .LASF344
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:260    .text.OCRST_CopyFromRealResetSrc:00000008 .LFE6
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:257    .text.OCRST_CopyFromRealResetSrc:00000004 .LVL22
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:259    .text.OCRST_CopyFromRealResetSrc:00000008 .LVL23
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6528   .debug_str:000003de .LASF345
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:272    .text.OCRST_WriteBootKeywordArea:0000000d .LFE7
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6448   .debug_str:00000232 .LASF346
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:284    .text.OCRST_WriteBootSettingKeywordArea:0000000d .LFE8
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6508   .debug_str:00000377 .LASF347
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6834   .debug_str:0000099a .LASF348
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6600   .debug_str:00000530 .LASF349
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6456   .debug_str:0000026e .LASF350
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6564   .debug_str:00000492 .LASF351
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6328   .debug_str:00000000 .LASF352
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6762   .debug_str:0000084d .LASF353
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:7016   .debug_str:00000d51 .LASF354
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6356   .debug_str:0000007e .LASF355
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6946   .debug_str:00000bd5 .LASF356
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6840   .debug_str:000009b8 .LASF357
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6578   .debug_str:000004d2 .LASF358
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6466   .debug_str:000002a0 .LASF359
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6556   .debug_str:00000469 .LASF364
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:6978   .debug_str:00000c82 .LASF365
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:12     .text.OCRST_GetResetSourceSync:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:16     .text.OCRST_GetResetSourceSync:0000000a .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:117    .text.OCRST_GetResetSourceSync:0000009a .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:130    .text.OCRST_SetSync:00000000 .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:151    .text.OCRST_SetSync:00000020 .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:159    .text.OCRST_SetSync:00000024 .LVL14
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:162    .text.OCRST_SetSync:00000026 .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:173    .text.OCRST_GenerateUserResetSync:00000002 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:188    .text.OCRST_GenerateUserResetSync:0000002e .LVL17
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:197    .text.OCRST_GenerateUserResetSync:00000035 .LVL18
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:199    .text.OCRST_GenerateUserResetSync:00000037 .LVL19
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:233    .text.OCRST_RestoreResetValue:00000000 .LVL20
+C:\Users\Andrea\AppData\Local\Temp\ccyn9Zqm.s:401    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_ResetInfo
+_SYS_UserReset
+_SYS_PowerOnReset
+_SYS_ExternalPinReset
+_SYS_WatchdogReset
+_SYS_LowVoltageReset
+_SYS_LossOfClockReset
+_SYS_IllegalOpcodeReset
+_SYS_IllegalAddressReset
+_SYS_DebuggerReset
+_OS_DisableInterrupt
+_OS_Global
+_SYS_GetResetSrcVal

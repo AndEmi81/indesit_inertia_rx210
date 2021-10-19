@@ -1,0 +1,1004 @@
+   1                             		.file	"OCLVD_drv.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.global	___floatsisf
+   5                             		.global	___gtsf2
+   6                             		.section	.text.OCLVDR_SetSync,"ax",@progbits
+   7                             		.global	_OCLVDR_SetSync
+   9                             	_OCLVDR_SetSync:
+  10                             	.LFB0:
+  11                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD/OCLVD_drv.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \n
+   8:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \Par		OCLVD_drv.c
+   9:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \n			Implementation of all functions necessary to achieve the aim.
+  10:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \n
+  11:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \file		OCLVD_drv.c
+  12:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \ingroup	OCLVD
+  13:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \date		May 6, 2010
+  14:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \version	00.00.01
+  15:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \author		Jaroslav Musil
+  16:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \n
+  17:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \n
+  18:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \Par\b	History:
+  19:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \n
+  20:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \n 		00.00.01
+  21:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \n		06/05/2010
+  22:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \n		Jaroslav Musil
+  23:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \n		First Insertion
+  24:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \n
+  25:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \n
+  26:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** */
+  27:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  28:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* ******** */
+  29:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* Includes */
+  30:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* ******** */
+  31:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** #include "OCLVD_drv.h"
+  32:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** #include "LIB_TaskMonitoring.h"
+  33:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  34:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* ****************** */
+  35:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* Defines and Macros */
+  36:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* ****************** */
+  37:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  38:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  39:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* *************************** */
+  40:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* Typedef, Structs and Unions */
+  41:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* *************************** */
+  42:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /** Commands and status */
+  43:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** typedef struct LvdStateTag
+  44:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** {
+  45:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	/** if '1' first setup done */
+  46:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	bool_t setupDone:1;
+  47:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	/** free for future use */
+  48:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	bool_t free:7;
+  49:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** } LvdState_t;
+  50:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  51:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  52:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* ********* */
+  53:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* Variables */
+  54:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* ********* */
+  55:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  56:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* Global */
+  57:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  58:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* Static */
+  59:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** static Comm_Notification callback;
+  60:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** static LvdState_t LvdState;
+  61:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* ******************* */
+  62:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* Functions Prototype */
+  63:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* ******************* */
+  64:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  65:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* Exported function */
+  66:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  67:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* Local Function */
+  68:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  69:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  70:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* *************** */
+  71:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* Function Bodies */
+  72:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* *************** */
+  73:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  74:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /* Exported function */
+  75:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /**
+  76:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** Sets the low voltage detection level to generate LV reset. Turns on the LV detection
+  77:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** mode and turns on the reset on LV feature.
+  78:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  79:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \param  [in]	tripPointVR - low voltage trip in volt * 10
+  80:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  81:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \return 	IO_ErrorType
+  82:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  83:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \retval		IO_E_OK
+  84:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \retval     IO_E_INVALID_VALUE - trip > than conventional Vdd
+  85:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  86:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \author 	Jaroslav Musil
+  87:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \date		May 6, 2010
+  88:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \version	1.0.0
+  89:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  90:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \note		\par \b Note 1:
+  91:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c ****             Feb 25,2011
+  92:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		    Rewritten because of several mistakes \n
+  93:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c ****             on AG128 SPMSC1 and SPMSC2 are one time writable on some bits (Stefano Ughi).\n
+  94:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c ****             added flag LvdState.setupDone
+  95:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+  96:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** */
+  97:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** IO_ErrorType OCLVDR_SetSync(LVDR_TripPointType tripPointVR)
+  98:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** {
+  12                             		.loc 1 98 0
+  13                             	.LVL0:
+  14 0000 6E 7B                   		pushm	r7-r11
+  15                             	.LCFI0:
+  16 0002 CF 1B                   		mov.B	r1, r11
+  99:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	if ( tripPointVR > UC_VDD_X_10 )
+  17                             		.loc 1 99 0
+  18 0004 5B 11                   		movu.B	r1, r1
+  19                             	.LVL1:
+  20 0006 05 00 00 00             		bsr	___floatsisf
+  21                             	.LVL2:
+  22 000a FB 22 00 00 04 42       		mov.L	#0x42040000, r2
+  23 0010 05 00 00 00             		bsr	___gtsf2
+  24                             	.LVL3:
+  25 0014 61 01                   		cmp	#0, r1
+  26 0016 2A 21                   		bgt	.L3
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	{
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	}
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	/* Sets the trip for detection to reset */
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	if ( LvdState.setupDone )
+  27                             		.loc 1 105 0
+  28 0018 FB A2 00 00 00 00       		mov.L	#_LvdState, r10
+  29 001e EC A7                   		mov.L	[r10], r7
+  30 0020 74 27 00 00 00 80       		and	#0x80000000, r7
+  31 0026 21 15                   		bne	.L4
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	{
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		if ( LVD_AllowUpDate() )
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		{
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 			LVDR_SetUp(tripPointVR);
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 			return (IO_ErrorType)IO_E_OK;
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		}
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		else
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		{
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 			return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		}
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	}
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	else
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	{
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		LVDR_SetUp(tripPointVR);
+  32                             		.loc 1 119 0
+  33 0028 CF B1                   		mov.B	r11, r1
+  34 002a 05 00 00 00             		bsr	_LVDR_SetUp
+  35                             	.LVL4:
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		LvdState.setupDone = 1;
+  36                             		.loc 1 120 0
+  37 002e CC AB                   		mov.B	[r10], r11
+  38                             	.LVL5:
+  39 0030 78 7B                   		bset	#7, r11
+  40 0032 C3 AB                   		mov.B	r11, [r10]
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		return (IO_ErrorType)IO_E_OK;
+  41                             		.loc 1 121 0
+  42 0034 CF 71                   		mov.B	r7, r1
+  43 0036 08                      		bra	.L2
+  44                             	.LVL6:
+  45                             	.L3:
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_VALUE;
+  46                             		.loc 1 101 0
+  47 0037 75 41 13                		mov	#19, r1
+  48 003a 0C                      		bra	.L2
+  49                             	.L4:
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 			return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+  50                             		.loc 1 114 0
+  51 003b 75 41 17                		mov	#23, r1
+  52                             	.LVL7:
+  53                             		.balign 2,3,2
+  54                             	.L2:
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	}
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** }
+  55                             		.loc 1 123 0
+  56 003e 75 21 17                		and #23, r1
+  57 0041 3F 7B 05                		rtsd	#20, r7-r11
+  58                             	.LFE0:
+  60                             		.section	.text.OCLVDNR_SetSync,"ax",@progbits
+  61                             		.global	_OCLVDNR_SetSync
+  63                             	_OCLVDNR_SetSync:
+  64                             	.LFB1:
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /**
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** Disable reset on Low Voltage Detection.
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \return 	IO_ErrorType
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \retval		IO_E_OK
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \author 	Stefano Ughi
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \date		Dec 7, 2010
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \version	1.0.0
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \note		\par \b Note 1:
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c ****             Feb 25,2011
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c ****             added flag LvdState.setupDone
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** */
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** IO_ErrorType OCLVDNR_SetSync(void)
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** {
+  65                             		.loc 1 141 0
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	if ( LvdState.setupDone )
+  66                             		.loc 1 142 0
+  67 0000 FB 42 00 00 00 00       		mov.L	#_LvdState, r4
+  68 0006 EC 41                   		mov.L	[r4], r1
+  69 0008 74 21 00 00 00 80       		and	#0x80000000, r1
+  70 000e 21 23                   		bne	.L8
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	{
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		if ( LVD_AllowUpDate() )
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		{
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 			LVDR_Disable();
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 			return (IO_ErrorType)IO_E_OK;
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		}
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		else
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		{
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 			return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		}
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	}
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	else
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	{
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		LVDR_Disable();
+  71                             		.loc 1 156 0
+  72 0010 FB EE 00 00 08          		mov.L	#0x80000, r14
+  73 0015 FA E9 FF 01 0F A5       		mov.W	#0xffffa50f, 1022[r14]
+  74 001b CB E1 97 C2             		mov.B	r1, 49815[r14]
+  75 001f FA E4 9A C2 82          		mov.B	#0xffffff82, 49818[r14]
+  76 0024 FA E9 FF 01 00 A5       		mov.W	#0xffffa500, 1022[r14]
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		LvdState.setupDone = 1;
+  77                             		.loc 1 157 0
+  78 002a CC 4E                   		mov.B	[r4], r14
+  79 002c 78 7E                   		bset	#7, r14
+  80 002e C3 4E                   		mov.B	r14, [r4]
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		return (IO_ErrorType)IO_E_OK;
+  81                             		.loc 1 158 0
+  82 0030 0C                      		bra	.L7
+  83                             	.L8:
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 			return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+  84                             		.loc 1 151 0
+  85 0031 75 41 17                		mov	#23, r1
+  86                             		.balign 2,3,2
+  87                             	.L7:
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	}
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** }
+  88                             		.loc 1 160 0
+  89 0034 75 21 17                		and #23, r1
+  90 0037 02                      		rts
+  91                             	.LFE1:
+  93                             		.section	.text.OCLVDW_SetSync,"ax",@progbits
+  94                             		.global	_OCLVDW_SetSync
+  96                             	_OCLVDW_SetSync:
+  97                             	.LFB2:
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /**
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** Sets the low voltage warning level to generate LV warning.
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** If the callback parameter is set, the interrupt is enabled.
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \param  [in]		tripPointVW - low voltage warning in volt * 10
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \param  [in]        lowVoltageWarning - pointer to the callback function
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \return 	IO_ErrorType
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \retval		IO_E_OK
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \retval     IO_E_INVALID_VALUE - trip > than conventional Vdd
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \author 	Jaroslav Musil
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \date		May 6, 2010
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \version	1.0.0
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** */
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** IO_ErrorType OCLVDW_SetSync(LVDW_TripPointType tripPointVW, Comm_Notification lowVoltageWarning)
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** {
+  98                             		.loc 1 180 0
+  99                             	.LVL8:
+ 100 0000 6E 7A                   		pushm	r7-r10
+ 101                             	.LCFI1:
+ 102 0002 CF 1A                   		mov.B	r1, r10
+ 103 0004 EF 27                   		mov.L	r2, r7
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	if (tripPointVW > UC_VDD_X_10)
+ 104                             		.loc 1 181 0
+ 105 0006 5B 11                   		movu.B	r1, r1
+ 106                             	.LVL9:
+ 107 0008 05 00 00 00             		bsr	___floatsisf
+ 108                             	.LVL10:
+ 109 000c FB 22 00 00 04 42       		mov.L	#0x42040000, r2
+ 110 0012 05 00 00 00             		bsr	___gtsf2
+ 111                             	.LVL11:
+ 112 0016 61 01                   		cmp	#0, r1
+ 113 0018 2A 3C                   		bgt	.L12
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	{
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	}
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	/* Sets the low voltage warning */
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	LVDW_SetTrip(tripPointVW);
+ 114                             		.loc 1 187 0
+ 115 001a CF A1                   		mov.B	r10, r1
+ 116 001c 05 00 00 00             		bsr	_LVDW_SetTrip
+ 117                             	.LVL12:
+ 118 0020 FB EE 00 70 08          		mov.L	#0x87000, r14
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	/* if callback function is defined, the interrupt is activated */
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	if (lowVoltageWarning != NULL)
+ 119                             		.loc 1 190 0
+ 120 0025 61 07                   		cmp	#0, r7
+ 121 0027 20 1B                   		beq	.L11
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	{
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		LVDWarningIntOn();
+ 122                             		.loc 1 192 0
+ 123 0029 FA E4 59 03 01          		mov.B	#1, 857[r14]
+ 124 002e F9 E4 59 00             		mov.B	#0, 89[r14]
+ 125                             	.LVL13:
+ 126 0032 F2 E1 0B 02             		bset #1, 523[r14].B
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		callback = lowVoltageWarning;
+ 127                             		.loc 1 193 0
+ 128 0036 FB A2 00 00 00 00       		mov.L	#_callback, r10
+ 129 003c E3 A7                   		mov.L	r7, [r10]
+ 130                             		.balign 2,3,1
+ 131                             	.L14:
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	}
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	else
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	{
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		LVDWarningIntOff();
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	}
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 132                             		.loc 1 200 0
+ 133 003e 66 01                   		mov	#0, r1
+ 134 0040 2E 18                   		bra	.L10
+ 135                             	.LVL14:
+ 136                             	.L11:
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		LVDWarningIntOff();
+ 137                             		.loc 1 197 0
+ 138 0042 C7 E7 59                		mov.B	r7, 89[r14]
+ 139 0045 FB AE 00 00 08          		mov.L	#0x80000, r10
+ 140                             	.LVL15:
+ 141 004a F2 A8 9B C2             		bclr #0, 49819[r10].B
+ 142 004e CB E7 59 03             		mov.B	r7, 857[r14]
+ 143 0052 2E EC                   		bra	.L14
+ 144                             	.LVL16:
+ 145                             	.L12:
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_VALUE;
+ 146                             		.loc 1 183 0
+ 147 0054 75 41 13                		mov	#19, r1
+ 148                             	.LVL17:
+ 149 0057 03                      		.balign 2,3,1
+ 150                             	.L10:
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** }
+ 151                             		.loc 1 201 0
+ 152 0058 5B 11                   		movu.B	r1, r1
+ 153 005a 3F 7A 04                		rtsd	#16, r7-r10
+ 154                             	.LFE2:
+ 156 005d 03                      		.section	.text.OCLVDW_IsWarningOn,"ax",@progbits
+ 157                             		.global	_OCLVDW_IsWarningOn
+ 159                             	_OCLVDW_IsWarningOn:
+ 160                             	.LFB3:
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /**
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** This function checks if low warning voltage is present.
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \return 	bool_t
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \retval		TRUE low voltage warning
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \retval		FALSE no low voltage warning
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \author 	Stefano Ughi
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \date		Dec 6, 2010
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \version	1.0.0
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** */
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** bool_t OCLVDW_IsWarningOn(void)
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** {
+ 161                             		.loc 1 216 0
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	if(LVDGetWarningFlag())
+ 162                             		.loc 1 217 0
+ 163 0000 FB EE 00 00 08          		mov.L	#0x80000, r14
+ 164 0005 CE E1 97 C2             		mov.B	49815[r14], r1
+ 165 0009 68 61                   		shlr	#6, r1
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	{
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		return TRUE;
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	}
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	else
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	{
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		return FALSE;
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	}
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** }
+ 166                             		.loc 1 225 0
+ 167 000b 64 11                   		and #1, r1
+ 168 000d 02                      		rts
+ 169                             	.LFE3:
+ 171                             		.section	.text.OCLVDW_ISR,"ax",@progbits
+ 172                             		.global	_OCLVDW_ISR
+ 174                             	_OCLVDW_ISR:
+ 175                             	.LFB4:
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /**
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** The interrupt function that is to be called from the interrupt vector table when
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** the LV warning is triggered. The function calls the predefined callback and clears
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** the warning flag
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \author 	Jaroslav Musil
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \date		May 6, 2010
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \version	1.0.0
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \note
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** */
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** void OCLVDW_ISR(void)
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** {
+ 176                             		.loc 1 240 0
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	IRQ_MONITOR_ENTER();
+ 177                             		.loc 1 241 0
+ 178 0000 05 00 00 00             		bsr	_LIB_IRQMonitor_Enter
+ 179                             	.LVL18:
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	(void)(callback)((IO_NotificationType)IO_N_COMPLETED, (IO_ChannelType)0, (IO_ErrorType)IO_E_OK);
+ 180                             		.loc 1 243 0
+ 181 0004 FB E2 00 00 00 00       		mov.L	#_callback, r14
+ 182 000a EC EE                   		mov.L	[r14], r14
+ 183 000c 66 61                   		mov	#6, r1
+ 184 000e 66 02                   		mov	#0, r2
+ 185 0010 CF 23                   		mov.B	r2, r3
+ 186 0012 7F 1E                   		jsr	r14
+ 187                             	.LVL19:
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	/* Acknoledges the flag */
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	LVDWarningAcknoledge();
+ 188                             		.loc 1 246 0
+ 189 0014 FB EE 00 70 08          		mov.L	#0x87000, r14
+ 190 0019 F9 E4 59 00             		mov.B	#0, 89[r14]
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	IRQ_MONITOR_EXIT();
+ 191                             		.loc 1 248 0
+ 192 001d 04 00 00 00             		bra	_LIB_IRQMonitor_Exit
+ 193                             	.LVL20:
+ 194                             	.LFE4:
+ 196                             		.section	.text.OCLVD_SetStop,"ax",@progbits
+ 197                             		.global	_OCLVD_SetStop
+ 199                             	_OCLVD_SetStop:
+ 200                             	.LFB5:
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** }
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /**
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** Turns on or off the LVD in stop mode.
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \param  [in]	enable
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \li             !0 turn on LVD in Stop Mode
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \li             0  turn off LVD in Stop Mode
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \return 	IO_ErrorType
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \retval		IO_E_OK
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \author 	Jaroslav Musil
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \date		May 6, 2010
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \version	1.0.0
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \note
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 268:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** */
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** IO_ErrorType OCLVD_SetStop(bool_t enable)
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** {
+ 201                             		.loc 1 270 0
+ 202                             	.LVL21:
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	if (enable)
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	{
+ 273:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		LVDSetStopOn();
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	}
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	else
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	{
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 		LVDSetStopOff();
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	}
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 280:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** }
+ 203                             		.loc 1 281 0
+ 204 0000 66 01                   		mov.L	#0, r1
+ 205                             	.LVL22:
+ 206 0002 02                      		rts
+ 207                             	.LFE5:
+ 209                             		.section	.text.OCLVDR_GetSync,"ax",@progbits
+ 210                             		.global	_OCLVDR_GetSync
+ 212                             	_OCLVDR_GetSync:
+ 213                             	.LFB6:
+ 282:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /**
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** Reads the preset low voltage detection level to generate LV reset.
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 286:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \return 	LVDR_TripPointType
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \retval		low voltage detection trip in volts * 10
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \author 	Jaroslav Musil
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \date		May 6, 2010
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \version	1.0.0
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \note
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** */
+ 297:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** LVDR_TripPointType OCLVDR_GetSync(void)
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** {
+ 214                             		.loc 1 298 0
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	return LVDR_GetTrip();
+ 215                             		.loc 1 299 0
+ 216 0000 04 00 00 00             		bra	_LVDR_GetTrip
+ 217                             	.LVL23:
+ 218                             	.LFE6:
+ 220                             		.section	.text.OCLVDW_GetSync,"ax",@progbits
+ 221                             		.global	_OCLVDW_GetSync
+ 223                             	_OCLVDW_GetSync:
+ 224                             	.LFB7:
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** }
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 302:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** /**
+ 303:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** Reads the preset low voltage warning level to generate LV warning.
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 305:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \return 	LVDW_TripPointType
+ 306:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 307:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \retval		low voltage warning trip in volts * 10
+ 308:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 309:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \author 	Jaroslav Musil
+ 310:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \date		May 6, 2010
+ 311:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \version	1.0.0
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 313:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** \note
+ 314:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** */
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** LVDW_TripPointType OCLVDW_GetSync(void)
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** {
+ 225                             		.loc 1 317 0
+ 318:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCLVD\OCLVD_drv.c **** 	return LVDW_GetTrip();
+ 226                             		.loc 1 318 0
+ 227 0000 04 00 00 00             		bra	_LVDW_GetTrip
+ 228                             	.LVL24:
+ 229                             	.LFE7:
+ 231                             		.section	.bss.LvdState,"aw",@nobits
+ 232                             		.balign 4
+ 235                             	_LvdState:
+ 236 0000 00 00 00 00             		.zero	4
+ 237                             		.section	.bss.callback,"aw",@nobits
+ 238                             		.balign 4
+ 241                             	_callback:
+ 242 0000 00 00 00 00             		.zero	4
+ 351                             	.Letext0:
+ 352                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 353                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\RN_RX200/RN_RX200_reg.h"
+ 354                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Drivers/IO_driver.h"
+ 355                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\RN_RX200/RN_RX200_hal.h"
+ 356                             		.file 6 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_SecurityCheck/LIB_TaskMon
+DEFINED SYMBOLS
+                            *ABS*:00000000 OCLVD_drv.c
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:9      .text.OCLVDR_SetSync:00000000 _OCLVDR_SetSync
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:14     .text.OCLVDR_SetSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:235    .bss.LvdState:00000000 _LvdState
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:63     .text.OCLVDNR_SetSync:00000000 _OCLVDNR_SetSync
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:67     .text.OCLVDNR_SetSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:96     .text.OCLVDW_SetSync:00000000 _OCLVDW_SetSync
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:100    .text.OCLVDW_SetSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:241    .bss.callback:00000000 _callback
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:159    .text.OCLVDW_IsWarningOn:00000000 _OCLVDW_IsWarningOn
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:163    .text.OCLVDW_IsWarningOn:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:174    .text.OCLVDW_ISR:00000000 _OCLVDW_ISR
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:178    .text.OCLVDW_ISR:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:199    .text.OCLVD_SetStop:00000000 _OCLVD_SetStop
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:204    .text.OCLVD_SetStop:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:212    .text.OCLVDR_GetSync:00000000 _OCLVDR_GetSync
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:216    .text.OCLVDR_GetSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:223    .text.OCLVDW_GetSync:00000000 _OCLVDW_GetSync
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:227    .text.OCLVDW_GetSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:244    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:10     .text.OCLVDR_SetSync:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:64     .text.OCLVDNR_SetSync:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:97     .text.OCLVDW_SetSync:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:160    .text.OCLVDW_IsWarningOn:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:175    .text.OCLVDW_ISR:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:200    .text.OCLVD_SetStop:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:213    .text.OCLVDR_GetSync:00000000 .LFB6
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:224    .text.OCLVDW_GetSync:00000000 .LFB7
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:5750   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7190   .debug_str:00000c1b .LASF369
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6944   .debug_str:000007d1 .LASF370
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6472   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6492   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7000   .debug_str:000008e0 .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7188   .debug_str:00000c08 .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6932   .debug_str:00000793 .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7008   .debug_str:000008fc .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6678   .debug_str:00000360 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6866   .debug_str:00000677 .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6840   .debug_str:000005ec .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7130   .debug_str:00000b05 .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6624   .debug_str:00000268 .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6744   .debug_str:0000048b .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7068   .debug_str:00000a14 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7086   .debug_str:00000a6c .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6508   .debug_str:00000055 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6896   .debug_str:00000709 .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6928   .debug_str:00000786 .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6658   .debug_str:00000302 .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6656   .debug_str:000002fd .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6654   .debug_str:000002f8 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6736   .debug_str:0000046b .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6650   .debug_str:000002ed .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6648   .debug_str:000002e8 .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6646   .debug_str:000002e3 .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6728   .debug_str:0000044f .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6966   .debug_str:0000085c .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6876   .debug_str:000006b7 .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6906   .debug_str:00000730 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6588   .debug_str:000001ba .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6546   .debug_str:00000100 .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6790   .debug_str:0000052b .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6788   .debug_str:00000524 .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6786   .debug_str:0000051d .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6784   .debug_str:00000516 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6782   .debug_str:0000050f .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6780   .debug_str:00000508 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6778   .debug_str:00000501 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6776   .debug_str:000004fa .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6814   .debug_str:00000586 .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7064   .debug_str:00000a04 .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7060   .debug_str:000009f5 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6810   .debug_str:00000578 .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6808   .debug_str:0000056f .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7050   .debug_str:000009c5 .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6806   .debug_str:00000566 .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6804   .debug_str:0000055d .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6948   .debug_str:0000081d .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7030   .debug_str:0000097b .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6830   .debug_str:000005c0 .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6762   .debug_str:000004c9 .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6602   .debug_str:0000021c .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7004   .debug_str:000008f1 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6622   .debug_str:00000261 .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7090   .debug_str:00000a7b .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6878   .debug_str:000006bc .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7088   .debug_str:00000a75 .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6614   .debug_str:00000245 .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7056   .debug_str:000009dc .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7012   .debug_str:0000090d .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6574   .debug_str:0000017c .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7108   .debug_str:00000acb .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6942   .debug_str:000007ca .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6852   .debug_str:00000626 .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7218   .debug_str:00000cbd .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6700   .debug_str:000003d6 .LASF62
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6592   .debug_str:000001d2 .LASF63
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7036   .debug_str:00000993 .LASF64
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7066   .debug_str:00000a0d .LASF238
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7136   .debug_str:00000b20 .LASF65
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6548   .debug_str:00000106 .LASF66
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6888   .debug_str:000006ed .LASF67
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6890   .debug_str:000006f4 .LASF68
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6892   .debug_str:000006fb .LASF69
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6894   .debug_str:00000702 .LASF70
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6826   .debug_str:000005b2 .LASF71
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7110   .debug_str:00000ad3 .LASF72
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6544   .debug_str:000000f7 .LASF73
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7112   .debug_str:00000ad8 .LASF74
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7196   .debug_str:00000c5b .LASF75
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7114   .debug_str:00000add .LASF76
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7074   .debug_str:00000a36 .LASF77
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7062   .debug_str:000009fe .LASF78
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6956   .debug_str:0000083b .LASF79
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7116   .debug_str:00000ae2 .LASF80
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6698   .debug_str:000003ce .LASF81
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7118   .debug_str:00000ae7 .LASF82
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6694   .debug_str:000003bd .LASF83
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6774   .debug_str:000004f5 .LASF84
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6920   .debug_str:00000769 .LASF85
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6846   .debug_str:00000606 .LASF86
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7006   .debug_str:000008f7 .LASF87
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6742   .debug_str:00000486 .LASF88
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7076   .debug_str:00000a3c .LASF89
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7092   .debug_str:00000a82 .LASF90
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6608   .debug_str:0000022d .LASF91
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6984   .debug_str:000008a0 .LASF92
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6982   .debug_str:00000898 .LASF93
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7138   .debug_str:00000b26 .LASF94
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6978   .debug_str:0000088a .LASF95
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6930   .debug_str:0000078b .LASF96
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6926   .debug_str:0000077e .LASF97
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6924   .debug_str:00000776 .LASF98
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6922   .debug_str:0000076e .LASF99
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7034   .debug_str:0000098c .LASF100
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6732   .debug_str:0000045c .LASF101
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6874   .debug_str:000006b0 .LASF102
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7200   .debug_str:00000c6c .LASF103
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6556   .debug_str:00000124 .LASF104
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6554   .debug_str:0000011c .LASF105
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6522   .debug_str:00000092 .LASF106
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6520   .debug_str:0000008a .LASF107
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6730   .debug_str:00000454 .LASF108
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6512   .debug_str:00000061 .LASF109
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7220   .debug_str:00000cc4 .LASF110
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7212   .debug_str:00000ca5 .LASF111
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7082   .debug_str:00000a50 .LASF112
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7080   .debug_str:00000a49 .LASF113
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6682   .debug_str:0000037c .LASF114
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6976   .debug_str:00000883 .LASF115
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6834   .debug_str:000005cf .LASF116
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6832   .debug_str:000005c7 .LASF117
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6772   .debug_str:000004ed .LASF118
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7134   .debug_str:00000b19 .LASF119
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6564   .debug_str:00000158 .LASF120
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6708   .debug_str:00000401 .LASF121
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6712   .debug_str:0000040d .LASF122
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6800   .debug_str:00000551 .LASF123
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6820   .debug_str:0000059f .LASF124
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6996   .debug_str:000008cc .LASF125
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6864   .debug_str:0000066f .LASF126
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6640   .debug_str:000002b6 .LASF127
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6576   .debug_str:00000184 .LASF128
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6882   .debug_str:000006ce .LASF129
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6760   .debug_str:000004c2 .LASF130
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6506   .debug_str:0000004f .LASF131
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7046   .debug_str:000009b9 .LASF132
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6604   .debug_str:00000222 .LASF133
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6994   .debug_str:000008c5 .LASF134
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6504   .debug_str:00000049 .LASF135
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7156   .debug_str:00000b8b .LASF136
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6752   .debug_str:000004a7 .LASF137
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6634   .debug_str:0000029d .LASF138
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7104   .debug_str:00000ab8 .LASF139
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6870   .debug_str:00000697 .LASF140
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7210   .debug_str:00000ca0 .LASF141
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6670   .debug_str:00000341 .LASF142
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6612   .debug_str:0000023f .LASF143
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6916   .debug_str:00000756 .LASF144
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6812   .debug_str:00000581 .LASF145
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6962   .debug_str:0000084f .LASF146
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6740   .debug_str:0000047f .LASF147
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7140   .debug_str:00000b2e .LASF148
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6842   .debug_str:000005f4 .LASF149
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6704   .debug_str:000003e8 .LASF150
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6534   .debug_str:000000cd .LASF151
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6818   .debug_str:00000594 .LASF152
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6502   .debug_str:0000003e .LASF153
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7198   .debug_str:00000c64 .LASF154
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6960   .debug_str:00000847 .LASF155
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7048   .debug_str:000009bf .LASF156
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7016   .debug_str:0000091f .LASF157
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6816   .debug_str:0000058f .LASF158
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6582   .debug_str:000001a1 .LASF159
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7052   .debug_str:000009ce .LASF160
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6794   .debug_str:00000539 .LASF161
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6898   .debug_str:0000070e .LASF162
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6768   .debug_str:000004df .LASF163
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6724   .debug_str:00000441 .LASF164
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6674   .debug_str:00000352 .LASF165
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6616   .debug_str:0000024b .LASF166
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6570   .debug_str:0000016e .LASF167
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6796   .debug_str:00000540 .LASF168
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7222   .debug_str:00000ccc .LASF169
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7184   .debug_str:00000bfa .LASF170
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6690   .debug_str:000003a6 .LASF171
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6986   .debug_str:000008a8 .LASF172
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6988   .debug_str:000008b0 .LASF173
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6540   .debug_str:000000e7 .LASF174
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6666   .debug_str:00000331 .LASF175
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6764   .debug_str:000004cf .LASF176
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7214   .debug_str:00000cad .LASF177
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6770   .debug_str:000004e6 .LASF178
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6726   .debug_str:00000448 .LASF179
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6676   .debug_str:00000359 .LASF180
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6618   .debug_str:00000252 .LASF181
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6572   .debug_str:00000175 .LASF182
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6524   .debug_str:0000009a .LASF183
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7224   .debug_str:00000cd3 .LASF184
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7186   .debug_str:00000c01 .LASF185
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7100   .debug_str:00000aa2 .LASF186
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6632   .debug_str:00000294 .LASF187
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6990   .debug_str:000008b6 .LASF188
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6542   .debug_str:000000ef .LASF189
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6668   .debug_str:00000339 .LASF190
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6766   .debug_str:000004d7 .LASF191
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7216   .debug_str:00000cb5 .LASF192
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6750   .debug_str:0000049f .LASF193
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7078   .debug_str:00000a41 .LASF194
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7044   .debug_str:000009b1 .LASF195
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7228   .debug_str:00000ce2 .LASF196
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6938   .debug_str:000007b6 .LASF197
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6628   .debug_str:00000279 .LASF198
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7094   .debug_str:00000a87 .LASF199
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7042   .debug_str:000009a9 .LASF200
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6908   .debug_str:00000735 .LASF201
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7204   .debug_str:00000c77 .LASF202
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6862   .debug_str:00000668 .LASF203
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6568   .debug_str:00000166 .LASF204
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7028   .debug_str:00000973 .LASF205
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7174   .debug_str:00000bc5 .LASF206
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7054   .debug_str:000009d4 .LASF207
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6720   .debug_str:00000433 .LASF208
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6964   .debug_str:00000855 .LASF209
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6844   .debug_str:000005ff .LASF210
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6500   .debug_str:00000039 .LASF211
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6680   .debug_str:00000377 .LASF212
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6652   .debug_str:000002f2 .LASF213
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6526   .debug_str:000000a1 .LASF214
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6584   .debug_str:000001a6 .LASF215
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6756   .debug_str:000004b6 .LASF216
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6970   .debug_str:00000869 .LASF217
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6802   .debug_str:00000557 .LASF218
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6748   .debug_str:00000499 .LASF219
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6578   .debug_str:0000018a .LASF220
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6516   .debug_str:00000070 .LASF221
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6754   .debug_str:000004ac .LASF222
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6946   .debug_str:00000812 .LASF223
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7182   .debug_str:00000bf2 .LASF224
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6734   .debug_str:00000463 .LASF225
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6974   .debug_str:0000087c .LASF226
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6968   .debug_str:00000862 .LASF227
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6562   .debug_str:0000014e .LASF228
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6992   .debug_str:000008bc .LASF229
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6858   .debug_str:0000064f .LASF230
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7144   .debug_str:00000b4b .LASF231
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6514   .debug_str:00000069 .LASF232
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6510   .debug_str:0000005a .LASF233
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6972   .debug_str:00000872 .LASF234
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6638   .debug_str:000002ad .LASF235
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7070   .debug_str:00000a21 .LASF236
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6828   .debug_str:000005b8 .LASF237
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7014   .debug_str:00000915 .LASF239
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6792   .debug_str:00000532 .LASF240
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6606   .debug_str:00000228 .LASF241
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6950   .debug_str:00000824 .LASF242
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6952   .debug_str:0000082b .LASF243
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6980   .debug_str:00000892 .LASF244
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6910   .debug_str:0000073e .LASF245
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6912   .debug_str:00000746 .LASF246
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6914   .debug_str:0000074e .LASF247
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7178   .debug_str:00000bd9 .LASF248
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7002   .debug_str:000008ea .LASF249
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6904   .debug_str:0000072a .LASF250
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6722   .debug_str:0000043a .LASF251
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7132   .debug_str:00000b13 .LASF252
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6900   .debug_str:00000717 .LASF253
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6600   .debug_str:00000215 .LASF254
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6824   .debug_str:000005ab .LASF255
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6636   .debug_str:000002a5 .LASF256
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6552   .debug_str:00000115 .LASF257
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7038   .debug_str:0000099c .LASF258
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6710   .debug_str:00000406 .LASF259
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6746   .debug_str:00000492 .LASF260
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6958   .debug_str:00000841 .LASF261
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6550   .debug_str:0000010d .LASF262
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6836   .debug_str:000005d7 .LASF263
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6936   .debug_str:000007ad .LASF264
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6934   .debug_str:000007a5 .LASF265
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7150   .debug_str:00000b63 .LASF266
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7032   .debug_str:00000982 .LASF267
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7234   .debug_str:00000cf8 .LASF268
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6822   .debug_str:000005a6 .LASF269
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6886   .debug_str:000006e5 .LASF270
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7026   .debug_str:0000096c .LASF271
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6532   .debug_str:000000c5 .LASF272
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6566   .debug_str:0000015f .LASF273
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7040   .debug_str:000009a4 .LASF274
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7120   .debug_str:00000aec .LASF275
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7096   .debug_str:00000a8f .LASF276
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7122   .debug_str:00000af1 .LASF277
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7146   .debug_str:00000b53 .LASF278
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7124   .debug_str:00000af6 .LASF279
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7148   .debug_str:00000b5b .LASF280
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7126   .debug_str:00000afb .LASF281
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6686   .debug_str:00000396 .LASF282
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7128   .debug_str:00000b00 .LASF283
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6688   .debug_str:0000039e .LASF284
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7162   .debug_str:00000ba7 .LASF285
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6536   .debug_str:000000d5 .LASF286
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7164   .debug_str:00000bac .LASF287
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6538   .debug_str:000000de .LASF288
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7166   .debug_str:00000bb1 .LASF289
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6696   .debug_str:000003c5 .LASF290
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7230   .debug_str:00000cea .LASF291
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7232   .debug_str:00000cf1 .LASF292
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7168   .debug_str:00000bb6 .LASF293
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7202   .debug_str:00000c71 .LASF294
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7226   .debug_str:00000cda .LASF295
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7170   .debug_str:00000bbb .LASF296
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6620   .debug_str:00000259 .LASF297
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6660   .debug_str:00000307 .LASF298
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7172   .debug_str:00000bc0 .LASF299
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6848   .debug_str:0000060b .LASF300
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6530   .debug_str:000000bd .LASF301
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6626   .debug_str:00000274 .LASF302
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7160   .debug_str:00000ba0 .LASF303
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6598   .debug_str:0000020b .LASF330
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7010   .debug_str:00000905 .LASF304
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7018   .debug_str:00000924 .LASF305
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6610   .debug_str:00000232 .LASF306
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7142   .debug_str:00000b39 .LASF307
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6644   .debug_str:000002d0 .LASF308
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6850   .debug_str:00000613 .LASF309
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6596   .debug_str:000001f3 .LASF310
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6684   .debug_str:00000383 .LASF311
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6558   .debug_str:0000012c .LASF312
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7024   .debug_str:00000956 .LASF313
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7020   .debug_str:0000092e .LASF314
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6594   .debug_str:000001d9 .LASF315
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7152   .debug_str:00000b6d .LASF316
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6560   .debug_str:0000013e .LASF317
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6798   .debug_str:00000547 .LASF318
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6662   .debug_str:0000030f .LASF319
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6998   .debug_str:000008d2 .LASF320
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6940   .debug_str:000007be .LASF321
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7158   .debug_str:00000b93 .LASF322
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7072   .debug_str:00000a2b .LASF323
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7180   .debug_str:00000bdf .LASF324
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6494   .debug_str:00000000 .LASF325
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6738   .debug_str:00000470 .LASF326
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6706   .debug_str:000003f0 .LASF327
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6672   .debug_str:00000346 .LASF328
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7208   .debug_str:00000c8b .LASF329
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6884   .debug_str:000006d4 .LASF331
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7098   .debug_str:00000a97 .LASF332
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6642   .debug_str:000002bc .LASF333
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7084   .debug_str:00000a57 .LASF334
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6630   .debug_str:00000281 .LASF335
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6714   .debug_str:00000412 .LASF336
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6702   .debug_str:000003dc .LASF337
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7236   .debug_str:00000cff .LASF338
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7058   .debug_str:000009e2 .LASF339
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6854   .debug_str:0000062d .LASF340
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7102   .debug_str:00000aab .LASF341
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6518   .debug_str:0000007b .LASF342
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6718   .debug_str:00000426 .LASF343
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6498   .debug_str:00000025 .LASF344
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6496   .debug_str:00000013 .LASF345
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6902   .debug_str:0000071e .LASF346
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7106   .debug_str:00000ac1 .LASF347
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6758   .debug_str:000004bd .LASF348
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6880   .debug_str:000006c3 .LASF349
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6692   .debug_str:000003ae .LASF350
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:58     .text.OCLVDR_SetSync:00000044 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6325   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6838   .debug_str:000005e0 .LASF352
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6338   .debug_loc:00000020 .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:35     .text.OCLVDR_SetSync:0000002e .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7022   .debug_str:00000946 .LASF355
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:91     .text.OCLVDNR_SetSync:00000038 .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6856   .debug_str:00000640 .LASF351
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:154    .text.OCLVDW_SetSync:0000005d .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6367   .debug_loc:00000065 .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7176   .debug_str:00000bcd .LASF353
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6380   .debug_loc:00000085 .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6868   .debug_str:00000685 .LASF354
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6420   .debug_loc:000000e3 .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:117    .text.OCLVDW_SetSync:00000020 .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6590   .debug_str:000001bf .LASF356
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:169    .text.OCLVDW_IsWarningOn:0000000e .LFE3
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7206   .debug_str:00000c80 .LASF371
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:194    .text.OCLVDW_ISR:00000021 .LFE4
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:179    .text.OCLVDW_ISR:00000004 .LVL18
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:187    .text.OCLVDW_ISR:00000014 .LVL19
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:193    .text.OCLVDW_ISR:00000021 .LVL20
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6586   .debug_str:000001ac .LASF357
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:207    .text.OCLVD_SetStop:00000003 .LFE5
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6716   .debug_str:0000041f .LASF358
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6431   .debug_loc:00000101 .LLST5
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6860   .debug_str:00000659 .LASF359
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:218    .text.OCLVDR_GetSync:00000004 .LFE6
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:217    .text.OCLVDR_GetSync:00000004 .LVL23
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7192   .debug_str:00000c41 .LASF360
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:229    .text.OCLVDW_GetSync:00000004 .LFE7
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:228    .text.OCLVDW_GetSync:00000004 .LVL24
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7154   .debug_str:00000b82 .LASF361
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6954   .debug_str:00000832 .LASF362
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:7194   .debug_str:00000c50 .LASF363
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6664   .debug_str:00000324 .LASF364
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6528   .debug_str:000000a8 .LASF365
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6872   .debug_str:0000069c .LASF366
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6580   .debug_str:00000194 .LASF367
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:6918   .debug_str:0000075c .LASF368
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:15     .text.OCLVDR_SetSync:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:13     .text.OCLVDR_SetSync:00000000 .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:19     .text.OCLVDR_SetSync:00000006 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:38     .text.OCLVDR_SetSync:00000030 .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:44     .text.OCLVDR_SetSync:00000037 .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:52     .text.OCLVDR_SetSync:0000003e .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:101    .text.OCLVDW_SetSync:00000002 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:99     .text.OCLVDW_SetSync:00000000 .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:106    .text.OCLVDW_SetSync:00000008 .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:125    .text.OCLVDW_SetSync:00000032 .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:135    .text.OCLVDW_SetSync:00000042 .LVL14
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:140    .text.OCLVDW_SetSync:0000004a .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:144    .text.OCLVDW_SetSync:00000054 .LVL16
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:148    .text.OCLVDW_SetSync:00000057 .LVL17
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:108    .text.OCLVDW_SetSync:0000000c .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:202    .text.OCLVD_SetStop:00000000 .LVL21
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:205    .text.OCLVD_SetStop:00000002 .LVL22
+C:\Users\Andrea\AppData\Local\Temp\ccocxYtf.s:358    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+___floatsisf
+___gtsf2
+_LVDR_SetUp
+_LVDW_SetTrip
+_LIB_IRQMonitor_Enter
+_LIB_IRQMonitor_Exit
+_LVDR_GetTrip
+_LVDW_GetTrip

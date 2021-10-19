@@ -1,0 +1,134 @@
+   1                             		.file	"LIB_Error.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.LIB_Error_Warning_Handler,"ax",@progbits
+   5                             		.global	_LIB_Error_Warning_Handler
+   7                             	_LIB_Error_Warning_Handler:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error/LIB_Error.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c ****  * LIB_Error.c
+   3:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c ****  *
+   4:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c ****  *  Created on: 18/mar/2013
+   5:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c ****  *      Author: marco
+   6:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c ****  */
+   7:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** #include "LIB_Error.h"
+   8:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** #include "Main.h"
+   9:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** #include "LIB_ResetExp.h"
+  10:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 
+  11:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** #if defined (__CWCC__)
+  12:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** #pragma define_section noinit ".noinit" far_absolute
+  13:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** #if _lint
+  14:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** #define NO_INIT_VAR
+  15:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** #else   /* _lint */
+  16:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** #define NO_INIT_VAR __declspec(noinit)
+  17:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** #endif  /* _lint */
+  18:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** NO_INIT_VAR PltError_t  LIB_Error_lastWarning;
+  19:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** NO_INIT_VAR PltError_t  LIB_Error_lastFatal ;
+  20:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 
+  21:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** #elif defined(__GNUC__)
+  22:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** PltError_t  LIB_Error_lastWarning __attribute__ ((section (".noinit")));
+  23:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** PltError_t  LIB_Error_lastFatal __attribute__ ((section (".noinit")));
+  24:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** #else
+  25:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** PltError_t  LIB_Error_lastWarning ;
+  26:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** PltError_t  LIB_Error_lastFatal ;
+  27:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** #endif
+  28:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 
+  29:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 
+  30:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 
+  31:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** void LIB_Error_Warning_Handler( PltError_t err)
+  32:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** {
+  10                             		.loc 1 32 0
+  11                             	.LVL0:
+  33:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 	LIB_Error_lastWarning = err;
+  12                             		.loc 1 33 0
+  13 0000 FB E2 00 00 00 00       		mov.L	#_LIB_Error_lastWarning, r14
+  14 0006 E3 E1                   		mov.L	r1, [r14]
+  15 0008 02                      		rts
+  16                             	.LFE0:
+  18                             		.section	.text.LIB_Error_Fatal_Handler,"ax",@progbits
+  19                             		.global	_LIB_Error_Fatal_Handler
+  21                             	_LIB_Error_Fatal_Handler:
+  22                             	.LFB1:
+  34:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** }
+  35:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 
+  36:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** void LIB_Error_Fatal_Handler(PltError_t err)
+  37:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** {
+  23                             		.loc 1 37 0
+  24                             	.LVL1:
+  25 0000 7E A7                   		push.l	r7
+  26                             	.LCFI0:
+  38:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 	LIB_Error_lastFatal = err;
+  27                             		.loc 1 38 0
+  28 0002 FB E2 00 00 00 00       		mov.L	#_LIB_Error_lastFatal, r14
+  37:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** {
+  29                             		.loc 1 37 0
+  30 0008 EF 17                   		mov.L	r1, r7
+  31                             		.loc 1 38 0
+  32 000a E3 E1                   		mov.L	r1, [r14]
+  39:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 
+  40:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 	if (LIB_Backup_GetBackupControlMonitor() != BACKUP_NO_SOURCE)
+  33                             		.loc 1 40 0
+  34 000c 05 00 00 00             		bsr	_LIB_Backup_GetBackupControlMonitor
+  35                             	.LVL2:
+  36 0010 5B 11                   		movu.B	r1, r1
+  37 0012 61 01                   		cmp	#0, r1
+  38 0014 20 16                   		beq	.L3
+  41:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 	{
+  42:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** #if !defined(CONFIG_LIB_BACKUP_DATACARE_SAVE)
+  43:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 		/* Force a cold reset with restore
+  44:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 		 * partial restore only if Data corruption occurs */
+  45:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 		if (err == PLT_ERROR_DATACORRUPTION_1)
+  39                             		.loc 1 45 0
+  40 0016 75 57 2E                		cmp	#46, r7
+  41 0019 21 07                   		bne	.L4
+  46:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 		{
+  47:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 			LIB_Backup_SetBackupSource();
+  42                             		.loc 1 47 0
+  43 001b 05 00 00 00             		bsr	_LIB_Backup_SetBackupSource
+  44                             	.LVL3:
+  45 001f 03                      		.balign 2,3,3
+  46                             	.L4:
+  48:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 		}
+  49:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** #endif
+  50:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 		Backup_SystemBackup(LIB_Reset_GetSystemMode());
+  47                             		.loc 1 50 0
+  48 0020 05 00 00 00             		bsr	_LIB_Reset_GetSystemMode
+  49                             	.LVL4:
+  51:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 	}
+  52:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 	else
+  53:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 	{
+  54:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 		LIB_Reset_ForceColdReset();
+  55:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 	}
+  56:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** }
+  50                             		.loc 1 56 0
+  51 0024 7E B7                   		pop	r7
+  52                             	.LVL5:
+  50:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 		Backup_SystemBackup(LIB_Reset_GetSystemMode());
+  53                             		.loc 1 50 0
+  54 0026 04 00 00 00             		bra	_Backup_SystemBackup
+  55                             	.LVL6:
+  56                             	.L3:
+  57                             		.loc 1 56 0
+  58 002a 7E B7                   		pop	r7
+  59                             	.LVL7:
+  54:C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error\LIB_Error.c **** 		LIB_Reset_ForceColdReset();
+  60                             		.loc 1 54 0
+  61 002c 04 00 00 00             		bra	_LIB_Reset_ForceColdReset
+  62                             	.LVL8:
+  63                             	.LFE1:
+  65                             		.global	_LIB_Error_lastFatal
+  66                             		.section	.noinit,"aw",@progbits
+  67                             		.balign 4
+  70                             	_LIB_Error_lastFatal:
+  71 0000 00 00 00 00             		.zero	4
+  72                             		.global	_LIB_Error_lastWarning
+  73                             		.balign 4
+  76                             	_LIB_Error_lastWarning:
+  77 0004 00 00 00 00             		.zero	4
+ 118                             	.Letext0:
+ 119                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 120                             		.file 3 "C:/Workspace/FW_Platform2_5/trunk/PlatformLibrary/LIB_Error/LIB_Error.h"
+ 121                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_BackUp/LIB_BackupExp.h"
+ 122                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Reset/LIB_ResetExp.h"
+ 123                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\Main\\EmbOS/Main.h"

@@ -1,0 +1,143 @@
+#############################################################################
+#
+#	Platform 2 library configuration
+#
+#############################################################################
+
+menu "Profile Loads Partialization"
+  depends on PM_PROFILE_LOADS_PARTIALIZATION_SUPPORT
+  
+config PM_PLP_PLATFORM2
+	depends on PM_PROFILE_LOADS_PARTIALIZATION_SUPPORT
+	bool "Platform2 module"
+	default y
+	help
+    if enabled platform 2 Profile Loads Partialization
+
+menu "Profile Loads Partialization plt2-specific configuration"
+	depends on PM_PLP_PLATFORM2
+	
+config PM_PLP_DISABLE_MODULE
+  bool "Disable module"
+  default n
+  help
+    Disable Profile Loads Partialization without need to remove support PM_PLP_SUPPORT. 
+    All functions and variables are still present, but nothing 
+    will happen when functions are called - no initialization and no updates.
+    
+    It's useful if you want save flash without excluding from build. 
+
+
+config PM_PLP_MAX_ITEMS_NUMBER
+	depends on !PM_PLP_DISABLE_MODULE
+    int "Max number of loads "
+    range 1 8
+    default 2
+	help
+		Maximum number of loads that can be managed 
+
+config PM_PLP_TMR_CH_ID
+	depends on !PM_PLP_DISABLE_MODULE
+    int "Timer ID"
+    range 0 7
+    default 0
+	help
+		Timer channel ID is the hw resource for compare match
+
+
+config PM_PLP_DIMMER_SUPPORT
+	depends on !PM_PLP_DISABLE_MODULE
+    bool "Enable Dimmer"
+    default n
+	help
+		enables Dimmer
+
+config PM_PLP_SLIDER_SUPPORT
+	depends on !PM_PLP_DISABLE_MODULE && PM_PLP_DIMMER_SUPPORT
+    bool "Enable Slider"
+    default n
+	help
+		enables Slider
+
+config PM_PLP_NORMAL_SUPPORT
+	depends on !PM_PLP_DISABLE_MODULE
+    bool "Enable Normal mode"
+    default n
+	help
+		enables Normal Mode
+				
+config PM_PLP_TURNOFF_MARGIN
+	depends on !PM_PLP_DISABLE_MODULE
+    int "turn off margin [us]"
+    range 0 8000
+    default 4000
+	help
+		At PM_PLP_TURNOFF_MARGIN from next ZC all PLP loads are turned off. 
+		This parameter is applied to all grid frequencies (50 and 60 Hz).
+
+config PM_PLP_FORCE_DELAY_AT_ZERO_TH
+	depends on !PM_PLP_DISABLE_MODULE
+    int "delay threshold [us]"
+    range 0 2000
+    default 600
+	help
+		delays under the threshold  PM_PLP_FORCE_DELAY_AT_ZERO_TH will be considered zero 
+		in this case the load wil be driven @ZC event  
+		This parameter is applied to all grid frequencies (50 and 60 Hz).
+
+config PM_PLP_GROUP_ACTIVATION_TH
+	depends on !PM_PLP_DISABLE_MODULE
+    int "group activation threshold [us]"
+    range 0 2000
+    default 260
+	help
+		defines the threshold of the range in which loads will be activated at the same time 
+
+comment "Debug & Test Options"
+config PM_PLP_DEBUG
+depends on !PM_PLP_DISABLE_MODULE
+    bool "[PLT] Debug enable"
+    default n
+	help
+		Debug
+
+config PM_PLP_EMULATE_PROFILE
+depends on !PM_PLP_DISABLE_MODULE && PM_PLP_DEBUG
+    bool "[PLT] use Debug Profile"
+    default n
+	help
+		Debug profile
+
+comment "Trace Options"	
+config PM_PLP_DEBUG_ISR_TRACE_ENABLE
+depends on !PM_PLP_DISABLE_MODULE && PM_PLP_DEBUG && LIB_TRACE_SUPPORT
+    bool "[PLT] ISR-trace enable"
+    default n
+	help
+		Enable trace of ISR
+
+config PM_PLP_DEBUG_SCH_TRACE_ENABLE
+depends on !PM_PLP_DISABLE_MODULE && PM_PLP_DEBUG && LIB_TRACE_SUPPORT
+    bool "[PLT] Scheduler-trace enable"
+    default n
+	help
+		Enable trace of Scheduler
+		
+config PM_PLP_DEBUG_ISR_TRACE_PIN
+depends on PM_PLP_DEBUG_ISR_TRACE_ENABLE
+    int "[PLT] ISR-trace pin"
+    default 10
+	help
+		Pin tracing ISR activity
+
+config PM_PLP_DEBUG_SCH_TRACE_PIN
+depends on PM_PLP_DEBUG_SCH_TRACE_ENABLE
+    int "[PLT] Scheduler-trace pin"
+    default 10
+	help
+		Pin tracing Scheduler activity
+
+endmenu
+endmenu
+
+#############################################################################

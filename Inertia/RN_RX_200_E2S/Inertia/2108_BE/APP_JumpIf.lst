@@ -1,0 +1,1080 @@
+   1                             		.file	"APP_JumpIf.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.JIF_Equal,"ax",@progbits
+   6                             	_JIF_Equal:
+   7                             	.LFB2:
+   8                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Application_Platform/APP_JumpIf.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /**
+   2:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \defgroup	APP_JumpIf Modulo microprogramma JumpIf
+   3:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \ingroup	ApplPlatform
+   4:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+   5:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** Il modulo implementa il microprogramma JumpIf per i salti condizionati
+   6:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** */
+   7:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+   8:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /**
+   9:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** Source file del modulo microprogramma JumpIf
+  10:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+  11:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \file		APP_JumpIf.c
+  12:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \ingroup	APP_JumpIf
+  13:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \date		22/09/2009
+  14:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \version	01.00.00
+  15:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \author		Marco Quintini
+  16:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+  17:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \par		PCLint
+  18:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			Report 16/01/2009: 0 Errors, 0 Warnings, 1 Info
+  19:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+  20:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** */
+  21:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+  22:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /*
+  23:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** Copyright (c) 2004-2007, Indesit Company, EDT.
+  24:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** Tutti i diritti sono riservati. All rights reserved.
+  25:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** */
+  26:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+  27:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* ******** */
+  28:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* Includes */
+  29:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* ******** */
+  30:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #include "CstmHeaders.h"
+  31:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+  32:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* ****************** */
+  33:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* Defines and Macros */
+  34:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* ****************** */
+  35:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #if (JIF_AND_OR_ENABLE == 1)
+  36:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /**
+  37:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \name Valutazione condizioni multiple
+  38:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** */
+  39:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /*@{*/ 
+  40:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #define COND_IN_AND				0	/**< Condizioni da valutare in AND logico */
+  41:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #define COND_IN_OR				1	/**< Condizioni da valutare in OR logico */
+  42:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /*@}*/ 
+  43:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #endif /* (JIF_AND_OR_ENABLE == 1) */
+  44:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+  45:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* *************************** */
+  46:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* Typedef, Structs and Unions */
+  47:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* *************************** */
+  48:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+  49:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* **************************** */
+  50:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* Prototype of local functions */
+  51:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* **************************** */
+  52:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** static bool_t JIF_Equal(int32_t a, int32_t b);
+  53:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** static bool_t JIF_Different(int32_t a, int32_t b);
+  54:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** static bool_t JIF_Greater(int32_t a, int32_t b);
+  55:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** static bool_t JIF_Smaller(int32_t a, int32_t b);
+  56:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+  57:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* ****************** */
+  58:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* Exported variables */
+  59:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* ****************** */
+  60:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+  61:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* **************** */
+  62:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* Global variables */
+  63:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* **************** */
+  64:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /** Array dei possibili operatori di confronto tra gli operandi di una condizione */
+  65:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** static const FUNCOP Operator_array[N_OPERATORS] =
+  66:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** {
+  67:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	JIF_Equal,
+  68:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	JIF_Different,
+  69:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	JIF_Greater,
+  70:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	JIF_Smaller,
+  71:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** };
+  72:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+  73:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* ***************** */
+  74:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* Exported function */
+  75:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* ***************** */
+  76:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+  77:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #if (MULTI_COMPARTMENT_APPL == 1)
+  78:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /**
+  79:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** Implementa il microprogramma JumpIF.
+  80:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+  81:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \param [in]		highStatement e' l'High Statement del microprogramma (T flag +
+  82:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				N flag + modificatori F1-F0 + opcode).
+  83:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \param [in]		lowStatement e' il Low Statement del microprogramma (indice
+  84:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				dello spiazzamento della tabella dati associata)
+  85:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \param [in]		compartment e' il vano in cui viene eseguito il microprogramma
+  86:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+  87:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \attention		Interpreter_Data (global, struttura con i dati sullo stato
+  88:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				corrente dell'interprete) e' usata come input
+  89:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \attention		Table_JumpIf (global, buffer tabelle destinazione Jump If per i
+  90:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				diversi vani) e' usata come output
+  91:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+  92:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \return			uint8_t
+  93:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+  94:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \retval			S_OK se la condizione di avanzamento passo per il microprogramma e'
+  95:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				verificata (condizione JumpIf vera), S_FALSE se non e' ancora verificata
+  96:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				(condizione JumpIF falsa) o in caso di errore.
+  97:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+  98:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \warning		none		
+  99:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \author			Marco Quintini
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \date 			06/07/2009
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \version		1.0.0
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \bug			none
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \todo			nothing
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c ****    
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \note			none
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** */
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /*lint -e715 */
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** uint8_t JIF_JumpIf_Exe(uint8_t highStatement, uint8_t lowStatement, uint8_t compartment)
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #else /* (MULTI_COMPARTMENT_APPL == 1) */
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /**
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** Implementa il microprogramma JumpIF.
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \param [in]		highStatement e' l'High Statement del microprogramma (T flag +
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				N flag + modificatori F1-F0 + opcode).
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \param [in]		lowStatement e' il Low Statement del microprogramma (indice
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				dello spiazzamento della tabella dati associata)
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \attention		Interpreter_Data (global, struttura con i dati sullo stato
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				corrente dell'interprete) e' usata come input
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \attention		Table_JumpIf (global, tabella destinazione Jump If) e' usata come output
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \return			uint8_t
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \retval			S_OK se la condizione di avanzamento passo per il microprogramma e'
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				verificata (condizione JumpIf vera), S_FALSE se non e' ancora verificata
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				(condizione JumpIF falsa) o in caso di errore.
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \warning		none		
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \author			Marco Quintini
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \date 			06/07/2009
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \version		1.0.0
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \bug			none
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \todo			nothing
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c ****    
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \note			none
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** */
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /*lint -e715 */
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** uint8_t JIF_JumpIf_Exe(uint8_t highStatement, uint8_t lowStatement)
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #endif /* (MULTI_COMPARTMENT_APPL != 1) */
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** {
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #if (MULTI_COMPARTMENT_APPL == 0)
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** uint8_t compartment = 0;
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #endif /* (MULTI_COMPARTMENT_APPL == 0) */  	
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** JumpIF_Struct *pCompTable_JumpIf = &Table_JumpIf[compartment];
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** Interpreter_Struct *pCompItpData = &Interpreter_Data[compartment];
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** Loader_Struct uPJumpIF_setting_data, cond_setting_data;
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	/* Caricamento tabella dati JumpIF */
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	if( MSettingBasicLoader( Interpreter_Data[0].mSetting, PTR_MP_JUMPIF_DATA, lowStatement, &uPJumpIF
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	{
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #ifdef _JIF_CHECKERRORS_
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		DBG_CheckErr(JIF_ERR_LD_DATA_TAB);
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #endif
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		return S_FALSE;	/* return S_FALSE perchè altrimenti (con S_OK) non saprei dove saltare! */
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	}
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	/* Caricamento tabella condizioni JumpIF */	
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	/*lint -save -e826 */
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	if ( MSettingBasicLoader( Interpreter_Data[0].mSetting, PTR_COND_TABLE_DATA, ((JumpIfTableData_Str
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	/*lint -restore */
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	{
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #ifdef _JIF_CHECKERRORS_			
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		DBG_CheckErr(JIF_ERROR_LD_COND_DATA);
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #endif
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		return S_FALSE;	/* return S_FALSE perchè altrimenti (con S_OK) non saprei dove saltare! */
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	}
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	/*lint -save -e826 */
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	switch(JIF_CheckCondition(&cond_setting_data))
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	/*lint -restore */
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	{
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		case S_OK:
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		{
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/* Condizione vera, effettua il salto */
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/* cycle */
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/*lint -save -e826 -e912 */
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			if( ((JumpIfTableData_Struct *)uPJumpIF_setting_data.Data)->sameCycle != 0 )
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/*lint -restore */
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			{
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/* same cycle */
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				pCompTable_JumpIf->cycle = pCompItpData->cycle;
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			}
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			else
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			{
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/* different cycle */
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/*lint -save -e826 */
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				pCompTable_JumpIf->cycle = ((JumpIfTableData_Struct *)uPJumpIF_setting_data.Data)->destinationC
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/*lint -restore */
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			}	
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/* phase */
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/*lint -save -e826 -e912 */
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			if( ((JumpIfTableData_Struct *)uPJumpIF_setting_data.Data)->samePhase != 0 )
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/*lint -restore */
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			{
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				#if (ITP_JIF_RELATIVE_PHASE_ENABLE == 1)
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/*
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				inizializzo "newPhase" con il valore di "Destination Phase" contenuto
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				nel file di setting. Questa variabile indica l'offset per il salto relativo
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				*/
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/*lint -save -e826 */
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				int8_t	newPhase = (int8_t)(((JumpIfTableData_Struct *)uPJumpIF_setting_data.Data)->destinationP
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/*lint -restore */
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/*lint -save -e826 */
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				if (((JumpIfTableData_Struct *)uPJumpIF_setting_data.Data)->signOffset)
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/*lint -restore */
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				{	/* salto relativo con offset negativo */
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					newPhase = -newPhase;	/* inverto il segno dell'offset */
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				}
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/*lint -save -e826 */
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				if ( (((int8_t)(pCompItpData->phase) + newPhase) < 0) || (((int8_t)(pCompItpData->phase) + newP
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/*lint -restore */
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				{
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					/* wrong phase: rimango all'interno della fase corrente */
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					pCompTable_JumpIf->phase = pCompItpData->phase;
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				}
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				else
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				{
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					/*lint -save -e826 */
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					pCompTable_JumpIf->phase = (uint8_t)((int8_t)(pCompItpData->phase) + newPhase);
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					/*lint -restore */
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				}
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				#else	/* (ITP_JIF_RELATIVE_PHASE_ENABLE != 1) */
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/* same phase */
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				pCompTable_JumpIf->phase = pCompItpData->phase;
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				#endif	/* (ITP_JIF_RELATIVE_PHASE_ENABLE != 1) */
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			}
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			else
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			{
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/* different phase */
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/*lint -save -e826 */
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				pCompTable_JumpIf->phase = ((JumpIfTableData_Struct *)uPJumpIF_setting_data.Data)->destinationP
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/*lint -restore */
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			}
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/*lint -save -e826 */
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			pCompTable_JumpIf->first_statement = ((JumpIfTableData_Struct *)uPJumpIF_setting_data.Data)->des
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/*lint -restore */
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #if (ITP_JIF_RET_ENABLE == 1)
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/* Gestione JumpIf con ritorno */
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/*lint -save -e826 */
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			if( ((JumpIfTableData_Struct *)uPJumpIF_setting_data.Data)->ret != 0 )
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/*lint -restore */
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			{
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				pCompTable_JumpIf->ret = TRUE;
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			}
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #endif /* (ITP_JIF_RET_ENABLE == 1) */
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			return S_OK;
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		}
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/*break;*/
+ 268:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		case S_FALSE:
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		{
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/* Condizione falsa, non effettua il salto */
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			return S_FALSE;
+ 273:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		}
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/*break;*/
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		default:
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		{
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/* Possibile gestione degli errori, se necessaria */
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			return S_FALSE;
+ 280:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		}
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/*break;*/
+ 282:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	}
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** }
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /*lint +e715 */
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 286:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /**
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** Dato il puntatore pDataCond ad un'area dati che codifica una condizione,
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** valuta il valore booleano della condizione stessa. \n
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** La condizione puo' anche essere una combinazione logica di piu' condizioni
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** semplici: se in APP_Config.h (JIF_AND_OR_ENABLE == 1), si possono combinare
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** più condizioni semplici in OR e/o in AND, altrimenti le condizioni multiple
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** sono valutate in AND.
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \param [in]		pDataCond punta alla struttura della condizione.
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 297:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \return			uint8_t
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \retval			S_OK/S_FALSE se la condizione e' corretta ed e' verificata/non verificata,
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				un codice di errore se i dati della condizione non sono corretti e quindi
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				la stessa non può essere valutata.
+ 302:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 303:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \warning		none		
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 305:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \author			Marco Quintini
+ 306:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \date 			06/07/2009
+ 307:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \version		1.0.0
+ 308:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 309:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \bug			none
+ 310:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 311:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \todo			nothing
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c ****    
+ 313:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \note			none
+ 314:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** */
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** uint8_t JIF_CheckCondition(Loader_Struct const* pDataCond)
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** {
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** uint8_t i;
+ 318:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** Condition_Struct *pCurrentCondition;
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** int32_t data, operand;	/* Il tipo deve essere int32_t, per poter gestire sia int16_t
+ 320:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 						   che uint16_t */
+ 321:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** uint8_t partialCondValue;
+ 322:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 323:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	/*lint -save -e912 */
+ 324:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	if( pDataCond->DataLenght < CONDITION_SIZE_IN_W )
+ 325:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	/*lint -restore */
+ 326:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	{
+ 327:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		/*
+ 328:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		Lunghezza del campo dati minore della lunghezza di una condizione:
+ 329:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		la condizione non può essere valutata.
+ 330:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		*/
+ 331:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #ifdef _JIF_CHECKERRORS_			
+ 332:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		DBG_CheckErr(JIF_ERR_COND_DATA_LEN);
+ 333:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #endif
+ 334:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		return ERR_CODE;
+ 335:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	}
+ 336:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	else
+ 337:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	{
+ 338:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		i = 0;
+ 339:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		/* Puntatore alla condizione corrente da valutare */
+ 340:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		/*lint -save -e826 */
+ 341:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		pCurrentCondition = (Condition_Struct *)pDataCond->Data;
+ 342:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		/*lint -restore */
+ 343:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		
+ 344:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		/*lint -save -e912 */
+ 345:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		while( i < (pDataCond->DataLenght / CONDITION_SIZE_IN_W) )
+ 346:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		/*lint -restore */
+ 347:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		{
+ 348:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/* Caricamento del dato e dell'operando */
+ 349:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			if( SelectOperands(pCurrentCondition, &data, &operand) != S_OK )
+ 350:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			{
+ 351:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/*
+ 352:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				Problemi nella selezione del dato e/o dell'operando: la
+ 353:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				condizione non può essere valutata.
+ 354:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				*/
+ 355:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #ifdef _JIF_CHECKERRORS_
+ 356:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				DBG_CheckErr(JIF_ERR_OP_OR_DATA_SEL);
+ 357:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #endif
+ 358:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				return ERR_CODE;
+ 359:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			}
+ 360:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 361:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			/*
+ 362:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			N.B.: è superfluo introdurre il controllo
+ 363:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				pCurrentCondition->dataSel.operatorCode < N_OPERATORS,
+ 364:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			dato che è un campo a 2 bit e dunque sicuramente < 4.
+ 365:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			*/
+ 366:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			
+ 367:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			if( (Operator_array[pCurrentCondition->dataSel.operatorCode](data, operand)) == FALSE )
+ 368:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #if (JIF_AND_OR_ENABLE == 1)
+ 369:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			{
+ 370:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/* Condizione corrente FALSE */
+ 371:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				if(i == 0)
+ 372:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				{
+ 373:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					/*
+ 374:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					Si sta valutando la prima condizione, deve essere inizializzato
+ 375:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					il risultato parziale.
+ 376:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					*/
+ 377:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					partialCondValue = FALSE;
+ 378:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				}
+ 379:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				else
+ 380:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				{
+ 381:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					if(pCurrentCondition->dataSel.andOr == COND_IN_AND)
+ 382:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					{
+ 383:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 						/* Condizioni in AND: se una è FALSE la combinazione è fin qui falsa */
+ 384:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 						partialCondValue = FALSE;
+ 385:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					}
+ 386:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					else
+ 387:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					{
+ 388:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 						/*
+ 389:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 						Do nothing, una condizione FALSE in OR non altera il
+ 390:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 						risultato parziale.
+ 391:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 						*/
+ 392:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					}
+ 393:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				}
+ 394:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			}
+ 395:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			else
+ 396:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			{ 
+ 397:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/* Condizione corrente TRUE */
+ 398:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				if(i == 0)
+ 399:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				{
+ 400:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					/*
+ 401:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					Si sta valutando la prima condizione, deve essere inizializzato
+ 402:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					il risultato parziale.
+ 403:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					*/
+ 404:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					partialCondValue = TRUE;
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				}
+ 406:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				else
+ 407:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				{
+ 408:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					if(pCurrentCondition->dataSel.andOr == COND_IN_OR)
+ 409:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					{
+ 410:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 						/* Condizioni in OR: se una è TRUE la combinazione è fin qui vera */
+ 411:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 						partialCondValue = TRUE;
+ 412:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					}
+ 413:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					else
+ 414:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					{
+ 415:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 						/*
+ 416:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 						Do nothing, una condizione TRUE in AND non altera
+ 417:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 						il risultato parziale.
+ 418:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 						*/
+ 419:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					}
+ 420:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				}
+ 421:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			}
+ 422:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #else /* (JIF_AND_OR_ENABLE == 1) */
+ 423:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			{
+ 424:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/* Condizione corrente FALSE */
+ 425:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				
+ 426:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/*
+ 427:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				Le condizioni sono valutate in AND: se una è FALSE la combinazione
+ 428:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				è sicuramente falsa, è inutile continuare a valutare le successive.
+ 429:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				*/
+ 430:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				return S_FALSE;
+ 431:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			}
+ 432:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			else
+ 433:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			{
+ 434:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				/*
+ 435:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				Le condizioni sono valutate in AND: finchè sono tutte TRUE, il
+ 436:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				risultato parziale è vero.
+ 437:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				*/
+ 438:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				partialCondValue = TRUE;
+ 439:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			}
+ 440:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** #endif /* (JIF_AND_OR_ENABLE != 1) */
+ 441:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			i ++;
+ 442:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			pCurrentCondition ++;
+ 443:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		}
+ 444:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 					
+ 445:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		/*
+ 446:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		Se (JIF_AND_OR_ENABLE == 0) PCLint segnala una possibile mancata inizializzazione
+ 447:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		di partialCondValue: in realtà, per come sono costruite i controlli in precedenza,
+ 448:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		il ciclo while viene sicuramente eseguito almeno una volta, per cui in questo
+ 449:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		punto partialCondValue è sicuramente inizializzata (ma PCLint non se ne
+ 450:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		accorge).
+ 451:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		*/
+ 452:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		/*lint -e644 -e771 */
+ 453:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		if(partialCondValue == TRUE)
+ 454:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		/*lint +e771 +e644 */
+ 455:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		{
+ 456:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			return S_OK;
+ 457:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		}
+ 458:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		else
+ 459:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		{
+ 460:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			return S_FALSE;
+ 461:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		}
+ 462:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	
+ 463:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	}
+ 464:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** }
+ 465:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 466:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 467:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* ************** */
+ 468:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* Local Function */
+ 469:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /* ************** */
+ 470:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 471:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /**
+ 472:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** Valuta se a e' uguale a b.
+ 473:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 474:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \param [in]		a e' il primo operando
+ 475:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \param [in]		b e' il secondo operando
+ 476:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 477:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \return			bool_t
+ 478:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 479:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \retval 		TRUE se a == b, FALSE altrimenti
+ 480:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 481:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \warning		none		
+ 482:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 483:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \author			Marco Quintini
+ 484:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \date 			06/07/2009
+ 485:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \version		1.0.0
+ 486:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 487:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \bug			none
+ 488:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 489:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \todo			nothing
+ 490:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c ****    
+ 491:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \note			none
+ 492:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** */
+ 493:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** static bool_t JIF_Equal(int32_t a, int32_t b)
+ 494:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** {
+   9                             		.loc 1 494 0
+  10                             	.LVL0:
+ 495:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	return(a == b);
+ 496:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** }
+  11                             		.loc 1 496 0
+  12 0000 47 21                   		cmp	r2, r1
+  13 0002 FC DB 10                		sceq.L	r1
+  14                             	.LVL1:
+  15 0005 02                      		rts
+  16                             	.LFE2:
+  18                             		.section	.text.JIF_Different,"ax",@progbits
+  20                             	_JIF_Different:
+  21                             	.LFB3:
+ 497:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 498:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 499:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /**
+ 500:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** Valuta se a e' diverso da b.
+ 501:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 502:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \param [in]		a e' il primo operando
+ 503:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \param [in]		b e' il secondo operando
+ 504:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 505:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \return			bool_t
+ 506:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 507:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \retval 		TRUE se a != b, FALSE altrimenti
+ 508:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 509:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \warning		none		
+ 510:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 511:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \author			Marco Quintini
+ 512:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \date 			06/07/2009
+ 513:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \version		1.0.0
+ 514:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 515:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \bug			none
+ 516:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 517:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \todo			nothing
+ 518:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c ****    
+ 519:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \note			none
+ 520:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** */
+ 521:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** static bool_t JIF_Different(int32_t a, int32_t b)
+ 522:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** {
+  22                             		.loc 1 522 0
+  23                             	.LVL2:
+ 523:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	return(a != b);
+ 524:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** }
+  24                             		.loc 1 524 0
+  25 0000 47 21                   		cmp	r2, r1
+  26 0002 FC DB 11                		scne.L	r1
+  27                             	.LVL3:
+  28 0005 02                      		rts
+  29                             	.LFE3:
+  31                             		.section	.text.JIF_Greater,"ax",@progbits
+  33                             	_JIF_Greater:
+  34                             	.LFB4:
+ 525:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 526:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 527:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /**
+ 528:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** Valuta se a e' maggiore di b.
+ 529:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 530:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \param [in]		a e' il primo operando
+ 531:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \param [in]		b e' il secondo operando
+ 532:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 533:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \return			bool_t
+ 534:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 535:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \retval 		TRUE se a > b, FALSE altrimenti
+ 536:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 537:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \warning		none		
+ 538:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 539:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \author			Marco Quintini
+ 540:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \date 			06/07/2009
+ 541:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \version		1.0.0
+ 542:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 543:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \bug			none
+ 544:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 545:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \todo			nothing
+ 546:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c ****    
+ 547:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \note			none
+ 548:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** */
+ 549:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** static bool_t JIF_Greater(int32_t a, int32_t b)
+ 550:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** {
+  35                             		.loc 1 550 0
+  36                             	.LVL4:
+ 551:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	return(a > b);
+ 552:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** }
+  37                             		.loc 1 552 0
+  38 0000 47 21                   		cmp	r2, r1
+  39 0002 FC DB 1A                		scgt.L	r1
+  40                             	.LVL5:
+  41 0005 02                      		rts
+  42                             	.LFE4:
+  44                             		.section	.text.JIF_Smaller,"ax",@progbits
+  46                             	_JIF_Smaller:
+  47                             	.LFB5:
+ 553:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 554:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 555:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** /**
+ 556:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** Valuta se a e' minore di b.
+ 557:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 558:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \param [in]		a e' il primo operando
+ 559:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \param [in]		b e' il secondo operando
+ 560:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 561:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \return			bool_t
+ 562:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 563:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \retval 		TRUE se a < b, FALSE altrimenti
+ 564:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 565:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \warning		none		
+ 566:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 567:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \author			Marco Quintini
+ 568:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \date 			06/07/2009
+ 569:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \version		1.0.0
+ 570:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 571:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \bug			none
+ 572:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 
+ 573:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \todo			nothing
+ 574:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c ****    
+ 575:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** \note			none
+ 576:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** */
+ 577:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** static bool_t JIF_Smaller(int32_t a, int32_t b)
+ 578:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** {
+  48                             		.loc 1 578 0
+  49                             	.LVL6:
+ 579:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	return(a < b);
+ 580:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** }
+  50                             		.loc 1 580 0
+  51 0000 47 21                   		cmp	r2, r1
+  52 0002 FC DB 19                		sclt.L	r1
+  53                             	.LVL7:
+  54 0005 02                      		rts
+  55                             	.LFE5:
+  57                             		.section	.text.JIF_CheckCondition,"ax",@progbits
+  58                             		.global	_JIF_CheckCondition
+  60                             	_JIF_CheckCondition:
+  61                             	.LFB1:
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** {
+  62                             		.loc 1 316 0
+  63                             	.LVL8:
+  64 0000 6E 7C                   		pushm	r7-r12
+  65                             	.LCFI0:
+  66 0002 60 80                   		sub	#8, r0
+  67                             	.LCFI1:
+  68 0004 EF 1B                   		mov.L	r1, r11
+ 324:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	if( pDataCond->DataLenght < CONDITION_SIZE_IN_W )
+  69                             		.loc 1 324 0
+  70 0006 B8 97                   		movu.W	4[r1], r7
+  71 0008 61 17                   		cmp	#1, r7
+  72 000a 24 07                   		bgtu	.L6
+  73                             	.LVL9:
+  74                             		.balign 2,3,2
+  75                             	.L9:
+ 334:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		return ERR_CODE;
+  76                             		.loc 1 334 0
+  77 000c FB 16 80                		mov	#0xffffff80, r1
+  78 000f 2E 47                   		bra	.L7
+  79                             	.LVL10:
+  80                             	.L6:
+ 341:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		pCurrentCondition = (Condition_Struct *)pDataCond->Data;
+  81                             		.loc 1 341 0
+  82 0011 EC 17                   		mov.L	[r1], r7
+  83                             	.LVL11:
+ 338:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		i = 0;
+  84                             		.loc 1 338 0
+  85 0013 66 0A                   		mov	#0, r10
+ 367:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			if( (Operator_array[pCurrentCondition->dataSel.operatorCode](data, operand)) == FALSE )
+  86                             		.loc 1 367 0
+  87 0015 FB C2 00 00 00 00       		mov.L	#_Operator_array, r12
+ 345:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		while( i < (pDataCond->DataLenght / CONDITION_SIZE_IN_W) )
+  88                             		.loc 1 345 0
+  89 001b 2E 2B                   		bra	.L8
+  90                             	.LVL12:
+  91                             	.L10:
+ 349:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			if( SelectOperands(pCurrentCondition, &data, &operand) != S_OK )
+  92                             		.loc 1 349 0
+  93 001d EF 71                   		mov.L	r7, r1
+  94 001f 66 42                   		mov.L	#4, r2
+  95 0021 4B 02                   		add	r0, r2
+  96 0023 EF 03                   		mov.L	r0, r3
+  97 0025 05 00 00 00             		bsr	_SelectOperands
+  98                             	.LVL13:
+  99 0029 76 21 FF 00             		and #0xff, r1
+ 100 002d 21 DF                   		bne	.L9
+ 367:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			if( (Operator_array[pCurrentCondition->dataSel.operatorCode](data, operand)) == FALSE )
+ 101                             		.loc 1 367 0
+ 102 002f 5C 7E                   		movu.W	[r7], r14
+ 103 0031 68 6E                   		shlr	#6, r14
+ 104 0033 64 3E                   		and #3, r14
+ 105 0035 FE 6E CE                		mov.L	[r14,r12], r14
+ 106 0038 A8 09                   		mov.L	4[r0], r1
+ 107 003a EC 02                   		mov.L	[r0], r2
+ 108 003c 7F 1E                   		jsr	r14
+ 109                             	.LVL14:
+ 110 003e 61 01                   		cmp	#0, r1
+ 111 0040 20 14                   		beq	.L11
+ 441:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			i ++;
+ 112                             		.loc 1 441 0
+ 113 0042 62 1A                   		add	#1, r10
+ 114                             	.LVL15:
+ 442:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			pCurrentCondition ++;
+ 115                             		.loc 1 442 0
+ 116 0044 62 47                   		add	#4, r7
+ 117                             	.LVL16:
+ 118                             		.balign 2,3,3
+ 119                             	.L8:
+ 345:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 		while( i < (pDataCond->DataLenght / CONDITION_SIZE_IN_W) )
+ 120                             		.loc 1 345 0 discriminator 1
+ 121 0046 5D BE 02                		movu.W	4[r11], r14
+ 122 0049 5B A4                   		movu.B	r10, r4
+ 123 004b 68 1E                   		shlr	#1, r14
+ 124 004d 47 E4                   		cmp	r14, r4
+ 125 004f 23 CE                   		bltu	.L10
+ 456:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			return S_OK;
+ 126                             		.loc 1 456 0
+ 127 0051 66 01                   		mov	#0, r1
+ 128 0053 0B                      		bra	.L7
+ 129                             	.L11:
+ 430:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				return S_FALSE;
+ 130                             		.loc 1 430 0
+ 131 0054 66 11                   		mov	#1, r1
+ 132                             	.LVL17:
+ 133                             		.balign 2,3,3
+ 134                             	.L7:
+ 464:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** }
+ 135                             		.loc 1 464 0
+ 136 0056 76 21 81 00             		and #0x81, r1
+ 137 005a 3F 7C 08                		rtsd	#32, r7-r12
+ 138                             	.LFE1:
+ 140 005d 03                      		.section	.text.JIF_JumpIf_Exe,"ax",@progbits
+ 141                             		.global	_JIF_JumpIf_Exe
+ 143                             	_JIF_JumpIf_Exe:
+ 144                             	.LFB0:
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** {
+ 145                             		.loc 1 149 0
+ 146                             	.LVL18:
+ 147 0000 7E A7                   		push.l	r7
+ 148                             	.LCFI2:
+ 149 0002 71 00 F0                		add	#-16, r0
+ 150                             	.LCFI3:
+ 151                             	.LVL19:
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	if( MSettingBasicLoader( Interpreter_Data[0].mSetting, PTR_MP_JUMPIF_DATA, lowStatement, &uPJumpIF
+ 152                             		.loc 1 159 0
+ 153 0005 FB 72 00 00 00 00       		mov.L	#_Interpreter_Data, r7
+ 154 000b 5B 23                   		movu.B	r2, r3
+ 155 000d 89 79                   		mov.B	5[r7], r1
+ 156                             	.LVL20:
+ 157 000f 75 42 1B                		mov	#27, r2
+ 158                             	.LVL21:
+ 159 0012 71 04 08                		add	#8, r0, r4
+ 160 0015 05 00 00 00             		bsr	_MSettingBasicLoader
+ 161                             	.LVL22:
+ 162 0019 76 21 FF 00             		and #0xff, r1
+ 163 001d 14                      		beq	.L14
+ 164 001e 38 81 00                		bra	.L24
+ 165                             	.L14:
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	if ( MSettingBasicLoader( Interpreter_Data[0].mSetting, PTR_COND_TABLE_DATA, ((JumpIfTableData_Str
+ 166                             		.loc 1 170 0
+ 167 0021 ED 0E 02                		mov.L	8[r0], r14
+ 168 0024 59 E3 02                		movu.B	2[r14], r3
+ 169 0027 89 79                   		mov.B	5[r7], r1
+ 170 0029 75 42 26                		mov	#38, r2
+ 171 002c EF 04                   		mov.L	r0, r4
+ 172 002e 05 00 00 00             		bsr	_MSettingBasicLoader
+ 173                             	.LVL23:
+ 174 0032 76 21 FF 00             		and #0xff, r1
+ 175 0036 21 69                   		bne	.L24
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 	switch(JIF_CheckCondition(&cond_setting_data))
+ 176                             		.loc 1 181 0
+ 177 0038 EF 01                   		mov.L	r0, r1
+ 178 003a 05 00 00 00             		bsr	_JIF_CheckCondition
+ 179                             	.LVL24:
+ 180 003e 76 21 FF 00             		and #0xff, r1
+ 181 0042 21 5D                   		bne	.L24
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			if( ((JumpIfTableData_Struct *)uPJumpIF_setting_data.Data)->sameCycle != 0 )
+ 182                             		.loc 1 190 0
+ 183 0044 ED 0E 02                		mov.L	8[r0], r14
+ 184 0047 CC E3                   		mov.B	[r14], r3
+ 185 0049 EF 32                   		mov.L	r3, r2
+ 186 004b 75 22 40                		and #64, r2
+ 187 004e FB 42 00 00 00 00       		mov.L	#_Table_JumpIf, r4
+ 188 0054 61 02                   		cmp	#0, r2
+ 189 0056 15                      		beq	.L18
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				pCompTable_JumpIf->cycle = pCompItpData->cycle;
+ 190                             		.loc 1 194 0
+ 191 0057 C1 74 01                		mov.B	1[r7], [r4]
+ 192 005a 0E                      		bra	.L19
+ 193                             	.L18:
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				pCompTable_JumpIf->cycle = ((JumpIfTableData_Struct *)uPJumpIF_setting_data.Data)->destinationC
+ 194                             		.loc 1 200 0
+ 195 005b 75 23 3F                		and #63, r3
+ 196 005e C3 43                   		mov.B	r3, [r4]
+ 197                             		.balign 2,3,5
+ 198                             	.L19:
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			if( ((JumpIfTableData_Struct *)uPJumpIF_setting_data.Data)->samePhase != 0 )
+ 199                             		.loc 1 206 0
+ 200 0060 CD E4 03                		mov.B	3[r14], r4
+ 201 0063 EF 43                   		mov.L	r4, r3
+ 202 0065 76 23 80 00             		and #0x80, r3
+ 203 0069 FB 72 00 00 00 00       		mov.L	#_Table_JumpIf, r7
+ 204 006f 61 03                   		cmp	#0, r3
+ 205 0071 20 0D                   		beq	.L20
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				pCompTable_JumpIf->phase = pCompItpData->phase;
+ 206                             		.loc 1 240 0
+ 207 0073 FB 42 00 00 00 00       		mov.L	#_Interpreter_Data, r4
+ 208 0079 C5 47 02 01             		mov.B	2[r4], 1[r7]
+ 209 007d 0F                      		bra	.L21
+ 210                             	.L20:
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				pCompTable_JumpIf->phase = ((JumpIfTableData_Struct *)uPJumpIF_setting_data.Data)->destinationP
+ 211                             		.loc 1 247 0
+ 212 007e 75 24 3F                		and #63, r4
+ 213 0081 80 7C                   		mov.B	r4, 1[r7]
+ 214 0083 03                      		.balign 2,3,5
+ 215                             	.L21:
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			pCompTable_JumpIf->first_statement = ((JumpIfTableData_Struct *)uPJumpIF_setting_data.Data)->des
+ 216                             		.loc 1 252 0
+ 217 0084 FB 72 00 00 00 00       		mov.L	#_Table_JumpIf, r7
+ 218 008a CD E4 01                		mov.B	1[r14], r4
+ 219 008d 75 24 1F                		and #31, r4
+ 220 0090 80 F4                   		mov.B	r4, 2[r7]
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			if( ((JumpIfTableData_Struct *)uPJumpIF_setting_data.Data)->ret != 0 )
+ 221                             		.loc 1 258 0
+ 222 0092 CC E1                   		mov.B [r14], r1
+ 223 0094 76 21 80 00             		and #0x80, r1
+ 224 0098 12                      		beq	.L15
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 				pCompTable_JumpIf->ret = TRUE;
+ 225                             		.loc 1 261 0
+ 226 0099 3C 73 01                		mov.B	#1, 3[r7]
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			return S_OK;
+ 227                             		.loc 1 265 0
+ 228 009c 66 01                   		mov	#0, r1
+ 229 009e 0C                      		bra	.L15
+ 230                             	.L24:
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** 			return S_FALSE;
+ 231                             		.loc 1 272 0
+ 232 009f 66 11                   		mov	#1, r1
+ 233 00a1 03                      		.balign 2,3,3
+ 234                             	.L15:
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Application_Platform\APP_JumpIf.c **** }
+ 235                             		.loc 1 283 0
+ 236 00a2 76 21 81 00             		and #0x81, r1
+ 237 00a6 3F 77 05                		rtsd	#20, r7-r7
+ 238                             	.LFE0:
+ 240 00a9 03                      		.section	.rodata.Operator_array,"a",@progbits
+ 241                             		.balign 4
+ 244                             	_Operator_array:
+ 245 0000 00 00 00 00             		.long	_JIF_Equal
+ 246 0004 00 00 00 00             		.long	_JIF_Different
+ 247 0008 00 00 00 00             		.long	_JIF_Greater
+ 248 000c 00 00 00 00             		.long	_JIF_Smaller
+ 345                             	.Letext0:
+ 346                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 347                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_Library/LIB_Utilities.h"
+ 348                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\CFG_DishWasher\\CFG_Inertia/ProductSafety_cfg.
+ 349                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Inertia\\General/CstmDefines.h"
+ 350                             		.file 6 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Application_Platform/APP_Types.h"
+ 351                             		.file 7 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_BusCOMM/BCP_General.h"
+ 352                             		.file 8 "C:\\Workspace\\FW_Inertia\\branch_indesit\\CFG_DishWasher\\CFG_Inertia/BusCommPltf_cfg.h"
+ 353                             		.file 9 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_BusCOMM/BCP_BusCommMng.h"
+ 354                             		.file 10 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Application_Platform/APP_Global.h"
+ 355                             		.file 11 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Application_Platform/APP_callback.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 APP_JumpIf.c
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:6      .text.JIF_Equal:00000000 _JIF_Equal
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:12     .text.JIF_Equal:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:20     .text.JIF_Different:00000000 _JIF_Different
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:25     .text.JIF_Different:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:33     .text.JIF_Greater:00000000 _JIF_Greater
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:38     .text.JIF_Greater:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:46     .text.JIF_Smaller:00000000 _JIF_Smaller
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:51     .text.JIF_Smaller:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:60     .text.JIF_CheckCondition:00000000 _JIF_CheckCondition
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:64     .text.JIF_CheckCondition:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:244    .rodata.Operator_array:00000000 _Operator_array
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:143    .text.JIF_JumpIf_Exe:00000000 _JIF_JumpIf_Exe
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:147    .text.JIF_JumpIf_Exe:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:250    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:7      .text.JIF_Equal:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:21     .text.JIF_Different:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:34     .text.JIF_Greater:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:47     .text.JIF_Smaller:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:61     .text.JIF_CheckCondition:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:144    .text.JIF_JumpIf_Exe:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:1634   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2642   .debug_str:0000028c .LASF145
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2614   .debug_str:00000182 .LASF146
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2544   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2560   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2776   .debug_str:0000069f .LASF0
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2590   .debug_str:000000d9 .LASF2
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2682   .debug_str:000003ce .LASF1
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2676   .debug_str:000003b2 .LASF3
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2668   .debug_str:00000360 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2658   .debug_str:00000313 .LASF5
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2740   .debug_str:00000586 .LASF6
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2838   .debug_str:0000088f .LASF7
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2580   .debug_str:00000083 .LASF8
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2592   .debug_str:000000e1 .LASF9
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2818   .debug_str:000007e5 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2742   .debug_str:0000058e .LASF11
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2798   .debug_str:0000076e .LASF12
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2594   .debug_str:000000ef .LASF13
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2596   .debug_str:000000fb .LASF14
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2588   .debug_str:000000d2 .LASF64
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2718   .debug_str:000004e2 .LASF15
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2692   .debug_str:00000421 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2826   .debug_str:00000824 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2704   .debug_str:0000047f .LASF18
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2724   .debug_str:00000509 .LASF28
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2744   .debug_str:0000059c .LASF19
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2598   .debug_str:00000102 .LASF20
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2706   .debug_str:00000488 .LASF21
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2756   .debug_str:0000060c .LASF22
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2844   .debug_str:000008b2 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2780   .debug_str:000006b9 .LASF24
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2712   .debug_str:000004b2 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2772   .debug_str:0000068e .LASF26
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2792   .debug_str:00000735 .LASF27
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2572   .debug_str:00000045 .LASF29
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2812   .debug_str:000007b9 .LASF30
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2578   .debug_str:00000073 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2786   .debug_str:00000701 .LASF32
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2802   .debug_str:0000077b .LASF33
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2610   .debug_str:00000159 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2690   .debug_str:0000040b .LASF35
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2770   .debug_str:0000067d .LASF36
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2794   .debug_str:00000743 .LASF37
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2730   .debug_str:00000536 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2582   .debug_str:0000009a .LASF39
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2636   .debug_str:0000025a .LASF40
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2752   .debug_str:000005ed .LASF41
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2680   .debug_str:000003c1 .LASF42
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2606   .debug_str:00000144 .LASF43
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2754   .debug_str:000005fe .LASF44
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2686   .debug_str:000003e7 .LASF45
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2662   .debug_str:0000032d .LASF46
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2694   .debug_str:0000042c .LASF47
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2784   .debug_str:000006e6 .LASF48
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2698   .debug_str:00000450 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2788   .debug_str:00000712 .LASF50
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2832   .debug_str:00000850 .LASF51
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2824   .debug_str:00000809 .LASF52
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2748   .debug_str:000005c3 .LASF53
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2568   .debug_str:00000025 .LASF54
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2638   .debug_str:00000269 .LASF55
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2806   .debug_str:00000798 .LASF56
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2612   .debug_str:00000171 .LASF57
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2576   .debug_str:00000066 .LASF58
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2814   .debug_str:000007c8 .LASF59
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2734   .debug_str:00000555 .LASF60
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2684   .debug_str:000003d8 .LASF61
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2768   .debug_str:00000674 .LASF62
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2678   .debug_str:000003bb .LASF63
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2836   .debug_str:0000087b .LASF65
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2630   .debug_str:00000230 .LASF66
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2804   .debug_str:00000792 .LASF67
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2608   .debug_str:00000153 .LASF68
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2820   .debug_str:000007ed .LASF69
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2600   .debug_str:00000118 .LASF70
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2746   .debug_str:000005ad .LASF71
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2564   .debug_str:00000011 .LASF72
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2618   .debug_str:000001d8 .LASF73
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2782   .debug_str:000006ce .LASF74
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2834   .debug_str:0000086b .LASF75
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2688   .debug_str:000003f6 .LASF76
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2854   .debug_str:000008f6 .LASF77
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2602   .debug_str:00000124 .LASF78
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2736   .debug_str:00000564 .LASF79
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2574   .debug_str:00000058 .LASF80
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2670   .debug_str:00000373 .LASF81
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2716   .debug_str:000004d8 .LASF82
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2720   .debug_str:000004e7 .LASF83
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2850   .debug_str:000008df .LASF84
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2700   .debug_str:00000463 .LASF85
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2624   .debug_str:00000206 .LASF86
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2808   .debug_str:000007a7 .LASF87
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2790   .debug_str:0000072a .LASF88
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2710   .debug_str:000004a1 .LASF89
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2634   .debug_str:00000243 .LASF90
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2646   .debug_str:000002b8 .LASF91
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2796   .debug_str:00000755 .LASF92
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2800   .debug_str:00000775 .LASF93
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2708   .debug_str:00000496 .LASF94
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2654   .debug_str:000002f5 .LASF95
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2778   .debug_str:000006ac .LASF96
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2846   .debug_str:000008c8 .LASF97
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2696   .debug_str:00000438 .LASF98
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2632   .debug_str:0000023e .LASF99
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2644   .debug_str:000002b2 .LASF100
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2702   .debug_str:00000478 .LASF101
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2620   .debug_str:000001ea .LASF102
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2566   .debug_str:0000001d .LASF103
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2660   .debug_str:00000325 .LASF104
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2722   .debug_str:000004f8 .LASF105
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2650   .debug_str:000002d1 .LASF106
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2766   .debug_str:0000065d .LASF107
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2584   .debug_str:000000aa .LASF108
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2664   .debug_str:0000033e .LASF109
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2764   .debug_str:00000642 .LASF110
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2760   .debug_str:0000062b .LASF111
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2816   .debug_str:000007d8 .LASF112
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2842   .debug_str:000008a5 .LASF113
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2728   .debug_str:00000529 .LASF114
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2604   .debug_str:00000137 .LASF115
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2726   .debug_str:00000518 .LASF116
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2562   .debug_str:00000000 .LASF117
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2750   .debug_str:000005df .LASF118
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2616   .debug_str:000001cb .LASF119
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2828   .debug_str:00000832 .LASF120
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2852   .debug_str:000008eb .LASF121
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2622   .debug_str:000001fc .LASF122
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:16     .text.JIF_Equal:00000006 .LFE2
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2325   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2628   .debug_str:00000222 .LASF123
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:29     .text.JIF_Different:00000006 .LFE3
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2339   .debug_loc:00000021 .LLST1
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2774   .debug_str:00000693 .LASF124
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:42     .text.JIF_Greater:00000006 .LFE4
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2353   .debug_loc:00000042 .LLST2
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2570   .debug_str:00000039 .LASF125
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:55     .text.JIF_Smaller:00000006 .LFE5
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2367   .debug_loc:00000063 .LLST3
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2738   .debug_str:00000573 .LASF130
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:138    .text.JIF_CheckCondition:0000005d .LFE1
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2381   .debug_loc:00000084 .LLST4
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2762   .debug_str:00000638 .LASF126
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2399   .debug_loc:000000b0 .LLST5
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2418   .debug_loc:000000e4 .LLST6
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2640   .debug_str:0000027a .LASF127
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2430   .debug_loc:00000103 .LLST7
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2666   .debug_str:0000035b .LASF128
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2437   .debug_loc:00000116 .LLST8
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2450   .debug_loc:00000136 .LLST9
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2732   .debug_str:00000544 .LASF129
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2463   .debug_loc:00000156 .LLST10
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:98     .text.JIF_CheckCondition:00000029 .LVL13
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2714   .debug_str:000004c9 .LASF131
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:238    .text.JIF_JumpIf_Exe:000000a9 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2471   .debug_loc:0000016a .LLST11
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2848   .debug_str:000008d1 .LASF132
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2489   .debug_loc:00000196 .LLST12
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2758   .debug_str:0000061e .LASF133
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2503   .debug_loc:000001b7 .LLST13
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2822   .debug_str:000007fd .LASF134
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2648   .debug_str:000002bf .LASF135
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2626   .debug_str:00000215 .LASF136
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2672   .debug_str:0000038b .LASF137
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2652   .debug_str:000002e3 .LASF138
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:161    .text.JIF_JumpIf_Exe:00000019 .LVL22
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:173    .text.JIF_JumpIf_Exe:00000032 .LVL23
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:179    .text.JIF_JumpIf_Exe:0000003e .LVL24
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2586   .debug_str:000000c3 .LASF139
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2810   .debug_str:000007b1 .LASF140
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2674   .debug_str:000003a1 .LASF141
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2840   .debug_str:00000898 .LASF142
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2830   .debug_str:00000841 .LASF143
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:2656   .debug_str:000002ff .LASF144
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:10     .text.JIF_Equal:00000000 .LVL0
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:14     .text.JIF_Equal:00000005 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:23     .text.JIF_Different:00000000 .LVL2
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:27     .text.JIF_Different:00000005 .LVL3
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:36     .text.JIF_Greater:00000000 .LVL4
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:40     .text.JIF_Greater:00000005 .LVL5
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:49     .text.JIF_Smaller:00000000 .LVL6
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:53     .text.JIF_Smaller:00000005 .LVL7
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:65     .text.JIF_CheckCondition:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:67     .text.JIF_CheckCondition:00000004 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:63     .text.JIF_CheckCondition:00000000 .LVL8
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:73     .text.JIF_CheckCondition:0000000c .LVL9
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:79     .text.JIF_CheckCondition:00000011 .LVL10
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:90     .text.JIF_CheckCondition:0000001d .LVL12
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:132    .text.JIF_CheckCondition:00000056 .LVL17
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:83     .text.JIF_CheckCondition:00000013 .LVL11
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:148    .text.JIF_JumpIf_Exe:00000002 .LCFI2
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:150    .text.JIF_JumpIf_Exe:00000005 .LCFI3
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:146    .text.JIF_JumpIf_Exe:00000000 .LVL18
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:156    .text.JIF_JumpIf_Exe:0000000f .LVL20
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:158    .text.JIF_JumpIf_Exe:00000012 .LVL21
+C:\Users\Andrea\AppData\Local\Temp\cctMT3Yq.s:357    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_SelectOperands
+_Interpreter_Data
+_MSettingBasicLoader
+_Table_JumpIf

@@ -1,0 +1,953 @@
+   1                             		.file	"Main_MeasureLIVE.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.Main_LiveMeasure,"ax",@progbits
+   5                             		.global	_Main_LiveMeasure
+   7                             	_Main_LiveMeasure:
+   8                             	.LFB4:
+   9                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS/Main_MeasureLIVE.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \n
+   8:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \par		Main_MeasureLive
+   9:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \n			This file contains the EmbOS-based service for the live peak value.
+  10:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \n
+  11:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \file		Main_MeasureLive.c
+  12:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \ingroup	Main
+  13:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \date		Feb 7, 2011
+  14:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \version	01.00.00
+  15:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \author		Roberto Fioravanti
+  16:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \n
+  17:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \n
+  18:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \par\b	History:
+  19:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \n
+  20:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \n 		00.00.00
+  21:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \n		29/03/2011
+  22:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \n		Roberto Fioravanti
+  23:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \n		changes
+  24:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \n 		- file created
+  25:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \n
+  26:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \n
+  27:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \n etc.
+  28:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+  29:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* ******** */
+  30:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* Includes */
+  31:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* ******** */
+  32:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #include "Config.h"
+  33:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #include "Analog.h"
+  34:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #include "Main.h"
+  35:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #include "LIB_Utilities.h"
+  36:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #include "LIB_GridVoltage.h"
+  37:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #include "LIB_ZeroCrossing.h"
+  38:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+  39:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_PM_ENERGY_METER_SW)
+  40:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #include "PM_EnergyMeterSw.h"
+  41:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* CONFIG_PM_ENERGY_METER_SW*/
+  42:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+  43:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_CLASS_B_DATA_INTEGRITY)
+  44:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #include "Lib_ClassBVar.h"
+  45:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* defined(CONFIG_CLASS_B_DATA_INTEGRITY) */
+  46:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* ****************** */
+  47:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* Defines and Macros */
+  48:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* ****************** */
+  49:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+  50:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if (ADC_RESOLUTION == 10)
+  51:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define EXPECTED_LIVE_PEAK_VOLTAGE_TO_ADC_10BIT(peakvoltage)	((unsigned short)( (((peakvoltage*1.41
+  52:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+  53:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if (ADC_RESOLUTION == 8)
+  54:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define EXPECTED_LIVE_PEAK_VOLTAGE_TO_ADC_8BIT(peakvoltage)	(VLINE_THEORETIC_AD_10BIT(peakvoltage)>
+  55:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+  56:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+  57:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+  58:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+  59:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+  60:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+  61:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /** 
+  62:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** @name Live task safety
+  63:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** If not needed, they can remain undefined.
+  64:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** The configuration definition is in TaskMonitor_Cfg.h
+  65:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** @{
+  66:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+  67:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if  !defined(MAIN_LIVE_TASK_TASKMONITOR_ENABLE) && !defined(CONFIG_MAIN_LIVE_TASK_TASKMONITOR_ENAB
+  68:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define START_LIVE_TASK_MONITORING()		{}
+  69:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK__MONITOR_IN()		{}
+  70:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK__MONITOR_OUT()		{}
+  71:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+  72:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /*@}*/
+  73:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+  74:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+  75:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /*  Check for the security entry definitions*/
+  76:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(START_LIVE_TASK_MONITORING)
+  77:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #error "START_LIVE_TASK_MONITORING() missing definition."
+  78:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+  79:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+  80:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(MAIN_LIVE_TASK__MONITOR_IN)
+  81:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #error "MAIN_LIVE_TASK__MONITOR_IN() missing definition."
+  82:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+  83:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+  84:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(MAIN_LIVE_TASK__MONITOR_OUT)
+  85:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #error "MAIN_LIVE_TASK__MONITOR_OUT() missing definition."
+  86:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+  87:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+  88:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /**
+  89:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** @name Debug macros
+  90:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \par Properties
+  91:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** Not mandatory. If not defined they assume the default values
+  92:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \code
+  93:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK_DEBUG                (1)
+  94:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK_DURATION             (1)
+  95:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK_DELAY_ON_ZC          (1)
+  96:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK_TUNING               (1)
+  97:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \endcode
+  98:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** @{
+  99:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(MAIN_LIVE_TASK_DEBUG)
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /** Debug enable
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \li 0: all debug features disabled
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \li 1: allows to enable the debug level for MAIN_LIVE_TASK_DURATION, MAIN_LIVE_TASK_DELAY_ON_ZC
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** MAIN_LIVE_TASK_TUNING
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK_DEBUG                (1)
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(MAIN_LIVE_TASK_DURATION)
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /** Measurement of the duration of the task
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \li 0: disabled
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \li 1: enabled
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK_DURATION             (1)
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(MAIN_LIVE_TASK_DELAY_ON_ZC)
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /** delay of the activation of the task in [us] */
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK_DELAY_ON_ZC          (1)
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(MAIN_LIVE_TASK_TUNING)
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /** correction of the delay of the activation of the task in [us] */
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define MAIN_LIVE_TASK_TUNING               (1)
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /*@}*/
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** @name Tuning macros
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \par Properties
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** Not mandatory. If not defined it assumes the default value
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \code
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define LIVE_OFFSET_ACTIVATION         (0)
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \endcode
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \attention Used only if \ref MAIN_LIVE_TASK_DEBUG is defined as 0.
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** @{
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #ifndef LIVE_OFFSET_ACTIVATION
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /** Live task activation delay correction in [us] */
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define LIVE_OFFSET_ACTIVATION             (0)
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif  /* LIVE_OFFSET_DEFAULT */
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /*@}*/
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define LIVE_TASK__LIVE_AWG_SAMPLES         (1<<LIVE_TASK__LIVE_AWG_SAMPLES_POF2)
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define V_LINE_UNDER_TH_FILTER              5
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if V_LINE_UNDER_TH_FILTER >= 255
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #error "V_LINE_UNDER_TH_FILTER >= 255"
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* V_LINE_UNDER_TH_FILTER >= 255*/
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* *************************** */
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* Typedef, Structs and Unions */
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* *************************** */
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** typedef struct
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	Main_LivePeakMeasureADCType LastSample;
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	uint8_t LiveUnderThCnt;
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** } Main_LiveFilterType;
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** typedef struct
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(LIVE_TASK__ADC_LIVE_TO_RMS_CONVERSION)
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	Main_LiveRMSType   Vrms;
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* defined(LIVE_TASK__ADC_LIVE_TO_RMS_CONVERSION) */
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	uint16_t  AverageValue;
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	int16_t   AverageIndex;
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	uint8_t   AverageSamplesCount;
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** } Main_LiveType;
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /*
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** Parameter for delay on ZC
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** It is the delay on ZC in system cycles (OS_NANOSECS_TO_SYSTEMTIMERCYCLES())
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** typedef struct
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	OS_U32 min;
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	OS_U32 max;
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** }MainLiveDelayOnZCParamType;
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* score (kind of correlation index) to state if delay on ZC measurement is in range and reliable *
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** typedef struct Score_s
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	OS_I8	score;
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	OS_I8	eScore;
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** } MainLive_ScoreType;
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* **************************** */
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* Prototype of local functions */
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* **************************** */
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* ********* */
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* Variables */
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* ********* */
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* Global */
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* Static */
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** @name Service variables
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** @{
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY)
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /** Task Stack */
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static STACK_SEC OS_STACKPTR int      Main_MeasureLiveTaskStack[CONFIG_MAIN_MEASURELIVE_TASK_STACK_
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /** Task Control Block*/
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static OS_TASK              Main_MeasureLiveTaskTCB;
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /** high resolution Alarm */
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static OS_ALARM             Main_AlmMeasureLive;
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif  /* defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY) */
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(LIVE_TASK__ADC_LIVE_TO_RMS_CONVERSION)  
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /** Sema */
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static OS_RSEMA             LiveSema;
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static Main_LiveFilterType  Main_LiveFilter = {0};
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static Main_LiveType        Main_Live = {0};
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /*@}*/
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_MAIN_LIVE_DELAY_ON_ZC)
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /*  timing for the measurement of the delay to ZC  */
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static  TOOLS_TIMING        			LiveDelayOnZC;
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* Number of updates for normal feedbacks :
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****  * free runner counter incremented from -128 up to 127 each task execution
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****  * */
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static	MainLive_ScoreType				MainLiveDelayOnZC_Score; /*score*/
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* Max and min delay in ZC in ns*/
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static const MainLiveDelayOnZCParamType MainLiveDelayOnZCParam =
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		OS_NANOSECS_TO_SYSTEMTIMERCYCLES(CONFIG_MAIN_LIVE_DELAY_ZC_ADV_MIN_VALUE*1000),
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		OS_NANOSECS_TO_SYSTEMTIMERCYCLES(CONFIG_MAIN_LIVE_DELAY_ZC_ADV_MAX_VALUE*1000)
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** };
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif  /* MAIN_FEEDBACKS_TASK_DELAY_ON_ZC */
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** @name Debug variables
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** @{
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY)
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if     MAIN_LIVE_TASK_DEBUG
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if     MAIN_LIVE_TASK_DELAY_ON_ZC
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /** task delay in [us]
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \attention Available only if \ref MAIN_LIVE_TASK_DEBUG and \ref MAIN_LIVE_TASK_DELAY_ON_ZC are
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** defined as 1.
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 268:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static  TOOLS_TIMING        MainLiveTaskDelayOnZC;
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static  TOOLS_TIMING_STATS  MainLiveTaskDelayOnZCStat;
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif  /* MAIN_LIVE_TASK_DELAY_ON_ZC */
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if     MAIN_LIVE_TASK_DURATION
+ 273:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /** task duration in [us]
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \attention Available only if \ref MAIN_LIVE_TASK_DEBUG and \ref MAIN_LIVE_TASK_DURATION are
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** defined as 1.
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static  TOOLS_TIMING        MainLiveTaskDuration;
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /** statistics about task duration [us]
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \attention Available only if \ref MAIN_LIVE_TASK_DEBUG and \ref MAIN_LIVE_TASK_DURATION are
+ 280:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** defined as 1.
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 282:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static  TOOLS_TIMING_STATS  MainLiveTaskDurationStat;
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif  /* MAIN_LIVE_TASK_DURATION */
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 286:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if     MAIN_LIVE_TASK_TUNING
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /** task delay correction in [us]
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \attention Available only if \ref MAIN_LIVE_TASK_DEBUG and \ref MAIN_LIVE_TASK_TUNING are
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** defined as 1.
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static  OS_I32              MainLiveTaskTuning;
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* MAIN_LIVE_TASK_TUNING */
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif  /* MAIN_LIVE_TASK_DEBUG */
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif  /* !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY) */
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 297:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /*@}*/
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY)
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static Main_SequencerActivityType LiveActivity;
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY) */
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 302:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* ******************* */
+ 303:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* Functions Prototype */
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* ******************* */
+ 305:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 306:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* Exported function */
+ 307:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 308:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 309:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* Local Function */
+ 310:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY)
+ 311:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_LiveTask ( void );
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static OS_ALARMROUTINE AlmMeasureLiveCallback;
+ 313:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 314:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if     MAIN_LIVE_TASK_DEBUG   &&   MAIN_LIVE_TASK_DELAY_ON_ZC
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_LiveTask_DelayOnZC_Init ( void );
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_LiveTask_DelayOnZC_SetRef ( void );
+ 318:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_LiveTask_DelayOnZC_GetTiming ( void );
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #else
+ 320:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_LiveTask_DelayOnZC_Init()
+ 321:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_LiveTask_DelayOnZC_SetRef()
+ 322:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_LiveTask_DelayOnZC_GetTiming()
+ 323:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* MAIN_LIVE_TASK_DEBUG   &&   MAIN_LIVE_TASK_DELAY_ON_ZC */
+ 324:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 325:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 326:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if     MAIN_LIVE_TASK_DEBUG   &&   MAIN_LIVE_TASK_DURATION
+ 327:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_LiveTask_Duration_Init ( void );
+ 328:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_LiveTask_Duration_Start ( void );
+ 329:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_LiveTask_Duration_End ( void );
+ 330:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #else
+ 331:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_LiveTask_Duration_Init()
+ 332:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_LiveTask_Duration_Start()
+ 333:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_LiveTask_Duration_End()
+ 334:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* MAIN_LIVE_TASK_DEBUG   &&   MAIN_LIVE_TASK_DURATION */
+ 335:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 336:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 337:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if     MAIN_LIVE_TASK_DEBUG   &&   MAIN_LIVE_TASK_TUNING
+ 338:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_LiveTask_Tuning_Init ( void );
+ 339:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static OS_I32 Main_LiveTask_Tuner ( OS_U32 usOffset );
+ 340:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #else
+ 341:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_LiveTask_Tuning_Init()
+ 342:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_LiveTask_Tuner(dummy)      ((OS_I32)LIVE_OFFSET_ACTIVATION)
+ 343:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* MAIN_LIVE_TASK_DEBUG   &&   MAIN_LIVE_TASK_TUNING */
+ 344:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY) */
+ 345:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 346:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_MAIN_LIVE_DELAY_ON_ZC) && defined(CONFIG_CLASS_B_DATA_INTEGRITY)
+ 347:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_Live_DelayOnZCProcess( void );
+ 348:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY)
+ 349:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** static void Main_Live_DelayOnZC_Init ( void );
+ 350:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 351:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #else
+ 352:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_Live_DelayOnZCProcess()
+ 353:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #define Main_Live_DelayOnZC_Init()
+ 354:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 355:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 356:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* *************** */
+ 357:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* Function Bodies */
+ 358:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* *************** */
+ 359:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 360:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /* Exported function */
+ 361:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 362:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 363:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** Live initialization. It creates the task Main_LiveTask and alarm Main_AlmMeasureLive.
+ 364:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 365:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** void Main_LiveInit ( void )
+ 366:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 367:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(LIVE_TASK__ADC_LIVE_TO_RMS_CONVERSION)  
+ 368:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	OS_CREATERSEMA(&LiveSema);
+ 369:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 370:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     
+ 371:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY)
+ 372:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     OS_CREATETASK ( &Main_MeasureLiveTaskTCB,
+ 373:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 					"LiveTask",
+ 374:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 					Main_LiveTask,
+ 375:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 					( OS_U8 ) MAIN_LIVE_TASK_PRIORITY,
+ 376:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 					Main_MeasureLiveTaskStack );
+ 377:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	
+ 378:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	OS_CreateAlarm ( &Main_AlmMeasureLive, AlmMeasureLiveCallback, 0, 0 );
+ 379:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     Main_LiveTask_DelayOnZC_Init();
+ 380:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	Main_LiveTask_Duration_Init();
+ 381:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	Main_LiveTask_Tuning_Init();
+ 382:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #else
+ 383:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     Main_AddSequencerActivity ( &LiveActivity, Main_LiveMeasure );
+ 384:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif	
+ 385:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 386:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_MAIN_LIVE_DELAY_ON_ZC) && defined(CONFIG_CLASS_B_DATA_INTEGRITY)
+ 387:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     SAFETY_REGION_START();
+ 388:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****    	SAFETY_DATA_UPDATE(LiveDelayOnZC );
+ 389:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****    	SAFETY_DATA_UPDATE(MainLiveDelayOnZC_Score);
+ 390:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****    	SAFETY_REGION_END();
+ 391:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 392:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** }
+ 393:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 394:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** Returns Live rms value
+ 395:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 396:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(LIVE_TASK__ADC_LIVE_TO_RMS_CONVERSION)
+ 397:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** Main_LiveRMSType Main_GetLiveValue_Rms(void)
+ 398:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 399:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     Main_LiveRMSType tmp;
+ 400:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     
+ 401:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     OS_Use(&LiveSema);
+ 402:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     tmp = Main_Live.Vrms;
+ 403:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     OS_Unuse(&LiveSema);
+ 404:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     return tmp;
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** }
+ 406:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif  /* defined(LIVE_TASK__ADC_LIVE_TO_RMS_CONVERSION) */
+ 407:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 408:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** Sets the Alarm on high resolution timer for Live Task
+ 409:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 410:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \param [in] usOffset alarm expiration in microseconds
+ 411:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \param [in] TickRef raw time reference in ticks
+ 412:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 413:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 414:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \author 	Roberto Fioravanti
+ 415:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \date		29/03/2011
+ 416:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \version	1.0.0
+ 417:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 418:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY)
+ 419:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** void Main_ScheduleMeasureLive ( OS_U32 usOffset, OS_U32 TickRef )
+ 420:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 421:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     OS_ALARM_TICK ref = (OS_ALARM_TICK)TickRef;
+ 422:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	usOffset += Main_LiveTask_Tuner ( usOffset );
+ 423:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	OS_START_ABSALARM_ONESHOT ( &Main_AlmMeasureLive, usOffset, &ref );
+ 424:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	Main_LiveTask_DelayOnZC_SetRef();
+ 425:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** }
+ 426:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* !defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY) */
+ 427:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 428:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 429:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** Sets the Alarm on high resolution timer for Live Task
+ 430:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 431:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \param [in] usOffset alarm expiration in microseconds
+ 432:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \param [in] TickRef raw time reference in ticks
+ 433:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 434:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 435:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \author 	Roberto Fioravanti
+ 436:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \date		29/03/2011
+ 437:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \version	1.0.0
+ 438:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 439:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_MAIN_LIVE_MEASURE_AS_ACTIVITY)
+ 440:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** void Main_MeasureLive_SetSequencerProfile ( Main_SequencerProfileType profile  )
+ 441:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 442:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     LiveActivity.profile = profile;
+ 443:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** }
+ 444:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 445:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 446:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** Returns the ADC live peak value
+ 447:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \return ADC_ValueType
+ 448:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \retval ADC sample of live peak.
+ 449:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 450:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** ADC_ValueType Main_GetLivePeakValueADC ( void )
+ 451:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 452:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	return Main_LiveFilter.LastSample;
+ 453:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** }
+ 454:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 455:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 456:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** Live peak acquisition
+ 457:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 458:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** void Main_LiveMeasure(void)
+ 459:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** {
+  10                             		.loc 1 459 0
+  11 0000 7E A7                   		push.l	r7
+  12                             	.LCFI0:
+  13 0002 60 40                   		sub	#4, r0
+  14                             	.LCFI1:
+ 460:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     Main_LivePeakMeasureADCType LivePeakADC;
+ 461:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_LIB_ADC_CALIBRATION)
+ 462:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	struct Loader CalibrationDataPtr_ElectSupp;
+ 463:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 464:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 465:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     Main_Live_DelayOnZCProcess();
+ 466:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     if ( LIB_ADC_VLineMeasure ( &LivePeakADC ) == TRUE )
+  15                             		.loc 1 466 0
+  16 0004 EF 01                   		mov.L	r0, r1
+  17 0006 05 00 00 00             		bsr	_LIB_ADC_VLineMeasure
+  18                             	.LVL0:
+  19 000a 61 11                   		cmp	#1, r1
+  20 000c 21 0C                   		bne	.L2
+ 467:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     {
+ 468:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****         /* LIVE channel not present: suspend task */
+ 469:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined (CONFIG_MAIN_LIVE_UPDATE_ZC_LINE_VOLTAGE)
+ 470:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****         LIB_ZC_SetLineVoltageParams(FALSE, LivePeakADC);
+  21                             		.loc 1 470 0
+  22 000e 66 01                   		mov.L	#0, r1
+  23                             	.LVL1:
+  24 0010 DC 02                   		mov.W	[r0], r2
+  25 0012 05 00 00 00             		bsr	_LIB_ZC_SetLineVoltageParams
+  26                             	.LVL2:
+  27 0016 2E 46                   		bra	.L1
+  28                             	.LVL3:
+  29                             	.L2:
+ 471:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 472:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     }
+ 473:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     else
+ 474:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     {
+ 475:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined (CONFIG_MAIN_LIVE_UPDATE_ZC_LINE_VOLTAGE)
+ 476:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****         LIB_ZC_SetLineVoltageParams(TRUE, LivePeakADC);
+  30                             		.loc 1 476 0
+  31 0018 66 11                   		mov.L	#1, r1
+  32                             	.LVL4:
+  33 001a DC 02                   		mov.W	[r0], r2
+  34 001c 05 00 00 00             		bsr	_LIB_ZC_SetLineVoltageParams
+  35                             	.LVL5:
+ 477:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 478:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 479:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_LIB_ADC_VLINE_CALIBRATION)
+ 480:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	if (LIB_CAL_GetCalibData(ID_CAL_PNTR_ELECT_SUPP, &CalibrationDataPtr_ElectSupp) == BSLDR_OK)
+ 481:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	{
+ 482:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		if (CalibrationDataPtr_ElectSupp.Data[CONFIG_LIB_CAL_VLINE_MEASR_OFFS] != 0)
+ 483:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		{
+ 484:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 			/* Data available for calibration */
+ 485:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 			LivePeakADC = (ADC_ValueType)(((uint32_t)LivePeakADC * CalibrationDataPtr_ElectSupp.Data[CONFIG_
+ 486:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		}
+ 487:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	}
+ 488:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* defined(CONFIG_LIB_ADC_VLINE_CALIBRATION) */
+ 489:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 490:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(LIVE_TASK__ADC_LIVE_TO_RMS_CONVERSION)
+ 491:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****         OS_Use(&LiveSema);
+  36                             		.loc 1 491 0
+  37 0020 FB 12 00 00 00 00       		mov.L	#_LiveSema, r1
+  38 0026 05 00 00 00             		bsr	_OS_Use
+  39                             	.LVL6:
+ 492:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****         Main_Live.Vrms = LIB_GV_getRMS_Vac ( LivePeakADC );
+  40                             		.loc 1 492 0
+  41 002a DC 01                   		mov.W	[r0], r1
+  42 002c 05 00 00 00             		bsr	_LIB_GV_getRMS_Vac
+  43                             	.LVL7:
+  44 0030 FB 72 00 00 00 00       		mov.L	#_Main_Live, r7
+  45 0036 D3 71                   		mov.W	r1, [r7]
+ 493:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****         OS_Unuse(&LiveSema);
+  46                             		.loc 1 493 0
+  47 0038 FB 12 00 00 00 00       		mov.L	#_LiveSema, r1
+  48 003e 05 00 00 00             		bsr	_OS_Unuse
+  49                             	.LVL8:
+ 494:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* defined(LIVE_TASK__ADC_LIVE_TO_RMS_CONVERSION) */
+ 495:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****         Main_LiveFilter.LastSample = LivePeakADC;
+  50                             		.loc 1 495 0
+  51 0042 DC 01                   		mov.W	[r0], r1
+  52 0044 FB 72 00 00 00 00       		mov.L	#_Main_LiveFilter, r7
+  53 004a D3 71                   		mov.W	r1, [r7]
+ 496:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****         if ( LIB_GV_CheckNominalVoltage ( LivePeakADC ) == TRUE )
+  54                             		.loc 1 496 0
+  55 004c 05 00 00 00             		bsr	_LIB_GV_CheckNominalVoltage
+  56                             	.LVL9:
+  57 0050 61 11                   		cmp	#1, r1
+  58 0052 1C                      		bne	.L4
+ 497:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****         {
+ 498:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****             {
+ 499:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****                 Main_LiveFilter.LiveUnderThCnt = 0;
+  59                             		.loc 1 499 0
+  60 0053 3C 72 00                		mov.B	#0, 2[r7]
+  61                             		.balign 2,3,3
+  62                             	.L4:
+ 500:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****             }
+ 501:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****         }
+ 502:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_PM_ENERGY_METER_SW)
+ 503:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****         PowerMeter_SetInstant_V((uint32_t)LivePeakADC);
+  63                             		.loc 1 503 0
+  64 0056 5C 01                   		movu.W	[r0], r1
+  65 0058 05 00 00 00             		bsr	_PowerMeter_SetInstant_V
+  66                             	.LVL10:
+  67                             		.balign 2,3,2
+  68                             	.L1:
+ 504:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* CONFIG_PM_ENERGY_METER_SW*/
+ 505:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 506:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if defined(CONFIG_MAIN_LIVE_AVERAGE_GRID_PERIOD)
+ 507:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****         LIB_ZC_PeriodoReteMedioManager();
+ 508:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif /* defined(CONFIG_MAIN_LIVE_AVERAGE_GRID_PERIOD) */
+ 509:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 510:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****         LIVE_TASK__LIVE_PROCESSING()
+ 511:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     }
+ 512:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** }
+  69                             		.loc 1 512 0
+  70 005c 3F 77 02                		rtsd	#8, r7-r7
+  71                             	.LFE4:
+  73 005f 03                      		.section	.text.Main_LiveInit,"ax",@progbits
+  74                             		.global	_Main_LiveInit
+  76                             	_Main_LiveInit:
+  77                             	.LFB0:
+ 366:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** {
+  78                             		.loc 1 366 0
+ 368:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	OS_CREATERSEMA(&LiveSema);
+  79                             		.loc 1 368 0
+  80 0000 FB 12 00 00 00 00       		mov.L	#_LiveSema, r1
+  81 0006 05 00 00 00             		bsr	_OS_CreateRSema
+  82                             	.LVL11:
+ 383:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     Main_AddSequencerActivity ( &LiveActivity, Main_LiveMeasure );
+  83                             		.loc 1 383 0
+  84 000a FB 12 00 00 00 00       		mov.L	#_LiveActivity, r1
+  85 0010 FB 22 00 00 00 00       		mov.L	#_Main_LiveMeasure, r2
+  86 0016 04 00 00 00             		bra	_Main_AddSequencerActivity
+  87                             	.LVL12:
+  88                             	.LFE0:
+  90                             		.section	.text.Main_GetLiveValue_Rms,"ax",@progbits
+  91                             		.global	_Main_GetLiveValue_Rms
+  93                             	_Main_GetLiveValue_Rms:
+  94                             	.LFB1:
+ 398:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** {
+  95                             		.loc 1 398 0
+  96 0000 7E A7                   		push.l	r7
+  97                             	.LCFI2:
+ 401:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     OS_Use(&LiveSema);
+  98                             		.loc 1 401 0
+  99 0002 FB 12 00 00 00 00       		mov.L	#_LiveSema, r1
+ 100 0008 05 00 00 00             		bsr	_OS_Use
+ 101                             	.LVL13:
+ 402:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     tmp = Main_Live.Vrms;
+ 102                             		.loc 1 402 0
+ 103 000c FB 72 00 00 00 00       		mov.L	#_Main_Live, r7
+ 104 0012 DC 77                   		mov.W	[r7], r7
+ 105                             	.LVL14:
+ 403:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     OS_Unuse(&LiveSema);
+ 106                             		.loc 1 403 0
+ 107 0014 FB 12 00 00 00 00       		mov.L	#_LiveSema, r1
+ 108 001a 05 00 00 00             		bsr	_OS_Unuse
+ 109                             	.LVL15:
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** }
+ 110                             		.loc 1 405 0
+ 111 001e DF 71                   		mov.W	r7, r1
+ 112 0020 3F 77 01                		rtsd	#4, r7-r7
+ 113                             	.LFE1:
+ 115                             		.section	.text.Main_MeasureLive_SetSequencerProfile,"ax",@progbits
+ 116                             		.global	_Main_MeasureLive_SetSequencerProfile
+ 118                             	_Main_MeasureLive_SetSequencerProfile:
+ 119                             	.LFB2:
+ 441:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 120                             		.loc 1 441 0
+ 121                             	.LVL16:
+ 442:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c ****     LiveActivity.profile = profile;
+ 122                             		.loc 1 442 0
+ 123 0000 FB E2 00 00 00 00       		mov.L	#_LiveActivity, r14
+ 124 0006 C7 E1 08                		mov.B	r1, 8[r14]
+ 125 0009 02                      		rts
+ 126                             	.LFE2:
+ 128                             		.section	.text.Main_GetLivePeakValueADC,"ax",@progbits
+ 129                             		.global	_Main_GetLivePeakValueADC
+ 131                             	_Main_GetLivePeakValueADC:
+ 132                             	.LFB3:
+ 451:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 133                             		.loc 1 451 0
+ 453:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** }
+ 134                             		.loc 1 453 0
+ 135 0000 FB E2 00 00 00 00       		mov.L	#_Main_LiveFilter, r14
+ 136 0006 5C E1                   		movu.W	[r14], r1
+ 137 0008 02                      		rts
+ 138                             	.LFE3:
+ 140                             		.section	.text.Main_AvgIndexManager,"ax",@progbits
+ 141                             		.global	_Main_AvgIndexManager
+ 143                             	_Main_AvgIndexManager:
+ 144                             	.LFB5:
+ 513:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 514:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 
+ 515:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** /**
+ 516:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** Computes average index of Live peak with LIVE_TASK__LIVE_AWG_SAMPLES samples.
+ 517:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** \param [in] ADC_LivePeakValue ADC peak value
+ 518:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** */
+ 519:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** void Main_AvgIndexManager ( ADC_ValueType ADC_LivePeakValue )
+ 520:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** {
+ 145                             		.loc 1 520 0
+ 146                             	.LVL17:
+ 147 0000 6E 7A                   		pushm	r7-r10
+ 148                             	.LCFI3:
+ 521:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	if ( Main_Live.AverageSamplesCount++ < LIVE_TASK__LIVE_AWG_SAMPLES )
+ 149                             		.loc 1 521 0
+ 150 0002 FB 72 00 00 00 00       		mov.L	#_Main_Live, r7
+ 151 0008 59 7E 06                		movu.B	6[r7], r14
+ 152 000b 71 E4 01                		add	#1, r14, r4
+ 153 000e 81 F4                   		mov.B	r4, 6[r7]
+ 154 0010 75 5E 3F                		cmp	#63, r14
+ 155 0013 24 0A                   		bgtu	.L12
+ 522:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	{
+ 523:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		Main_Live.AverageValue += ADC_LivePeakValue;
+ 156                             		.loc 1 523 0
+ 157 0015 06 49 71 01             		add	2[r7].W, r1
+ 158                             	.LVL18:
+ 159 0019 90 79                   		mov.W	r1, 2[r7]
+ 160 001b 2E 2B                   		bra	.L11
+ 161                             	.LVL19:
+ 162                             	.L12:
+ 524:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	}
+ 525:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	else
+ 526:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	{
+ 527:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if ADC_RESOLUTION == 10
+ 528:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	
+ 529:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		if ( LIB_GV_GetNominalGridVoltage() )
+ 163                             		.loc 1 529 0
+ 164 001d 05 00 00 00             		bsr	_LIB_GV_GetNominalGridVoltage
+ 165                             	.LVL20:
+ 166 0021 5B 11                   		movu.B	r1, r1
+ 167 0023 5D 7E 01                		movu.W	2[r7], r14
+ 168 0026 61 01                   		cmp	#0, r1
+ 169 0028 17                      		beq	.L14
+ 530:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		{
+ 531:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 			Main_Live.AverageIndex = (int16_t) (Main_Live.AverageValue / EXPECTED_LIVE_PEAK_VOLTAGE_TO_ADC_1
+ 170                             		.loc 1 531 0
+ 171 0029 FD 78 9E A5 01          		divu	#0x1a5, r14
+ 172 002e 0E                      		bra	.L17
+ 173                             	.L14:
+ 532:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		}
+ 533:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		else
+ 534:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		{
+ 535:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 			Main_Live.AverageIndex = (int16_t) ((Main_Live.AverageValue / EXPECTED_LIVE_PEAK_VOLTAGE_TO_ADC_
+ 174                             		.loc 1 535 0
+ 175 002f FD 78 9E 51 03          		divu	#0x351, r14
+ 176                             		.balign 2,3,2
+ 177                             	.L17:
+ 178 0034 71 EE C0                		add	#-64, r14
+ 179 0037 D7 7E 02                		mov.W	r14, 4[r7]
+ 536:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		}
+ 537:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		
+ 538:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 539:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #if ADC_RESOLUTION == 8
+ 540:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		
+ 541:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		if ( LIB_GV_GetNominalGridVoltage() )
+ 542:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		{
+ 543:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 			Main_Live.AverageIndex = Main_Live.AverageValue / EXPECTED_LIVE_PEAK_VOLTAGE_TO_ADC_8BIT ( 110 )
+ 544:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		}
+ 545:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		else
+ 546:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		{
+ 547:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 			Main_Live.AverageIndex = Main_Live.AverageValue / EXPECTED_LIVE_PEAK_VOLTAGE_TO_ADC_8BIT ( 230 )
+ 548:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		}
+ 549:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		
+ 550:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** #endif
+ 551:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		Main_Live.AverageSamplesCount = 0;
+ 180                             		.loc 1 551 0
+ 181 003a FB 72 00 00 00 00       		mov.L	#_Main_Live, r7
+ 182 0040 3C 76 00                		mov.B	#0, 6[r7]
+ 552:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 		Main_Live.AverageValue = 0;
+ 183                             		.loc 1 552 0
+ 184 0043 3D 71 00                		mov.W	#0, 2[r7]
+ 185                             		.balign 2,3,2
+ 186                             	.L11:
+ 553:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** 	}
+ 554:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_MeasureLIVE.c **** }
+ 187                             		.loc 1 554 0
+ 188 0046 3F 7A 04                		rtsd	#16, r7-r10
+ 189                             	.LFE5:
+ 191 0049 03                      		.section	.bss.LiveSema,"aw",@nobits
+ 192                             		.balign 4
+ 195                             	_LiveSema:
+ 196 0000 00 00 00 00 00 00 00 00 		.zero	16
+ 196      00 00 00 00 00 00 00 00 
+ 197                             		.section	.bss.LiveActivity,"aw",@nobits
+ 198                             		.balign 4
+ 201                             	_LiveActivity:
+ 202 0000 00 00 00 00 00 00 00 00 		.zero	16
+ 202      00 00 00 00 00 00 00 00 
+ 203                             		.section	.bss.Main_Live,"aw",@nobits
+ 204                             		.balign 2
+ 207                             	_Main_Live:
+ 208 0000 00 00 00 00 00 00 00 00 		.zero	8
+ 209                             		.section	.bss.Main_LiveFilter,"aw",@nobits
+ 210                             		.balign 2
+ 213                             	_Main_LiveFilter:
+ 214 0000 00 00 00 00             		.zero	4
+ 309                             	.Letext0:
+ 310                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 311                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 312                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_EnergyMeterSw/PM_EnergyMete
+ 313                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Drivers\\OCADC/OCADC_drv.h"
+ 314                             		.file 6 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Main\\EmbOS\\Services\\ActivityList/Main_Activ
+ 315                             		.file 7 "C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS/MainInterface.h"
+ 316                             		.file 8 "C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS/Main.h"
+ 317                             		.file 9 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_Analog/Analog.h"
+ 318                             		.file 10 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_GridVoltage/LIB_GridVolt
+ 319                             		.file 11 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_ZeroCrossing/LIB_ZeroCro
+DEFINED SYMBOLS
+                            *ABS*:00000000 Main_MeasureLIVE.c
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:7      .text.Main_LiveMeasure:00000000 _Main_LiveMeasure
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:11     .text.Main_LiveMeasure:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:195    .bss.LiveSema:00000000 _LiveSema
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:207    .bss.Main_Live:00000000 _Main_Live
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:213    .bss.Main_LiveFilter:00000000 _Main_LiveFilter
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:76     .text.Main_LiveInit:00000000 _Main_LiveInit
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:80     .text.Main_LiveInit:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:201    .bss.LiveActivity:00000000 _LiveActivity
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:93     .text.Main_GetLiveValue_Rms:00000000 _Main_GetLiveValue_Rms
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:96     .text.Main_GetLiveValue_Rms:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:118    .text.Main_MeasureLive_SetSequencerProfile:00000000 _Main_MeasureLive_SetSequencerProfile
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:123    .text.Main_MeasureLive_SetSequencerProfile:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:131    .text.Main_GetLivePeakValueADC:00000000 _Main_GetLivePeakValueADC
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:135    .text.Main_GetLivePeakValueADC:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:143    .text.Main_AvgIndexManager:00000000 _Main_AvgIndexManager
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:147    .text.Main_AvgIndexManager:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:216    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:8      .text.Main_LiveMeasure:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:77     .text.Main_LiveInit:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:94     .text.Main_GetLiveValue_Rms:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:119    .text.Main_MeasureLive_SetSequencerProfile:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:132    .text.Main_GetLivePeakValueADC:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:144    .text.Main_AvgIndexManager:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:1504   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2216   .debug_str:00000029 .LASF99
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2390   .debug_str:00000511 .LASF100
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2194   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2210   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2410   .debug_str:000005ce .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2234   .debug_str:000000dc .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2336   .debug_str:0000039e .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2342   .debug_str:000003bd .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2332   .debug_str:00000388 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2370   .debug_str:0000046a .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2302   .debug_str:0000028e .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2328   .debug_str:0000034c .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2292   .debug_str:00000238 .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2264   .debug_str:00000175 .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2316   .debug_str:000002ed .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2228   .debug_str:0000009d .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2326   .debug_str:00000340 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2356   .debug_str:00000414 .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2334   .debug_str:00000391 .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2258   .debug_str:00000156 .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2310   .debug_str:000002c6 .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2404   .debug_str:000005a6 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2238   .debug_str:000000ed .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2420   .debug_str:0000061a .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2378   .debug_str:000004a1 .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2314   .debug_str:000002e1 .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2386   .debug_str:000004f2 .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2250   .debug_str:0000012d .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2288   .debug_str:00000214 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2212   .debug_str:00000000 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2296   .debug_str:00000261 .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2284   .debug_str:000001fb .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2392   .debug_str:00000556 .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2344   .debug_str:000003d0 .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2240   .debug_str:000000f6 .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2226   .debug_str:00000094 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2236   .debug_str:000000e6 .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2262   .debug_str:0000016b .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2248   .debug_str:00000128 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2374   .debug_str:0000048b .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2272   .debug_str:000001ba .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2218   .debug_str:0000004f .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2254   .debug_str:00000140 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2408   .debug_str:000005ba .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2278   .debug_str:000001dd .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2220   .debug_str:0000005e .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2400   .debug_str:00000596 .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2376   .debug_str:00000495 .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2280   .debug_str:000001e3 .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2380   .debug_str:000004ae .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2322   .debug_str:00000320 .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2402   .debug_str:0000059c .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2298   .debug_str:00000267 .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2352   .debug_str:000003fa .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2382   .debug_str:000004cc .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2300   .debug_str:0000027e .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2304   .debug_str:00000297 .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2242   .debug_str:000000fb .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2256   .debug_str:0000014d .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2308   .debug_str:000002b3 .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2320   .debug_str:0000030c .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2266   .debug_str:0000017d .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2406   .debug_str:000005b1 .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2362   .debug_str:0000042e .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2388   .debug_str:000004f7 .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2346   .debug_str:000003d8 .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2244   .debug_str:00000102 .LASF62
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2416   .debug_str:000005fb .LASF63
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2270   .debug_str:000001a0 .LASF64
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2230   .debug_str:000000a4 .LASF65
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2412   .debug_str:000005d6 .LASF66
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2348   .debug_str:000003ea .LASF67
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2414   .debug_str:000005f3 .LASF68
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2338   .debug_str:000003a7 .LASF69
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2290   .debug_str:0000021c .LASF70
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2318   .debug_str:000002fb .LASF71
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2252   .debug_str:00000135 .LASF72
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2372   .debug_str:0000047c .LASF73
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2366   .debug_str:00000449 .LASF74
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2282   .debug_str:000001f6 .LASF75
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2368   .debug_str:0000045d .LASF76
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2276   .debug_str:000001d0 .LASF77
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2306   .debug_str:0000029f .LASF78
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2260   .debug_str:0000015d .LASF79
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2224   .debug_str:00000083 .LASF80
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:71     .text.Main_LiveMeasure:0000005f .LFE4
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2089   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2274   .debug_str:000001c4 .LASF82
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2107   .debug_loc:0000002c .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2384   .debug_str:000004d5 .LASF101
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:18     .text.Main_LiveMeasure:0000000a .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:26     .text.Main_LiveMeasure:00000016 .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:35     .text.Main_LiveMeasure:00000020 .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:39     .text.Main_LiveMeasure:0000002a .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:43     .text.Main_LiveMeasure:00000030 .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:49     .text.Main_LiveMeasure:00000042 .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:56     .text.Main_LiveMeasure:00000050 .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:66     .text.Main_LiveMeasure:0000005c .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2394   .debug_str:00000560 .LASF81
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:88     .text.Main_LiveInit:0000001a .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:82     .text.Main_LiveInit:0000000a .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:87     .text.Main_LiveInit:0000001a .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2312   .debug_str:000002cb .LASF102
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:113    .text.Main_GetLiveValue_Rms:00000023 .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2120   .debug_loc:0000004c .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:101    .text.Main_GetLiveValue_Rms:0000000c .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:109    .text.Main_GetLiveValue_Rms:0000001e .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2330   .debug_str:00000363 .LASF83
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:126    .text.Main_MeasureLive_SetSequencerProfile:0000000a .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2324   .debug_str:00000327 .LASF103
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:138    .text.Main_GetLivePeakValueADC:00000009 .LFE3
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2354   .debug_str:000003ff .LASF84
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:189    .text.Main_AvgIndexManager:00000049 .LFE5
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2133   .debug_loc:0000006c .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2286   .debug_str:00000202 .LASF85
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2146   .debug_loc:0000008c .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:165    .text.Main_AvgIndexManager:00000021 .LVL20
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2358   .debug_str:0000041b .LASF86
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2398   .debug_str:00000586 .LASF87
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2360   .debug_str:00000424 .LASF88
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2364   .debug_str:0000043c .LASF89
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2418   .debug_str:00000605 .LASF90
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2222   .debug_str:00000067 .LASF93
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2350   .debug_str:000003f3 .LASF91
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2246   .debug_str:00000116 .LASF92
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2340   .debug_str:000003b4 .LASF94
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2294   .debug_str:00000246 .LASF95
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2396   .debug_str:0000056e .LASF96
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2268   .debug_str:00000191 .LASF97
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2214   .debug_str:0000000f .LASF98
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:2232   .debug_str:000000bf .LASF104
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:12     .text.Main_LiveMeasure:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:14     .text.Main_LiveMeasure:00000004 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:23     .text.Main_LiveMeasure:00000010 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:28     .text.Main_LiveMeasure:00000018 .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:32     .text.Main_LiveMeasure:0000001a .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:97     .text.Main_GetLiveValue_Rms:00000002 .LCFI2
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:148    .text.Main_AvgIndexManager:00000002 .LCFI3
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:146    .text.Main_AvgIndexManager:00000000 .LVL17
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:158    .text.Main_AvgIndexManager:00000019 .LVL18
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:161    .text.Main_AvgIndexManager:0000001d .LVL19
+C:\Users\Andrea\AppData\Local\Temp\ccB3NUUQ.s:321    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_LIB_ADC_VLineMeasure
+_LIB_ZC_SetLineVoltageParams
+_OS_Use
+_LIB_GV_getRMS_Vac
+_OS_Unuse
+_LIB_GV_CheckNominalVoltage
+_PowerMeter_SetInstant_V
+_OS_CreateRSema
+_Main_AddSequencerActivity
+_LIB_GV_GetNominalGridVoltage

@@ -1,0 +1,162 @@
+/**
+\defgroup	PM_LinkedLoads
+@{
+\n			The aim of this module is the management of linked loads, which is the union of entities seen as loads.
+\n          The phrase 'linked loads' includes all loads such as 
+            \li digital delayed (DD)
+            \li triac + relay   (TR)
+            \li relay + triac   (RT)
+            \li relay + load    (RR)
+
+\n          'Digital Delayed' loads require a single pin. The second entity is dummy.
+\n          'Triac + Relay' and 'Relay + triac' loads require a couple of pin.
+\n          'Relay + load loads require a pin and a load id (or load position)
+\n          Each entity, pin or load id, is a load and is part of the same load. In this sense we say that 
+\n          the load are linked.
+
+\n          The module manages the (de)activation of the of individual entities which make up the complex load, 
+            according to the timings.
+            
+            The types of loads above-mentioned DD, TR, RT, RL are caracterized by two timings or delay:
+            \li one relating to the first load 
+            \li and one to the second.
+            
+\n          As for the meaning of the load which can be a pin or load id, also 
+            the meaning of the timings, such as the time reference, are depending on the type of the load.
+\n          For further details about the timings, please refer to specific library.
+
+\par        Architecure
+\n          In this module each type of linked load has its own library, while common functionalities are implemented
+            in the main library.
+            
+            \li LinkedLoads general library:
+            PM_LinkedLoads.c
+            
+            \li DD-library:
+            PM_LinkedLoads_DigitalDelayed.c
+            
+            \li TR-library:
+            PM_LinkedLoads_TriacRelay.c
+            
+            \li RT-library:
+            PM_LinkedLoads_RelayTriac.c
+            
+            \li RL-library:
+            PM_LinkedLoads_RelayLoad.c
+
+
+\par Configuration:
+\todo
+\n
+\par Exported Functions:
+\todo
+
+@}
+\ingroup   	ProductM
+*/
+
+/**
+
+\page   LinkedLoadsTODO Linked Loads TODO:
+\section    LinkedLoads_goodZC goodZCSignal
+As the platform2 ZC module not ready, SetLoad method uses the function
+
+uint8_t goodZCSignal( void )
+
+from platform 1.
+
+*/
+/**
+\page       LinkedLoadsConfiguration The configuration
+\section    LinkedLoads_cfgfiles    Configuration files
+Only one configuration file is needed: LinkedLoadsConfig.h
+\section    LinkedLoads_ModuleProperties Module properties
+            The available properties are:
+            \li LINKED_LOADS_PINDRIVINGONTHEFLY
+            \li RELAY_LOAD_ENABLE
+            \li LINKED_LOADS_NUM
+            
+\section    LinkedLoads_OtherProperties Other properties 
+            \li LOAD_DONT_CARE
+
+
+\subsection LinkedLoads_LINKED_LOADS_PINDRIVINGONTHEFLY LINKED_LOADS_PINDRIVINGONTHEFLY
+This property is optional. if defined as 1, it allows the module to set the pin on the fly.
+Defined as 0 pin are set by the use of \ref PM_LinkedLoads_Driver method. In this case IO_MODULE_MAP_SIZE must be visible in the configuration file.
+
+Example:
+in the file \e LinkedLoadsConfig.h
+\code
+#define LINKED_LOADS_PINDRIVINGONTHEFLY     0
+
+
+#if (LINKED_LOADS_PINDRIVINGONTHEFLY == 0)
+#include "Dio_cfg.h"
+#endif // (LINKED_LOADS_PINDRIVINGONTHEFLY == 0) 
+
+\endcode
+
+\subsection LinkedLoads_LINKED_LOADS_NUM LINKED_LOADS_NUM
+This property is mandatory and is needed to define the maximum number of linked loads that you application is able to support.
+Range is 1 to 254.
+
+Example:
+in the file \e LinkedLoadsConfig.h
+\code
+#define LINKED_LOADS_NUM                3
+\endcode
+
+\subsection LinkedLoads_RELAY_LOAD_ENABLE RELAY_LOAD_ENABLE
+This property is mandatory and is needed to adapt the shared functionalities of the module to the use of RL loads.
+Possible values are:
+
+\li 0- no RL support needed
+\li 1- RL support needed
+
+Example:
+in the file \e LinkedLoadsConfig.h
+\code									 
+#define RELAY_LOAD_ENABLE                1
+\endcode
+
+\subsection LinkedLoads_LOAD_DONT_CARE LOAD_DONT_CARE
+If this property is visible to OutputManager, linked loads module ignore the state of those loads that have 
+the LOAD_DONT_CARE flag enabled.
+See specific documentation.
+
+*/
+
+/**
+\defgroup	LINKEDLOADS_DD  DigitalDelayed loads 
+@{
+\par		DigitalDelayed
+\n			Specfic methods for didital delayed loads.
+@}
+\ingroup   	PM_LinkedLoads
+*/
+
+/**
+\defgroup LINKEDLOADS_RL  Relay + Load
+@{
+\n			Specfic methods for linked loads of type relay + load.
+@}
+\ingroup   	PM_LinkedLoads
+*/
+
+/**
+\defgroup	LINKEDLOADS_RT Relay + Triac load 
+@{
+\par		Relay + Triac
+\n			Specfic methods for linked loads of type relay + triac
+@}
+\ingroup   	PM_LinkedLoads
+*/
+
+/**
+\defgroup	LINKEDLOADS_TR Triac + Relay
+@{
+\par		Triac + Relay
+\n			Specfic methods for linked loads of type triac + relay
+@}
+\ingroup   	PM_LinkedLoads
+*/

@@ -1,0 +1,2111 @@
+   1                             		.file	"AlternateControl.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.Could_Alternate_from_Virtual_Sensor,"ax",@progbits
+   5                             		.global	_Could_Alternate_from_Virtual_Sensor
+   7                             	_Could_Alternate_from_Virtual_Sensor:
+   8                             	.LFB4:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules/AlternateControl.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /**
+   2:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Source File 
+   3:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+   4:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \file    AlternateControl.c
+   5:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \ingroup AlternateControl
+   6:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \date    4/03/2008
+   7:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \author  Roberto Fioravanti
+   8:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \version 1.0.0
+   9:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** */
+  10:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  11:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /*
+  12:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Copyright (c) 2004-2008, Indesit Company, EDT.
+  13:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Tutti i diritti sono riservati. All rights reserved.
+  14:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** */
+  15:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  16:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* Old Versions
+  17:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \version 
+  18:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \date    
+  19:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \author Roberto Fioravanti
+  20:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** */
+  21:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  22:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  23:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /** 
+  24:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \note : 
+  25:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** */ 
+  26:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  27:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  28:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* ******** */
+  29:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* Includes */
+  30:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* ******** */
+  31:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  32:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #include "CstmHeaders.h"
+  33:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  34:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* ****************** */
+  35:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* Defines and Macros */
+  36:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* ****************** */
+  37:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  38:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* *************************** */
+  39:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* Typedef, Structs and Unions */
+  40:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* *************************** */
+  41:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* EA : la struttura per l'alternato a 6 posizioni cambia per il microprogramma a tabella , ma la l
+  42:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** quindi finchï¿½ si usa solo per determinare l'avanzamento alla posizione della tabella successiva ï
+  43:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /*
+  44:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** struct
+  45:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** {
+  46:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t t_mnt;  
+  47:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t speed;
+  48:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t t_ramp;
+  49:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t pos: 4
+  50:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t unused:4 ;  
+  51:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** }up_Alt_setting_data_s;
+  52:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** */
+  53:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** struct
+  54:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** {
+  55:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t pos:2;
+  56:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t t_mnt:6;  
+  57:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t speed;
+  58:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t t_ramp;
+  59:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t unused;  
+  60:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** }up_Alt_setting_data_s;
+  61:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  62:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  63:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  64:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  65:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* **************************** */
+  66:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* Prototype of local functions */
+  67:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* **************************** */
+  68:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** static void ALT_uP_AlternateControl_Init(void); 
+  69:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** static uint8_t ALT_uP_AlternateControl_StepMgmt(uint8_t highStatement, uint8_t lowStatement);
+  70:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  71:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** static void ALT_SelectTableRuleByDishRackSelection(uint8_t dishrakcselection, uint8_t highStatement
+  72:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** static uint8_t ALT_SelectTableRuleByZoneWashSelection(uint8_t regulation_value);
+  73:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** uint8_t Could_Alternate_from_Virtual_Sensor ( void);
+  74:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* ****************** */
+  75:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* Exported variables */
+  76:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* ****************** */
+  77:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  78:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* **************** */
+  79:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* Global variables */
+  80:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* **************** */
+  81:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  82:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* ***************** */
+  83:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* Exported function */
+  84:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* ***************** */
+  85:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  86:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /**
+  87:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Gestisce l'esecuzione del microprogramma AlternateControl.
+  88:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  89:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \param [in] HighStatement specifica l'high statement (opcode +  modificatori F0-F1 + N flag + T fla
+  90:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \param [in] LowStatement specifica il low statement (displacement ai dati) del microprogramma.
+  91:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****  
+  92:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \retvalue S_OK se la condizione di avanzamento passo per il microprogramma ï¿½ verificata (nel caso
+  93:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** almeno una volta)
+  94:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \retvalue S_FALSE se non ï¿½ ancora verificata
+  95:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+  96:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Inizializza la macchina a stati (ALT_uP_AlternateControl_Init).
+  97:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** sospende il microprogramma in particolari condizioni (ALT_uP_AlternateControl_Suspend).
+  98:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Esegue la macchina a stati associata al microprogramma (ALT_uP_AlternateControl_StepMgmt).
+  99:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 100:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \par \bSospensione del microprogramma
+ 101:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Il microprogramma viene sospeso in caso di apertura della porta.
+ 102:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** La sospensione del microprogramma durante il posizionamento dell'alternato richiede la 
+ 103:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** ripetizione della procedre di posizionamento (l'alternato ï¿½ autoalimentato). 
+ 104:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Le condizioni in cui ciï¿½ puï¿½ avvenire sono:
+ 105:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 106:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 1. apertura della porta 
+ 107:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 2. apertura del master relï¿½
+ 108:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 109:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \version		1.0.0
+ 110:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \date 			26/02/2008
+ 111:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \author			Roberto Fioravanti            
+ 112:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 113:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 114:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \todo   \par \bFaults
+ 115:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Gestione della sospensione del micorprogramma in presenza di faults
+ 116:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Attualmente la condizione sulla porta viene testata solo se non ci sono faults
+ 117:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** */
+ 118:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 119:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 120:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** uint8_t ALT_uP_AlternateControl_Exe( uint8_t highStatement, uint8_t lowStatement)
+ 121:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** {
+ 122:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** uint8_t nRet=S_FALSE;
+ 123:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 124:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 125:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   if ( (FALSE == Interpreter_Data[0].stepInitialized) || (FALSE == Interpreter_Data[0].optionalStep
+ 126:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   {
+ 127:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     /* Init passo o restore from backup */
+ 128:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     
+ 129:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		ALT_uP_AlternateControl_Init();    
+ 130:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		return nRet;
+ 131:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   } 
+ 132:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   
+ 133:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   /* TODO1: condizioni particolari in cui deve essere sospesa l'attivitï¿½ del microprogramma */
+ 134:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /*    
+ 135:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   if( !Alarm )
+ 136:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   {
+ 137:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** */	
+ 138:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     if ( uPDoorStatus == UP_DOOR_WAIT )
+ 139:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	{/* porta aperta o in attesa di timeout dopo la chiusura o delay MR -> il uP va sospeso */
+ 140:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  		  
+ 141:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  (void)SWTC_Stop((SWTC_CountersType)MP_ALTCTRL_S_COUNTER);
+ 142:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  
+ 143:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  if (uP_AltCtrl_Data.step == ALT_CTRL_WAIT_ALTPOS_EXE)
+ 144:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       {
+ 145:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       	/* Se la condizione occorre durante il posizionamento dell'alternato 
+ 146:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		    si ripete la procedura
+ 147:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		    */
+ 148:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       	uP_AltCtrl_Data.step= ALT_CTRL_BEGIN;
+ 149:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       }
+ 150:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 151:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		return S_FALSE;  				    
+ 152:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	}
+ 153:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /*		
+ 154:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** }
+ 155:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** */
+ 156:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	nRet= ALT_uP_AlternateControl_StepMgmt(highStatement, lowStatement);
+ 157:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   
+ 158:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   return nRet;   
+ 159:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** }
+ 160:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 161:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* ************** */
+ 162:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* Local Function */
+ 163:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /* ************** */
+ 164:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 165:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /**
+ 166:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Inizializza la macchina a stati del microprogramma AlternateControl.
+ 167:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 168:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \version		1.0.0
+ 169:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \date 			26/02/2008
+ 170:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \author			Roberto Fioravanti
+ 171:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 172:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** */
+ 173:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** static void ALT_uP_AlternateControl_Init(void) 
+ 174:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** {
+ 175:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uP_AltCtrl_Data.step = ALT_CTRL_INIT;
+ 176:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** }
+ 177:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 178:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 179:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 180:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /**
+ 181:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Gestisce l'avanzamento della macchina a stati del microprogramma AlternateControl
+ 182:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 183:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \par \b Opzioni:
+ 184:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** -incremento della posizione corrente dell'alternato
+ 185:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** -posizionamento assoluto dell'alternato
+ 186:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** -posizionamento combinato con attivazione pompa (sia BLDC che sincrona)
+ 187:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 188:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \par \b Condizione di avanzamento:
+ 189:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Nel caso di incremento della posizione corrente e posizionamento assoluto la condizione 
+ 190:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** consiste nel raggiungimento della posizione da parte dell'alternato.
+ 191:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Nel posizionamento combinato con attivazione della pompa ci sono due sotto-casi.
+ 192:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** -mezzocarico:la condizione di avanzamento ï¿½ il completamento dell'esecuzione della tabella 
+ 193:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** per quel cesto
+ 194:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** -cesto non selezionato:esecuzione di tutte le tabelle.
+ 195:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 196:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \par \bVariante mezzocarico
+ 197:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** In caso di mezzocarico selezionato il microprogramma non esegue tutte le tabelle ma solo
+ 198:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** quella compatibile con la selezione dell'utente.
+ 199:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 200:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \par \b Formato dati:
+ 201:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Vel:
+ 202:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** -pompa sincrona:
+ 203:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** ON  = FFh (per permettere la eventuale gestione della pompa asincrona )
+ 204:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** OFF = 0h
+ 205:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** -pompa BLDC
+ 206:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** rpm/25
+ 207:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** tempo di rampa:
+ 208:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** -pompa sincrona
+ 209:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 0
+ 210:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** -pompa BLDC
+ 211:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** s/500ms
+ 212:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 213:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \param [in] HighStatement specifica l'high statement (opcode +  modificatori F0-F1 + N flag + T fla
+ 214:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \param [in] LowStatement specifica il low statement (displacement ai dati) del microprogramma.
+ 215:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****  
+ 216:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \retvalue S_OK se la condizione di avanzamento passo per il microprogramma ï¿½ verificata:
+ 217:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \retvalue S_FALSE se non ï¿½ ancora verificata
+ 218:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 219:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \version		1.0.0
+ 220:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \date 			26/02/2008
+ 221:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \author			Roberto Fioravanti
+ 222:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 223:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \todo       -La condizione sulla porta viene testata solo se non ci sono faults
+ 224:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             
+ 225:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** */
+ 226:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** static uint8_t ALT_uP_AlternateControl_StepMgmt(uint8_t highStatement, uint8_t lowStatement) 
+ 227:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** {
+ 228:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t nRet=S_FALSE;
+ 229:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t alternatecmd, altpos;
+ 230:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t choise;
+ 231:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t table_displacement=0;
+ 232:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   
+ 233:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     
+ 234:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   if(SWTC_IsExpired(MP_ALTERNATE_UP_VS_FILTER_S_TIMER)|| (HWC_Flags.bit.vs_wash_presence==0))
+ 235:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   {
+ 236:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     uP_AltCtrl_Data.SV_invalid_4alt=FALSE;
+ 237:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     (void)SWTC_Stop((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER);
+ 238:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   }
+ 239:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 240:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   switch(uP_AltCtrl_Data.step) 
+ 241:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   {
+ 242:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     case ALT_CTRL_INIT:
+ 243:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     
+ 244:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       	if (BasicLoader(PTR_UP_ALTERNATECONTROL, lowStatement, &uPAlternateCtrl_setting_data) != S_O
+ 245:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		{		 			
+ 246:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 247:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   				uP_AltCtrl_Data.step = ALT_CTRL_ERROR;
+ 248:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   				return S_OK;
+ 249:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		}
+ 250:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		if ( (highStatement & ALT_CTRL_OPTION) == ALT_CTRL_TABLE_PPOS)
+ 251:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		{
+ 252:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			table_displacement=ALT_SelectTableRuleByZoneWashSelection(ZoneWashFunctionValue);
+ 253:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			if (BasicLoader(PTR_UP_ALTERNATECONTROL, table_displacement, &uPAlternateCtrl_setting_data) != S
+ 254:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   			{	
+ 255:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				uP_AltCtrl_Data.step = ALT_CTRL_ERROR;
+ 256:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   				return S_OK;
+ 257:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			}
+ 258:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			
+ 259:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		}
+ 260:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		
+ 261:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		uP_AltCtrl_Data.step=ALT_CTRL_BEGIN;
+ 262:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		
+ 263:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   	/* -fallthrough */  		
+ 264:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     case ALT_CTRL_BEGIN:
+ 265:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		switch((highStatement & ALT_CTRL_OPTION)) 
+ 266:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		{
+ 267:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		  case ALT_CTRL_RELATIVE_POS:
+ 268:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		 	if( Could_Alternate_from_Virtual_Sensor()==ALTERNATE_KO)
+ 269:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			{	/* non posso alternare */
+ 270:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				nRet=S_OK;	
+ 271:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				return nRet;
+ 272:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			}
+ 273:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    /* posizione di default */
+ 274:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    alternatecmd=0;
+ 275:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    
+ 276:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    altpos=uP_AltCtrl_Data.curr_pos;
+ 277:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    
+ 278:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    if(altpos>=ALT_getPosNotDef( )) 
+ 279:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    {
+ 280:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		      alternatecmd=ALT_CTRL_SYNC_MSK;
+ 281:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    } else 
+ 282:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    {  		      
+ 283:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		      alternatecmd=altpos+1;
+ 284:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		      alternatecmd%= ALT_getNumPos();
+ 285:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    }
+ 286:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			 
+ 287:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			 uP_AltCtrl_Data.SV_invalid_4alt=TRUE;
+ 288:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			(void)SWTC_SetSValue((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER, (SWTC_SCounterValue)O
+ 289:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		    (void)SWTC_Run((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER);
+ 290:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    LoadsReq_New[Alt_Pos].b=alternatecmd;
+ 291:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    uP_AltCtrl_Data.step=ALT_CTRL_WAIT_ALTPOS_EXE;
+ 292:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			 uP_AltCtrl_Data.curr_cmd=alternatecmd;
+ 293:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    
+ 294:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		  break;
+ 295:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		  
+ 296:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		  case ALT_CTRL_ABSOLUTE_POS:
+ 297:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		  	if( Could_Alternate_from_Virtual_Sensor()==ALTERNATE_KO)
+ 298:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			{	/* non posso alternare */
+ 299:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				nRet=S_OK;	
+ 300:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				return nRet;
+ 301:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			}
+ 302:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    alternatecmd=ALT_CTRL_GET_ALT_POS(0,highStatement);
+ 303:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    alternatecmd|=ALT_CTRL_SYNC_MSK;  		    
+ 304:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    
+ 305:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    LoadsReq_New[Alt_Pos].b=alternatecmd;
+ 306:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    uP_AltCtrl_Data.curr_cmd=alternatecmd;
+ 307:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			
+ 308:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			uP_AltCtrl_Data.SV_invalid_4alt=TRUE;
+ 309:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			(void)SWTC_SetSValue((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER, (SWTC_SCounterValue)O
+ 310:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		    (void)SWTC_Run((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER);
+ 311:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			uP_AltCtrl_Data.step=ALT_CTRL_WAIT_ALTPOS_EXE;
+ 312:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    
+ 313:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    
+ 314:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    
+ 315:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		  break;
+ 316:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		  case ALT_CTRL_TABLE:
+ 317:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		  case ALT_CTRL_TABLE_PPOS:
+ 318:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		  
+ 319:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    uP_AltCtrl_Data.step=ALT_CTRL_SELECT_TABLE_EXE;
+ 320:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    
+ 321:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			break;
+ 322:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		  default:
+ 323:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    
+ 324:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    uP_AltCtrl_Data.step=ALT_CTRL_ERROR;
+ 325:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		  
+ 326:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		}  		
+ 327:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         if((highStatement &  ALT_CTRL_OPTION_TABLE) != ALT_CTRL_TABLE)
+ 328:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         {        
+ 329:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       		break;	                    
+ 330:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         }
+ 331:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     /* -fallthrough */  
+ 332:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     case ALT_CTRL_SELECT_TABLE_EXE:
+ 333:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       /* todo: solo con BLDC? oppure anche per la sincrona? */
+ 334:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       if ((DishRackFunctionValue & DISH_RACK_FVALUE_MSK)&& ((highStatement &  ALT_CTRL_TABLE_PPOS)!
+ 335:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       {
+ 336:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         ALT_SelectTableRuleByDishRackSelection(DishRackFunctionValue,highStatement);
+ 337:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	
+ 338:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       }     
+ 339:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       
+ 340:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       uP_AltCtrl_Data.timing=1;
+ 341:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 342:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #ifdef CONFIG_LIB_EXTERNAL_BOARD_SUPPORT	
+ 343:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #ifdef _CORRECT_BUG_ALTERNATE_MUL_FACT_
+ 344:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		if( ( HWC_Flags.bit.bldc ) || ( HWC_Flags.bit.bldc1 ) )
+ 345:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #else
+ 346:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	    if( HWC_Flags.bit.bldc != 0 )
+ 347:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #endif /* _CORRECT_BUG_ALTERNATE_MUL_FACT_ */
+ 348:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	    {
+ 349:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	      uP_AltCtrl_Data.timing+=ALT_CTRL_GET_RAMPTIME(0);
+ 350:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	    } 
+ 351:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #endif
+ 352:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		(void)Set_SmallCounter((SWTC_CountersType)MP_ALTCTRL_S_COUNTER, (SWTC_PrescalerType)COUNTERS2_TBA
+ 353:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       
+ 354:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       
+ 355:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       uP_AltCtrl_Data.step=ALT_CTRL_WAIT_RAMP_EXE;
+ 356:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     /* -fallthrough */      
+ 357:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     case ALT_CTRL_WAIT_RAMP_EXE:
+ 358:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       
+ 359:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       /* ribadire il comando alla pompa */       
+ 360:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		if(ALT_CTRL_GET_SPEED(0))
+ 361:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		{
+ 362:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		    
+ 363:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #ifdef CONFIG_LIB_EXTERNAL_BOARD_SUPPORT				
+ 364:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #ifdef _CORRECT_BUG_ALTERNATE_MUL_FACT_
+ 365:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			if( ( HWC_Flags.bit.bldc ) || ( HWC_Flags.bit.bldc1 ) )
+ 366:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #else
+ 367:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             if( HWC_Flags.bit.bldc != 0)
+ 368:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #endif /* _CORRECT_BUG_ALTERNATE_MUL_FACT_ */
+ 369:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             {	                                           
+ 370:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****                 SET_BLDC_TIME(BLDC_PumpReq_New[WASH_BLDC_PUMP], ALT_CTRL_GET_RAMPTIME(0)*ALT_CTRL_B
+ 371:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     	        SET_BLDC_SPEED(BLDC_PumpReq_New[WASH_BLDC_PUMP],ALT_CTRL_GET_SPEED(0)*ALT_CTRL_BLDC_SP
+ 372:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             }
+ 373:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             else
+ 374:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #endif            
+ 375:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             { 
+ 376:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /*lint -e572*/
+ 377:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****                 SET_BLDC_TIME(BLDC_PumpReq_New[WASH_BLDC_PUMP], ALT_CTRL_GET_RAMPTIME(0));
+ 378:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         	    SET_BLDC_SPEED(BLDC_PumpReq_New[WASH_BLDC_PUMP],ALT_CTRL_GET_SPEED(0))
+ 379:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /*lint +e572*/
+ 380:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             }  
+ 381:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             
+ 382:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             SET_PUMP(LD_WASH_PUMP_IND, LOAD_ON)
+ 383:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			
+ 384:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		}
+ 385:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		
+ 386:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  	
+ 387:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		
+ 388:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		if(SWTC_IsExpired((SWTC_CountersType)MP_ALTCTRL_S_COUNTER)) 
+ 389:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		{
+ 390:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			 	
+ 391:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			if(--uP_AltCtrl_Data.timing) 
+ 392:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			{
+ 393:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			(void)SWTC_SetSValue ((SWTC_CountersType)MP_ALTCTRL_S_COUNTER,(SWTC_SCounterValue)ALT_CTRL_BLDC_
+ 394:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			} else
+ 395:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			{
+ 396:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				
+ 397:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				
+ 398:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				if( Could_Alternate_from_Virtual_Sensor()==ALTERNATE_KO)
+ 399:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				{	/* non posso alternare */
+ 400:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 					nRet=S_OK;
+ 401:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 					uP_AltCtrl_Data.timing=	1;	
+ 402:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 					return nRet;
+ 403:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				}
+ 404:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				if ((DishRackFunctionValue & DISH_RACK_FVALUE_MSK) && ((highStatement &  ALT_CTRL_TABLE_PPOS)!=
+ 405:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				{/* con l'alyternato a 6 posizioni non ci sarï¿½ mail il mezzo carico attuale. 
+ 406:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				 anche se ci fosse sarebbe definito come zoneWash con due zone*/
+ 407:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 					/* cesto selezionato */
+ 408:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 					alternatecmd=(DishRackFunctionValue & DISH_RACK_FVALUE_MSK);
+ 409:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 410:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				} else 
+ 411:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				{
+ 412:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 					alternatecmd=ALT_CTRL_GET_ALT_POS(0,highStatement);
+ 413:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				}
+ 414:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   
+ 415:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			  if(uP_AltCtrl_Data.curr_pos>=ALT_getPosNotDef()) 
+ 416:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			    {
+ 417:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			      alternatecmd|=ALT_CTRL_SYNC_MSK;
+ 418:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			    }
+ 419:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				
+ 420:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			  
+ 421:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	 			if (uP_AltCtrl_Data.curr_cmd!=  alternatecmd)
+ 422:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				{
+ 423:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				  uP_AltCtrl_Data.SV_invalid_4alt=TRUE;
+ 424:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				  (void)SWTC_SetSValue((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER, (SWTC_SCounterValu
+ 425:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			      (void)SWTC_Run((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER);
+ 426:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				} 
+ 427:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				
+ 428:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			      LoadsReq_New[Alt_Pos].b=alternatecmd;
+ 429:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			      uP_AltCtrl_Data.step=ALT_CTRL_WAIT_ALTPOS_EXE;
+ 430:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				uP_AltCtrl_Data.curr_cmd=alternatecmd;
+ 431:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			}
+ 432:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		}else 
+ 433:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		{
+ 434:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 435:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		}
+ 436:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       (void)SWTC_Run((SWTC_CountersType)MP_ALTCTRL_S_COUNTER);
+ 437:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     
+ 438:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       break;
+ 439:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 440:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     case ALT_CTRL_WAIT_ALTPOS_EXE:
+ 441:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       /* ribadire il comando alla pompa BLDC e (a)sync */  
+ 442:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       if((highStatement & ALT_CTRL_OPTION_TABLE)) 
+ 443:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       {
+ 444:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         
+ 445:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         if(ALT_CTRL_GET_SPEED(0)) 
+ 446:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         {                          
+ 447:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #ifdef CONFIG_LIB_EXTERNAL_BOARD_SUPPORT      
+ 448:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /*lint -e572*/
+ 449:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #ifdef _CORRECT_BUG_ALTERNATE_MUL_FACT_
+ 450:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			if( ( HWC_Flags.bit.bldc ) || ( HWC_Flags.bit.bldc1 ) )
+ 451:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #else
+ 452:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****            if( HWC_Flags.bit.bldc != 0 )
+ 453:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #endif /* _CORRECT_BUG_ALTERNATE_MUL_FACT_ */
+ 454:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       	    {	           
+ 455:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       	          	      
+ 456:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           	    SET_BLDC_TIME(BLDC_PumpReq_New[WASH_BLDC_PUMP], 0);
+ 457:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****                 SET_BLDC_SPEED(BLDC_PumpReq_New[WASH_BLDC_PUMP],ALT_CTRL_GET_SPEED(0)*ALT_CTRL_BLDC
+ 458:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       	    }
+ 459:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       	    else
+ 460:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #endif  
+ 461:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             {
+ 462:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****                 SET_BLDC_TIME(BLDC_PumpReq_New[WASH_BLDC_PUMP], 0);
+ 463:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****                 SET_BLDC_SPEED(BLDC_PumpReq_New[WASH_BLDC_PUMP],ALT_CTRL_GET_SPEED(0))
+ 464:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             }
+ 465:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /*lint +e572*/
+ 466:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 467:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             SET_PUMP(LD_WASH_PUMP_IND, LOAD_ON)			
+ 468:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         }    
+ 469:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       }
+ 470:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       
+ 471:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       if(ALT_posReached())
+ 472:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       {
+ 473:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         uP_AltCtrl_Data.curr_pos=ALT_getPos();
+ 474:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         
+ 475:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         switch((highStatement & ALT_CTRL_OPTION)) 
+ 476:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		  {
+ 477:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    case ALT_CTRL_TABLE:
+ 478:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			case ALT_CTRL_TABLE_PPOS:
+ 479:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             /* carica il tempo di mantenimento della posizione */
+ 480:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			
+ 481:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			(void)Set_SmallCounter((SWTC_CountersType)MP_ALTCTRL_S_COUNTER, (SWTC_PrescalerType)COUNTERS2_TB
+ 482:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             uP_AltCtrl_Data.timing=1+ALT_CTRL_GET_MNT_TIME(0);
+ 483:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			if ( uP_AltCtrl_Data.seq_done_could_esc)
+ 484:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			{
+ 485:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				nRet=S_OK;	
+ 486:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			}
+ 487:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****                     
+ 488:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             uP_AltCtrl_Data.step=ALT_CTRL_MNT_EXE;
+ 489:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             break;
+ 490:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             
+ 491:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           case ALT_CTRL_RELATIVE_POS:
+ 492:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           case ALT_CTRL_ABSOLUTE_POS:
+ 493:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             nRet=S_OK;
+ 494:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             uP_AltCtrl_Data.step=ALT_CTRL_END;
+ 495:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           break;
+ 496:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           
+ 497:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           default:
+ 498:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           
+ 499:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           break;
+ 500:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		  }
+ 501:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       }
+ 502:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       else
+ 503:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       {
+ 504:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         uP_AltCtrl_Data.curr_pos=ALT_getPosNotDef();
+ 505:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		uP_AltCtrl_Data.SV_invalid_4alt=TRUE;
+ 506:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         if((highStatement & ALT_CTRL_OPTION)==ALT_CTRL_ABSOLUTE_POS) 
+ 507:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         {
+ 508:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           LoadsReq_New[Alt_Pos].b=uP_AltCtrl_Data.curr_cmd;
+ 509:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         }
+ 510:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       }
+ 511:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       break;
+ 512:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       
+ 513:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     case ALT_CTRL_MNT_EXE:
+ 514:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       /* ribadire il comando alla pompa BLDC e (a)sync */ 
+ 515:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  if ( uP_AltCtrl_Data.seq_done_could_esc)
+ 516:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  {
+ 517:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			nRet=S_OK;	
+ 518:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  }
+ 519:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  if(ALT_CTRL_GET_SPEED(0)) 
+ 520:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       {
+ 521:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       
+ 522:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #ifdef CONFIG_LIB_EXTERNAL_BOARD_SUPPORT      
+ 523:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /*lint -e572*/
+ 524:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #ifdef _CORRECT_BUG_ALTERNATE_MUL_FACT_
+ 525:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		if( ( HWC_Flags.bit.bldc ) || ( HWC_Flags.bit.bldc1 ) )
+ 526:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #else
+ 527:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         if( HWC_Flags.bit.bldc != 0 )
+ 528:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #endif /* _CORRECT_BUG_ALTERNATE_MUL_FACT_ */
+ 529:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	    {	      
+ 530:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	      SET_BLDC_TIME(BLDC_PumpReq_New[WASH_BLDC_PUMP], 0);
+ 531:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	      SET_BLDC_SPEED(BLDC_PumpReq_New[WASH_BLDC_PUMP],ALT_CTRL_GET_SPEED(0)*ALT_CTRL_BLDC_SPEED_MU
+ 532:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	    }
+ 533:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	    else
+ 534:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #endif
+ 535:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         {
+ 536:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             SET_BLDC_TIME(BLDC_PumpReq_New[WASH_BLDC_PUMP], 0);
+ 537:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	        SET_BLDC_SPEED(BLDC_PumpReq_New[WASH_BLDC_PUMP],ALT_CTRL_GET_SPEED(0));
+ 538:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         }
+ 539:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /*lint +e572*/
+ 540:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 541:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         SET_PUMP(LD_WASH_PUMP_IND, LOAD_ON)
+ 542:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		
+ 543:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		
+ 544:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       }   
+ 545:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       
+ 546:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       if(SWTC_IsExpired((SWTC_CountersType)MP_ALTCTRL_S_COUNTER))       
+ 547:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       {
+ 548:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         if(--uP_AltCtrl_Data.timing) 
+ 549:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         {
+ 550:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		  (void)SWTC_SetSValue ((SWTC_CountersType)MP_ALTCTRL_S_COUNTER,(SWTC_SCounterValue)ALT_CTRL_MNT_
+ 551:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         }
+ 552:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         else 
+ 553:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         {
+ 554:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           uPAlternateCtrl_setting_data.DataLenght-=sizeof(up_Alt_setting_data_s)/2;
+ 555:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           
+ 556:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #ifdef _CORRECT_BUG_ALTERNATE_MUL_FACT_
+ 557:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****          if( ( uPAlternateCtrl_setting_data.DataLenght )
+ 558:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****          	 &&
+ 559:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****          	 !( (( DishRackFunctionValue & DISH_RACK_FVALUE_MSK ) && ((highStatement &  ALT_CTRL_TABL
+ 560:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****          	    &&
+ 561:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****  				( ( HWC_Flags.bit.bldc ) || ( HWC_Flags.bit.bldc1 ) )
+ 562:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****          	  )
+ 563:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****          	)
+ 564:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #else
+ 565:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****          if( uPAlternateCtrl_setting_data.DataLenght && !((DishRackFunctionValue & DISH_RACK_FVALUE
+ 566:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** #endif /* _CORRECT_BUG_ALTERNATE_MUL_FACT_ */
+ 567:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           {
+ 568:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             /* sequenza non terminata */
+ 569:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             uPAlternateCtrl_setting_data.Data+=sizeof(up_Alt_setting_data_s);
+ 570:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             uP_AltCtrl_Data.step=ALT_CTRL_BEGIN;
+ 571:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             
+ 572:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           }
+ 573:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           else           
+ 574:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           {
+ 575:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             /* sequenza terminata: ripete la sequenza */
+ 576:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             uP_AltCtrl_Data.step=ALT_CTRL_INIT;
+ 577:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			uP_AltCtrl_Data.seq_done_could_esc=TRUE;
+ 578:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             nRet=S_OK;
+ 579:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           }
+ 580:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         }	
+ 581:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		
+ 582:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       }
+ 583:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       
+ 584:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       (void)SWTC_Run((SWTC_CountersType)MP_ALTCTRL_S_COUNTER);
+ 585:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       break;
+ 586:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     case ALT_CTRL_END:
+ 587:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       nRet=S_OK;
+ 588:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       break;
+ 589:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     default:
+ 590:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       uP_AltCtrl_Data.step=ALT_CTRL_INIT;
+ 591:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       nRet=S_FALSE;
+ 592:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     
+ 593:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   }    
+ 594:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 595:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   return nRet;
+ 596:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** }
+ 597:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 598:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /**
+ 599:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Seleziona la tabella in base al mezzocarico selezionato spostando i puntatori alle tabelle del 
+ 600:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** up Alternato.
+ 601:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** La logica di selezione ï¿½ la seguente:
+ 602:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** -Nel primo tentativo viene ricercata la tabella compatibile con il mezzocarico selezionato.
+ 603:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** -Nel caso in cui la tabella non ï¿½ presente, si effettua il secondo tentativo che ricerca la 
+ 604:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** tebella per l'altro mezzocarico.
+ 605:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** -Nel caso che la tebella non ï¿½ presente si ricerca la tabella per entrambi i cesti
+ 606:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 607:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** In tutti i tentativi vengono prese in considerazione le tabelle con velocitï¿½ e tempo di 
+ 608:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** mantenimento non nulli, escludendo le tabelle adoperate per la movimentazione dell'alternato.
+ 609:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 610:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 611:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \param [in] dishrackselection
+ 612:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****  
+ 613:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \return     none
+ 614:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \attention  modifica uPAlternateCtrl_setting_data
+ 615:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \version		1.0.0
+ 616:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \date 			11/03/2008
+ 617:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \author			Roberto Fioravanti
+ 618:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             
+ 619:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** */
+ 620:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** static void ALT_SelectTableRuleByDishRackSelection(uint8_t dishrackselection,uint8_t highStatement)
+ 621:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** {
+ 622:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t found=FALSE;
+ 623:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t drdatafound=FALSE;
+ 624:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t i=0,nrows=uPAlternateCtrl_setting_data.DataLenght/(sizeof(up_Alt_setting_data_s)/2), numT
+ 625:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   
+ 626:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   while(!found) 
+ 627:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   {
+ 628:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     while(((i/sizeof(up_Alt_setting_data_s))<nrows) && (!drdatafound)) 
+ 629:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     {      
+ 630:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       /* posizione cesto della riga (i/sizeof(up_Alt_setting_data_s))-esima */
+ 631:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       if((ALT_CTRL_GET_ALT_POS(i,highStatement)==dishrackselection) && ( ALT_CTRL_GET_MNT_TIME(i)!=
+ 632:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       {
+ 633:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         drdatafound=TRUE;
+ 634:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       } else
+ 635:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       {        
+ 636:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         i+=sizeof(up_Alt_setting_data_s);
+ 637:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       }
+ 638:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     }
+ 639:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     
+ 640:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 641:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     if ( drdatafound )
+ 642:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		{
+ 643:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			found = TRUE;
+ 644:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		}
+ 645:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		else
+ 646:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		{
+ 647:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			i=0;
+ 648:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			numTentResearch ++;
+ 649:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			
+ 650:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			if ( numTentResearch == 1 )
+ 651:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			{
+ 652:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				if ( dishrackselection == b0 )
+ 653:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				{
+ 654:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 					dishrackselection = b1;
+ 655:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				}
+ 656:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				else
+ 657:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				{
+ 658:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 					dishrackselection = b0;
+ 659:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				}
+ 660:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			}
+ 661:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			else if ( numTentResearch == 2 )
+ 662:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			{
+ 663:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				dishrackselection = 0;
+ 664:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			}
+ 665:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			else
+ 666:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			{
+ 667:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				/* tutti i tentativi non hanno prodotto un campo dati corretto 
+ 668:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				   prendo il primo */
+ 669:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				i = 0;
+ 670:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				found = TRUE;				    			
+ 671:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			}
+ 672:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		}
+ 673:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		
+ 674:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   }
+ 675:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   
+ 676:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uPAlternateCtrl_setting_data.Data+=i;
+ 677:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uPAlternateCtrl_setting_data.DataLenght-=i/(sizeof(up_Alt_setting_data_s)/2);
+ 678:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   
+ 679:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   
+ 680:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   /* modifica uPAlternateCtrl_setting_data.Data */
+ 681:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** }
+ 682:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 683:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /**
+ 684:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Verifica lo stato del sensore virtuale , in base al quale si decide di alternare o meno
+ 685:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 686:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \param [in] none
+ 687:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****  
+ 688:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \return     none
+ 689:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \version		1.0.0
+ 690:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \date 			01/12/2011
+ 691:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \author			Emanuela Antognoli
+ 692:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             
+ 693:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** */
+ 694:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** uint8_t Could_Alternate_from_Virtual_Sensor ( void)
+ 695:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** {
+  10                             		.loc 1 695 0
+ 696:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		/* LR la pompa resta attiva, e si aspetta che il riconoscimento sporco/schiuma */
+ 697:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	if(HWC_Flags.bit.vs_wash_presence)
+  11                             		.loc 1 697 0
+  12 0000 FB E2 00 00 00 00       		mov.L	#_HWC_Flags, r14
+  13 0006 DC E1                   		mov.W	[r14], r1
+  14 0008 76 21 00 08             		and	#0x800, r1
+  15 000c 5F 11                   		movu.W	r1, r1
+  16 000e 61 01                   		cmp	#0, r1
+  17 0010 20 36                   		beq	.L2
+ 698:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	{
+ 699:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		if ( dirty_foam_Data.filter_foam_on )
+  18                             		.loc 1 699 0
+  19 0012 FB E2 00 00 00 00       		mov.L	#_dirty_foam_Data, r14
+  20 0018 DC EE                   		mov.W	[r14], r14
+  21 001a 75 2E 10                		and	#16, r14
+  22 001d 5F EE                   		movu.W	r14, r14
+  23 001f 61 0E                   		cmp	#0, r14
+  24 0021 21 23                   		bne	.L4
+ 700:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		{/* se entro qui il riconoscimento sporco e schiuma sta intervenendo e 
+ 701:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		quindi l'alternato ï¿½ in pausa*/
+ 702:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			return ALTERNATE_KO;		            	            
+ 703:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		}
+ 704:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	
+ 705:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	    if (  TESTBIT(GIValid, (GI_FIRST_VIRTSENSOR_BIT+GI_VIRTUAL_SENSOR_WASH)) )
+  25                             		.loc 1 705 0
+  26 0023 FB E2 00 00 00 00       		mov.L	#_GIValid, r14
+  27 0029 DC E1                   		mov.W	[r14], r1
+  28 002b 76 21 00 04             		and	#0x400, r1
+  29 002f 5F 11                   		movu.W	r1, r1
+  30 0031 61 01                   		cmp	#0, r1
+  31 0033 20 13                   		beq	.L2
+  32                             	.LBB6:
+  33                             	.LBB7:
+ 706:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		{	
+ 707:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			switch(Virtual_Sensor_Value[GI_VIRTUAL_SENSOR_WASH])
+  34                             		.loc 1 707 0
+  35 0035 FB E2 00 00 00 00       		mov.L	#_Virtual_Sensor_Value, r14
+  36                             	.LBE7:
+  37                             	.LBE6:
+ 694:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** uint8_t Could_Alternate_from_Virtual_Sensor ( void)
+  38                             		.loc 1 694 0
+  39 003b 58 E1                   		movu.B	[r14], r1
+  40 003d 61 21                   		cmp	#2, r1
+  41 003f FC DB 11                		scne.L	r1
+  42 0042 2E 04                   		bra	.L2
+  43                             	.L4:
+ 702:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			return ALTERNATE_KO;		            	            
+  44                             		.loc 1 702 0
+  45 0044 66 11                   		mov	#1, r1
+  46                             		.balign 2,3,1
+  47                             	.L2:
+ 708:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			{ 
+ 709:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				case 2:
+ 710:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 					return ALTERNATE_OK  ;
+ 711:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 712:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				  break;
+ 713:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 714:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				case 0:
+ 715:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				case 3:
+ 716:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				case 1:
+ 717:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				default:/* comprende anche lo stato 5*/
+ 718:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				return ALTERNATE_KO;				    					
+ 719:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			}	            
+ 720:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		}
+ 721:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		
+ 722:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	}	
+ 723:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	/* se il valore del sensore non ï¿½ ready comunque provo ad alternare oppure non ci sono i sensori
+ 724:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	return ALTERNATE_OK;
+ 725:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** }
+  48                             		.loc 1 725 0
+  49 0046 64 11                   		and	#1, r1
+  50 0048 02                      		rts
+  51                             	.LFE4:
+  53 0049 03                      		.section	.text.ALT_uP_AlternateControl_Exe,"ax",@progbits
+  54                             		.global	_ALT_uP_AlternateControl_Exe
+  56                             	_ALT_uP_AlternateControl_Exe:
+  57                             	.LFB0:
+ 121:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** {
+  58                             		.loc 1 121 0
+  59                             	.LVL0:
+  60 0000 6E 7D                   		pushm	r7-r13
+  61                             	.LCFI0:
+ 125:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   if ( (FALSE == Interpreter_Data[0].stepInitialized) || (FALSE == Interpreter_Data[0].optionalStep
+  62                             		.loc 1 125 0
+  63 0002 FB 72 00 00 00 00       		mov.L	#_Interpreter_Data, r7
+  64 0008 89 77                   		mov.B	4[r7], r7
+  65 000a 64 67                   		and	#6, r7
+  66 000c 61 67                   		cmp	#6, r7
+  67 000e 20 14                   		beq	.L7
+  68                             	.LBB22:
+  69                             	.LBB23:
+ 175:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uP_AltCtrl_Data.step = ALT_CTRL_INIT;
+  70                             		.loc 1 175 0
+  71 0010 FB 72 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r7
+  72 0016 CD 7A 04                		mov.B	4[r7], r10
+  73 0019 75 2A C0                		and	#-64, r10
+  74 001c C7 7A 04                		mov.B	r10, 4[r7]
+  75 001f 38 BA 06                		bra	.L73
+  76                             	.L7:
+  77                             	.LBE23:
+  78                             	.LBE22:
+ 138:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     if ( uPDoorStatus == UP_DOOR_WAIT )
+  79                             		.loc 1 138 0
+  80 0022 FB 72 00 00 00 00       		mov.L	#_uPDoorStatus, r7
+  81 0028 58 77                   		movu.B	[r7], r7
+  82 002a 61 07                   		cmp	#0, r7
+  83 002c 21 27                   		bne	.L9
+ 141:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  (void)SWTC_Stop((SWTC_CountersType)MP_ALTCTRL_S_COUNTER);
+  84                             		.loc 1 141 0
+  85 002e 75 41 24                		mov	#36, r1
+  86                             	.LVL1:
+ 143:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  if (uP_AltCtrl_Data.step == ALT_CTRL_WAIT_ALTPOS_EXE)
+  87                             		.loc 1 143 0
+  88 0031 FB A2 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r10
+ 141:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  (void)SWTC_Stop((SWTC_CountersType)MP_ALTCTRL_S_COUNTER);
+  89                             		.loc 1 141 0
+  90 0037 05 00 00 00             		bsr	_SWTC_Stop
+  91                             	.LVL2:
+ 143:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  if (uP_AltCtrl_Data.step == ALT_CTRL_WAIT_ALTPOS_EXE)
+  92                             		.loc 1 143 0
+  93 003b CD A7 04                		mov.B	4[r10], r7
+  94 003e EF 7B                   		mov.L	r7, r11
+  95 0040 75 2B 3F                		and	#63, r11
+  96 0043 61 4B                   		cmp	#4, r11
+  97 0045 3B 94 06                		bne	.L73
+ 148:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       	uP_AltCtrl_Data.step= ALT_CTRL_BEGIN;
+  98                             		.loc 1 148 0
+  99 0048 75 27 C0                		and	#-64, r7
+ 100 004b 65 17                   		or	#1, r7
+ 101 004d C7 A7 04                		mov.B	r7, 4[r10]
+ 102 0050 38 89 06                		bra	.L73
+ 103                             	.LVL3:
+ 104                             	.L9:
+ 105 0053 CF 1A                   		mov.B	r1, r10
+ 106                             	.LBB24:
+ 107                             	.LBB25:
+ 234:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   if(SWTC_IsExpired(MP_ALTERNATE_UP_VS_FILTER_S_TIMER)|| (HWC_Flags.bit.vs_wash_presence==0))
+ 108                             		.loc 1 234 0
+ 109 0055 75 41 2D                		mov	#45, r1
+ 110                             	.LVL4:
+ 111 0058 CF 2C                   		mov.B	r2, r12
+ 112                             	.LVL5:
+ 113 005a 05 00 00 00             		bsr	_SWTC_IsExpired
+ 114                             	.LVL6:
+ 115 005e 61 01                   		cmp	#0, r1
+ 116 0060 21 14                   		bne	.L10
+ 117 0062 FB 72 00 00 00 00       		mov.L	#_HWC_Flags, r7
+ 118 0068 DC 77                   		mov.W	[r7], r7
+ 119 006a 76 27 00 08             		and	#0x800, r7
+ 120 006e 5F 77                   		movu.W	r7, r7
+ 121 0070 61 07                   		cmp	#0, r7
+ 122 0072 21 18                   		bne	.L11
+ 123                             		.balign 2,3,5
+ 124                             	.L10:
+ 236:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     uP_AltCtrl_Data.SV_invalid_4alt=FALSE;
+ 125                             		.loc 1 236 0
+ 126 0074 FB 72 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r7
+ 127 007a CD 7B 04                		mov.B	4[r7], r11
+ 237:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     (void)SWTC_Stop((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER);
+ 128                             		.loc 1 237 0
+ 129 007d 75 41 2D                		mov	#45, r1
+ 236:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     uP_AltCtrl_Data.SV_invalid_4alt=FALSE;
+ 130                             		.loc 1 236 0
+ 131 0080 7A 7B                   		bclr	#7, r11
+ 132 0082 C7 7B 04                		mov.B	r11, 4[r7]
+ 237:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     (void)SWTC_Stop((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER);
+ 133                             		.loc 1 237 0
+ 134 0085 05 00 00 00             		bsr	_SWTC_Stop
+ 135                             	.LVL7:
+ 136 0089 03                      		.balign 2,3,5
+ 137                             	.L11:
+ 240:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   switch(uP_AltCtrl_Data.step) 
+ 138                             		.loc 1 240 0
+ 139 008a FB 72 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r7
+ 140 0090 CD 7B 04                		mov.B	4[r7], r11
+ 141 0093 EF 74                   		mov.L	r7, r4
+ 142 0095 EF BE                   		mov.L	r11, r14
+ 143 0097 75 2E 3F                		and	#63, r14
+ 144 009a 61 6E                   		cmp	#6, r14
+ 145 009c 25 05 38 2F 06          		bgtu	.L12
+ 146 00a1 FB 72 00 00 00 00       		mov.L	#.L20, r7
+ 147 00a7 FE 6E 77                		mov.L	[r14,r7], r7
+ 148                             		
+ 149 00aa 7F 07                   	1:jmp	r7
+ 150                             		.section	.rodata.ALT_uP_AlternateControl_Exe,"a",@progbits
+ 151                             		.balign 4
+ 152                             		.balign 4
+ 153                             	.L20:
+ 154 0000 00 00 00 00             		.long .L13
+ 155 0004 00 00 00 00             		.long .L14
+ 156 0008 00 00 00 00             		.long .L15
+ 157 000c 00 00 00 00             		.long .L16
+ 158 0010 00 00 00 00             		.long .L17
+ 159 0014 00 00 00 00             		.long .L18
+ 160 0018 00 00 00 00             		.long .L77
+ 161                             		.section	.text.ALT_uP_AlternateControl_Exe
+ 162                             	.L13:
+ 163                             	.LBB26:
+ 244:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       	if (BasicLoader(PTR_UP_ALTERNATECONTROL, lowStatement, &uPAlternateCtrl_setting_data) != S_O
+ 164                             		.loc 1 244 0
+ 165 00ac 75 41 15                		mov	#21, r1
+ 166 00af CF C2                   		mov.B	r12, r2
+ 167 00b1 FB 32 00 00 00 00       		mov.L	#_uPAlternateCtrl_setting_data, r3
+ 168 00b7 05 00 00 00             		bsr	_BasicLoader
+ 169                             	.LVL8:
+ 170 00bb 5B 11                   		movu.B	r1, r1
+ 171 00bd 61 01                   		cmp	#0, r1
+ 172 00bf 20 04                   		beq	.L21
+ 173 00c1 2E 53                   		bra	.L154
+ 174                             	.L21:
+ 250:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		if ( (highStatement & ALT_CTRL_OPTION) == ALT_CTRL_TABLE_PPOS)
+ 175                             		.loc 1 250 0
+ 176 00c3 EF A7                   		mov.L	r10, r7
+ 177 00c5 75 27 30                		and	#48, r7
+ 178 00c8 75 57 30                		cmp	#48, r7
+ 179 00cb 21 5A                   		bne	.L22
+ 180                             	.LVL9:
+ 181                             	.LBB27:
+ 182                             	.LBB28:
+ 726:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 727:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 728:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 729:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** /**
+ 730:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** Seleziona la tabeRestituisce il displacement del up Alternato dela tabella della zone wash selezion
+ 731:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 732:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 733:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \param [in] ZoneWashFunctionValue 
+ 734:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \param [in] uPAlCTRL_setting_preview tabella dei displacement
+ 735:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 736:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \return     displacement
+ 737:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 738:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \version		1.0.0
+ 739:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \date 			26/03/2012
+ 740:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** \author			Emanuela Antongoli
+ 741:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             
+ 742:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** */
+ 743:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** static uint8_t ALT_SelectTableRuleByZoneWashSelection(uint8_t regulation_value) 
+ 744:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** {
+ 745:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	uint8_t found=FALSE;
+ 746:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	uint8_t drdatafound=FALSE;
+ 747:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	struct
+ 748:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	{
+ 749:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		uint8_t reg_val : 4;  
+ 750:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		uint8_t free    : 4;
+ 751:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		uint8_t displacement;
+ 752:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		
+ 753:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	}up_reg_displ_setting_s;
+ 754:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 755:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****  	uint8_t i=0,nrows=uPAlternateCtrl_setting_data.DataLenght/(sizeof(up_reg_displ_setting_s)/2), num
+ 183                             		.loc 1 755 0
+ 184 00cd FB B2 00 00 00 00       		mov.L	#_uPAlternateCtrl_setting_data, r11
+ 185                             	.LVL10:
+ 756:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   
+ 757:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   
+ 758:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	while(!found) 
+ 759:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	{/* il numero di byte per ogni informazione  dacercare ï¿½ pari a 2*/
+ 760:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		while(((i/sizeof(up_reg_displ_setting_s))<nrows) && (!drdatafound)) 
+ 761:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		{      
+ 762:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		  /* posizione cesto della riga (i/sizeof(up_Alt_setting_data_s))-esima */
+ 763:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 764:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			if ( regulation_value <=( OFFS_B(uPAlternateCtrl_setting_data.Data,i)& 0x0F) )
+ 186                             		.loc 1 764 0
+ 187 00d3 EC B7                   		mov.L	[r11], r7
+ 760:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		while(((i/sizeof(up_reg_displ_setting_s))<nrows) && (!drdatafound)) 
+ 188                             		.loc 1 760 0
+ 189 00d5 59 BC 04                		movu.B	4[r11], r12
+ 190                             	.LVL11:
+ 191                             		.loc 1 764 0
+ 192 00d8 FB B2 00 00 00 00       		mov.L	#_ZoneWashFunctionValue, r11
+ 193                             	.LVL12:
+ 194 00de 58 BE                   		movu.B	[r11], r14
+ 195 00e0 2E 0C                   		bra	.L23
+ 196                             	.LVL13:
+ 197                             	.L25:
+ 198                             	.LBE28:
+ 199 00e2 CC DB                   		mov.B	[r13], r11
+ 200                             	.LBB29:
+ 201 00e4 64 FB                   		and	#15, r11
+ 202 00e6 47 BE                   		cmp	r11, r14
+ 203 00e8 2B 12                   		ble	.L24
+ 765:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			{
+ 766:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				drdatafound=TRUE;
+ 767:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			}else 
+ 768:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			{        
+ 769:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				i+=sizeof(up_reg_displ_setting_s);
+ 204                             		.loc 1 769 0
+ 205 00ea 62 21                   		add	#2, r1
+ 206                             	.LVL14:
+ 207                             		.balign 2,3,1
+ 208                             	.L23:
+ 764:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			if ( regulation_value <=( OFFS_B(uPAlternateCtrl_setting_data.Data,i)& 0x0F) )
+ 209                             		.loc 1 764 0
+ 210 00ec 5B 1B                   		movu.B	r1, r11
+ 211 00ee FF 2D B7                		add	r11, r7, r13
+ 212                             	.LVL15:
+ 760:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		while(((i/sizeof(up_reg_displ_setting_s))<nrows) && (!drdatafound)) 
+ 213                             		.loc 1 760 0
+ 214 00f1 68 1B                   		shlr	#1, r11
+ 215 00f3 47 BC                   		cmp	r11, r12
+ 216 00f5 24 ED                   		bgtu	.L25
+ 770:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			}
+ 771:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		}
+ 772:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 773:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 774:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		if (! drdatafound )
+ 775:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		{/* tutti i tentativi non hanno prodotto un campo dati corretto 
+ 776:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			   prendo il primo */
+ 777:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			i=0;
+ 217                             		.loc 1 777 0
+ 218 00f7 66 01                   		mov	#0, r1
+ 219                             	.LVL16:
+ 220 00f9 03                      		.balign 2,3,1
+ 221                             	.L24:
+ 778:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		}
+ 779:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		
+ 780:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		found = TRUE;				    			
+ 781:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		
+ 782:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 
+ 783:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	}
+ 784:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	return (OFFS_B(uPAlternateCtrl_setting_data.Data,i+1));
+ 222                             		.loc 1 784 0
+ 223 00fa 5B 11                   		movu.B	r1, r1
+ 224 00fc 4B 17                   		add	r1, r7
+ 225                             	.LBE29:
+ 226                             	.LBE27:
+ 253:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			if (BasicLoader(PTR_UP_ALTERNATECONTROL, table_displacement, &uPAlternateCtrl_setting_data) != S
+ 227                             		.loc 1 253 0
+ 228 00fe 88 7A                   		mov.B	1[r7], r2
+ 229 0100 75 41 15                		mov	#21, r1
+ 230                             	.LVL17:
+ 231 0103 FB 32 00 00 00 00       		mov.L	#_uPAlternateCtrl_setting_data, r3
+ 232                             	.LVL18:
+ 233 0109 05 00 00 00             		bsr	_BasicLoader
+ 234                             	.LVL19:
+ 235 010d 5B 11                   		movu.B	r1, r1
+ 236 010f 61 01                   		cmp	#0, r1
+ 237 0111 20 14                   		beq	.L22
+ 238                             	.LVL20:
+ 239 0113 03                      		.balign 2,3,5
+ 240                             	.L154:
+ 255:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				uP_AltCtrl_Data.step = ALT_CTRL_ERROR;
+ 241                             		.loc 1 255 0
+ 242 0114 FB A2 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r10
+ 243                             	.LVL21:
+ 244 011a CD A7 04                		mov.B	4[r10], r7
+ 245 011d 75 27 C0                		and	#-64, r7
+ 246 0120 65 77                   		or	#7, r7
+ 247 0122 38 64 04                		bra	.L153
+ 248                             	.LVL22:
+ 249                             	.L22:
+ 261:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		uP_AltCtrl_Data.step=ALT_CTRL_BEGIN;
+ 250                             		.loc 1 261 0
+ 251 0125 FB B2 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r11
+ 252 012b CD B7 04                		mov.B	4[r11], r7
+ 253 012e 75 27 C0                		and	#-64, r7
+ 254 0131 65 17                   		or	#1, r7
+ 255 0133 C7 B7 04                		mov.B	r7, 4[r11]
+ 256                             		.balign 2,3,1
+ 257                             	.L14:
+ 265:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		switch((highStatement & ALT_CTRL_OPTION)) 
+ 258                             		.loc 1 265 0
+ 259 0136 EF A7                   		mov.L	r10, r7
+ 260 0138 75 27 30                		and	#48, r7
+ 261 013b 75 57 10                		cmp	#16, r7
+ 262 013e 3A 99 00                		beq	.L28
+ 263 0141 24 09                   		bgtu	.L30
+ 264 0143 61 07                   		cmp	#0, r7
+ 265 0145 20 14                   		beq	.L27
+ 266 0147 38 02 01                		bra	.L26
+ 267                             	.L30:
+ 268 014a 75 57 20                		cmp	#32, r7
+ 269 014d 3A EC 00                		beq	.L29
+ 270 0150 75 57 30                		cmp	#48, r7
+ 271 0153 3B F6 00                		bne	.L26
+ 272 0156 38 E3 00                		bra	.L29
+ 273                             	.L27:
+ 274                             	.LBB30:
+ 268:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		 	if( Could_Alternate_from_Virtual_Sensor()==ALTERNATE_KO)
+ 275                             		.loc 1 268 0
+ 276 0159 05 00 00 00             		bsr	_Could_Alternate_from_Virtual_Sensor
+ 277                             	.LVL23:
+ 278 015d 5B 11                   		movu.B	r1, r1
+ 279 015f 61 11                   		cmp	#1, r1
+ 280 0161 3A 7B 05                		beq	.L8
+ 281                             	.LVL24:
+ 276:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    altpos=uP_AltCtrl_Data.curr_pos;
+ 282                             		.loc 1 276 0
+ 283 0164 FB 72 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r7
+ 284 016a CD 7B 06                		mov.B	6[r7], r11
+ 285                             	.LVL25:
+ 278:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    if(altpos>=ALT_getPosNotDef( )) 
+ 286                             		.loc 1 278 0
+ 287 016d 05 00 00 00             		bsr	_ALT_getPosNotDef
+ 288                             	.LVL26:
+ 289 0171 5B B7                   		movu.B	r11, r7
+ 290 0173 47 17                   		cmp	r1, r7
+ 291 0175 28 15                   		bge	.L76
+ 292                             	.LVL27:
+ 293                             	.LBB31:
+ 283:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		      alternatecmd=altpos+1;
+ 294                             		.loc 1 283 0
+ 295 0177 62 1B                   		add	#1, r11
+ 296                             	.LVL28:
+ 284:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		      alternatecmd%= ALT_getNumPos();
+ 297                             		.loc 1 284 0
+ 298 0179 5B BB                   		movu.B	r11, r11
+ 299 017b 05 00 00 00             		bsr	_ALT_getNumPos
+ 300                             	.LVL29:
+ 301 017f EF B7                   		mov.L	r11, r7
+ 302                             	.LVL30:
+ 303 0181 FC 23 17                		div	r1, r7
+ 304 0184 4F 71                   		mul	r7, r1
+ 305 0186 43 1B                   		sub	r1, r11
+ 306                             	.LVL31:
+ 307 0188 2E 06                   		bra	.L31
+ 308                             	.LVL32:
+ 309                             	.L76:
+ 310                             	.LBE31:
+ 280:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		      alternatecmd=ALT_CTRL_SYNC_MSK;
+ 311                             		.loc 1 280 0
+ 312 018a 75 4B 10                		mov	#16, r11
+ 313                             	.LVL33:
+ 314 018d 03                      		.balign 2,3,5
+ 315                             	.L31:
+ 287:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			 uP_AltCtrl_Data.SV_invalid_4alt=TRUE;
+ 316                             		.loc 1 287 0
+ 317 018e FB 72 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r7
+ 318 0194 CD 7E 04                		mov.B	4[r7], r14
+ 288:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			(void)SWTC_SetSValue((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER, (SWTC_SCounterValue)O
+ 319                             		.loc 1 288 0
+ 320 0197 FB C2 00 00 00 00       		mov.L	#_Tab_SFT_MotorWash, r12
+ 287:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			 uP_AltCtrl_Data.SV_invalid_4alt=TRUE;
+ 321                             		.loc 1 287 0
+ 322 019d 78 7E                   		bset	#7, r14
+ 323 019f C7 7E 04                		mov.B	r14, 4[r7]
+ 288:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			(void)SWTC_SetSValue((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER, (SWTC_SCounterValue)O
+ 324                             		.loc 1 288 0
+ 325 01a2 EC CC                   		mov.L	[r12], r12
+ 326 01a4 75 41 2D                		mov	#45, r1
+ 327 01a7 CD C2 01                		mov.B	1[r12], r2
+ 290:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    LoadsReq_New[Alt_Pos].b=alternatecmd;
+ 328                             		.loc 1 290 0
+ 329 01aa FB C2 00 00 00 00       		mov.L	#_Alt_Pos, r12
+ 288:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			(void)SWTC_SetSValue((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER, (SWTC_SCounterValue)O
+ 330                             		.loc 1 288 0
+ 331 01b0 05 00 00 00             		bsr	_SWTC_SetSValue
+ 332                             	.LVL34:
+ 289:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		    (void)SWTC_Run((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER);
+ 333                             		.loc 1 289 0
+ 334 01b4 75 41 2D                		mov	#45, r1
+ 335 01b7 05 00 00 00             		bsr	_SWTC_Run
+ 336                             	.LVL35:
+ 290:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    LoadsReq_New[Alt_Pos].b=alternatecmd;
+ 337                             		.loc 1 290 0
+ 338 01bb 58 CC                   		movu.B	[r12], r12
+ 339 01bd FB D2 00 00 00 00       		mov.L	#_LoadsReq_New, r13
+ 340 01c3 FE 0C DB                		mov.B	r11, [r12,r13]
+ 291:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    uP_AltCtrl_Data.step=ALT_CTRL_WAIT_ALTPOS_EXE;
+ 341                             		.loc 1 291 0
+ 342 01c6 CD 7E 04                		mov.B	4[r7], r14
+ 292:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			 uP_AltCtrl_Data.curr_cmd=alternatecmd;
+ 343                             		.loc 1 292 0
+ 344 01c9 C7 7B 07                		mov.B	r11, 7[r7]
+ 291:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    uP_AltCtrl_Data.step=ALT_CTRL_WAIT_ALTPOS_EXE;
+ 345                             		.loc 1 291 0
+ 346 01cc 75 2E C0                		and	#-64, r14
+ 347 01cf 65 4E                   		or	#4, r14
+ 348 01d1 C7 7E 04                		mov.B	r14, 4[r7]
+ 349 01d4 38 88 00                		bra	.L32
+ 350                             	.LVL36:
+ 351                             	.L28:
+ 297:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		  	if( Could_Alternate_from_Virtual_Sensor()==ALTERNATE_KO)
+ 352                             		.loc 1 297 0
+ 353 01d7 05 00 00 00             		bsr	_Could_Alternate_from_Virtual_Sensor
+ 354                             	.LVL37:
+ 355 01db 5B 11                   		movu.B	r1, r1
+ 356 01dd 61 11                   		cmp	#1, r1
+ 357 01df 3A F6 04                		beq	.L77
+ 358                             	.LVL38:
+ 302:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    alternatecmd=ALT_CTRL_GET_ALT_POS(0,highStatement);
+ 359                             		.loc 1 302 0
+ 360 01e2 FB 72 00 00 00 00       		mov.L	#_uPAlternateCtrl_setting_data, r7
+ 361                             	.LVL39:
+ 362 01e8 EC 77                   		mov.L	[r7], r7
+ 363                             	.LVL40:
+ 305:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    LoadsReq_New[Alt_Pos].b=alternatecmd;
+ 364                             		.loc 1 305 0
+ 365 01ea FB B2 00 00 00 00       		mov.L	#_LoadsReq_New, r11
+ 302:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    alternatecmd=ALT_CTRL_GET_ALT_POS(0,highStatement);
+ 366                             		.loc 1 302 0
+ 367 01f0 CC 7E                   		mov.B	[r7], r14
+ 305:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    LoadsReq_New[Alt_Pos].b=alternatecmd;
+ 368                             		.loc 1 305 0
+ 369 01f2 FB 72 00 00 00 00       		mov.L	#_Alt_Pos, r7
+ 370                             	.LVL41:
+ 371 01f8 58 77                   		movu.B	[r7], r7
+ 302:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    alternatecmd=ALT_CTRL_GET_ALT_POS(0,highStatement);
+ 372                             		.loc 1 302 0
+ 373 01fa 64 3E                   		and	#3, r14
+ 303:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    alternatecmd|=ALT_CTRL_SYNC_MSK;  		    
+ 374                             		.loc 1 303 0
+ 375 01fc 75 3E 10                		or	#16, r14
+ 376                             	.LVL42:
+ 305:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    LoadsReq_New[Alt_Pos].b=alternatecmd;
+ 377                             		.loc 1 305 0
+ 378 01ff FE 07 BE                		mov.B	r14, [r7,r11]
+ 306:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    uP_AltCtrl_Data.curr_cmd=alternatecmd;
+ 379                             		.loc 1 306 0
+ 380 0202 FB 72 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r7
+ 308:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			uP_AltCtrl_Data.SV_invalid_4alt=TRUE;
+ 381                             		.loc 1 308 0
+ 382 0208 CD 7B 04                		mov.B	4[r7], r11
+ 306:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    uP_AltCtrl_Data.curr_cmd=alternatecmd;
+ 383                             		.loc 1 306 0
+ 384 020b C7 7E 07                		mov.B	r14, 7[r7]
+ 308:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			uP_AltCtrl_Data.SV_invalid_4alt=TRUE;
+ 385                             		.loc 1 308 0
+ 386 020e 78 7B                   		bset	#7, r11
+ 387 0210 C7 7B 04                		mov.B	r11, 4[r7]
+ 309:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			(void)SWTC_SetSValue((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER, (SWTC_SCounterValue)O
+ 388                             		.loc 1 309 0
+ 389 0213 FB B2 00 00 00 00       		mov.L	#_Tab_SFT_MotorWash, r11
+ 390 0219 EC BB                   		mov.L	[r11], r11
+ 391 021b 75 41 2D                		mov	#45, r1
+ 392 021e CD B2 01                		mov.B	1[r11], r2
+ 393 0221 05 00 00 00             		bsr	_SWTC_SetSValue
+ 394                             	.LVL43:
+ 310:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		    (void)SWTC_Run((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER);
+ 395                             		.loc 1 310 0
+ 396 0225 75 41 2D                		mov	#45, r1
+ 397 0228 05 00 00 00             		bsr	_SWTC_Run
+ 398                             	.LVL44:
+ 311:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			uP_AltCtrl_Data.step=ALT_CTRL_WAIT_ALTPOS_EXE;
+ 399                             		.loc 1 311 0
+ 400 022c CD 7B 04                		mov.B	4[r7], r11
+ 401 022f 75 2B C0                		and	#-64, r11
+ 402 0232 65 4B                   		or	#4, r11
+ 403 0234 C7 7B 04                		mov.B	r11, 4[r7]
+ 404 0237 2E 25                   		bra	.L32
+ 405                             	.L29:
+ 319:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    uP_AltCtrl_Data.step=ALT_CTRL_SELECT_TABLE_EXE;
+ 406                             		.loc 1 319 0
+ 407 0239 FB B2 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r11
+ 408 023f CD B7 04                		mov.B	4[r11], r7
+ 409 0242 75 27 C0                		and	#-64, r7
+ 410 0245 65 27                   		or	#2, r7
+ 411 0247 2E 11                   		bra	.L149
+ 412                             	.L26:
+ 324:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   		    uP_AltCtrl_Data.step=ALT_CTRL_ERROR;
+ 413                             		.loc 1 324 0
+ 414 0249 FB B2 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r11
+ 415 024f CD B7 04                		mov.B	4[r11], r7
+ 416 0252 75 27 C0                		and	#-64, r7
+ 417 0255 65 77                   		or	#7, r7
+ 418 0257 03                      		.balign 2,3,5
+ 419                             	.L149:
+ 420 0258 C7 B7 04                		mov.B	r7, 4[r11]
+ 421 025b 03                      		.balign 2,3,1
+ 422                             	.L32:
+ 423                             	.LBE30:
+ 327:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         if((highStatement &  ALT_CTRL_OPTION_TABLE) != ALT_CTRL_TABLE)
+ 424                             		.loc 1 327 0
+ 425 025c EF A7                   		mov.L	r10, r7
+ 426 025e 75 27 20                		and	#32, r7
+ 427 0261 5B 77                   		movu.B	r7, r7
+ 428 0263 61 07                   		cmp	#0, r7
+ 429 0265 21 05                   		bne	.L15
+ 430 0267 38 72 04                		bra	.L73
+ 431                             	.L15:
+ 334:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       if ((DishRackFunctionValue & DISH_RACK_FVALUE_MSK)&& ((highStatement &  ALT_CTRL_TABLE_PPOS)!
+ 432                             		.loc 1 334 0
+ 433 026a FB 72 00 00 00 00       		mov.L	#_DishRackFunctionValue, r7
+ 434 0270 CC 7E                   		mov.B	[r7], r14
+ 435 0272 FD 74 CE 0F             		tst	#15, r14
+ 436 0276 20 72                   		beq	.L33
+ 437 0278 EF A7                   		mov.L	r10, r7
+ 438 027a 75 27 30                		and	#48, r7
+ 439 027d 75 57 30                		cmp	#48, r7
+ 440 0280 20 68                   		beq	.L33
+ 441                             	.LVL45:
+ 442                             	.LBB32:
+ 443                             	.LBB33:
+ 624:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t i=0,nrows=uPAlternateCtrl_setting_data.DataLenght/(sizeof(up_Alt_setting_data_s)/2), numT
+ 444                             		.loc 1 624 0
+ 445 0282 FB 72 00 00 00 00       		mov.L	#_uPAlternateCtrl_setting_data, r7
+ 446 0288 89 73                   		mov.B	4[r7], r3
+ 631:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       if((ALT_CTRL_GET_ALT_POS(i,highStatement)==dishrackselection) && ( ALT_CTRL_GET_MNT_TIME(i)!=
+ 447                             		.loc 1 631 0
+ 448 028a EC 72                   		mov.L	[r7], r2
+ 624:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uint8_t i=0,nrows=uPAlternateCtrl_setting_data.DataLenght/(sizeof(up_Alt_setting_data_s)/2), numT
+ 449                             		.loc 1 624 0
+ 450 028c 5B 3C                   		movu.B	r3, r12
+ 451                             	.LVL46:
+ 452 028e 66 0B                   		mov	#0, r11
+ 628:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     while(((i/sizeof(up_Alt_setting_data_s))<nrows) && (!drdatafound)) 
+ 453                             		.loc 1 628 0
+ 454 0290 68 1C                   		shlr	#1, r12
+ 455                             	.LVL47:
+ 456 0292 2E 4E                   		bra	.L145
+ 457                             	.LVL48:
+ 458                             	.L38:
+ 631:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       if((ALT_CTRL_GET_ALT_POS(i,highStatement)==dishrackselection) && ( ALT_CTRL_GET_MNT_TIME(i)!=
+ 459                             		.loc 1 631 0
+ 460 0294 FE 45 24                		mov.B	[r5,r2], r4
+ 461 0297 EF 4D                   		mov.L	r4, r13
+ 462 0299 64 3D                   		and	#3, r13
+ 463 029b 47 FD                   		cmp	r15, r13
+ 464 029d 21 09                   		bne	.L35
+ 465 029f FD 78 C4 FC 00          		tst	#0xfc, r4
+ 466 02a4 21 06                   		bne	.L78
+ 467                             		.balign 2,3,1
+ 468                             	.L35:
+ 636:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         i+=sizeof(up_Alt_setting_data_s);
+ 469                             		.loc 1 636 0
+ 470 02a6 62 47                   		add	#4, r7
+ 471                             	.LVL49:
+ 472 02a8 2E 04                   		bra	.L146
+ 473                             	.L78:
+ 633:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         drdatafound=TRUE;
+ 474                             		.loc 1 633 0
+ 475 02aa 66 11                   		mov	#1, r1
+ 476                             	.LVL50:
+ 477                             		.balign 2,3,1
+ 478                             	.L146:
+ 628:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     while(((i/sizeof(up_Alt_setting_data_s))<nrows) && (!drdatafound)) 
+ 479                             		.loc 1 628 0
+ 480 02ac 5B 75                   		movu.B	r7, r5
+ 481 02ae FD 82 5D                		shlr	#2, r5, r13
+ 482 02b1 47 DC                   		cmp	r13, r12
+ 483 02b3 5B 14                   		movu.B	r1, r4
+ 484 02b5 25 09                   		bleu	.L37
+ 485 02b7 61 04                   		cmp	#0, r4
+ 486 02b9 20 DB                   		beq	.L38
+ 487 02bb 38 2A 04                		bra	.L39
+ 488                             	.L37:
+ 641:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     if ( drdatafound )
+ 489                             		.loc 1 641 0
+ 490 02be 61 04                   		cmp	#0, r4
+ 491 02c0 3B 25 04                		bne	.L39
+ 492                             	.LVL51:
+ 648:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			numTentResearch ++;
+ 493                             		.loc 1 648 0
+ 494 02c3 62 1B                   		add	#1, r11
+ 495                             	.LVL52:
+ 650:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			if ( numTentResearch == 1 )
+ 496                             		.loc 1 650 0
+ 497 02c5 5B B7                   		movu.B	r11, r7
+ 498 02c7 61 17                   		cmp	#1, r7
+ 499 02c9 21 0D                   		bne	.L40
+ 652:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				if ( dishrackselection == b0 )
+ 500                             		.loc 1 652 0
+ 501 02cb 5B EE                   		movu.B	r14, r14
+ 658:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 					dishrackselection = b0;
+ 502                             		.loc 1 658 0
+ 503 02cd 61 1E                   		cmp	#1, r14
+ 504 02cf FC DB E0                		sceq.L	r14
+ 505 02d2 62 1E                   		add	#1, r14
+ 506 02d4 2E 0C                   		bra	.L145
+ 507                             	.L40:
+ 661:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			else if ( numTentResearch == 2 )
+ 508                             		.loc 1 661 0
+ 509 02d6 61 27                   		cmp	#2, r7
+ 510 02d8 3A 08 04                		beq	.L80
+ 669:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				i = 0;
+ 511                             		.loc 1 669 0
+ 512 02db CF 47                   		mov.B	r4, r7
+ 513 02dd 38 08 04                		bra	.L39
+ 514                             	.LVL53:
+ 515                             	.L145:
+ 633:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         drdatafound=TRUE;
+ 516                             		.loc 1 633 0
+ 517 02e0 66 07                   		mov	#0, r7
+ 518 02e2 CF 71                   		mov.B	r7, r1
+ 631:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       if((ALT_CTRL_GET_ALT_POS(i,highStatement)==dishrackselection) && ( ALT_CTRL_GET_MNT_TIME(i)!=
+ 519                             		.loc 1 631 0
+ 520 02e4 5B EF                   		movu.B	r14, r15
+ 521 02e6 2E C6                   		bra	.L146
+ 522                             	.LVL54:
+ 523                             	.L33:
+ 524                             	.LBE33:
+ 525                             	.LBE32:
+ 340:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       uP_AltCtrl_Data.timing=1;
+ 526                             		.loc 1 340 0
+ 527 02e8 FB 72 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r7
+ 528 02ee 3C 75 01                		mov.B	#1, 5[r7]
+ 344:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		if( ( HWC_Flags.bit.bldc ) || ( HWC_Flags.bit.bldc1 ) )
+ 529                             		.loc 1 344 0
+ 530 02f1 FB B2 00 00 00 00       		mov.L	#_HWC_Flags, r11
+ 531 02f7 DC BB                   		mov.W	[r11], r11
+ 532 02f9 64 6B                   		and	#6, r11
+ 533 02fb 20 13                   		beq	.L44
+ 349:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	      uP_AltCtrl_Data.timing+=ALT_CTRL_GET_RAMPTIME(0);
+ 534                             		.loc 1 349 0
+ 535 02fd FB B2 00 00 00 00       		mov.L	#_uPAlternateCtrl_setting_data, r11
+ 536 0303 EC BB                   		mov.L	[r11], r11
+ 537 0305 CD BB 02                		mov.B	2[r11], r11
+ 538 0308 62 1B                   		add	#1, r11
+ 539 030a C7 7B 05                		mov.B	r11, 5[r7]
+ 540 030d 03                      		.balign 2,3,5
+ 541                             	.L44:
+ 355:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       uP_AltCtrl_Data.step=ALT_CTRL_WAIT_RAMP_EXE;
+ 542                             		.loc 1 355 0
+ 543 030e FB B2 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r11
+ 352:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		(void)Set_SmallCounter((SWTC_CountersType)MP_ALTCTRL_S_COUNTER, (SWTC_PrescalerType)COUNTERS2_TBA
+ 544                             		.loc 1 352 0
+ 545 0314 75 41 24                		mov	#36, r1
+ 546 0317 66 12                   		mov	#1, r2
+ 547 0319 66 03                   		mov	#0, r3
+ 548 031b 05 00 00 00             		bsr	_Set_SmallCounter
+ 549                             	.LVL55:
+ 355:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       uP_AltCtrl_Data.step=ALT_CTRL_WAIT_RAMP_EXE;
+ 550                             		.loc 1 355 0
+ 551 031f CD B7 04                		mov.B	4[r11], r7
+ 552 0322 75 27 C0                		and	#-64, r7
+ 553 0325 65 37                   		or	#3, r7
+ 554 0327 C7 B7 04                		mov.B	r7, 4[r11]
+ 555                             		.balign 2,3,5
+ 556                             	.L16:
+ 360:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		if(ALT_CTRL_GET_SPEED(0))
+ 557                             		.loc 1 360 0
+ 558 032a FB 72 00 00 00 00       		mov.L	#_uPAlternateCtrl_setting_data, r7
+ 559 0330 EC 7E                   		mov.L	[r7], r14
+ 560 0332 59 E7 01                		movu.B	1[r14], r7
+ 561 0335 61 07                   		cmp	#0, r7
+ 562 0337 20 6D                   		beq	.L45
+ 365:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			if( ( HWC_Flags.bit.bldc ) || ( HWC_Flags.bit.bldc1 ) )
+ 563                             		.loc 1 365 0
+ 564 0339 FB 72 00 00 00 00       		mov.L	#_HWC_Flags, r7
+ 565 033f DC 7B                   		mov.W	[r7], r11
+ 566 0341 FB 72 00 00 00 00       		mov.L	#_BLDC_PumpReq_New, r7
+ 567 0347 64 6B                   		and	#6, r11
+ 568 0349 20 2A                   		beq	.L46
+ 370:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****                 SET_BLDC_TIME(BLDC_PumpReq_New[WASH_BLDC_PUMP], ALT_CTRL_GET_RAMPTIME(0)*ALT_CTRL_B
+ 569                             		.loc 1 370 0
+ 570 034b 59 EB 02                		movu.B	2[r14], r11
+ 571 034e 63 5B                   		mul	#5, r11
+ 572 0350 68 8B                   		shlr	#8, r11
+ 573 0352 C7 7B 04                		mov.B	r11, 4[r7]
+ 574 0355 CD EB 02                		mov.B	2[r14], r11
+ 575 0358 63 5B                   		mul	#5, r11
+ 576 035a C7 7B 05                		mov.B	r11, 5[r7]
+ 371:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****     	        SET_BLDC_SPEED(BLDC_PumpReq_New[WASH_BLDC_PUMP],ALT_CTRL_GET_SPEED(0)*ALT_CTRL_BLDC_SP
+ 577                             		.loc 1 371 0
+ 578 035d 59 EB 01                		movu.B	1[r14], r11
+ 579 0360 75 1B 19                		mul	#25, r11
+ 580 0363 68 8B                   		shlr	#8, r11
+ 581 0365 C7 7B 02                		mov.B	r11, 2[r7]
+ 582 0368 CD EB 01                		mov.B	1[r14], r11
+ 583 036b 75 1B 19                		mul	#25, r11
+ 584 036e C7 7B 03                		mov.B	r11, 3[r7]
+ 585 0371 2E 15                   		bra	.L150
+ 586                             	.L46:
+ 377:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****                 SET_BLDC_TIME(BLDC_PumpReq_New[WASH_BLDC_PUMP], ALT_CTRL_GET_RAMPTIME(0));
+ 587                             		.loc 1 377 0
+ 588 0373 C7 7B 04                		mov.B	r11, 4[r7]
+ 589 0376 CD EC 02                		mov.B	2[r14], r12
+ 378:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         	    SET_BLDC_SPEED(BLDC_PumpReq_New[WASH_BLDC_PUMP],ALT_CTRL_GET_SPEED(0))
+ 590                             		.loc 1 378 0
+ 591 0379 C7 7B 02                		mov.B	r11, 2[r7]
+ 377:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****                 SET_BLDC_TIME(BLDC_PumpReq_New[WASH_BLDC_PUMP], ALT_CTRL_GET_RAMPTIME(0));
+ 592                             		.loc 1 377 0
+ 593 037c C7 7C 05                		mov.B	r12, 5[r7]
+ 378:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         	    SET_BLDC_SPEED(BLDC_PumpReq_New[WASH_BLDC_PUMP],ALT_CTRL_GET_SPEED(0))
+ 594                             		.loc 1 378 0
+ 595 037f CD ED 01                		mov.B	1[r14], r13
+ 596 0382 C7 7D 03                		mov.B	r13, 3[r7]
+ 597 0385 03                      		.balign 2,3,3
+ 598                             	.L150:
+ 599 0386 59 EB 01                		movu.B	1[r14], r11
+ 382:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             SET_PUMP(LD_WASH_PUMP_IND, LOAD_ON)
+ 600                             		.loc 1 382 0
+ 601 0389 66 1C                   		mov	#1, r12
+ 378:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         	    SET_BLDC_SPEED(BLDC_PumpReq_New[WASH_BLDC_PUMP],ALT_CTRL_GET_SPEED(0))
+ 602                             		.loc 1 378 0
+ 603 038b 61 0B                   		cmp	#0, r11
+ 604 038d FC DB B1                		scne.L	r11
+ 605 0390 C7 7B 01                		mov.B	r11, 1[r7]
+ 382:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             SET_PUMP(LD_WASH_PUMP_IND, LOAD_ON)
+ 606                             		.loc 1 382 0
+ 607 0393 FB 72 00 00 00 00       		mov.L	#_Pump_Pos, r7
+ 608 0399 58 77                   		movu.B	[r7], r7
+ 609 039b FB B2 00 00 00 00       		mov.L	#_LoadsReq_New, r11
+ 610 03a1 FE 07 BC                		mov.B	r12, [r7,r11]
+ 611                             		.balign 2,3,2
+ 612                             	.L45:
+ 388:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		if(SWTC_IsExpired((SWTC_CountersType)MP_ALTCTRL_S_COUNTER)) 
+ 613                             		.loc 1 388 0
+ 614 03a4 75 41 24                		mov	#36, r1
+ 615 03a7 05 00 00 00             		bsr	_SWTC_IsExpired
+ 616                             	.LVL56:
+ 617 03ab 61 01                   		cmp	#0, r1
+ 618 03ad 3A DB 00                		beq	.L48
+ 391:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			if(--uP_AltCtrl_Data.timing) 
+ 619                             		.loc 1 391 0
+ 620 03b0 FB B2 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r11
+ 621 03b6 CD B7 05                		mov.B	5[r11], r7
+ 622 03b9 60 17                   		sub	#1, r7
+ 623 03bb C7 B7 05                		mov.B	r7, 5[r11]
+ 624 03be 5B 77                   		movu.B	r7, r7
+ 625 03c0 61 07                   		cmp	#0, r7
+ 626 03c2 20 0E                   		beq	.L49
+ 393:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			(void)SWTC_SetSValue ((SWTC_CountersType)MP_ALTCTRL_S_COUNTER,(SWTC_SCounterValue)ALT_CTRL_BLDC_
+ 627                             		.loc 1 393 0
+ 628 03c4 75 41 24                		mov	#36, r1
+ 629 03c7 66 52                   		mov	#5, r2
+ 630 03c9 05 00 00 00             		bsr	_SWTC_SetSValue
+ 631                             	.LVL57:
+ 632 03cd 38 BB 00                		bra	.L48
+ 633                             	.L49:
+ 634                             	.LBB35:
+ 398:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				if( Could_Alternate_from_Virtual_Sensor()==ALTERNATE_KO)
+ 635                             		.loc 1 398 0
+ 636 03d0 05 00 00 00             		bsr	_Could_Alternate_from_Virtual_Sensor
+ 637                             	.LVL58:
+ 638 03d4 61 11                   		cmp	#1, r1
+ 639 03d6 21 08                   		bne	.L50
+ 640                             	.LVL59:
+ 401:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 					uP_AltCtrl_Data.timing=	1;	
+ 641                             		.loc 1 401 0
+ 642 03d8 C7 B1 05                		mov.B	r1, 5[r11]
+ 643 03db 38 01 03                		bra	.L8
+ 644                             	.LVL60:
+ 645                             	.L50:
+ 646                             	.LBE35:
+ 647                             	.LBE26:
+ 648                             	.LBE25:
+ 404:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				if ((DishRackFunctionValue & DISH_RACK_FVALUE_MSK) && ((highStatement &  ALT_CTRL_TABLE_PPOS)!=
+ 649                             		.loc 1 404 0
+ 650 03de FB 72 00 00 00 00       		mov.L	#_DishRackFunctionValue, r7
+ 651 03e4 CC 77                   		mov.B	[r7], r7
+ 652 03e6 64 F7                   		and	#15, r7
+ 653                             	.LBB46:
+ 654                             	.LBB42:
+ 655                             	.LBB36:
+ 656 03e8 5B 7B                   		movu.B	r7, r11
+ 657 03ea 61 0B                   		cmp	#0, r11
+ 658 03ec 20 0C                   		beq	.L51
+ 659 03ee EF AB                   		mov.L	r10, r11
+ 660 03f0 75 2B 30                		and	#48, r11
+ 661 03f3 75 5B 30                		cmp	#48, r11
+ 662 03f6 21 28                   		bne	.L52
+ 663                             		.balign 2,3,2
+ 664                             	.L51:
+ 412:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 					alternatecmd=ALT_CTRL_GET_ALT_POS(0,highStatement);
+ 665                             		.loc 1 412 0
+ 666 03f8 75 2A 30                		and	#48, r10
+ 667                             	.LVL61:
+ 668 03fb FB 72 00 00 00 00       		mov.L	#_uPAlternateCtrl_setting_data, r7
+ 669 0401 75 5A 30                		cmp	#48, r10
+ 670 0404 EC 7B                   		mov.L	[r7], r11
+ 671 0406 21 06                   		bne	.L81
+ 672 0408 66 37                   		mov.L	#3, r7
+ 673 040a 2E 04                   		bra	.L53
+ 674                             	.L81:
+ 675 040c 66 07                   		mov.L	#0, r7
+ 676                             		.balign 2,3,2
+ 677                             	.L53:
+ 678 040e 75 5A 30                		cmp	#48, r10
+ 679 0411 FE 47 BB                		mov.B	[r7,r11], r11
+ 680 0414 21 06                   		bne	.L82
+ 681 0416 66 F7                   		mov	#15, r7
+ 682 0418 2E 04                   		bra	.L54
+ 683                             	.L82:
+ 684 041a 66 37                   		mov	#3, r7
+ 685                             		.balign 2,3,1
+ 686                             	.L54:
+ 687 041c 53 B7                   		and	r11, r7
+ 688                             	.LVL62:
+ 689                             		.balign 2,3,5
+ 690                             	.L52:
+ 415:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			  if(uP_AltCtrl_Data.curr_pos>=ALT_getPosNotDef()) 
+ 691                             		.loc 1 415 0
+ 692 041e FB A2 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r10
+ 693 0424 59 AB 06                		movu.B	6[r10], r11
+ 694 0427 05 00 00 00             		bsr	_ALT_getPosNotDef
+ 695                             	.LVL63:
+ 696 042b 47 1B                   		cmp	r1, r11
+ 697 042d 29 05                   		blt	.L55
+ 417:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			      alternatecmd|=ALT_CTRL_SYNC_MSK;
+ 698                             		.loc 1 417 0
+ 699 042f 75 37 10                		or	#16, r7
+ 700                             	.LVL64:
+ 701                             		.balign 2,3,3
+ 702                             	.L55:
+ 421:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	 			if (uP_AltCtrl_Data.curr_cmd!=  alternatecmd)
+ 703                             		.loc 1 421 0
+ 704 0432 59 AC 07                		movu.B	7[r10], r12
+ 705 0435 5B 7A                   		movu.B	r7, r10
+ 706 0437 47 AC                   		cmp	r10, r12
+ 707 0439 FB B2 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r11
+ 708 043f 20 23                   		beq	.L56
+ 423:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				  uP_AltCtrl_Data.SV_invalid_4alt=TRUE;
+ 709                             		.loc 1 423 0
+ 710 0441 CD BA 04                		mov.B	4[r11], r10
+ 424:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				  (void)SWTC_SetSValue((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER, (SWTC_SCounterValu
+ 711                             		.loc 1 424 0
+ 712 0444 75 41 2D                		mov	#45, r1
+ 423:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				  uP_AltCtrl_Data.SV_invalid_4alt=TRUE;
+ 713                             		.loc 1 423 0
+ 714 0447 78 7A                   		bset	#7, r10
+ 715 0449 C7 BA 04                		mov.B	r10, 4[r11]
+ 424:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				  (void)SWTC_SetSValue((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER, (SWTC_SCounterValu
+ 716                             		.loc 1 424 0
+ 717 044c FB A2 00 00 00 00       		mov.L	#_Tab_SFT_MotorWash, r10
+ 718 0452 EC AA                   		mov.L	[r10], r10
+ 719 0454 CD A2 01                		mov.B	1[r10], r2
+ 720 0457 05 00 00 00             		bsr	_SWTC_SetSValue
+ 721                             	.LVL65:
+ 425:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			      (void)SWTC_Run((SWTC_CountersType)MP_ALTERNATE_UP_VS_FILTER_S_TIMER);
+ 722                             		.loc 1 425 0
+ 723 045b 75 41 2D                		mov	#45, r1
+ 724 045e 05 00 00 00             		bsr	_SWTC_Run
+ 725                             	.LVL66:
+ 726                             		.balign 2,3,5
+ 727                             	.L56:
+ 428:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			      LoadsReq_New[Alt_Pos].b=alternatecmd;
+ 728                             		.loc 1 428 0
+ 729 0462 FB A2 00 00 00 00       		mov.L	#_Alt_Pos, r10
+ 730 0468 58 AA                   		movu.B	[r10], r10
+ 731 046a FB B2 00 00 00 00       		mov.L	#_LoadsReq_New, r11
+ 732 0470 FE 0A B7                		mov.B	r7, [r10,r11]
+ 429:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			      uP_AltCtrl_Data.step=ALT_CTRL_WAIT_ALTPOS_EXE;
+ 733                             		.loc 1 429 0
+ 734 0473 FB A2 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r10
+ 735 0479 CD AB 04                		mov.B	4[r10], r11
+ 430:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				uP_AltCtrl_Data.curr_cmd=alternatecmd;
+ 736                             		.loc 1 430 0
+ 737 047c C7 A7 07                		mov.B	r7, 7[r10]
+ 429:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			      uP_AltCtrl_Data.step=ALT_CTRL_WAIT_ALTPOS_EXE;
+ 738                             		.loc 1 429 0
+ 739 047f 75 2B C0                		and	#-64, r11
+ 740 0482 65 4B                   		or	#4, r11
+ 741 0484 C7 AB 04                		mov.B	r11, 4[r10]
+ 742                             	.LVL67:
+ 743 0487 03                      		.balign 2,3,2
+ 744                             	.L48:
+ 745                             	.LBE36:
+ 436:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       (void)SWTC_Run((SWTC_CountersType)MP_ALTCTRL_S_COUNTER);
+ 746                             		.loc 1 436 0
+ 747 0488 75 41 24                		mov	#36, r1
+ 748 048b 05 00 00 00             		bsr	_SWTC_Run
+ 749                             	.LVL68:
+ 750 048f 38 4A 02                		bra	.L73
+ 751                             	.LVL69:
+ 752                             	.L17:
+ 442:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       if((highStatement & ALT_CTRL_OPTION_TABLE)) 
+ 753                             		.loc 1 442 0
+ 754 0492 EF A7                   		mov.L	r10, r7
+ 755 0494 75 27 20                		and	#32, r7
+ 756 0497 5B 77                   		movu.B	r7, r7
+ 757 0499 61 07                   		cmp	#0, r7
+ 758 049b 20 67                   		beq	.L57
+ 445:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         if(ALT_CTRL_GET_SPEED(0)) 
+ 759                             		.loc 1 445 0
+ 760 049d FB 72 00 00 00 00       		mov.L	#_uPAlternateCtrl_setting_data, r7
+ 761 04a3 EC 7E                   		mov.L	[r7], r14
+ 762 04a5 59 E7 01                		movu.B	1[r14], r7
+ 763 04a8 61 07                   		cmp	#0, r7
+ 764 04aa 20 58                   		beq	.L57
+ 450:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			if( ( HWC_Flags.bit.bldc ) || ( HWC_Flags.bit.bldc1 ) )
+ 765                             		.loc 1 450 0
+ 766 04ac FB 72 00 00 00 00       		mov.L	#_HWC_Flags, r7
+ 767 04b2 DC 74                   		mov.W	[r7], r4
+ 768 04b4 FB 72 00 00 00 00       		mov.L	#_BLDC_PumpReq_New, r7
+ 769 04ba 64 64                   		and	#6, r4
+ 770 04bc 20 1B                   		beq	.L58
+ 456:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           	    SET_BLDC_TIME(BLDC_PumpReq_New[WASH_BLDC_PUMP], 0);
+ 771                             		.loc 1 456 0
+ 772 04be 3C 74 00                		mov.B	#0, 4[r7]
+ 773 04c1 3C 75 00                		mov.B	#0, 5[r7]
+ 457:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****                 SET_BLDC_SPEED(BLDC_PumpReq_New[WASH_BLDC_PUMP],ALT_CTRL_GET_SPEED(0)*ALT_CTRL_BLDC
+ 774                             		.loc 1 457 0
+ 775 04c4 59 EB 01                		movu.B	1[r14], r11
+ 776 04c7 75 1B 19                		mul	#25, r11
+ 777 04ca 68 8B                   		shlr	#8, r11
+ 778 04cc C7 7B 02                		mov.B	r11, 2[r7]
+ 779 04cf CD EB 01                		mov.B	1[r14], r11
+ 780 04d2 75 1B 19                		mul	#25, r11
+ 781 04d5 2E 0B                   		bra	.L151
+ 782                             	.L58:
+ 462:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****                 SET_BLDC_TIME(BLDC_PumpReq_New[WASH_BLDC_PUMP], 0);
+ 783                             		.loc 1 462 0
+ 784 04d7 81 74                   		mov.B	r4, 4[r7]
+ 785 04d9 81 7C                   		mov.B	r4, 5[r7]
+ 463:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****                 SET_BLDC_SPEED(BLDC_PumpReq_New[WASH_BLDC_PUMP],ALT_CTRL_GET_SPEED(0))
+ 786                             		.loc 1 463 0
+ 787 04db 80 F4                   		mov.B	r4, 2[r7]
+ 788 04dd CD EB 01                		mov.B	1[r14], r11
+ 789                             		.balign 2,3,5
+ 790                             	.L151:
+ 791 04e0 C7 7B 03                		mov.B	r11, 3[r7]
+ 792 04e3 59 EB 01                		movu.B	1[r14], r11
+ 467:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             SET_PUMP(LD_WASH_PUMP_IND, LOAD_ON)			
+ 793                             		.loc 1 467 0
+ 794 04e6 66 1C                   		mov	#1, r12
+ 795                             	.LVL70:
+ 463:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****                 SET_BLDC_SPEED(BLDC_PumpReq_New[WASH_BLDC_PUMP],ALT_CTRL_GET_SPEED(0))
+ 796                             		.loc 1 463 0
+ 797 04e8 61 0B                   		cmp	#0, r11
+ 798 04ea FC DB B1                		scne.L	r11
+ 799 04ed C7 7B 01                		mov.B	r11, 1[r7]
+ 467:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             SET_PUMP(LD_WASH_PUMP_IND, LOAD_ON)			
+ 800                             		.loc 1 467 0
+ 801 04f0 FB 72 00 00 00 00       		mov.L	#_Pump_Pos, r7
+ 802 04f6 58 77                   		movu.B	[r7], r7
+ 803 04f8 FB B2 00 00 00 00       		mov.L	#_LoadsReq_New, r11
+ 804 04fe FE 07 BC                		mov.B	r12, [r7,r11]
+ 805 0501 03                      		.balign 2,3,3
+ 806                             	.L57:
+ 471:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       if(ALT_posReached())
+ 807                             		.loc 1 471 0
+ 808 0502 05 00 00 00             		bsr	_ALT_posReached
+ 809                             	.LVL71:
+ 810 0506 61 01                   		cmp	#0, r1
+ 811 0508 FB 72 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r7
+ 812 050e 20 7E                   		beq	.L60
+ 813                             	.LBB37:
+ 473:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         uP_AltCtrl_Data.curr_pos=ALT_getPos();
+ 814                             		.loc 1 473 0
+ 815 0510 05 00 00 00             		bsr	_ALT_getPos
+ 816                             	.LVL72:
+ 817                             	.LBE37:
+ 818                             	.LBE42:
+ 819                             	.LBE46:
+ 475:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         switch((highStatement & ALT_CTRL_OPTION)) 
+ 820                             		.loc 1 475 0
+ 821 0514 75 2A 30                		and	#48, r10
+ 822                             	.LVL73:
+ 823                             	.LBB47:
+ 824                             	.LBB43:
+ 825                             	.LBB38:
+ 473:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         uP_AltCtrl_Data.curr_pos=ALT_getPos();
+ 826                             		.loc 1 473 0
+ 827 0517 81 F1                   		mov.B	r1, 6[r7]
+ 475:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         switch((highStatement & ALT_CTRL_OPTION)) 
+ 828                             		.loc 1 475 0
+ 829 0519 5B A7                   		movu.B	r10, r7
+ 830 051b 75 57 10                		cmp	#16, r7
+ 831 051e 20 59                   		beq	.L61
+ 832 0520 24 09                   		bgtu	.L63
+ 833 0522 61 07                   		cmp	#0, r7
+ 834 0524 20 53                   		beq	.L61
+ 835 0526 38 B3 01                		bra	.L73
+ 836                             	.L63:
+ 837 0529 75 57 20                		cmp	#32, r7
+ 838 052c 20 08                   		beq	.L62
+ 839 052e 75 57 30                		cmp	#48, r7
+ 840 0531 3B A8 01                		bne	.L73
+ 841                             		.balign 2,3,2
+ 842                             	.L62:
+ 481:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			(void)Set_SmallCounter((SWTC_CountersType)MP_ALTCTRL_S_COUNTER, (SWTC_PrescalerType)COUNTERS2_TB
+ 843                             		.loc 1 481 0
+ 844 0534 75 41 24                		mov	#36, r1
+ 845 0537 66 32                   		mov	#3, r2
+ 846 0539 66 03                   		mov	#0, r3
+ 482:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             uP_AltCtrl_Data.timing=1+ALT_CTRL_GET_MNT_TIME(0);
+ 847                             		.loc 1 482 0
+ 848 053b FB 72 00 00 00 00       		mov.L	#_uPAlternateCtrl_setting_data, r7
+ 481:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			(void)Set_SmallCounter((SWTC_CountersType)MP_ALTCTRL_S_COUNTER, (SWTC_PrescalerType)COUNTERS2_TB
+ 849                             		.loc 1 481 0
+ 850 0541 05 00 00 00             		bsr	_Set_SmallCounter
+ 851                             	.LVL74:
+ 482:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             uP_AltCtrl_Data.timing=1+ALT_CTRL_GET_MNT_TIME(0);
+ 852                             		.loc 1 482 0
+ 853 0545 5B AA                   		movu.B	r10, r10
+ 854 0547 EC 77                   		mov.L	[r7], r7
+ 855 0549 75 5A 30                		cmp	#48, r10
+ 856 054c FC DB A1                		scne.L	r10
+ 857 054f 58 77                   		movu.B	[r7], r7
+ 858 0551 6C 1A                   		shll	#1, r10
+ 859 0553 FB B2 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r11
+ 860 0559 FD 61 A7                		shar	r10, r7
+ 483:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			if ( uP_AltCtrl_Data.seq_done_could_esc)
+ 861                             		.loc 1 483 0
+ 862 055c CD BA 04                		mov.B	4[r11], r10
+ 482:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             uP_AltCtrl_Data.timing=1+ALT_CTRL_GET_MNT_TIME(0);
+ 863                             		.loc 1 482 0
+ 864 055f 62 17                   		add	#1, r7
+ 865 0561 C7 B7 05                		mov.B	r7, 5[r11]
+ 483:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			if ( uP_AltCtrl_Data.seq_done_could_esc)
+ 866                             		.loc 1 483 0
+ 867 0564 EF A7                   		mov.L	r10, r7
+ 868 0566 75 27 40                		and	#64, r7
+ 869 0569 FC DB 70                		sceq.L	r7
+ 870                             	.LVL75:
+ 488:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             uP_AltCtrl_Data.step=ALT_CTRL_MNT_EXE;
+ 871                             		.loc 1 488 0
+ 872 056c 75 2A C0                		and	#-64, r10
+ 873 056f 65 5A                   		or	#5, r10
+ 874 0571 C7 BA 04                		mov.B	r10, 4[r11]
+ 875 0574 38 68 01                		bra	.L8
+ 876                             	.LVL76:
+ 877                             	.L61:
+ 494:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             uP_AltCtrl_Data.step=ALT_CTRL_END;
+ 878                             		.loc 1 494 0
+ 879 0577 FB A2 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r10
+ 880 057d CD A7 04                		mov.B	4[r10], r7
+ 881 0580 75 27 C0                		and	#-64, r7
+ 882 0583 65 67                   		or	#6, r7
+ 883                             	.LVL77:
+ 884 0585 03                      		.balign 2,3,5
+ 885                             	.L153:
+ 886 0586 C7 A7 04                		mov.B	r7, 4[r10]
+ 887 0589 38 4C 01                		bra	.L77
+ 888                             	.LVL78:
+ 889                             	.L60:
+ 890                             	.LBE38:
+ 891                             	.LBB39:
+ 504:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         uP_AltCtrl_Data.curr_pos=ALT_getPosNotDef();
+ 892                             		.loc 1 504 0
+ 893 058c 05 00 00 00             		bsr	_ALT_getPosNotDef
+ 894                             	.LVL79:
+ 505:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		uP_AltCtrl_Data.SV_invalid_4alt=TRUE;
+ 895                             		.loc 1 505 0
+ 896 0590 CD 7B 04                		mov.B	4[r7], r11
+ 506:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         if((highStatement & ALT_CTRL_OPTION)==ALT_CTRL_ABSOLUTE_POS) 
+ 897                             		.loc 1 506 0
+ 898 0593 75 2A 30                		and	#48, r10
+ 899                             	.LVL80:
+ 505:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		uP_AltCtrl_Data.SV_invalid_4alt=TRUE;
+ 900                             		.loc 1 505 0
+ 901 0596 78 7B                   		bset	#7, r11
+ 504:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         uP_AltCtrl_Data.curr_pos=ALT_getPosNotDef();
+ 902                             		.loc 1 504 0
+ 903 0598 81 F1                   		mov.B	r1, 6[r7]
+ 505:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		uP_AltCtrl_Data.SV_invalid_4alt=TRUE;
+ 904                             		.loc 1 505 0
+ 905 059a C7 7B 04                		mov.B	r11, 4[r7]
+ 506:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         if((highStatement & ALT_CTRL_OPTION)==ALT_CTRL_ABSOLUTE_POS) 
+ 906                             		.loc 1 506 0
+ 907 059d 75 5A 10                		cmp	#16, r10
+ 908 05a0 3B 39 01                		bne	.L73
+ 508:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           LoadsReq_New[Alt_Pos].b=uP_AltCtrl_Data.curr_cmd;
+ 909                             		.loc 1 508 0
+ 910 05a3 FB A2 00 00 00 00       		mov.L	#_Alt_Pos, r10
+ 911 05a9 58 AA                   		movu.B	[r10], r10
+ 912 05ab 89 FF                   		mov.B	7[r7], r7
+ 913 05ad FB B2 00 00 00 00       		mov.L	#_LoadsReq_New, r11
+ 914 05b3 FE 0A B7                		mov.B	r7, [r10,r11]
+ 915 05b6 38 23 01                		bra	.L73
+ 916                             	.LVL81:
+ 917                             	.L18:
+ 918                             	.LBE39:
+ 519:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  if(ALT_CTRL_GET_SPEED(0)) 
+ 919                             		.loc 1 519 0
+ 920 05b9 FB B2 00 00 00 00       		mov.L	#_uPAlternateCtrl_setting_data, r11
+ 515:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  if ( uP_AltCtrl_Data.seq_done_could_esc)
+ 921                             		.loc 1 515 0
+ 922 05bf 89 47                   		mov.B	4[r4], r7
+ 519:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  if(ALT_CTRL_GET_SPEED(0)) 
+ 923                             		.loc 1 519 0
+ 924 05c1 EC B4                   		mov.L	[r11], r4
+ 515:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  if ( uP_AltCtrl_Data.seq_done_could_esc)
+ 925                             		.loc 1 515 0
+ 926 05c3 75 27 40                		and	#64, r7
+ 519:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  if(ALT_CTRL_GET_SPEED(0)) 
+ 927                             		.loc 1 519 0
+ 928 05c6 59 4B 01                		movu.B	1[r4], r11
+ 515:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  if ( uP_AltCtrl_Data.seq_done_could_esc)
+ 929                             		.loc 1 515 0
+ 930 05c9 FC DB 70                		sceq.L	r7
+ 931                             	.LVL82:
+ 519:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	  if(ALT_CTRL_GET_SPEED(0)) 
+ 932                             		.loc 1 519 0
+ 933 05cc 61 0B                   		cmp	#0, r11
+ 934 05ce 20 60                   		beq	.L66
+ 525:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		if( ( HWC_Flags.bit.bldc ) || ( HWC_Flags.bit.bldc1 ) )
+ 935                             		.loc 1 525 0
+ 936 05d0 FB B2 00 00 00 00       		mov.L	#_HWC_Flags, r11
+ 937 05d6 DC B3                   		mov.W	[r11], r3
+ 938 05d8 FB E2 00 00 00 00       		mov.L	#_BLDC_PumpReq_New, r14
+ 939 05de 64 63                   		and	#6, r3
+ 940 05e0 20 20                   		beq	.L67
+ 530:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	      SET_BLDC_TIME(BLDC_PumpReq_New[WASH_BLDC_PUMP], 0);
+ 941                             		.loc 1 530 0
+ 942 05e2 F9 E4 04 00             		mov.B	#0, 4[r14]
+ 943 05e6 F9 E4 05 00             		mov.B	#0, 5[r14]
+ 531:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	      SET_BLDC_SPEED(BLDC_PumpReq_New[WASH_BLDC_PUMP],ALT_CTRL_GET_SPEED(0)*ALT_CTRL_BLDC_SPEED_MU
+ 944                             		.loc 1 531 0
+ 945 05ea 59 4B 01                		movu.B	1[r4], r11
+ 946 05ed 75 1B 19                		mul	#25, r11
+ 947 05f0 68 8B                   		shlr	#8, r11
+ 948 05f2 C7 EB 02                		mov.B	r11, 2[r14]
+ 949 05f5 CD 4B 01                		mov.B	1[r4], r11
+ 950 05f8 75 1B 19                		mul	#25, r11
+ 951 05fb C7 EB 03                		mov.B	r11, 3[r14]
+ 952 05fe 2E 12                   		bra	.L152
+ 953                             	.L67:
+ 536:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             SET_BLDC_TIME(BLDC_PumpReq_New[WASH_BLDC_PUMP], 0);
+ 954                             		.loc 1 536 0
+ 955 0600 C7 E3 04                		mov.B	r3, 4[r14]
+ 956 0603 C7 E3 05                		mov.B	r3, 5[r14]
+ 537:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	        SET_BLDC_SPEED(BLDC_PumpReq_New[WASH_BLDC_PUMP],ALT_CTRL_GET_SPEED(0));
+ 957                             		.loc 1 537 0
+ 958 0606 C7 E3 02                		mov.B	r3, 2[r14]
+ 959 0609 CD 4D 01                		mov.B	1[r4], r13
+ 960 060c C7 ED 03                		mov.B	r13, 3[r14]
+ 961 060f 03                      		.balign 2,3,3
+ 962                             	.L152:
+ 963 0610 59 4B 01                		movu.B	1[r4], r11
+ 541:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         SET_PUMP(LD_WASH_PUMP_IND, LOAD_ON)
+ 964                             		.loc 1 541 0
+ 965 0613 FB C2 00 00 00 00       		mov.L	#_LoadsReq_New, r12
+ 966                             	.LVL83:
+ 537:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 	        SET_BLDC_SPEED(BLDC_PumpReq_New[WASH_BLDC_PUMP],ALT_CTRL_GET_SPEED(0));
+ 967                             		.loc 1 537 0
+ 968 0619 61 0B                   		cmp	#0, r11
+ 969 061b FC DB B1                		scne.L	r11
+ 970 061e C7 EB 01                		mov.B	r11, 1[r14]
+ 541:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         SET_PUMP(LD_WASH_PUMP_IND, LOAD_ON)
+ 971                             		.loc 1 541 0
+ 972 0621 FB B2 00 00 00 00       		mov.L	#_Pump_Pos, r11
+ 973 0627 58 BB                   		movu.B	[r11], r11
+ 974 0629 66 1D                   		mov	#1, r13
+ 975 062b FE 0B CD                		mov.B	r13, [r11,r12]
+ 976                             		.balign 2,3,2
+ 977                             	.L66:
+ 546:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       if(SWTC_IsExpired((SWTC_CountersType)MP_ALTCTRL_S_COUNTER))       
+ 978                             		.loc 1 546 0
+ 979 062e 75 41 24                		mov	#36, r1
+ 980 0631 05 00 00 00             		bsr	_SWTC_IsExpired
+ 981                             	.LVL84:
+ 982 0635 61 01                   		cmp	#0, r1
+ 983 0637 3A 8D 00                		beq	.L69
+ 548:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****         if(--uP_AltCtrl_Data.timing) 
+ 984                             		.loc 1 548 0
+ 985 063a FB E2 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r14
+ 986 0640 CD EB 05                		mov.B	5[r14], r11
+ 987 0643 60 1B                   		sub	#1, r11
+ 988 0645 C7 EB 05                		mov.B	r11, 5[r14]
+ 989 0648 5B BB                   		movu.B	r11, r11
+ 990 064a 61 0B                   		cmp	#0, r11
+ 991 064c 20 0D                   		beq	.L70
+ 550:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		  (void)SWTC_SetSValue ((SWTC_CountersType)MP_ALTCTRL_S_COUNTER,(SWTC_SCounterValue)ALT_CTRL_MNT_
+ 992                             		.loc 1 550 0
+ 993 064e 75 41 24                		mov	#36, r1
+ 994 0651 66 A2                   		mov	#10, r2
+ 995 0653 05 00 00 00             		bsr	_SWTC_SetSValue
+ 996                             	.LVL85:
+ 997 0657 2E 6D                   		bra	.L69
+ 998                             	.L70:
+ 554:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****           uPAlternateCtrl_setting_data.DataLenght-=sizeof(up_Alt_setting_data_s)/2;
+ 999                             		.loc 1 554 0
+ 1000 0659 FB E2 00 00 00 00       		mov.L	#_uPAlternateCtrl_setting_data, r14
+ 1001 065f CD EB 04                		mov.B	4[r14], r11
+ 1002 0662 60 2B                   		sub	#2, r11
+ 1003 0664 C7 EB 04                		mov.B	r11, 4[r14]
+ 557:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****          if( ( uPAlternateCtrl_setting_data.DataLenght )
+ 1004                             		.loc 1 557 0
+ 1005 0667 5B BB                   		movu.B	r11, r11
+ 1006 0669 61 0B                   		cmp	#0, r11
+ 1007 066b 20 44                   		beq	.L71
+ 1008                             	.LBE43:
+ 1009                             	.LBE47:
+ 559:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****          	 !( (( DishRackFunctionValue & DISH_RACK_FVALUE_MSK ) && ((highStatement &  ALT_CTRL_TABL
+ 1010                             		.loc 1 559 0
+ 1011 066d FB B2 00 00 00 00       		mov.L	#_DishRackFunctionValue, r11
+ 1012 0673 CC BB                   		mov.B	[r11], r11
+ 1013                             	.LBB48:
+ 1014                             	.LBB44:
+ 558:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****          	 &&
+ 1015                             		.loc 1 558 0
+ 1016 0675 FD 74 CB 0F             		tst	#15, r11
+ 1017 0679 20 17                   		beq	.L72
+ 559:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****          	 !( (( DishRackFunctionValue & DISH_RACK_FVALUE_MSK ) && ((highStatement &  ALT_CTRL_TABL
+ 1018                             		.loc 1 559 0
+ 1019 067b 75 2A 30                		and	#48, r10
+ 1020                             	.LVL86:
+ 1021 067e 75 5A 30                		cmp	#48, r10
+ 1022 0681 20 0F                   		beq	.L72
+ 561:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****  				( ( HWC_Flags.bit.bldc ) || ( HWC_Flags.bit.bldc1 ) )
+ 1023                             		.loc 1 561 0
+ 1024 0683 FB A2 00 00 00 00       		mov.L	#_HWC_Flags, r10
+ 1025 0689 DC AA                   		mov.W	[r10], r10
+ 559:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****          	 !( (( DishRackFunctionValue & DISH_RACK_FVALUE_MSK ) && ((highStatement &  ALT_CTRL_TABL
+ 1026                             		.loc 1 559 0
+ 1027 068b 64 6A                   		and	#6, r10
+ 1028 068d 21 22                   		bne	.L71
+ 1029 068f 03                      		.balign 2,3,5
+ 1030                             	.L72:
+ 569:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             uPAlternateCtrl_setting_data.Data+=sizeof(up_Alt_setting_data_s);
+ 1031                             		.loc 1 569 0
+ 1032 0690 FB A2 00 00 00 00       		mov.L	#_uPAlternateCtrl_setting_data, r10
+ 1033 0696 EC AB                   		mov.L	[r10], r11
+ 1034 0698 62 4B                   		add	#4, r11
+ 1035 069a E3 AB                   		mov.L	r11, [r10]
+ 570:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             uP_AltCtrl_Data.step=ALT_CTRL_BEGIN;
+ 1036                             		.loc 1 570 0
+ 1037 069c FB B2 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r11
+ 1038 06a2 CD BA 04                		mov.B	4[r11], r10
+ 1039 06a5 75 2A C0                		and	#-64, r10
+ 1040 06a8 65 1A                   		or	#1, r10
+ 1041 06aa C7 BA 04                		mov.B	r10, 4[r11]
+ 1042 06ad 2E 17                   		bra	.L69
+ 1043                             	.L71:
+ 576:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             uP_AltCtrl_Data.step=ALT_CTRL_INIT;
+ 1044                             		.loc 1 576 0
+ 1045 06af FB 72 00 00 00 00       		mov.L	#_uP_AltCtrl_Data, r7
+ 1046                             	.LVL87:
+ 1047 06b5 CD 7A 04                		mov.B	4[r7], r10
+ 577:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 			uP_AltCtrl_Data.seq_done_could_esc=TRUE;
+ 1048                             		.loc 1 577 0
+ 1049 06b8 76 2A C0 00             		and	#0xc0, r10
+ 1050 06bc 78 6A                   		bset	#6, r10
+ 1051 06be C7 7A 04                		mov.B	r10, 4[r7]
+ 1052                             	.LVL88:
+ 578:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****             nRet=S_OK;
+ 1053                             		.loc 1 578 0
+ 1054 06c1 66 07                   		mov	#0, r7
+ 1055                             	.LVL89:
+ 1056 06c3 03                      		.balign 2,3,2
+ 1057                             	.L69:
+ 584:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       (void)SWTC_Run((SWTC_CountersType)MP_ALTCTRL_S_COUNTER);
+ 1058                             		.loc 1 584 0
+ 1059 06c4 75 41 24                		mov	#36, r1
+ 1060 06c7 05 00 00 00             		bsr	_SWTC_Run
+ 1061                             	.LVL90:
+ 1062 06cb 2E 11                   		bra	.L8
+ 1063                             	.LVL91:
+ 1064                             	.L12:
+ 590:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****       uP_AltCtrl_Data.step=ALT_CTRL_INIT;
+ 1065                             		.loc 1 590 0
+ 1066 06cd 75 2B C0                		and	#-64, r11
+ 1067 06d0 C7 7B 04                		mov.B	r11, 4[r7]
+ 1068 06d3 2E 06                   		bra	.L73
+ 1069                             	.LVL92:
+ 1070                             	.L77:
+ 1071                             	.LBB40:
+ 271:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				return nRet;
+ 1072                             		.loc 1 271 0
+ 1073 06d5 66 07                   		mov	#0, r7
+ 1074 06d7 2E 05                   		bra	.L8
+ 1075                             	.LVL93:
+ 1076                             	.L73:
+ 1077                             	.LBE40:
+ 1078                             	.LBE44:
+ 1079                             	.LBE48:
+ 1080                             	.LBE24:
+ 151:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 		return S_FALSE;  				    
+ 1081                             		.loc 1 151 0
+ 1082 06d9 66 17                   		mov	#1, r7
+ 1083 06db 03                      		.balign 2,3,1
+ 1084                             	.L8:
+ 1085 06dc 5B 71                   		movu.B	r7, r1
+ 1086 06de 2E 1D                   		bra	.L147
+ 1087                             	.LVL94:
+ 1088                             	.L80:
+ 1089                             	.LBB50:
+ 1090                             	.LBB49:
+ 1091                             	.LBB45:
+ 1092                             	.LBB41:
+ 1093                             	.LBB34:
+ 663:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** 				dishrackselection = 0;
+ 1094                             		.loc 1 663 0
+ 1095 06e0 CF 4E                   		mov.B	r4, r14
+ 1096                             	.LVL95:
+ 1097 06e2 38 FE FB                		bra	.L145
+ 1098                             	.LVL96:
+ 1099                             	.L39:
+ 676:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uPAlternateCtrl_setting_data.Data+=i;
+ 1100                             		.loc 1 676 0
+ 1101 06e5 5B 77                   		movu.B	r7, r7
+ 1102                             	.LVL97:
+ 1103 06e7 4B 72                   		add	r7, r2
+ 677:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uPAlternateCtrl_setting_data.DataLenght-=i/(sizeof(up_Alt_setting_data_s)/2);
+ 1104                             		.loc 1 677 0
+ 1105 06e9 68 17                   		shlr	#1, r7
+ 1106                             	.LVL98:
+ 676:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uPAlternateCtrl_setting_data.Data+=i;
+ 1107                             		.loc 1 676 0
+ 1108 06eb FB B2 00 00 00 00       		mov.L	#_uPAlternateCtrl_setting_data, r11
+ 677:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uPAlternateCtrl_setting_data.DataLenght-=i/(sizeof(up_Alt_setting_data_s)/2);
+ 1109                             		.loc 1 677 0
+ 1110 06f1 43 73                   		sub	r7, r3
+ 1111                             	.LVL99:
+ 676:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uPAlternateCtrl_setting_data.Data+=i;
+ 1112                             		.loc 1 676 0
+ 1113 06f3 E3 B2                   		mov.L	r2, [r11]
+ 677:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c ****   uPAlternateCtrl_setting_data.DataLenght-=i/(sizeof(up_Alt_setting_data_s)/2);
+ 1114                             		.loc 1 677 0
+ 1115 06f5 C7 B3 04                		mov.B	r3, 4[r11]
+ 1116 06f8 38 F0 FB                		bra	.L33
+ 1117                             	.LVL100:
+ 1118                             	.L147:
+ 1119                             	.LBE34:
+ 1120                             	.LBE41:
+ 1121                             	.LBE45:
+ 1122                             	.LBE49:
+ 1123                             	.LBE50:
+ 159:C:/Workspace/FW_Platform2_5/trunk/Inertia/Modules\AlternateControl.c **** }
+ 1124                             		.loc 1 159 0
+ 1125 06fb 3F 7D 07                		rtsd	#28, r7-r13
+ 1126                             	.LFE0:
+ 1128                             		.comm	_up_Alt_setting_data_s,4,1
+ 1181                             	.Letext0:
+ 1182                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 1183                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_SwTimersCounters/SwTimersCounter
+ 1184                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_Library/LIB_Utilities.h"
+ 1185                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\CFG_DishWasher\\CFG_Inertia/ProductSafety_cfg.h"
+ 1186                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmDefines.h"
+ 1187                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_Types.h"
+ 1188                             		.file 8 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmTypes.h"
+ 1189                             		.file 9 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_IOManager/OutputManagerExp.h"
+ 1190                             		.file 10 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmGlobal.h"
+ 1191                             		.file 11 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\Modules/AlternateControl.h"
+ 1192                             		.file 12 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_Global.h"
+ 1193                             		.file 13 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_FuncLib.h"

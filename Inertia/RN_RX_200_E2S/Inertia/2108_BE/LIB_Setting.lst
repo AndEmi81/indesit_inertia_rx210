@@ -1,0 +1,496 @@
+   1                             		.file	"LIB_Setting.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.LIB_SettingBIST_StartSync,"ax",@progbits
+   5                             		.global	_LIB_SettingBIST_StartSync
+   7                             	_LIB_SettingBIST_StartSync:
+   8                             	.LFB1:
+   9                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting/LIB_Setting.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n
+   8:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \par		LIB_Setting
+   9:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n\li		General Purpose
+  10:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			GetDefaultSettingStartAddress()
+  11:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n\li		Test of setting file
+  12:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n\lo		POST - LIB_SettingPOST_Sync() tests the whole setting
+  13:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n\lo		BIST - test made by chunks, no internal state is kept or managed by this library.
+  14:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			methods: LIB_SettingBIST_StartSync(), LIB_SettingBIST_StepSync(), LIB_SettingBIST_EndSync()
+  15:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n
+  16:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \par		Methods
+  17:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n			Depending on the CONFIG_LIB_SETTING_CHECK_TYPE_CRC two methods are available:
+  18:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n\li		modified CHK
+  19:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n\li		CRC16 CCITT(FFFF)
+  20:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n			the method must be choosen accoding to the application
+  21:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n
+  22:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \file		LIB_Setting.c
+  23:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \ingroup	LIB_Setting
+  24:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \date		Apr 18, 2013
+  25:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \version	01.00.00
+  26:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \author		Roberto Fioravanti
+  27:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** */
+  28:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  29:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* ******** */
+  30:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* Includes */
+  31:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* ******** */
+  32:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #include "Config.h"
+  33:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #include "LIB_Setting.h"
+  34:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #include "LIB_Utilities.h"
+  35:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #include "LIB_Generic.h"
+  36:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #include "LIB_crcExp.h"
+  37:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* ****************** */
+  38:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* Defines and Macros */
+  39:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* ****************** */
+  40:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  41:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  42:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  43:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* *************************** */
+  44:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* Typedef, Structs and Unions */
+  45:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* *************************** */
+  46:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  47:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  48:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* **************************** */
+  49:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* Prototype of local functions */
+  50:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* **************************** */
+  51:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  52:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* ****************** */
+  53:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* Exported variables */
+  54:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* ****************** */
+  55:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  56:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* **************** */
+  57:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* Global variables */
+  58:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* **************** */
+  59:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  60:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* ********* */
+  61:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* Functions */
+  62:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /* ********* */
+  63:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  64:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /**
+  65:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** Synchrounous implementation of POST (Pre-Operation Self Test) to verify the integrity
+  66:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** of the whole setting file checking if the signature matches.
+  67:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  68:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \return 	bool_t
+  69:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  70:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \retval		TRUE 	test passed
+  71:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \retval		FALSE	test not passed
+  72:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  73:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \author 	Roberto Fioravanti
+  74:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \date		Apr 18,2013
+  75:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \version	1.0.0
+  76:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** */
+  77:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** bool_t LIB_SettingPOST_Sync(void)
+  78:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** {
+  79:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	bool_t res=FALSE;
+  80:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	LIB_SettingSignatureType sign=0;
+  81:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	uint8_t* pStart=0;
+  82:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	uint16_t len=0;
+  83:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  84:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	if (LIB_SettingBIST_StartSync(&len, &pStart, &sign))
+  85:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	{
+  86:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		if (len)
+  87:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		{
+  88:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			sign=LIB_SettingBIST_StepSync(len, pStart, sign);
+  89:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			res=LIB_SettingBIST_EndSync(sign);
+  90:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		}
+  91:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	}
+  92:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	return res;
+  93:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** }
+  94:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  95:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+  96:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /*
+  97:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** Allows setting BIST initialization.
+  98:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** This method provides start address, number of bytes, and the initial seed
+  99:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \param [out]	pLen	pointer to len in bytes
+ 100:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \param [out]	ppStart	pointer to start address pointer
+ 101:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \param [out]	pInitSeed	initial seed to be used to test setting. It is affected by CONFIG_LIB_SETTIN
+ 102:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** if defined CONFIG_LIB_SETTING_CHECK_TYPE_CRC checking is CRC else CHK
+ 103:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 104:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \return 	bool_t
+ 105:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 106:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \retval		TRUE 	test inizialized
+ 107:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \retval		FALSE	test not inizialized
+ 108:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 109:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \author 	Roberto Fioravanti
+ 110:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \date		Apr 18,2013
+ 111:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \version	1.0.0
+ 112:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** */
+ 113:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** bool_t	LIB_SettingBIST_StartSync(uint16_t* pLen, uint8_t** ppStart, LIB_SettingSignatureType* pInit
+ 114:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** {
+  10                             		.loc 1 114 0
+  11                             	.LVL0:
+  12 0000 6E 7B                   		pushm	r7-r11
+  13                             	.LCFI0:
+  14 0002 EF 17                   		mov.L	r1, r7
+  15 0004 EF 2B                   		mov.L	r2, r11
+  16 0006 EF 3A                   		mov.L	r3, r10
+  17                             	.LVL1:
+ 115:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	bool_t res = FALSE;
+ 116:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	uint16_t chkPtrVal = EndianU16_BToN(*(GetDefaultSettingStartAddress() + SF_PTR_CHECKSUM));
+  18                             		.loc 1 116 0
+  19 0008 05 00 00 00             		bsr	_GetDefaultSettingStartAddress
+  20                             	.LVL2:
+  21 000c DD 1E 09                		mov.W	18[r1], r14
+  22                             	.LVL3:
+ 117:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 118:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	if(pLen && ppStart && pInitSeed)
+  23                             		.loc 1 118 0
+  24 000f 61 07                   		cmp	#0, r7
+  25 0011 1D                      		bne	.L2
+  26                             		.balign 2,3,1
+  27                             	.L4:
+ 115:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	bool_t res = FALSE;
+  28                             		.loc 1 115 0
+  29 0012 66 01                   		mov.L	#0, r1
+  30 0014 2E 24                   		bra	.L3
+  31                             	.L2:
+  32                             		.loc 1 118 0 discriminator 1
+  33 0016 61 0B                   		cmp	#0, r11
+  34 0018 20 FA                   		beq	.L4
+  35 001a 61 0A                   		cmp	#0, r10
+  36 001c 20 F6                   		beq	.L4
+ 119:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	{
+ 120:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		*pLen=0;
+  37                             		.loc 1 120 0
+  38 001e 3D 70 00                		mov.W	#0, [r7]
+ 121:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 122:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		if(chkPtrVal < APPL_SETTING_SIZE_W)
+  39                             		.loc 1 122 0
+  40 0021 5F E4                   		movu.W	r14, r4
+  41 0023 76 04 FF 37             		cmp	#0x37ff, r4
+  42 0027 24 EB                   		bgtu	.L4
+ 123:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		{
+ 124:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			*pLen=chkPtrVal*2;
+  43                             		.loc 1 124 0
+  44 0029 4B EE                   		add	r14, r14
+  45                             	.LVL4:
+  46 002b D3 7E                   		mov.W	r14, [r7]
+ 125:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 126:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			*ppStart=(uint8_t*)GetDefaultSettingStartAddress();
+  47                             		.loc 1 126 0
+  48 002d 05 00 00 00             		bsr	_GetDefaultSettingStartAddress
+  49                             	.LVL5:
+  50 0031 E3 B1                   		mov.L	r1, [r11]
+ 127:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 128:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #if defined(CONFIG_LIB_SETTING_CHECK_TYPE_CRC)
+ 129:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			*pInitSeed=0xFFFF;
+ 130:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #else
+ 131:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			*pInitSeed=0;
+  51                             		.loc 1 131 0
+  52 0033 F8 A5 00                		mov.W	#0, [r10]
+  53                             	.LVL6:
+ 132:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #endif /*defined(CONFIG_LIB_SETTING_CHECK_TYPE_CRC)*/
+ 133:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			res = TRUE;
+  54                             		.loc 1 133 0
+  55 0036 66 11                   		mov.L	#1, r1
+  56                             	.LVL7:
+  57                             		.balign 2,3,2
+  58                             	.L3:
+ 134:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		}
+ 135:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	}
+ 136:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	return res;
+ 137:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** }
+  59                             		.loc 1 137 0
+  60 0038 3F 7B 05                		rtsd	#20, r7-r11
+  61                             	.LFE1:
+  63 003b 03                      		.section	.text.LIB_SettingBIST_StepSync,"ax",@progbits
+  64                             		.global	_LIB_SettingBIST_StepSync
+  66                             	_LIB_SettingBIST_StepSync:
+  67                             	.LFB2:
+ 138:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 139:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 140:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /**
+ 141:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** Setting BIST single step.
+ 142:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 143:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \param  [in]		len number of bytes to test
+ 144:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \param  [in]		ppStart pointer to the start address
+ 145:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \param  [in]		initSeed is the initial seed
+ 146:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 147:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n The applied method is affected by CONFIG_LIB_SETTING_CHECK_TYPE_CRC
+ 148:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** if defined CONFIG_LIB_SETTING_CHECK_TYPE_CRC checking is CRC else CHK
+ 149:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 150:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \return 	LIB_SettingSignatureType
+ 151:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 152:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \retval		partial result taking into account the result of the earlie call to this method
+ 153:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 154:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \author 	Roberto Fioravanti
+ 155:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \date		Apr 18, 2013
+ 156:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \version	1.0.1
+ 157:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 158:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \note		\par \b Note 1:
+ 159:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			documentation by Roberto Fioravanti
+ 160:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c ****  */
+ 161:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** LIB_SettingSignatureType	LIB_SettingBIST_StepSync(uint16_t len, uint8_t* ppStart, LIB_SettingSignat
+ 162:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** {
+  68                             		.loc 1 162 0
+  69                             	.LVL8:
+ 163:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	LIB_SettingSignatureType	sign=0;
+ 164:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	if(ppStart)
+  70                             		.loc 1 164 0
+  71 0000 71 2E 00                		add	#0, r2, r14
+  72 0003 15                      		beq	.L13
+ 165:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	{
+ 166:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #if defined(CONFIG_LIB_SETTING_CHECK_TYPE_CRC)
+ 167:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		sign=LIB_crc_partial_calculate(len, ppStart, initSeed);
+ 168:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #else
+ 169:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		sign=LIB_ModifiedChk_Computation(len, ppStart, initSeed);
+  73                             		.loc 1 169 0
+  74 0004 04 00 00 00             		bra	_LIB_ModifiedChk_Computation
+  75                             	.LVL9:
+  76                             	.L13:
+ 170:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #endif /*defined(CONFIG_LIB_SETTING_CHECK_TYPE_CRC)*/
+ 171:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	}
+ 172:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	return sign;
+ 173:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** }
+  77                             		.loc 1 173 0
+  78 0008 EF E1                   		mov.L	r14, r1
+  79                             	.LVL10:
+  80 000a 02                      		rts
+  81                             	.LFE2:
+  83                             		.section	.text.LIB_SettingBIST_EndSync,"ax",@progbits
+  84                             		.global	_LIB_SettingBIST_EndSync
+  86                             	_LIB_SettingBIST_EndSync:
+  87                             	.LFB3:
+ 174:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 175:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 176:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 177:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 178:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** /*
+ 179:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** final step
+ 180:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** if returns if the partial resutll matches the signature of the setting
+ 181:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \param [in]	sign	computed signature
+ 182:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \n The applied method is affected by CONFIG_LIB_SETTING_CHECK_TYPE_CRC
+ 183:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** if defined CONFIG_LIB_SETTING_CHECK_TYPE_CRC checking is CRC else CHK
+ 184:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 185:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \return 	bool_t
+ 186:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 187:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \retval		TRUE 	test passed
+ 188:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \retval		FALSE	test not passed
+ 189:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 190:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \author 	Roberto Fioravanti
+ 191:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \date		Apr 18,2013
+ 192:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** \version	1.0.0
+ 193:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** */
+ 194:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** bool_t	LIB_SettingBIST_EndSync(LIB_SettingSignatureType sign)
+ 195:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** {
+  88                             		.loc 1 195 0
+  89                             	.LVL11:
+  90 0000 6E 7B                   		pushm	r7-r11
+  91                             	.LCFI1:
+  92 0002 DF 1B                   		mov.W	r1, r11
+  93                             	.LVL12:
+ 196:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	LIB_SettingSignatureType	settingSign=0;
+ 197:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	uint16_t chkPtrVal=0;
+ 198:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 199:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	chkPtrVal = EndianU16_BToN(*(GetDefaultSettingStartAddress() + SF_PTR_CHECKSUM));
+  94                             		.loc 1 199 0
+  95 0004 05 00 00 00             		bsr	_GetDefaultSettingStartAddress
+  96                             	.LVL13:
+  97 0008 BA 1F                   		movu.W	18[r1], r7
+  98                             	.LVL14:
+ 200:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 
+ 201:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #if defined(CONFIG_LIB_SETTING_CHECK_TYPE_CRC)
+ 202:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	settingSign=STD_SF_PTR_CHECKSUM_CRC_VAL((STD_SettingSignatureType*)(GetDefaultSettingStartAddress(
+ 203:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #else
+ 204:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	settingSign=STD_SF_PTR_CHECKSUM_CHK_VAL((STD_SettingSignatureType*)(GetDefaultSettingStartAddress(
+  99                             		.loc 1 204 0
+ 100 000a 05 00 00 00             		bsr	_GetDefaultSettingStartAddress
+ 101                             	.LVL15:
+ 102 000e 4B 77                   		add	r7, r7
+ 103                             	.LVL16:
+ 104 0010 4B 71                   		add	r7, r1
+ 105 0012 59 1A 01                		movu.B	1[r1], r10
+ 106 0015 05 00 00 00             		bsr	_GetDefaultSettingStartAddress
+ 107                             	.LVL17:
+ 108 0019 FE C7 17                		movu.B	[r7,r1], r7
+ 109                             	.LVL18:
+ 110 001c 6C 87                   		shll	#8, r7
+ 111                             	.LVL19:
+ 205:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** #endif /*defined(CONFIG_LIB_SETTING_CHECK_TYPE_CRC)*/
+ 206:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	return (sign==settingSign);
+ 112                             		.loc 1 206 0
+ 113 001e 5F BB                   		movu.W	r11, r11
+ 114 0020 FF 51 A7                		or	r10, r7, r1
+ 207:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** }
+ 115                             		.loc 1 207 0
+ 116 0023 47 1B                   		cmp	r1, r11
+ 117 0025 FC DB 10                		sceq.L	r1
+ 118 0028 3F 7B 05                		rtsd	#20, r7-r11
+ 119                             	.LFE3:
+ 121                             		.section	.text.LIB_SettingPOST_Sync,"ax",@progbits
+ 122                             		.global	_LIB_SettingPOST_Sync
+ 124                             	_LIB_SettingPOST_Sync:
+ 125                             	.LFB0:
+  78:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** {
+ 126                             		.loc 1 78 0
+ 127 0000 60 80                   		sub	#8, r0
+ 128                             	.LCFI2:
+ 129                             	.LVL20:
+  80:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	LIB_SettingSignatureType sign=0;
+ 130                             		.loc 1 80 0
+ 131 0002 3D 03 00                		mov.W	#0, 6[r0]
+ 132                             	.LVL21:
+  81:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	uint8_t* pStart=0;
+ 133                             		.loc 1 81 0
+ 134 0005 3E 00 00                		mov.L	#0, [r0]
+ 135                             	.LVL22:
+  82:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	uint16_t len=0;
+ 136                             		.loc 1 82 0
+ 137 0008 3D 02 00                		mov.W	#0, 4[r0]
+ 138                             	.LVL23:
+  84:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	if (LIB_SettingBIST_StartSync(&len, &pStart, &sign))
+ 139                             		.loc 1 84 0
+ 140 000b 71 01 04                		add	#4, r0, r1
+ 141 000e EF 02                   		mov.L	r0, r2
+ 142 0010 71 03 06                		add	#6, r0, r3
+ 143 0013 05 00 00 00             		bsr	_LIB_SettingBIST_StartSync
+ 144                             	.LVL24:
+ 145 0017 61 01                   		cmp	#0, r1
+ 146 0019 20 1B                   		beq	.L17
+  86:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 		if (len)
+ 147                             		.loc 1 86 0
+ 148 001b 98 81                   		mov.W	4[r0], r1
+ 149 001d 5F 1E                   		movu.W	r1, r14
+ 150 001f 61 0E                   		cmp	#0, r14
+ 151 0021 20 11                   		beq	.L19
+  88:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			sign=LIB_SettingBIST_StepSync(len, pStart, sign);
+ 152                             		.loc 1 88 0
+ 153 0023 EC 02                   		mov.L	[r0], r2
+ 154 0025 98 8B                   		mov.W	6[r0], r3
+ 155 0027 05 00 00 00             		bsr	_LIB_SettingBIST_StepSync
+ 156                             	.LVL25:
+ 157 002b 90 89                   		mov.W	r1, 6[r0]
+  89:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 			res=LIB_SettingBIST_EndSync(sign);
+ 158                             		.loc 1 89 0
+ 159 002d 05 00 00 00             		bsr	_LIB_SettingBIST_EndSync
+ 160                             	.LVL26:
+ 161 0031 0B                      		bra	.L17
+ 162                             	.LVL27:
+ 163                             	.L19:
+  79:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** 	bool_t res=FALSE;
+ 164                             		.loc 1 79 0
+ 165 0032 EF E1                   		mov.L	r14, r1
+ 166                             	.LVL28:
+ 167                             		.balign 2,3,1
+ 168                             	.L17:
+  93:C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting\LIB_Setting.c **** }
+ 169                             		.loc 1 93 0
+ 170 0034 67 02                   		rtsd	#8
+ 171                             	.LFE0:
+ 255                             	.Letext0:
+ 256                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 257                             		.file 3 "C:/Workspace/FW_Inertia/branch_indesit/PlatformLibrary/LIB_Setting/LIB_Setting.h"
+ 258                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_Generic/LIB_Generic.h"
+ 259                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_Library/LIB_Utilities.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 LIB_Setting.c
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:7      .text.LIB_SettingBIST_StartSync:00000000 _LIB_SettingBIST_StartSync
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:12     .text.LIB_SettingBIST_StartSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:66     .text.LIB_SettingBIST_StepSync:00000000 _LIB_SettingBIST_StepSync
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:71     .text.LIB_SettingBIST_StepSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:86     .text.LIB_SettingBIST_EndSync:00000000 _LIB_SettingBIST_EndSync
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:90     .text.LIB_SettingBIST_EndSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:124    .text.LIB_SettingPOST_Sync:00000000 _LIB_SettingPOST_Sync
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:127    .text.LIB_SettingPOST_Sync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:174    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:8      .text.LIB_SettingBIST_StartSync:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:67     .text.LIB_SettingBIST_StepSync:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:87     .text.LIB_SettingBIST_EndSync:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:125    .text.LIB_SettingPOST_Sync:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:653    .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1327   .debug_str:00000178 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1303   .debug_str:00000075 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1275   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1287   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1351   .debug_str:00000225 .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1353   .debug_str:0000022f .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1321   .debug_str:00000147 .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1329   .debug_str:0000019e .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1357   .debug_str:0000023f .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1309   .debug_str:000000f9 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1347   .debug_str:00000212 .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1343   .debug_str:00000201 .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1313   .debug_str:0000012a .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1361   .debug_str:0000024d .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1355   .debug_str:00000238 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1339   .debug_str:000001ef .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1345   .debug_str:00000209 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1305   .debug_str:000000c6 .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1319   .debug_str:00000142 .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1315   .debug_str:00000138 .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1325   .debug_str:00000173 .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1341   .debug_str:000001fc .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1295   .debug_str:00000028 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1359   .debug_str:00000248 .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1323   .debug_str:0000015a .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1333   .debug_str:000001c8 .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1311   .debug_str:00000110 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:61     .text.LIB_SettingBIST_StartSync:0000003b .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1005   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1349   .debug_str:00000220 .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1018   .debug_loc:00000020 .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1289   .debug_str:00000000 .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1029   .debug_loc:0000003e .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1301   .debug_str:0000006b .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1040   .debug_loc:0000005c .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1051   .debug_loc:0000007a .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1335   .debug_str:000001dc .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1068   .debug_loc:000000a5 .LLST5
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:20     .text.LIB_SettingBIST_StartSync:0000000c .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:49     .text.LIB_SettingBIST_StartSync:00000031 .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1293   .debug_str:0000000f .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:81     .text.LIB_SettingBIST_StepSync:0000000b .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1079   .debug_loc:000000c3 .LLST6
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1104   .debug_loc:000000fd .LLST7
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1337   .debug_str:000001e6 .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1122   .debug_loc:00000129 .LLST8
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1317   .debug_str:0000013d .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:75     .text.LIB_SettingBIST_StepSync:00000008 .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1331   .debug_str:000001b0 .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:119    .text.LIB_SettingBIST_EndSync:0000002b .LFE3
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1140   .debug_loc:00000155 .LLST9
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1153   .debug_loc:00000175 .LLST10
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1299   .debug_str:0000005f .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1164   .debug_loc:00000193 .LLST11
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1205   .debug_loc:000001d6 .LLST12
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:96     .text.LIB_SettingBIST_EndSync:00000008 .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:101    .text.LIB_SettingBIST_EndSync:0000000e .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:107    .text.LIB_SettingBIST_EndSync:00000019 .LVL17
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1363   .debug_str:00000259 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:171    .text.LIB_SettingPOST_Sync:00000036 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1222   .debug_loc:00000201 .LLST13
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1235   .debug_loc:00000221 .LLST14
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1291   .debug_str:00000008 .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:144    .text.LIB_SettingPOST_Sync:00000017 .LVL24
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:156    .text.LIB_SettingPOST_Sync:0000002b .LVL25
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:160    .text.LIB_SettingPOST_Sync:00000031 .LVL26
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1297   .debug_str:00000041 .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:1307   .debug_str:000000dd .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:13     .text.LIB_SettingBIST_StartSync:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:11     .text.LIB_SettingBIST_StartSync:00000000 .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:17     .text.LIB_SettingBIST_StartSync:00000008 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:53     .text.LIB_SettingBIST_StartSync:00000036 .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:56     .text.LIB_SettingBIST_StartSync:00000038 .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:22     .text.LIB_SettingBIST_StartSync:0000000f .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:45     .text.LIB_SettingBIST_StartSync:0000002b .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:69     .text.LIB_SettingBIST_StepSync:00000000 .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:79     .text.LIB_SettingBIST_StepSync:0000000a .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:91     .text.LIB_SettingBIST_EndSync:00000002 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:89     .text.LIB_SettingBIST_EndSync:00000000 .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:93     .text.LIB_SettingBIST_EndSync:00000004 .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:109    .text.LIB_SettingBIST_EndSync:0000001c .LVL18
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:111    .text.LIB_SettingBIST_EndSync:0000001e .LVL19
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:98     .text.LIB_SettingBIST_EndSync:0000000a .LVL14
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:103    .text.LIB_SettingBIST_EndSync:00000010 .LVL16
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:128    .text.LIB_SettingPOST_Sync:00000002 .LCFI2
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:129    .text.LIB_SettingPOST_Sync:00000002 .LVL20
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:162    .text.LIB_SettingPOST_Sync:00000032 .LVL27
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:166    .text.LIB_SettingPOST_Sync:00000034 .LVL28
+C:\Users\Andrea\AppData\Local\Temp\ccsijDPq.s:261    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_GetDefaultSettingStartAddress
+_LIB_ModifiedChk_Computation

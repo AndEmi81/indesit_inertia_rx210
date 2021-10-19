@@ -1,0 +1,159 @@
+/**
+\defgroup	OCTPM OCTPM (Hardware Timer/PWM Module)
+@{
+\n          The module offers a standardized access to the on chip timer. The following modes are available:
+\n\li       Counter mode with possible overflow interrupt and modulo setting
+\n\li       Input capture mode with possible capture event interrupt
+\n\li       Output compare mode with possible edge event and interrupt
+\n\li       PWM with possible on-pulse edge interrupt and period interrupt
+\n\li       PWD with possible interrupt once per period - this mode uses the input capture hw mode so
+\n          some limitation are present. The 0 and 100 % is not detectable because no edge is present.
+\n          So the user must evaluate the min. and max. safe duty cycle range that can be detected.
+\n
+\version 01.00
+\n
+\par      Configuration:
+\n          1) The user must provide a Timers_cfg.h file in order to define the key properties
+\n          see "\Drivers\OCTPM\ConfigExample\Timers_cfg(Example).h".
+\n          2) Include Timers_cfg.h inside Config.h.
+\n          3) Hardware Counter Configuration:
+\n          in Config.c provide a structure like the following
+\n          <b>
+\n          const IO_HwCntrCfgType HwCntr0_cfg = {
+\n              HW_TMR_ID_0,
+\n              TMR_CLEAR_SOURCE_IS_INTERNAL,
+\n              TMR_ID0_PSC_VALUE,
+\n              TMR_CLK_SOURCE_IS_BUS_CLOCK,
+\n              TMR_COUNT_UP,
+\n              TMR_ID0_TICK_RES,
+\n              TMR_ID0_PERIOD_VALUE,
+\n              FLAGS
+\n          };
+\n          </b>
+\n          that describes the behavior	of an Hardware Counter.
+\n
+\n          4) Input Capture Configuration:
+\n          in Config.c provide a structure like the following
+\n          <b>
+\n          const IO_ICU_CfgType IcuTmr0Ch0_cfg = {
+\n              TMR_CH_ID_0,
+\n              TMR_CH_NO_INV
+\n          };
+\n          </b>
+\n          that describes the behavior	of an Input Capture Channel.
+\n
+\n          5) Output Compare Configuration:
+\n          in Config.c provide a structure like the following
+\n          <b>
+\n          const IO_OCU_CfgType OcuTmr0Ch2_cfg = {
+\n              TMR_CH_ID_2,
+\n              TMR_CH_NO_INV
+\n          };
+\n          </b>
+\n          that describes the behavior	of an Output Compare Channel.
+\n
+\n          6) Pulse Width Demodulator Configuration:
+\n          in Config.c provide a structure like the following
+\n          <b>
+\n          const IO_PWD_CfgType PwdTmr1Ch4_cfg = {
+\n              TMR_CH_ID_7,
+\n              TMR_CH_INV
+\n          };
+\n          </b>
+\n          that describes the behavior	of a Pulse Width Demodulator Channel
+\n
+\n          7) Pulse Width Modulator Configuration:
+\n          in Config.c provide a structure like the following
+\n          <b>
+\n          const IO_PWM_CfgType PwmTmr1Ch3_cfg = {
+\n              TMR_CH_ID_6,
+\n              TMR_ID1_PERIOD_VALUE*TMR_ID1_TICK_RES,
+\n              TMR_CH_NO_INV,
+\n          };
+\n          </b>
+\n          that describes the behavior	of a Pulse Width Modulator Channel
+\n.
+\n          See "\Drivers\OCTPM\ConfigExample\TestTimer(Example).c".
+\n          as example of driver use.
+\n
+\par Exported Functions (Platform Level):
+\n
+ <b>   Counter functions: </b>
+\n
+\li		OCHWCNTR_InitSync() - counter initialization
+\li		OCHWCNTR_DeInitSync() - counter deinitialization
+\li		OCHWCNTR_GetSync() - reads the counter in nSec
+\li       OCHWCNTR_GetTicksSync() - reads the counter in ticks
+\li		OCHWCNTR_SetSync() - sets the counter value in nSec
+\li		OCHWCNTR_Enable() - enables/disables (starts/stops) the counter
+\li		OCHWCNTR_EnableISR() - enables/disables the ISR and declars its callback function
+\li		OCHWCNTR_GetTickResoution() - retrives the counter tick resolution
+\li      OCHWCNTR_GetTimerModulus() - retrives the counter modulus
+
+
+<b>  Input capture functions: </b>
+\n
+\li		OCICU_InitSync() - input capture channel initialization
+\li		OCICU_DeInitSync() - input capture channel deinitialization
+\li		OCICU_GetSync() - reads the captured value in nSec
+\li		OCICU_GetSyncTickResolution() - reads the raw captured value in ticks
+\li		OCICU_SetModeSync() - sets the capture edged mode
+\li     OCICU_GetModeSync() - returns the capture edge mode
+\li     OCICU_ToggleModeSync() - toggles the capture edge mode
+\li		OCICU_EnableISR() - enables/disables the ISR and declares its callback function
+
+<b>  Output compare functions: </b>
+\n
+\li		OCOCU_InitSync() - output compare channel initialization
+\li		OCOCU_DeInitSync() - output compare channel deinitialization
+\li		OCOCU_GetSync() - reads the counter in nSec
+\li		OCOCU_GetSyncTickResolution() - reads the raw counter value in ticks
+\li		OCOCU_SetThreshold1Sync() - sets the compare event 1 time in nSec
+\li		OCOCU_SetThreshold1TickResolutionSync() - sets the compare event 1 time in ticks
+\li		OCOCU_SetThreshold2Sync() - sets the compare event 2 time in nSec
+\li		OCOCU_SetThreshold2TickResolutionSync() - sets the compare event 2 time in ticks
+\li		OCOCU_SetModeSync() - sets the compare event output edge mode
+\li		OCOCU_EnableISR() - enables/disables the ISR and declares its callback function
+\n          it's the same of OCICU_EnableISR()
+
+<b>  PWM functions: </b>
+\n
+\li		OCPWM_InitSync() - PWM channel initialization
+\li		OCPWM_DeInitSync() - PWM channel deinitialization
+\li		OCPWM_SetSync() - sets the on-time in nSec
+\li		OCPWM_GetSync() - reads the on-time in nSec
+\li		OCPWM_GetPeriodSync() - reads the period in nSec
+\li		OCPWM_SetPeriodSync() - sets the period in nSec
+\li		OCPWM_SetAllSync() - sets the period and the on-time in nSec
+\li		OCPWM_EnableT0ISR() - enables/disables the on-pulse edge ISR and declares its callback function
+\n          it's the same of OCICU_EnableISR()
+\li		OCPWM_EnableT1ISR() - enables/disables the period ISR and declares its callback function
+
+
+<b> PWD functions: </b>
+
+\li		OCPWD_InitSync() - PWD channel initialization
+\li		OCPWD_DeInitSync() - PWD channel deinitialization
+\li		OCPWD_StartSampleSync() - starts the pulse-width demodulation. The interrupts must be enabled.
+\li		OCPWD_GetAllSync() - reads the on-time and the period in nSec
+\li		OCPWD_StopSampleSync() - stops the pulse-width demodulation.
+
+<b> General: </b>
+\n
+\li          OCTPM_GetChannelSync()
+
+
+
+
+\n
+\par Architecture Requirements ID:
+\li SARS_WMMT_MN_DrvTMR_1
+\li SARS_WMMT_MN_DrvTMR_2
+\li SARS_WMMT_MN_DrvTMR_3
+\li SARS_WMMT_MN_DrvTMR_4
+\li SARS_WMMT_MN_DrvTMR_5
+
+
+@}
+\ingroup   	Drivers
+*/

@@ -1,0 +1,1814 @@
+   1                             		.file	"OCFLS_drv.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.OCFLS_CheckParams.part.0,"ax",@progbits
+   6                             	_OCFLS_CheckParams.part.0:
+   7                             	.LFB8:
+   8                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS/OCFLS_drv.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n
+   8:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n			Source File
+   9:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n
+  10:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \file		OCFLS_drv.c
+  11:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \ingroup	OCFLS
+  12:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \date		Nov 10, 2009
+  13:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \version	01.00.00
+  14:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \author		stefano.ughi
+  15:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n
+  16:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n
+  17:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \par	History:
+  18:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n
+  19:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n 		00.00.35
+  20:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n		June 18, 2010
+  21:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n		stefano.ughi
+  22:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n		changes:
+  23:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n      compliant to ISO/ANSI 9899-1990 6.3.4 and Annex B
+  24:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n 		00.00.34
+  25:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n		June 18, 2010
+  26:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n		stefano.ughi
+  27:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n		changes:
+  28:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n      changed macro's name EnterCritical() in EnterCriticalSection()
+  29:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n      changed macro's name ExitCritical() in ExitCriticalSection()
+  30:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n      In Config.h must be defined
+  31:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n      #if defined(OSEK_SUPPORT)
+  32:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n      #define EnterCriticalSection()  SuspendAllInterrupts()
+  33:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n      #define ExitCriticalSection()   ResumeAllInterrupts()
+  34:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n      #else
+  35:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n      #define EnterCriticalSection()  EnterCritical()
+  36:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n      #define ExitCriticalSection()   ExitCritical()
+  37:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n      #endif
+  38:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n
+  39:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n 		00.00.34
+  40:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n		Jan 27, 2011
+  41:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n		stefano.ughi
+  42:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n		changes:
+  43:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n      Fixed bug on OCFLS_RWriteVerify
+  44:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n      OCWDT_SetSync(0) call changed with OCWDT_RefreshSync()
+  45:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n
+  46:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n 		00.00.33
+  47:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n		March 15, 2010
+  48:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n		stefano.ughi
+  49:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n		changes:
+  50:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n      added only write or erase/write permission on the selected flash block
+  51:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n
+  52:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n 		00.00.30
+  53:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n		Jan 14, 2010
+  54:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n		stefano.ughi
+  55:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n		changes:
+  56:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n      due to watchdog
+  57:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n 		- added FLS_ERASE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG property
+  58:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n		- added FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG property
+  59:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n
+  60:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n
+  61:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n
+  62:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n
+  63:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n etc.
+  64:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** */
+  65:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #define MODULE_BODY_OCFLS
+  66:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* ******** */
+  67:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* Includes */
+  68:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* ******** */
+  69:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #include "Config.h"
+  70:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #include "RTOS.h"
+  71:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #include "IO_Driver.h"
+  72:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #include "OCFLS_drv.h"
+  73:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #include "OCWDT_drv.h"
+  74:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #include "LIB_Error.h"
+  75:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+  76:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #if (FLS_ERASE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG > 255)
+  77:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #error "Value of FLS_ERASE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG property out of range."
+  78:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #endif
+  79:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+  80:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #if (FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG > 255)
+  81:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #error "Value of FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG property out of range."
+  82:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #endif
+  83:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+  84:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+  85:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+  86:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* ****************** */
+  87:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* Defines and Macros */
+  88:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* ****************** */
+  89:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+  90:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+  91:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* *************************** */
+  92:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* Typedef, Structs and Unions */
+  93:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* *************************** */
+  94:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* Function's pointer for Erase Page Command Executed in RAM  */
+  95:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** typedef void (*pFLS_ErasePageCmdIsInRam)(FLS_paramType param);
+  96:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* Function's pointer for Burst Writing Command Executed in RAM  */
+  97:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** typedef void (*pFLS_BurstProgCmdIsInRam)(FLS_SourcePtrType pSource, FLS_sizeType size, FLS_position
+  98:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+  99:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* ********* */
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* Variables */
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* ********* */
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* Global */
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** extern const FLS_MapType FlashMap[];
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** extern const uint8_t FlashMapEraseForbidden[];
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* Static */
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* ******************* */
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* Functions Prototype */
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* ******************* */
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** static IO_ErrorType OCFLS_CheckParams(FLS_sizeType size, FLS_positionType position);
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* *************** */
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* Function Bodies */
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* *************** */
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* Exported function */
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /**
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** This function initialises the FLS driver.
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \return 	IO_ErrorType
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OK succes
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \author 	stefano.ughi
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \date		Nov 12, 2009
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \version	1.0.0
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \note		\par \b Note 1:
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			documentation by stefano.ughi
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** */
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_InitSync(void)
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** {
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_Init();
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** }
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /**
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** This service implements the erase functionality.\n
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** Verify is not performed, use \b OCFLS_REraseVerify function.
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \param  [in]		size  specifies the number of bytes to be erased.
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n					- \b probably more than size bytes will be erase bacause of uC flash
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n                  organization.
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \n
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \param  [in]		position  specifies the position where the erase operation starts.
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \return 	IO_ErrorType
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_INVALID_SIZE size is invalid
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OUT_OF_MEMORY position + (size-1) out of memory allocation.
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval     IO_E_OUT_OF_BOUNDS check failed out of segments.
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval 	IO_E_ERASE_FORBIDDEN  on the selected block only write operations are allowed
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_PROGRAMMING problems during erasing procedure.
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OK erase is o.k..
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \author 	stefano.ughi
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \date		Jan 13, 2010
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \version	1.0.1
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \todo       implementazione per i micro con pagine flash di dim. non uniforme.
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \note		\par \b Note 1:
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			documentation by stefano.ughi
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** */
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_REraseSync (FLS_sizeType size, FLS_positionType position)
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** {
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType err;
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	static FLS_positionType EndPosition;
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	/* Check if the parameters are valid */
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	err = OCFLS_CheckParams(size,position);
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	if( (IO_ErrorType)IO_E_OK != err )
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		/* Problems founded check err */
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		PLT_ERROR_WARNING(PLT_ERROR_OCFLS_BAD_PARAMS);
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		return err;
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_ERASE_BEGIN();
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	EndPosition = (position+size);
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	while ( position < EndPosition )
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_InitRegsForErasing();
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		/* Enter Critical Section */
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EnterCriticalSection();
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		/* Erasing */
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		err = FLS_Erase(position);
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		PLT_ERROR_WARNING_IF(err, PLT_ERROR_OCFLS_BAD_ERASE);
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		/* Exit Critical Section */
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ExitCriticalSection();
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ERASE_END();
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		/* Check Errors during erasing operation */
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if( FLS_CheckErrors() )
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			PLT_ERROR_WARNING(PLT_ERROR_OCFLS_BAD_PROGRAMMING);
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			return (IO_ErrorType)IO_E_PROGRAMMING;
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		else
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #ifdef ALL_FLASH_PAGES_HAVE_THE_SAME_SIZE
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			position+=FLASH_PAGE_SIZE_IN_BYTES;
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #else
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #error "ALL_FLASH_PAGES_HAVE_THE_SAME_SIZE, not supported different page size"
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #endif
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** }
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /**
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** This function implements write functionality.\n
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** We assume that flash is blank.\n
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** Verify is not performed, use \b OCFLS_RWriteVerify function.\n
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \b HCS08: pSource must point to R.A.M. data, it is not possible to access flash during write operat
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \param  [in]	pSource  Points to the initial data where to read from.
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]	size  Specifies the number of bytes to be write.
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]	position  Specifies the start point where the data is written.
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \return 	IO_ErrorType
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OK Successful write operation.
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_INVALID_SIZE size is invalid.
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OUT_OF_MEMORY position + (size-1) out of memory allocation.
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval     IO_E_OUT_OF_BOUNDS check failed out of avaible segments.
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_PROGRAMMING Programming Error.
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \author 	stefano.ughi
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \date		Nov 17, 2009
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \version	1.0.0
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \warning    check inside map file the right length of routine that is performed in R.A.M.
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \note		\par \b Note 1:
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			documentation by stefano.ughi
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** */
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_RWriteSync (FLS_SourcePtrType pSource, FLS_sizeType size, FLS_positionType posit
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** {
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType err;
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	/* Check if the parameters are valid */
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	err = OCFLS_CheckParams(size,position);
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	if( ((IO_ErrorType)IO_E_OK != err) && ((IO_ErrorType)IO_E_ERASE_FORBIDDEN != err) )
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		/* Problems founded check err */
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		PLT_ERROR_WARNING(PLT_ERROR_OCFLS_BAD_PARAMS);
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		return err;
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_WRITE_BEGIN();
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	/* Init Flash regs */
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_InitRegsForProgramming();
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	/* Enter Critical Section */
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_EnterCriticalSection();
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	/* Programming */
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	err = FLS_Programming((uint8_t *) pSource,size,position);
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	PLT_ERROR_WARNING_IF(err, PLT_ERROR_OCFLS_BAD_PROGRAMMING);
+ 268:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	/* Exit Critical Section */
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_ExitCriticalSection();
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_WRITE_END();
+ 273:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	/* Check Errors during erasing operation */
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	if( FLS_CheckErrors() )
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		err = (IO_ErrorType)IO_E_PROGRAMMING;
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	else
+ 280:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		err = (IO_ErrorType)IO_E_OK;
+ 282:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	return err;
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** }
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /**
+ 286:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** This service verify if flash is blanck.
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \param  [in]		size  specifies the number of bytes to be checked.
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]		position  specifies the position where the check operation start.
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \return 	IO_ErrorType
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval     IO_E_NOT_BLANK check failed flash is not blanck.
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OK check is o.k.
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 297:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \author 	stefano.ughi
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \date		Nov 12, 2009
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \version	1.0.0
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \note		\par \b Note 1:
+ 302:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			documentation by stefano.ughi
+ 303:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			\par \b Note 2:
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			\b FLS_BlankCheckType must be the largest possible type in order to decrease time of checking.
+ 305:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			\par \b Note 3:
+ 306:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			\b FLS_ERASE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG must be set in FlashConfig.h
+ 307:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** */
+ 308:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #ifdef FLS_BlankCheck
+ 309:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_REraseVerify(FLS_sizeType size, FLS_positionType position)
+ 310:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** {
+ 311:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType Err;
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	Err = FLS_BlankCheck(size, position);
+ 313:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	if(Err != 0)
+ 314:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		Err = IO_E_NOT_BLANK;
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	return Err;
+ 318:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** }
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #else
+ 320:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_REraseVerify(FLS_sizeType size, FLS_positionType position)
+ 321:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** {
+ 322:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #if (FLS_ERASE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG!=0)
+ 323:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	static uint8_t NumCheck=0;
+ 324:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #endif
+ 325:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 326:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	while( size >= sizeof(FLS_BlankCheckType) )
+ 327:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 328:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if( FLS_BLANK_VALUE != *(FLS_BlankCheckType*)position )
+ 329:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 330:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			return (IO_ErrorType)IO_E_NOT_BLANK;
+ 331:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 332:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		position+=sizeof(FLS_BlankCheckType);
+ 333:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		size-=sizeof(FLS_BlankCheckType);
+ 334:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 335:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #if (FLS_ERASE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG!=0)
+ 336:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 337:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		NumCheck++;
+ 338:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if ( NumCheck >= FLS_ERASE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG )
+ 339:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 340:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			(void)OCWDT_RefreshSync();
+ 341:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			NumCheck = 0;
+ 342:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 343:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 344:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #endif
+ 345:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 346:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #if (SIZE_OF_FLS_BlankCheckType > 1)
+ 347:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	/* This control is not necessary if FLS_BlankCheckType is 1 byte size */
+ 348:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	while( size > 0 )
+ 349:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 350:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if( (uint8_t)FLS_BLANK_VALUE != *(uint8_t*)position )
+ 351:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 352:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			return (IO_ErrorType)IO_E_NOT_BLANK;
+ 353:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 354:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		position++;
+ 355:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		size--;
+ 356:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 357:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #endif /* (SIZE_OF_FLS_BlankCheckType > 1) */
+ 358:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 359:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #if (FLS_ERASE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG!=0)
+ 360:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	/* For the next call */
+ 361:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	NumCheck = 0;
+ 362:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #endif
+ 363:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 364:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 365:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** }
+ 366:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #endif /* FLS_BlankCheck*/
+ 367:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /**
+ 368:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** This function implements the verify functionality.\n
+ 369:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 370:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \param  [in]	pSource  Points to the initial data where to read from.
+ 371:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]	size  Specifies the number of bytes to verify.
+ 372:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]	position  Specifies the start point where the data is written.
+ 373:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 374:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \return 	IO_ErrorType
+ 375:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 376:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OK Successful verify operation.
+ 377:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_VERIFY	Verify Error.
+ 378:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 379:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \author 	stefano.ughi
+ 380:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \date		Jan 27, 2011
+ 381:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \version	1.0.1
+ 382:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 383:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \note		\par \b Note 1:
+ 384:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			documentation by stefano.ughi
+ 385:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			\par \b Note 2:
+ 386:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			\b FLS_VerifyType must be the largest possible type in order to decrease time of checking.
+ 387:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			\par \b Note 3:
+ 388:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			\b FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG must be set in FlashConfig.
+ 389:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			\par \b Note 4:
+ 390:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			Jan 27,2011 fixed bug on pSource inc.
+ 391:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			\par \b Note 5:
+ 392:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			May 09,2011 fixed problem on pSource inc due to ISO/ANSI 9899-1990 6.3.4 and Annex B
+ 393:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 394:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** */
+ 395:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_RWriteVerify (FLS_SourcePtrType pSource, FLS_sizeType size, FLS_positionType pos
+ 396:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** {
+ 397:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #if (FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG!=0)
+ 398:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	static uint8_t NumCheck=0;
+ 399:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #endif
+ 400:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType err=IO_E_OK;
+ 401:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	uint8_t* pData=(uint8_t*)pSource;
+ 402:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	/* Check if data correctly written */
+ 403:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	while( (size >0) && (err == IO_E_OK))
+ 404:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if( *pData++ != *(uint8_t*)position++ )
+ 406:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 407:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			err = (IO_ErrorType)IO_E_VERIFY;
+ 408:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 409:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		size--;
+ 410:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 411:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #if (FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG!=0)
+ 412:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 413:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		NumCheck++;
+ 414:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if ( NumCheck >= FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG )
+ 415:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 416:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			(void)OCWDT_RefreshSync();
+ 417:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			NumCheck = 0;
+ 418:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 419:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 420:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #endif
+ 421:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 422:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 423:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #if 0
+ 424:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c ****     {
+ 425:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c ****         uint8_t * p = (uint8_t*)pSource;
+ 426:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c ****         while( size > 0 )
+ 427:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c ****         {    
+ 428:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c ****             if( *p != *(uint8_t*)position )
+ 429:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c ****             {
+ 430:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c ****                 return (IO_ErrorType)IO_E_VERIFY;
+ 431:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c ****             }
+ 432:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c ****             position++;
+ 433:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 434:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c ****             p++;
+ 435:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 436:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c ****             size--;
+ 437:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c ****         }
+ 438:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c ****     }
+ 439:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #endif /* ( SIZE_OF_FLS_VerifyType > 1 ) */
+ 440:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 441:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #if (FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG!=0)
+ 442:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	/* For the next call */
+ 443:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	NumCheck = 0;
+ 444:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** #endif
+ 445:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 446:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	return err;
+ 447:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** }
+ 448:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /**
+ 449:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** This function perform write-verify operations in flash.
+ 450:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 451:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \param  [in]	pSource  Points to the initial data where to read from.
+ 452:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]	size  Specifies the number of bytes to be write.
+ 453:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]	position  Specifies the start point where the data is written.
+ 454:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 455:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \attention \b	FLS_WriteSteps states of routine, used as global variable R/W
+ 456:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 457:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \return 	IO_ErrorType
+ 458:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 459:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_WORKING job running
+ 460:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OK job done correctly
+ 461:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_UNEXPECTED_CONDITION problem occurred
+ 462:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 463:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \author 	stefano.ughi
+ 464:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \date		Jan 8, 2010
+ 465:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \version	1.0.0
+ 466:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 467:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \note		\par \b Note 1:
+ 468:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			documentation by stefano.ughi
+ 469:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** */
+ 470:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_WriteAndVerifyAsync(FLS_SourcePtrType pSource, FLS_sizeType size, FLS_positionTy
+ 471:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** {
+ 472:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	static enum FLS_WriteStepsTag
+ 473:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 474:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WRITE= 0,
+ 475:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WRITE_VERIFY,
+ 476:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WRITE_SUCCES,
+ 477:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ERR
+ 478:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	} FLS_WriteSteps= {FLS_WRITE};
+ 479:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 480:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType err;
+ 481:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType fls_State = (IO_ErrorType)IO_E_WORKING;
+ 482:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 483:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	switch(FLS_WriteSteps)
+ 484:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 485:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_WRITE:
+ 486:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 487:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_RWriteSync(pSource,size,position);
+ 488:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if((IO_ErrorType)IO_E_OK == err)
+ 489:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 490:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_WriteSteps = FLS_WRITE_VERIFY;
+ 491:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 492:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		else
+ 493:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 494:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_WriteSteps = FLS_ERR;
+ 495:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 496:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 497:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 498:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_WRITE_VERIFY:
+ 499:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 500:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_RWriteVerify(pSource,size,position);
+ 501:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if((IO_ErrorType)IO_E_OK == err)
+ 502:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 503:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_WriteSteps = FLS_WRITE_SUCCES;
+ 504:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 505:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		else
+ 506:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 507:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_WriteSteps = FLS_ERR;
+ 508:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 509:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 510:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 511:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_WRITE_SUCCES:
+ 512:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		/* success */
+ 513:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		fls_State = (IO_ErrorType)IO_E_OK;
+ 514:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		/* restore machine state for the next call */
+ 515:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WriteSteps = FLS_WRITE;
+ 516:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 517:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 518:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_ERR:
+ 519:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		/* problem */
+ 520:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		fls_State = (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+ 521:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		/* restore machine state for the next call */
+ 522:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WriteSteps = FLS_WRITE;
+ 523:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 524:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 525:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	default:
+ 526:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WriteSteps = FLS_WRITE;
+ 527:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 528:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 529:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 530:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	return fls_State;
+ 531:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** }
+ 532:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /**
+ 533:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** This function perform verify-erase-verify operations in flash.
+ 534:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 535:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]	size  Specifies the number of bytes to erase.
+ 536:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]	position  Specifies the start point where the data is erased.
+ 537:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 538:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \attention \b	FLS_EraseSteps states of routine, used as global variable R/W
+ 539:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 540:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \return 	IO_ErrorType
+ 541:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 542:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_WORKING job running
+ 543:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OK job done correctly
+ 544:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_UNEXPECTED_CONDITION problem occurred
+ 545:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 546:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \author 	stefano.ughi
+ 547:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \date		Jan 14, 2010
+ 548:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \version	1.0.0
+ 549:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 550:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \note		\par \b Note 1:
+ 551:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			documentation by stefano.ughi
+ 552:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 553:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** */
+ 554:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_BlankCheckEraseVerifyAsync(FLS_sizeType size, FLS_positionType position)
+ 555:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** {
+ 556:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	static enum FLS_EraseStepsTag
+ 557:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 558:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_CHECK_IF_BLANK=0,
+ 559:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ERASE,
+ 560:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ERASE_VERIFY,
+ 561:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ERASE_SUCCES,
+ 562:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ERR
+ 563:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	} FLS_EraseSteps= {FLS_CHECK_IF_BLANK};
+ 564:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 565:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType err;
+ 566:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType fls_State = (IO_ErrorType)IO_E_WORKING;
+ 567:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 568:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	switch(FLS_EraseSteps)
+ 569:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 570:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_CHECK_IF_BLANK:
+ 571:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 572:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_REraseVerify(size,position);
+ 573:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if ((IO_ErrorType)IO_E_NOT_BLANK == err)
+ 574:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 575:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERASE;
+ 576:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 577:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		else
+ 578:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 579:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERASE_SUCCES;
+ 580:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 581:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 582:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 583:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_ERASE:
+ 584:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 585:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_REraseSync(size, position);
+ 586:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if((IO_ErrorType)IO_E_OK == err)
+ 587:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 588:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERASE_VERIFY;
+ 589:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 590:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		else
+ 591:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 592:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERR;
+ 593:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 594:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 595:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 596:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_ERASE_VERIFY:
+ 597:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 598:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_REraseVerify(size,position);
+ 599:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if((IO_ErrorType)IO_E_NOT_BLANK == err)
+ 600:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 601:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERR;
+ 602:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 603:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		else
+ 604:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 605:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERASE_SUCCES;
+ 606:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 607:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 608:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 609:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_ERASE_SUCCES:
+ 610:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		/* success */
+ 611:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		fls_State = (IO_ErrorType)IO_E_OK;
+ 612:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		/* restore machine state for the next call */
+ 613:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EraseSteps = FLS_CHECK_IF_BLANK;
+ 614:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 615:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 616:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	case FLS_ERR:
+ 617:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		/* problem */
+ 618:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		fls_State = (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+ 619:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		/* restore machine state for the next call */
+ 620:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EraseSteps = FLS_CHECK_IF_BLANK;
+ 621:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 622:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 623:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	default:
+ 624:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EraseSteps = FLS_CHECK_IF_BLANK;
+ 625:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 626:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 627:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 628:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	return fls_State;
+ 629:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** }
+ 630:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /* Local Function */
+ 631:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** /**
+ 632:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** This service implements the check flash in range functionality.
+ 633:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 634:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \param  [in]		size  specifies the number of bytes to be checked.
+ 635:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \param	[in]		position  specifies the position where the check operation starts.
+ 636:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 637:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \return 	IO_ErrorType
+ 638:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 639:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_INVALID_SIZE size is invalid.
+ 640:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OUT_OF_MEMORY position + (size-1) out of memory allocation.
+ 641:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval     IO_E_OUT_OF_BOUNDS check failed out of segments.
+ 642:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval 	IO_E_ERASE_FORBIDDEN check is o.k. but on the selected block only write operations are per
+ 643:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \retval		IO_E_OK check is o.k. and all operations are permitted
+ 644:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 645:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \author 	stefano.ughi
+ 646:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \date		Nov 11, 2009
+ 647:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \version	1.0.0
+ 648:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 649:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** \note		\par \b Note 1:
+ 650:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			documentation by stefano.ughi
+ 651:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 652:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** */
+ 653:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** static IO_ErrorType OCFLS_CheckParams(FLS_sizeType size, FLS_positionType position)
+   9                             		.loc 1 653 0
+  10                             	.LVL0:
+ 654:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** {
+ 655:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_sizePLUSpositionType endPosition;
+ 656:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	uint8_t j;
+ 657:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 
+ 658:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	if( (FLS_sizeType)0 == size )
+ 659:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 660:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_SIZE;
+ 661:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 662:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	endPosition = ((FLS_sizePLUSpositionType)position + (size-1));
+  11                             		.loc 1 662 0
+  12 0000 60 11                   		sub	#1, r1
+  13                             	.LVL1:
+  14 0002 4B 21                   		add	r2, r1
+  15                             	.LVL2:
+  16 0004 FB 42 00 00 00 00       		mov.L	#_FlashMap, r4
+  17 000a 66 0E                   		mov.L	#0, r14
+  18                             	.LVL3:
+  19                             		.balign 2,3,4
+  20                             	.L4:
+ 663:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	if( endPosition > (FLS_sizePLUSpositionType)FLS_MAX_ADDR )
+ 664:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 665:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		return (IO_ErrorType)IO_E_OUT_OF_MEMORY;
+ 666:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 667:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	for( j = 0; j < NUM_FLASH_BLOCKS; j++ )
+ 668:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	{
+ 669:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if( ( position >= FlashMap[j].StartAddress ) &&
+  21                             		.loc 1 669 0
+  22 000c 06 84 42                		cmp	[r4].L, r2
+  23 000f 23 1A                   		bltu	.L2
+  24 0011 06 85 41 01             		cmp	4[r4].L, r1
+  25 0015 24 14                   		bgtu	.L2
+ 670:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		        ( endPosition <= FlashMap[j].EndAddress ) )
+ 671:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		{
+ 672:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			if( FlashMapEraseForbidden[j] )
+  26                             		.loc 1 672 0
+  27 0017 FB 42 00 00 00 00       		mov.L	#_FlashMapEraseForbidden, r4
+  28 001d FE CE 41                		movu.B	[r14,r4], r1
+  29                             	.LVL4:
+  30 0020 61 01                   		cmp	#0, r1
+  31 0022 20 12                   		beq	.L3
+ 673:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			{
+ 674:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 				return (IO_ErrorType)IO_E_ERASE_FORBIDDEN;
+  32                             		.loc 1 674 0
+  33 0024 75 41 25                		mov	#37, r1
+  34 0027 2E 0D                   		bra	.L3
+  35                             	.LVL5:
+  36                             	.L2:
+  37 0029 62 1E                   		add	#1, r14
+  38 002b 62 84                   		add	#8, r4
+ 667:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	for( j = 0; j < NUM_FLASH_BLOCKS; j++ )
+  39                             		.loc 1 667 0
+  40 002d 61 3E                   		cmp	#3, r14
+  41 002f 21 DD                   		bne	.L4
+ 675:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			}
+ 676:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			else
+ 677:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			{
+ 678:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 				return (IO_ErrorType)IO_E_OK;
+ 679:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			}
+ 680:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		}
+ 681:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	}
+ 682:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	return (IO_ErrorType)IO_E_OUT_OF_BOUNDS;
+  42                             		.loc 1 682 0
+  43 0031 75 41 21                		mov	#33, r1
+  44                             	.LVL6:
+  45                             		.balign 2,3,1
+  46                             	.L3:
+ 683:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** }
+  47                             		.loc 1 683 0
+  48 0034 5B 11                   		movu.B	r1, r1
+  49 0036 02                      		rts
+  50                             	.LFE8:
+  52 0037 03                      		.section	.text.OCFLS_InitSync,"ax",@progbits
+  53                             		.global	_OCFLS_InitSync
+  55                             	_OCFLS_InitSync:
+  56                             	.LFB0:
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** {
+  57                             		.loc 1 132 0
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_Init();
+  58                             		.loc 1 133 0
+  59 0000 05 00 00 00             		bsr	_FLS_Init
+  60                             	.LVL7:
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** }
+  61                             		.loc 1 135 0
+  62 0004 66 01                   		mov.L	#0, r1
+  63 0006 02                      		rts
+  64                             	.LFE0:
+  66                             		.section	.text.OCFLS_REraseSync,"ax",@progbits
+  67                             		.global	_OCFLS_REraseSync
+  69                             	_OCFLS_REraseSync:
+  70                             	.LFB1:
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** {
+  71                             		.loc 1 169 0
+  72                             	.LVL8:
+  73 0000 6E 7D                   		pushm	r7-r13
+  74                             	.LCFI0:
+  75                             	.LBB4:
+  76                             	.LBB5:
+ 658:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	if( (FLS_sizeType)0 == size )
+  77                             		.loc 1 658 0
+  78 0002 71 1B 00                		add	#0, r1, r11
+  79 0005 20 11                   		beq	.L17
+  80 0007 EF 27                   		mov.L	r2, r7
+  81 0009 05 00 00 00             		bsr	_OCFLS_CheckParams.part.0
+  82                             	.LVL9:
+  83 000d CF 1A                   		mov.B	r1, r10
+  84                             	.LBE5:
+  85                             	.LBE4:
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	if( (IO_ErrorType)IO_E_OK != err )
+  86                             		.loc 1 177 0
+  87 000f 5B 1C                   		movu.B	r1, r12
+  88 0011 61 0C                   		cmp	#0, r12
+  89 0013 20 10                   		beq	.L10
+  90 0015 0D                      		bra	.L9
+  91                             	.LVL10:
+  92                             	.L17:
+  93                             	.LBB7:
+  94                             	.LBB6:
+ 660:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_SIZE;
+  95                             		.loc 1 660 0
+  96 0016 75 4A 14                		mov	#20, r10
+  97                             	.LVL11:
+  98 0019 03                      		.balign 2,3,2
+  99                             	.L9:
+ 100                             	.LBE6:
+ 101                             	.LBE7:
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		PLT_ERROR_WARNING(PLT_ERROR_OCFLS_BAD_PARAMS);
+ 102                             		.loc 1 180 0
+ 103 001a 75 41 4E                		mov.L	#0x4e, r1
+ 104 001d 05 00 00 00             		bsr	_LIB_Error_Warning_Handler
+ 105                             	.LVL12:
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		return err;
+ 106                             		.loc 1 181 0
+ 107 0021 2E 6D                   		bra	.L11
+ 108                             	.LVL13:
+ 109                             	.L10:
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	EndPosition = (position+size);
+ 110                             		.loc 1 186 0
+ 111 0023 FB C2 00 00 00 00       		mov.L	#_EndPosition.10065, r12
+ 112 0029 4B 7B                   		add	r7, r11
+ 113                             	.LVL14:
+ 114 002b E3 CB                   		mov.L	r11, [r12]
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	while ( position < EndPosition )
+ 115                             		.loc 1 187 0
+ 116 002d EF CD                   		mov.L	r12, r13
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EnterCriticalSection();
+ 117                             		.loc 1 191 0
+ 118 002f FB B2 00 00 00 00       		mov.L	#_OS_Global, r11
+ 119 0035 EF BC                   		mov.L	r11, r12
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	while ( position < EndPosition )
+ 120                             		.loc 1 187 0
+ 121 0037 2E 51                   		bra	.L12
+ 122                             	.L16:
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_InitRegsForErasing();
+ 123                             		.loc 1 189 0
+ 124 0039 05 00 00 00             		bsr	_FLS_InitRegsForErasing
+ 125                             	.LVL15:
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EnterCriticalSection();
+ 126                             		.loc 1 191 0
+ 127 003d 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 128                             	.LVL16:
+ 129 0041 CD BE 01                		mov.B	1[r11], r14
+ 130 0044 62 1E                   		add	#1, r14
+ 131 0046 C7 BE 01                		mov.B	r14, 1[r11]
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		err = FLS_Erase(position);
+ 132                             		.loc 1 193 0
+ 133 0049 EF 71                   		mov.L	r7, r1
+ 134 004b 05 00 00 00             		bsr	_FLS_Erase
+ 135                             	.LVL17:
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		PLT_ERROR_WARNING_IF(err, PLT_ERROR_OCFLS_BAD_ERASE);
+ 136                             		.loc 1 194 0
+ 137 004f 76 21 FF 00             		and #0xff, r1
+ 138                             	.LVL18:
+ 139 0053 11                      		beq	.L13
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		PLT_ERROR_WARNING_IF(err, PLT_ERROR_OCFLS_BAD_ERASE);
+ 140                             		.loc 1 194 0 is_stmt 0 discriminator 1
+ 141 0054 75 41 50                		mov.L	#0x50, r1
+ 142 0057 05 00 00 00             		bsr	_LIB_Error_Warning_Handler
+ 143                             	.LVL19:
+ 144 005b 03                      		.balign 2,3,5
+ 145                             	.L13:
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ExitCriticalSection();
+ 146                             		.loc 1 197 0 is_stmt 1
+ 147 005c CD CE 01                		mov.B	1[r12], r14
+ 148 005f 60 1E                   		sub	#1, r14
+ 149 0061 C7 CE 01                		mov.B	r14, 1[r12]
+ 150 0064 76 2E FF 00             		and #0xff, r14
+ 151 0068 1E                      		bne	.L14
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_ExitCriticalSection();
+ 152                             		.loc 1 197 0 is_stmt 0 discriminator 1
+ 153 0069 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 154                             	.LVL20:
+ 155 006d 03                      		.balign 2,3,3
+ 156                             	.L14:
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if( FLS_CheckErrors() )
+ 157                             		.loc 1 202 0 is_stmt 1
+ 158 006e 05 00 00 00             		bsr	_FLS_CheckErrors
+ 159                             	.LVL21:
+ 160 0072 76 21 FF 00             		and #0xff, r1
+ 161 0076 20 0E                   		beq	.L15
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			PLT_ERROR_WARNING(PLT_ERROR_OCFLS_BAD_PROGRAMMING);
+ 162                             		.loc 1 204 0
+ 163 0078 75 41 4F                		mov.L	#0x4f, r1
+ 164 007b 05 00 00 00             		bsr	_LIB_Error_Warning_Handler
+ 165                             	.LVL22:
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			return (IO_ErrorType)IO_E_PROGRAMMING;
+ 166                             		.loc 1 205 0
+ 167 007f 75 4A 23                		mov	#35, r10
+ 168 0082 2E 0C                   		bra	.L11
+ 169                             	.L15:
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			position+=FLASH_PAGE_SIZE_IN_BYTES;
+ 170                             		.loc 1 210 0
+ 171 0084 72 77 00 08             		add	#0x800, r7
+ 172                             	.LVL23:
+ 173                             		.balign 2,3,4
+ 174                             	.L12:
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	while ( position < EndPosition )
+ 175                             		.loc 1 187 0 discriminator 1
+ 176 0088 06 84 D7                		cmp	[r13].L, r7
+ 177 008b 23 AE                   		bltu	.L16
+ 178                             	.LVL24:
+ 179 008d 03                      		.balign 2,3,1
+ 180                             	.L11:
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** }
+ 181                             		.loc 1 217 0
+ 182 008e 5B A1                   		movu.B	r10, r1
+ 183 0090 3F 7D 07                		rtsd	#28, r7-r13
+ 184                             	.LFE1:
+ 186 0093 03                      		.section	.text.OCFLS_RWriteSync,"ax",@progbits
+ 187                             		.global	_OCFLS_RWriteSync
+ 189                             	_OCFLS_RWriteSync:
+ 190                             	.LFB2:
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** {
+ 191                             		.loc 1 246 0
+ 192                             	.LVL25:
+ 193 0000 6E 7C                   		pushm	r7-r12
+ 194                             	.LCFI1:
+ 195                             	.LBB10:
+ 196                             	.LBB11:
+ 658:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	if( (FLS_sizeType)0 == size )
+ 197                             		.loc 1 658 0
+ 198 0002 71 2A 00                		add	#0, r2, r10
+ 199 0005 20 1C                   		beq	.L28
+ 200 0007 EF 1C                   		mov.L	r1, r12
+ 201 0009 EF 3B                   		mov.L	r3, r11
+ 202 000b EF A1                   		mov.L	r10, r1
+ 203                             	.LVL26:
+ 204 000d EF 32                   		mov.L	r3, r2
+ 205                             	.LVL27:
+ 206 000f 05 00 00 00             		bsr	_OCFLS_CheckParams.part.0
+ 207                             	.LVL28:
+ 208 0013 CF 17                   		mov.B	r1, r7
+ 209                             	.LBE11:
+ 210                             	.LBE10:
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	if( ((IO_ErrorType)IO_E_OK != err) && ((IO_ErrorType)IO_E_ERASE_FORBIDDEN != err) )
+ 211                             		.loc 1 252 0
+ 212 0015 5B 1E                   		movu.B	r1, r14
+ 213 0017 61 0E                   		cmp	#0, r14
+ 214 0019 20 14                   		beq	.L24
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	if( ((IO_ErrorType)IO_E_OK != err) && ((IO_ErrorType)IO_E_ERASE_FORBIDDEN != err) )
+ 215                             		.loc 1 252 0 is_stmt 0 discriminator 1
+ 216 001b 75 5E 25                		cmp	#37, r14
+ 217 001e 20 0F                   		beq	.L24
+ 218 0020 0C                      		bra	.L23
+ 219                             	.LVL29:
+ 220                             	.L28:
+ 221                             	.LBB13:
+ 222                             	.LBB12:
+ 660:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_SIZE;
+ 223                             		.loc 1 660 0 is_stmt 1
+ 224 0021 75 47 14                		mov	#20, r7
+ 225                             	.LVL30:
+ 226                             		.balign 2,3,2
+ 227                             	.L23:
+ 228                             	.LBE12:
+ 229                             	.LBE13:
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		PLT_ERROR_WARNING(PLT_ERROR_OCFLS_BAD_PARAMS);
+ 230                             		.loc 1 255 0
+ 231 0024 75 41 4E                		mov.L	#0x4e, r1
+ 232 0027 05 00 00 00             		bsr	_LIB_Error_Warning_Handler
+ 233                             	.LVL31:
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		return err;
+ 234                             		.loc 1 256 0
+ 235 002b 2E 4D                   		bra	.L25
+ 236                             	.LVL32:
+ 237                             	.L24:
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_EnterCriticalSection();
+ 238                             		.loc 1 264 0
+ 239 002d 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 240                             	.LVL33:
+ 241 0031 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 242 0037 CD 7E 01                		mov.B	1[r7], r14
+ 243 003a 62 1E                   		add	#1, r14
+ 244 003c C7 7E 01                		mov.B	r14, 1[r7]
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	err = FLS_Programming((uint8_t *) pSource,size,position);
+ 245                             		.loc 1 266 0
+ 246 003f EF C1                   		mov.L	r12, r1
+ 247 0041 EF A2                   		mov.L	r10, r2
+ 248 0043 EF B3                   		mov.L	r11, r3
+ 249 0045 05 00 00 00             		bsr	_FLS_Programming
+ 250                             	.LVL34:
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	PLT_ERROR_WARNING_IF(err, PLT_ERROR_OCFLS_BAD_PROGRAMMING);
+ 251                             		.loc 1 267 0
+ 252 0049 76 21 FF 00             		and #0xff, r1
+ 253                             	.LVL35:
+ 254 004d 11                      		beq	.L26
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	PLT_ERROR_WARNING_IF(err, PLT_ERROR_OCFLS_BAD_PROGRAMMING);
+ 255                             		.loc 1 267 0 is_stmt 0 discriminator 1
+ 256 004e 75 41 4F                		mov.L	#0x4f, r1
+ 257 0051 05 00 00 00             		bsr	_LIB_Error_Warning_Handler
+ 258                             	.LVL36:
+ 259 0055 03                      		.balign 2,3,5
+ 260                             	.L26:
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_ExitCriticalSection();
+ 261                             		.loc 1 270 0 is_stmt 1
+ 262 0056 CD 7A 01                		mov.B	1[r7], r10
+ 263                             	.LVL37:
+ 264 0059 60 1A                   		sub	#1, r10
+ 265 005b C7 7A 01                		mov.B	r10, 1[r7]
+ 266 005e 76 2A FF 00             		and #0xff, r10
+ 267 0062 1E                      		bne	.L27
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	FLS_ExitCriticalSection();
+ 268                             		.loc 1 270 0 is_stmt 0 discriminator 1
+ 269 0063 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 270                             	.LVL38:
+ 271 0067 03                      		.balign 2,3,3
+ 272                             	.L27:
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	if( FLS_CheckErrors() )
+ 273                             		.loc 1 275 0 is_stmt 1
+ 274 0068 05 00 00 00             		bsr	_FLS_CheckErrors
+ 275                             	.LVL39:
+ 276 006c 5B 11                   		movu.B	r1, r1
+ 277 006e 61 01                   		cmp	#0, r1
+ 278 0070 15                      		beq	.L29
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		err = (IO_ErrorType)IO_E_PROGRAMMING;
+ 279                             		.loc 1 277 0
+ 280 0071 75 47 23                		mov	#35, r7
+ 281 0074 0C                      		bra	.L25
+ 282                             	.L29:
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		err = (IO_ErrorType)IO_E_OK;
+ 283                             		.loc 1 281 0
+ 284 0075 CF 17                   		mov.B	r1, r7
+ 285                             	.LVL40:
+ 286 0077 03                      		.balign 2,3,1
+ 287                             	.L25:
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** }
+ 288                             		.loc 1 284 0
+ 289 0078 5B 71                   		movu.B	r7, r1
+ 290 007a 3F 7C 06                		rtsd	#24, r7-r12
+ 291                             	.LFE2:
+ 293 007d 03                      		.section	.text.OCFLS_REraseVerify,"ax",@progbits
+ 294                             		.global	_OCFLS_REraseVerify
+ 296                             	_OCFLS_REraseVerify:
+ 297                             	.LFB3:
+ 310:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** {
+ 298                             		.loc 1 310 0
+ 299                             	.LVL41:
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	Err = FLS_BlankCheck(size, position);
+ 300                             		.loc 1 312 0
+ 301 0000 05 00 00 00             		bsr	_FLS_BlankCheck
+ 302                             	.LVL42:
+ 313:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	if(Err != 0)
+ 303                             		.loc 1 313 0
+ 304 0004 5B 1E                   		movu.B	r1, r14
+ 305 0006 61 0E                   		cmp	#0, r14
+ 306 0008 14                      		beq	.L41
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		Err = IO_E_NOT_BLANK;
+ 307                             		.loc 1 315 0
+ 308 0009 75 41 22                		mov	#34, r1
+ 309                             	.LVL43:
+ 310                             		.balign 2,3,1
+ 311                             	.L41:
+ 318:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** }
+ 312                             		.loc 1 318 0
+ 313 000c 5B 11                   		movu.B	r1, r1
+ 314 000e 02                      		rts
+ 315                             	.LFE3:
+ 317 000f 03                      		.section	.text.OCFLS_RWriteVerify,"ax",@progbits
+ 318                             		.global	_OCFLS_RWriteVerify
+ 320                             	_OCFLS_RWriteVerify:
+ 321                             	.LFB4:
+ 396:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** {
+ 322                             		.loc 1 396 0
+ 323                             	.LVL44:
+ 324 0000 6E 7D                   		pushm	r7-r13
+ 325                             	.LCFI2:
+ 326 0002 EF 37                   		mov.L	r3, r7
+ 327                             	.LVL45:
+ 328 0004 EF 1C                   		mov.L	r1, r12
+ 395:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** IO_ErrorType OCFLS_RWriteVerify (FLS_SourcePtrType pSource, FLS_sizeType size, FLS_positionType pos
+ 329                             		.loc 1 395 0
+ 330 0006 FF 2D 23                		add	r2, r3, r13
+ 400:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType err=IO_E_OK;
+ 331                             		.loc 1 400 0
+ 332 0009 66 0A                   		mov	#0, r10
+ 413:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		NumCheck++;
+ 333                             		.loc 1 413 0
+ 334 000b FB B2 00 00 00 00       		mov.L	#_NumCheck.10085, r11
+ 403:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	while( (size >0) && (err == IO_E_OK))
+ 335                             		.loc 1 403 0
+ 336 0011 2E 1F                   		bra	.L55
+ 337                             	.LVL46:
+ 338                             	.L50:
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if( *pData++ != *(uint8_t*)position++ )
+ 339                             		.loc 1 405 0
+ 340 0013 FD 38 C4                		movu.B	[r12+], r4
+ 341 0016 FD 38 7E                		movu.B	[r7+], r14
+ 342                             	.LVL47:
+ 343 0019 47 E4                   		cmp	r14, r4
+ 344 001b 15                      		beq	.L47
+ 407:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			err = (IO_ErrorType)IO_E_VERIFY;
+ 345                             		.loc 1 407 0
+ 346 001c 75 4A 24                		mov	#36, r10
+ 347                             	.LVL48:
+ 348 001f 03                      		.balign 2,3,5
+ 349                             	.L47:
+ 413:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		NumCheck++;
+ 350                             		.loc 1 413 0
+ 351 0020 CC BE                   		mov.B	[r11], r14
+ 352 0022 62 1E                   		add	#1, r14
+ 353 0024 C3 BE                   		mov.B	r14, [r11]
+ 414:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if ( NumCheck >= FLS_WRITE_VERIFY_NUM_CHECK_BEFORE_FEED_THE_DOG )
+ 354                             		.loc 1 414 0
+ 355 0026 7C 7E                   		btst #7, r14
+ 356 0028 10                      		beq	.L55
+ 416:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			(void)OCWDT_RefreshSync();
+ 357                             		.loc 1 416 0
+ 358 0029 05 00 00 00             		bsr	_OCWDT_RefreshSync
+ 359                             	.LVL49:
+ 417:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			NumCheck = 0;
+ 360                             		.loc 1 417 0
+ 361 002d F8 B4 00                		mov.B	#0, [r11]
+ 362                             	.LVL50:
+ 363                             		.balign 2,3,1
+ 364                             	.L55:
+ 403:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	while( (size >0) && (err == IO_E_OK))
+ 365                             		.loc 1 403 0 discriminator 1
+ 366 0030 47 D7                   		cmp	r13, r7
+ 367 0032 21 0E                   		bne	.L49
+ 368                             		.balign 2,3,5
+ 369                             	.L51:
+ 443:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	NumCheck = 0;
+ 370                             		.loc 1 443 0
+ 371 0034 FB 72 00 00 00 00       		mov.L	#_NumCheck.10085, r7
+ 372                             	.LVL51:
+ 373 003a 3C 70 00                		mov.B	#0, [r7]
+ 446:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	return err;
+ 374                             		.loc 1 446 0
+ 375 003d 5B A1                   		movu.B	r10, r1
+ 376 003f 09                      		bra	.L56
+ 377                             	.LVL52:
+ 378                             	.L49:
+ 403:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	while( (size >0) && (err == IO_E_OK))
+ 379                             		.loc 1 403 0 discriminator 2
+ 380 0040 5B AE                   		movu.B	r10, r14
+ 381 0042 61 0E                   		cmp	#0, r14
+ 382 0044 20 CF                   		beq	.L50
+ 383 0046 2E EE                   		bra	.L51
+ 384                             	.LVL53:
+ 385                             	.L56:
+ 447:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** }
+ 386                             		.loc 1 447 0
+ 387 0048 3F 7D 07                		rtsd	#28, r7-r13
+ 388                             	.LFE4:
+ 390 004b 03                      		.section	.text.OCFLS_WriteAndVerifyAsync,"ax",@progbits
+ 391                             		.global	_OCFLS_WriteAndVerifyAsync
+ 393                             	_OCFLS_WriteAndVerifyAsync:
+ 394                             	.LFB5:
+ 471:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** {
+ 395                             		.loc 1 471 0
+ 396                             	.LVL54:
+ 397 0000 7E A7                   		push.l	r7
+ 398                             	.LCFI3:
+ 399                             	.LVL55:
+ 483:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	switch(FLS_WriteSteps)
+ 400                             		.loc 1 483 0
+ 401 0002 FB 72 00 00 00 00       		mov.L	#_FLS_WriteSteps.10101, r7
+ 402 0008 EC 7E                   		mov.L	[r7], r14
+ 403 000a 61 1E                   		cmp	#1, r14
+ 404 000c 20 1F                   		beq	.L61
+ 405 000e 61 0E                   		cmp	#0, r14
+ 406 0010 20 0C                   		beq	.L60
+ 407 0012 61 2E                   		cmp	#2, r14
+ 408 0014 20 2A                   		beq	.L62
+ 409 0016 61 3E                   		cmp	#3, r14
+ 410 0018 21 34                   		bne	.L67
+ 411 001a 2E 2B                   		bra	.L63
+ 412                             	.L60:
+ 487:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_RWriteSync(pSource,size,position);
+ 413                             		.loc 1 487 0
+ 414 001c 05 00 00 00             		bsr	_OCFLS_RWriteSync
+ 415                             	.LVL56:
+ 488:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if((IO_ErrorType)IO_E_OK == err)
+ 416                             		.loc 1 488 0
+ 417 0020 76 21 FF 00             		and #0xff, r1
+ 418                             	.LVL57:
+ 419 0024 21 15                   		bne	.L66
+ 490:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_WriteSteps = FLS_WRITE_VERIFY;
+ 420                             		.loc 1 490 0
+ 421 0026 3E 70 01                		mov.L	#1, [r7]
+ 422 0029 2E 27                   		bra	.L69
+ 423                             	.LVL58:
+ 424                             	.L61:
+ 500:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_RWriteVerify(pSource,size,position);
+ 425                             		.loc 1 500 0
+ 426 002b 05 00 00 00             		bsr	_OCFLS_RWriteVerify
+ 427                             	.LVL59:
+ 501:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if((IO_ErrorType)IO_E_OK == err)
+ 428                             		.loc 1 501 0
+ 429 002f 76 21 FF 00             		and #0xff, r1
+ 430                             	.LVL60:
+ 431 0033 1E                      		bne	.L66
+ 503:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_WriteSteps = FLS_WRITE_SUCCES;
+ 432                             		.loc 1 503 0
+ 433 0034 3E 70 02                		mov.L	#2, [r7]
+ 434 0037 2E 19                   		bra	.L69
+ 435                             	.L66:
+ 507:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_WriteSteps = FLS_ERR;
+ 436                             		.loc 1 507 0
+ 437 0039 3E 70 03                		mov.L	#3, [r7]
+ 438 003c 2E 14                   		bra	.L69
+ 439                             	.LVL61:
+ 440                             	.L62:
+ 515:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WriteSteps = FLS_WRITE;
+ 441                             		.loc 1 515 0
+ 442 003e 3E 70 00                		mov.L	#0, [r7]
+ 513:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		fls_State = (IO_ErrorType)IO_E_OK;
+ 443                             		.loc 1 513 0
+ 444 0041 66 01                   		mov	#0, r1
+ 445                             	.LVL62:
+ 516:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 446                             		.loc 1 516 0
+ 447 0043 2E 0F                   		bra	.L65
+ 448                             	.LVL63:
+ 449                             	.L63:
+ 522:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WriteSteps = FLS_WRITE;
+ 450                             		.loc 1 522 0
+ 451 0045 3E 70 00                		mov.L	#0, [r7]
+ 520:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		fls_State = (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+ 452                             		.loc 1 520 0
+ 453 0048 75 41 17                		mov	#23, r1
+ 454                             	.LVL64:
+ 523:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 455                             		.loc 1 523 0
+ 456 004b 0F                      		bra	.L65
+ 457                             	.LVL65:
+ 458                             	.L67:
+ 526:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_WriteSteps = FLS_WRITE;
+ 459                             		.loc 1 526 0
+ 460 004c 3E 70 00                		mov.L	#0, [r7]
+ 461                             	.LVL66:
+ 462 004f 03                      		.balign 2,3,1
+ 463                             	.L69:
+ 481:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType fls_State = (IO_ErrorType)IO_E_WORKING;
+ 464                             		.loc 1 481 0
+ 465 0050 66 21                   		mov	#2, r1
+ 466                             	.LVL67:
+ 467                             		.balign 2,3,2
+ 468                             	.L65:
+ 531:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** }
+ 469                             		.loc 1 531 0
+ 470 0052 75 21 17                		and #23, r1
+ 471                             	.LVL68:
+ 472 0055 3F 77 01                		rtsd	#4, r7-r7
+ 473                             	.LFE5:
+ 475                             		.section	.text.OCFLS_BlankCheckEraseVerifyAsync,"ax",@progbits
+ 476                             		.global	_OCFLS_BlankCheckEraseVerifyAsync
+ 478                             	_OCFLS_BlankCheckEraseVerifyAsync:
+ 479                             	.LFB6:
+ 555:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** {
+ 480                             		.loc 1 555 0
+ 481                             	.LVL69:
+ 568:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	switch(FLS_EraseSteps)
+ 482                             		.loc 1 568 0
+ 483 0000 FB E2 00 00 00 00       		mov.L	#_FLS_EraseSteps.10120, r14
+ 484 0006 EC E4                   		mov.L	[r14], r4
+ 485 0008 61 44                   		cmp	#4, r4
+ 486 000a 24 62                   		bgtu	.L71
+ 487 000c 6C 24                   		shll	#2, r4
+ 488 000e 70 44 00 00 00 00       		add	#.L77, r4
+ 489 0014 EC 44                   		mov.L	[r4], r4
+ 490                             		
+ 491 0016 7F 04                   	1:jmp	r4
+ 492                             		.section	.rodata.OCFLS_BlankCheckEraseVerifyAsync,"a",@progbits
+ 493                             		.balign 4
+ 494                             		.balign 4
+ 495                             	.L77:
+ 496 0000 00 00 00 18             		.long .L72
+ 497 0004 00 00 00 2E             		.long .L73
+ 498 0008 00 00 00 43             		.long .L74
+ 499 000c 00 00 00 5E             		.long .L75
+ 500 0010 00 00 00 65             		.long .L76
+ 501                             		.section	.text.OCFLS_BlankCheckEraseVerifyAsync
+ 502                             	.L72:
+ 572:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_REraseVerify(size,position);
+ 503                             		.loc 1 572 0
+ 504 0018 05 00 00 00             		bsr	_OCFLS_REraseVerify
+ 505                             	.LVL70:
+ 573:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if ((IO_ErrorType)IO_E_NOT_BLANK == err)
+ 506                             		.loc 1 573 0
+ 507 001c 5B 11                   		movu.B	r1, r1
+ 508 001e FB E2 00 00 00 00       		mov.L	#_FLS_EraseSteps.10120, r14
+ 509 0024 75 51 22                		cmp	#34, r1
+ 510 0027 21 32                   		bne	.L81
+ 575:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERASE;
+ 511                             		.loc 1 575 0
+ 512 0029 F8 E6 01                		mov.L	#1, [r14]
+ 513 002c 2E 44                   		bra	.L82
+ 514                             	.LVL71:
+ 515                             	.L73:
+ 585:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_REraseSync(size, position);
+ 516                             		.loc 1 585 0
+ 517 002e 05 00 00 00             		bsr	_OCFLS_REraseSync
+ 518                             	.LVL72:
+ 586:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if((IO_ErrorType)IO_E_OK == err)
+ 519                             		.loc 1 586 0
+ 520 0032 5B 11                   		movu.B	r1, r1
+ 521 0034 FB E2 00 00 00 00       		mov.L	#_FLS_EraseSteps.10120, r14
+ 522 003a 61 01                   		cmp	#0, r1
+ 523 003c 21 18                   		bne	.L83
+ 588:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERASE_VERIFY;
+ 524                             		.loc 1 588 0
+ 525 003e F8 E6 02                		mov.L	#2, [r14]
+ 526 0041 2E 2F                   		bra	.L82
+ 527                             	.LVL73:
+ 528                             	.L74:
+ 598:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		err=OCFLS_REraseVerify(size,position);
+ 529                             		.loc 1 598 0
+ 530 0043 05 00 00 00             		bsr	_OCFLS_REraseVerify
+ 531                             	.LVL74:
+ 599:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		if((IO_ErrorType)IO_E_NOT_BLANK == err)
+ 532                             		.loc 1 599 0
+ 533 0047 5B 11                   		movu.B	r1, r1
+ 534 0049 FB E2 00 00 00 00       		mov.L	#_FLS_EraseSteps.10120, r14
+ 535 004f 75 51 22                		cmp	#34, r1
+ 536 0052 1F                      		bne	.L81
+ 537                             	.LVL75:
+ 538 0053 03                      		.balign 2,3,4
+ 539                             	.L83:
+ 601:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERR;
+ 540                             		.loc 1 601 0
+ 541 0054 F8 E6 04                		mov.L	#4, [r14]
+ 542 0057 2E 19                   		bra	.L82
+ 543                             	.L81:
+ 605:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 			FLS_EraseSteps = FLS_ERASE_SUCCES;
+ 544                             		.loc 1 605 0
+ 545 0059 F8 E6 03                		mov.L	#3, [r14]
+ 546 005c 2E 14                   		bra	.L82
+ 547                             	.LVL76:
+ 548                             	.L75:
+ 613:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EraseSteps = FLS_CHECK_IF_BLANK;
+ 549                             		.loc 1 613 0
+ 550 005e F8 E6 00                		mov.L	#0, [r14]
+ 611:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		fls_State = (IO_ErrorType)IO_E_OK;
+ 551                             		.loc 1 611 0
+ 552 0061 66 01                   		mov	#0, r1
+ 553                             	.LVL77:
+ 614:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 554                             		.loc 1 614 0
+ 555 0063 2E 0F                   		bra	.L79
+ 556                             	.LVL78:
+ 557                             	.L76:
+ 620:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EraseSteps = FLS_CHECK_IF_BLANK;
+ 558                             		.loc 1 620 0
+ 559 0065 F8 E6 00                		mov.L	#0, [r14]
+ 618:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		fls_State = (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+ 560                             		.loc 1 618 0
+ 561 0068 75 41 17                		mov	#23, r1
+ 562                             	.LVL79:
+ 621:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		break;
+ 563                             		.loc 1 621 0
+ 564 006b 0F                      		bra	.L79
+ 565                             	.LVL80:
+ 566                             	.L71:
+ 624:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 		FLS_EraseSteps = FLS_CHECK_IF_BLANK;
+ 567                             		.loc 1 624 0
+ 568 006c F8 E6 00                		mov.L	#0, [r14]
+ 569                             	.LVL81:
+ 570 006f 03                      		.balign 2,3,1
+ 571                             	.L82:
+ 566:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** 	IO_ErrorType fls_State = (IO_ErrorType)IO_E_WORKING;
+ 572                             		.loc 1 566 0
+ 573 0070 66 21                   		mov	#2, r1
+ 574                             	.LVL82:
+ 575                             		.balign 2,3,2
+ 576                             	.L79:
+ 629:C:/Workspace/FW_Inertia/branch_indesit/Drivers/OCFLS\OCFLS_drv.c **** }
+ 577                             		.loc 1 629 0
+ 578 0072 75 21 17                		and #23, r1
+ 579                             	.LVL83:
+ 580 0075 02                      		rts
+ 581                             	.LFE6:
+ 583                             		.section	.bss.EndPosition.10065,"aw",@nobits
+ 584                             		.balign 4
+ 587                             	_EndPosition.10065:
+ 588 0000 00 00 00 00             		.zero	4
+ 589                             		.section	.bss.NumCheck.10085,"aw",@nobits
+ 592                             	_NumCheck.10085:
+ 593 0000 00                      		.zero	1
+ 594                             		.section	.bss.FLS_WriteSteps.10101,"aw",@nobits
+ 595                             		.balign 4
+ 598                             	_FLS_WriteSteps.10101:
+ 599 0000 00 00 00 00             		.zero	4
+ 600                             		.section	.bss.FLS_EraseSteps.10120,"aw",@nobits
+ 601                             		.balign 4
+ 604                             	_FLS_EraseSteps.10120:
+ 605 0000 00 00 00 00             		.zero	4
+ 746                             	.Letext0:
+ 747                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 748                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 749                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\RN_RX200/RN_RX200_cfg.h"
+ 750                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Drivers/IO_Driver.h"
+ 751                             		.file 6 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_Error/LIB_Error.h"
+ 752                             		.file 7 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\RN_RX200/RN_RX200_hal_Flash.h"
+ 753                             		.file 8 "C:\\Workspace\\FW_Inertia\\branch_indesit\\Drivers\\OCWDT/OCWDT_drv.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 OCFLS_drv.c
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:6      .text.OCFLS_CheckParams.part.0:00000000 _OCFLS_CheckParams.part.0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:12     .text.OCFLS_CheckParams.part.0:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:55     .text.OCFLS_InitSync:00000000 _OCFLS_InitSync
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:59     .text.OCFLS_InitSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:69     .text.OCFLS_REraseSync:00000000 _OCFLS_REraseSync
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:73     .text.OCFLS_REraseSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:587    .bss.EndPosition.10065:00000000 _EndPosition.10065
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:189    .text.OCFLS_RWriteSync:00000000 _OCFLS_RWriteSync
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:193    .text.OCFLS_RWriteSync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:296    .text.OCFLS_REraseVerify:00000000 _OCFLS_REraseVerify
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:301    .text.OCFLS_REraseVerify:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:320    .text.OCFLS_RWriteVerify:00000000 _OCFLS_RWriteVerify
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:324    .text.OCFLS_RWriteVerify:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:592    .bss.NumCheck.10085:00000000 _NumCheck.10085
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:393    .text.OCFLS_WriteAndVerifyAsync:00000000 _OCFLS_WriteAndVerifyAsync
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:397    .text.OCFLS_WriteAndVerifyAsync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:598    .bss.FLS_WriteSteps.10101:00000000 _FLS_WriteSteps.10101
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:478    .text.OCFLS_BlankCheckEraseVerifyAsync:00000000 _OCFLS_BlankCheckEraseVerifyAsync
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:483    .text.OCFLS_BlankCheckEraseVerifyAsync:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:604    .bss.FLS_EraseSteps.10120:00000000 _FLS_EraseSteps.10120
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:495    .rodata.OCFLS_BlankCheckEraseVerifyAsync:00000000 .L77
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:502    .text.OCFLS_BlankCheckEraseVerifyAsync:00000018 .L72
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:515    .text.OCFLS_BlankCheckEraseVerifyAsync:0000002e .L73
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:528    .text.OCFLS_BlankCheckEraseVerifyAsync:00000043 .L74
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:548    .text.OCFLS_BlankCheckEraseVerifyAsync:0000005e .L75
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:557    .text.OCFLS_BlankCheckEraseVerifyAsync:00000065 .L76
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:607    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:7      .text.OCFLS_CheckParams.part.0:00000000 .LFB8
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:56     .text.OCFLS_InitSync:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:70     .text.OCFLS_REraseSync:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:190    .text.OCFLS_RWriteSync:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:297    .text.OCFLS_REraseVerify:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:321    .text.OCFLS_RWriteVerify:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:394    .text.OCFLS_WriteAndVerifyAsync:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:479    .text.OCFLS_BlankCheckEraseVerifyAsync:00000000 .LFB6
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:2733   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4460   .debug_str:00000352 .LASF238
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4654   .debug_str:00000abc .LASF239
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4324   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4368   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4712   .debug_str:00000d38 .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4810   .debug_str:00001129 .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4456   .debug_str:00000324 .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4766   .debug_str:00000f58 .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4718   .debug_str:00000d73 .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4466   .debug_str:000003b7 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4560   .debug_str:00000748 .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4600   .debug_str:000008a7 .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4776   .debug_str:00000f93 .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4806   .debug_str:000010ee .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4400   .debug_str:00000121 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4764   .debug_str:00000f4f .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4816   .debug_str:00001177 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4774   .debug_str:00000f86 .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4602   .debug_str:000008af .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4758   .debug_str:00000f2e .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4404   .debug_str:0000013f .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4580   .debug_str:000007d0 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4754   .debug_str:00000eea .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4476   .debug_str:00000405 .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4558   .debug_str:00000741 .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4428   .debug_str:0000023a .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4374   .debug_str:00000016 .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4832   .debug_str:00001242 .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4416   .debug_str:000001b1 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4746   .debug_str:00000eba .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4668   .debug_str:00000b65 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4516   .debug_str:0000058b .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4554   .debug_str:000006fb .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4636   .debug_str:000009df .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4622   .debug_str:00000973 .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4658   .debug_str:00000b09 .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4616   .debug_str:0000094c .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4388   .debug_str:000000b9 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4626   .debug_str:00000995 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4620   .debug_str:0000096d .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4574   .debug_str:000007aa .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4624   .debug_str:00000982 .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4448   .debug_str:000002e1 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4614   .debug_str:00000942 .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4708   .debug_str:00000d19 .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4848   .debug_str:000012d9 .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4752   .debug_str:00000edd .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4442   .debug_str:000002aa .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4470   .debug_str:000003e1 .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4732   .debug_str:00000df5 .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4660   .debug_str:00000b16 .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4450   .debug_str:000002ed .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4618   .debug_str:00000960 .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4568   .debug_str:00000793 .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4800   .debug_str:000010c1 .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4698   .debug_str:00000c9a .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4646   .debug_str:00000a53 .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4846   .debug_str:000012d2 .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4606   .debug_str:000008d2 .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4604   .debug_str:000008bb .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4572   .debug_str:000007a5 .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4828   .debug_str:00001227 .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4398   .debug_str:00000118 .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4628   .debug_str:0000099e .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4634   .debug_str:000009d8 .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4768   .debug_str:00000f6a .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4546   .debug_str:000006c3 .LASF62
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4490   .debug_str:0000046d .LASF63
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4406   .debug_str:00000147 .LASF64
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4748   .debug_str:00000ec1 .LASF65
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4578   .debug_str:000007c5 .LASF66
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4780   .debug_str:00000fd7 .LASF67
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4486   .debug_str:00000460 .LASF68
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4818   .debug_str:00001180 .LASF69
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4570   .debug_str:00000798 .LASF70
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4526   .debug_str:000005f3 .LASF71
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4420   .debug_str:000001e5 .LASF72
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4424   .debug_str:00000207 .LASF73
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4544   .debug_str:000006b1 .LASF74
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4436   .debug_str:00000280 .LASF212
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4724   .debug_str:00000dad .LASF75
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4834   .debug_str:00001247 .LASF76
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4438   .debug_str:0000028a .LASF77
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4784   .debug_str:00000ff2 .LASF78
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4468   .debug_str:000003ce .LASF79
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4608   .debug_str:000008dc .LASF80
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4434   .debug_str:00000268 .LASF81
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4482   .debug_str:0000043b .LASF82
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4408   .debug_str:00000153 .LASF83
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4396   .debug_str:00000102 .LASF84
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4730   .debug_str:00000ddd .LASF85
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4432   .debug_str:0000024e .LASF86
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4788   .debug_str:0000101b .LASF87
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4410   .debug_str:00000165 .LASF88
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4564   .debug_str:00000776 .LASF89
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4394   .debug_str:000000ed .LASF90
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4710   .debug_str:00000d2a .LASF91
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4680   .debug_str:00000bd6 .LASF92
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4508   .debug_str:00000523 .LASF93
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4794   .debug_str:00001078 .LASF94
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4804   .debug_str:000010db .LASF95
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4378   .debug_str:00000031 .LASF96
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4532   .debug_str:0000063b .LASF97
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4402   .debug_str:0000012e .LASF98
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4472   .debug_str:000003e8 .LASF99
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4844   .debug_str:000012bd .LASF100
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4652   .debug_str:00000ab0 .LASF101
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4714   .debug_str:00000d42 .LASF102
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4540   .debug_str:0000068a .LASF103
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4674   .debug_str:00000b9a .LASF104
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4770   .debug_str:00000f71 .LASF105
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4506   .debug_str:00000514 .LASF106
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4692   .debug_str:00000c59 .LASF107
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4694   .debug_str:00000c6c .LASF108
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4530   .debug_str:00000628 .LASF109
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4440   .debug_str:00000297 .LASF110
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4762   .debug_str:00000f3c .LASF111
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4688   .debug_str:00000c2c .LASF112
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4700   .debug_str:00000cab .LASF113
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4702   .debug_str:00000cc0 .LASF114
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4706   .debug_str:00000cea .LASF115
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4556   .debug_str:00000705 .LASF116
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4756   .debug_str:00000ef9 .LASF117
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4822   .debug_str:000011a5 .LASF118
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4644   .debug_str:00000a1d .LASF119
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4778   .debug_str:00000fa1 .LASF120
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4610   .debug_str:000008ef .LASF121
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4648   .debug_str:00000a71 .LASF122
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4824   .debug_str:000011d9 .LASF123
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4582   .debug_str:000007d8 .LASF124
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4584   .debug_str:000007ef .LASF125
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4586   .debug_str:00000806 .LASF126
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4588   .debug_str:0000081d .LASF127
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4590   .debug_str:00000834 .LASF128
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4592   .debug_str:0000084b .LASF129
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4594   .debug_str:00000862 .LASF130
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4596   .debug_str:00000879 .LASF131
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4662   .debug_str:00000b1d .LASF132
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4664   .debug_str:00000b35 .LASF133
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4666   .debug_str:00000b4d .LASF134
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4670   .debug_str:00000b6f .LASF135
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4444   .debug_str:000002b1 .LASF136
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4446   .debug_str:000002c9 .LASF137
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4676   .debug_str:00000ba6 .LASF138
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4678   .debug_str:00000bbe .LASF139
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4492   .debug_str:00000473 .LASF140
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4494   .debug_str:0000048c .LASF141
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4496   .debug_str:000004a5 .LASF142
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4498   .debug_str:000004be .LASF143
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4500   .debug_str:000004d7 .LASF144
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4716   .debug_str:00000d4f .LASF145
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4684   .debug_str:00000bfa .LASF146
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4686   .debug_str:00000c13 .LASF147
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4538   .debug_str:0000066a .LASF148
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4464   .debug_str:00000392 .LASF149
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4458   .debug_str:0000032d .LASF150
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4518   .debug_str:00000590 .LASF151
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4696   .debug_str:00000c7f .LASF152
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4672   .debug_str:00000b87 .LASF153
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4632   .debug_str:000009c8 .LASF154
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4638   .debug_str:000009e9 .LASF155
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4412   .debug_str:00000175 .LASF156
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4854   .debug_str:000012fc .LASF157
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4512   .debug_str:0000055e .LASF158
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4462   .debug_str:00000378 .LASF159
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4630   .debug_str:000009a3 .LASF160
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4542   .debug_str:00000695 .LASF161
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4390   .debug_str:000000bf .LASF162
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4528   .debug_str:00000604 .LASF163
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4640   .debug_str:000009f8 .LASF164
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4820   .debug_str:0000118b .LASF165
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4612   .debug_str:00000924 .LASF166
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4798   .debug_str:00001096 .LASF167
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4380   .debug_str:00000044 .LASF168
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4480   .debug_str:00000415 .LASF169
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4426   .debug_str:00000216 .LASF170
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4838   .debug_str:0000126b .LASF171
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4738   .debug_str:00000e53 .LASF172
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4382   .debug_str:00000069 .LASF173
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4598   .debug_str:00000890 .LASF174
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4736   .debug_str:00000e32 .LASF175
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4722   .debug_str:00000d8b .LASF176
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4522   .debug_str:000005c0 .LASF177
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4808   .debug_str:000010fa .LASF178
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4792   .debug_str:00001049 .LASF179
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4510   .debug_str:00000530 .LASF180
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4418   .debug_str:000001ba .LASF181
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4734   .debug_str:00000e01 .LASF182
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4742   .debug_str:00000e81 .LASF183
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4520   .debug_str:000005a5 .LASF184
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4562   .debug_str:00000756 .LASF185
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4836   .debug_str:00001251 .LASF186
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4682   .debug_str:00000be2 .LASF187
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4414   .debug_str:00000192 .LASF188
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4552   .debug_str:000006dd .LASF189
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4384   .debug_str:00000083 .LASF190
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4840   .debug_str:0000128f .LASF191
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4704   .debug_str:00000cd5 .LASF192
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4690   .debug_str:00000c40 .LASF193
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4814   .debug_str:0000115d .LASF194
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4790   .debug_str:00001030 .LASF195
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4386   .debug_str:0000009e .LASF196
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4454   .debug_str:0000030a .LASF197
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4744   .debug_str:00000eaf .LASF198
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4802   .debug_str:000010c9 .LASF240
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4642   .debug_str:00000a18 .LASF199
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4852   .debug_str:000012f3 .LASF200
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4372   .debug_str:0000000a .LASF201
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:50     .text.OCFLS_CheckParams.part.0:00000037 .LFE8
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3601   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3621   .debug_loc:0000002e .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3656   .debug_loc:00000072 .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4720   .debug_str:00000d7c .LASF202
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:64     .text.OCFLS_InitSync:00000007 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:60     .text.OCFLS_InitSync:00000004 .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4842   .debug_str:000012ac .LASF203
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:184    .text.OCFLS_REraseSync:00000093 .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3664   .debug_loc:00000086 .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3677   .debug_loc:000000a6 .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3703   .debug_loc:000000e8 .LLST5
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3729   .debug_loc:0000012a .LLST6
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4656   .debug_str:00000afd .LASF204
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:75     .text.OCFLS_REraseSync:00000002 .LBB4
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:82     .text.OCFLS_REraseSync:0000000d .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:105    .text.OCFLS_REraseSync:00000021 .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:125    .text.OCFLS_REraseSync:0000003d .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:128    .text.OCFLS_REraseSync:00000041 .LVL16
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:135    .text.OCFLS_REraseSync:0000004f .LVL17
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:143    .text.OCFLS_REraseSync:0000005b .LVL19
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:154    .text.OCFLS_REraseSync:0000006d .LVL20
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:159    .text.OCFLS_REraseSync:00000072 .LVL21
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:165    .text.OCFLS_REraseSync:0000007f .LVL22
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4504   .debug_str:00000503 .LASF205
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:291    .text.OCFLS_RWriteSync:0000007d .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3736   .debug_loc:0000013d .LLST7
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4772   .debug_str:00000f7e .LASF206
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3749   .debug_loc:0000015d .LLST8
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3782   .debug_loc:000001ad .LLST9
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3812   .debug_loc:000001fa .LLST10
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3845   .debug_loc:0000024a .LLST11
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:195    .text.OCFLS_RWriteSync:00000002 .LBB10
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:207    .text.OCFLS_RWriteSync:00000013 .LVL28
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:233    .text.OCFLS_RWriteSync:0000002b .LVL31
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:240    .text.OCFLS_RWriteSync:00000031 .LVL33
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:250    .text.OCFLS_RWriteSync:00000049 .LVL34
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:258    .text.OCFLS_RWriteSync:00000055 .LVL36
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:270    .text.OCFLS_RWriteSync:00000067 .LVL38
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:275    .text.OCFLS_RWriteSync:0000006c .LVL39
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4566   .debug_str:00000780 .LASF207
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:315    .text.OCFLS_REraseVerify:0000000f .LFE3
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3852   .debug_loc:0000025d .LLST12
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3866   .debug_loc:0000027e .LLST13
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:302    .text.OCFLS_REraseVerify:00000004 .LVL42
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4376   .debug_str:0000001e .LASF208
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:388    .text.OCFLS_RWriteVerify:0000004b .LFE4
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3880   .debug_loc:0000029f .LLST14
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3893   .debug_loc:000002bf .LLST15
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3907   .debug_loc:000002e0 .LLST16
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3914   .debug_loc:000002f3 .LLST17
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4548   .debug_str:000006ca .LASF209
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3939   .debug_loc:00000334 .LLST18
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4534   .debug_str:0000064a .LASF210
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3951   .debug_loc:00000353 .LLST19
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:359    .text.OCFLS_RWriteVerify:0000002d .LVL49
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4826   .debug_str:0000120d .LASF211
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:473    .text.OCFLS_WriteAndVerifyAsync:00000058 .LFE5
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3958   .debug_loc:00000366 .LLST20
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:3971   .debug_loc:00000386 .LLST21
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4029   .debug_loc:0000040b .LLST22
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4065   .debug_loc:0000045e .LLST23
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4830   .debug_str:00001230 .LASF213
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4370   .debug_str:00000000 .LASF214
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4514   .debug_str:0000057a .LASF215
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4726   .debug_str:00000db5 .LASF216
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4488   .debug_str:00000465 .LASF217
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4452   .debug_str:000002fb .LASF218
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4101   .debug_loc:000004b1 .LLST24
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4550   .debug_str:000006d3 .LASF219
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4112   .debug_loc:000004cf .LLST25
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:415    .text.OCFLS_WriteAndVerifyAsync:00000020 .LVL56
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:427    .text.OCFLS_WriteAndVerifyAsync:0000002f .LVL59
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4812   .debug_str:0000113c .LASF220
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:581    .text.OCFLS_BlankCheckEraseVerifyAsync:00000076 .LFE6
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4139   .debug_loc:00000512 .LLST26
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4208   .debug_loc:000005b0 .LLST27
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4484   .debug_str:0000044e .LASF221
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4502   .debug_str:000004f0 .LASF222
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4430   .debug_str:00000244 .LASF223
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4750   .debug_str:00000ecc .LASF224
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4474   .debug_str:000003f4 .LASF225
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4576   .debug_str:000007b6 .LASF226
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4255   .debug_loc:0000061c .LLST28
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4270   .debug_loc:00000645 .LLST29
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:505    .text.OCFLS_BlankCheckEraseVerifyAsync:0000001c .LVL70
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:518    .text.OCFLS_BlankCheckEraseVerifyAsync:00000032 .LVL72
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:531    .text.OCFLS_BlankCheckEraseVerifyAsync:00000047 .LVL74
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4478   .debug_str:0000040b .LASF227
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4760   .debug_str:00000f33 .LASF228
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4786   .debug_str:00001004 .LASF229
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4422   .debug_str:000001fe .LASF230
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4536   .debug_str:00000650 .LASF241
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4728   .debug_str:00000dc6 .LASF231
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4392   .debug_str:000000d9 .LASF232
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4650   .debug_str:00000aa6 .LASF234
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4796   .debug_str:00001083 .LASF233
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4782   .debug_str:00000fe2 .LASF242
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4524   .debug_str:000005e3 .LASF235
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4740   .debug_str:00000e72 .LASF236
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:4850   .debug_str:000012e1 .LASF237
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:10     .text.OCFLS_CheckParams.part.0:00000000 .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:13     .text.OCFLS_CheckParams.part.0:00000002 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:15     .text.OCFLS_CheckParams.part.0:00000004 .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:29     .text.OCFLS_CheckParams.part.0:00000020 .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:35     .text.OCFLS_CheckParams.part.0:00000029 .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:44     .text.OCFLS_CheckParams.part.0:00000034 .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:18     .text.OCFLS_CheckParams.part.0:0000000c .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:74     .text.OCFLS_REraseSync:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:72     .text.OCFLS_REraseSync:00000000 .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:91     .text.OCFLS_REraseSync:00000016 .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:97     .text.OCFLS_REraseSync:00000019 .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:113    .text.OCFLS_REraseSync:0000002b .LVL14
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:108    .text.OCFLS_REraseSync:00000023 .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:178    .text.OCFLS_REraseSync:0000008d .LVL24
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:138    .text.OCFLS_REraseSync:00000053 .LVL18
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:194    .text.OCFLS_RWriteSync:00000002 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:192    .text.OCFLS_RWriteSync:00000000 .LVL25
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:203    .text.OCFLS_RWriteSync:0000000d .LVL26
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:219    .text.OCFLS_RWriteSync:00000021 .LVL29
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:225    .text.OCFLS_RWriteSync:00000024 .LVL30
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:236    .text.OCFLS_RWriteSync:0000002d .LVL32
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:285    .text.OCFLS_RWriteSync:00000077 .LVL40
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:205    .text.OCFLS_RWriteSync:0000000f .LVL27
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:263    .text.OCFLS_RWriteSync:00000059 .LVL37
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:253    .text.OCFLS_RWriteSync:0000004d .LVL35
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:299    .text.OCFLS_REraseVerify:00000000 .LVL41
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:325    .text.OCFLS_RWriteVerify:00000002 .LCFI2
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:323    .text.OCFLS_RWriteVerify:00000000 .LVL44
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:337    .text.OCFLS_RWriteVerify:00000013 .LVL46
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:342    .text.OCFLS_RWriteVerify:00000019 .LVL47
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:362    .text.OCFLS_RWriteVerify:00000030 .LVL50
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:372    .text.OCFLS_RWriteVerify:0000003a .LVL51
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:377    .text.OCFLS_RWriteVerify:00000040 .LVL52
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:384    .text.OCFLS_RWriteVerify:00000048 .LVL53
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:327    .text.OCFLS_RWriteVerify:00000004 .LVL45
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:398    .text.OCFLS_WriteAndVerifyAsync:00000002 .LCFI3
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:396    .text.OCFLS_WriteAndVerifyAsync:00000000 .LVL54
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:423    .text.OCFLS_WriteAndVerifyAsync:0000002b .LVL58
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:439    .text.OCFLS_WriteAndVerifyAsync:0000003e .LVL61
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:445    .text.OCFLS_WriteAndVerifyAsync:00000043 .LVL62
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:448    .text.OCFLS_WriteAndVerifyAsync:00000045 .LVL63
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:454    .text.OCFLS_WriteAndVerifyAsync:0000004b .LVL64
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:457    .text.OCFLS_WriteAndVerifyAsync:0000004c .LVL65
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:461    .text.OCFLS_WriteAndVerifyAsync:0000004f .LVL66
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:418    .text.OCFLS_WriteAndVerifyAsync:00000024 .LVL57
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:430    .text.OCFLS_WriteAndVerifyAsync:00000033 .LVL60
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:399    .text.OCFLS_WriteAndVerifyAsync:00000002 .LVL55
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:466    .text.OCFLS_WriteAndVerifyAsync:00000052 .LVL67
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:471    .text.OCFLS_WriteAndVerifyAsync:00000055 .LVL68
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:481    .text.OCFLS_BlankCheckEraseVerifyAsync:00000000 .LVL69
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:514    .text.OCFLS_BlankCheckEraseVerifyAsync:0000002e .LVL71
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:527    .text.OCFLS_BlankCheckEraseVerifyAsync:00000043 .LVL73
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:547    .text.OCFLS_BlankCheckEraseVerifyAsync:0000005e .LVL76
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:553    .text.OCFLS_BlankCheckEraseVerifyAsync:00000063 .LVL77
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:556    .text.OCFLS_BlankCheckEraseVerifyAsync:00000065 .LVL78
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:562    .text.OCFLS_BlankCheckEraseVerifyAsync:0000006b .LVL79
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:565    .text.OCFLS_BlankCheckEraseVerifyAsync:0000006c .LVL80
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:569    .text.OCFLS_BlankCheckEraseVerifyAsync:0000006f .LVL81
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:537    .text.OCFLS_BlankCheckEraseVerifyAsync:00000053 .LVL75
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:574    .text.OCFLS_BlankCheckEraseVerifyAsync:00000072 .LVL82
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:579    .text.OCFLS_BlankCheckEraseVerifyAsync:00000075 .LVL83
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:755    .debug_info:00000000 .Ldebug_info0
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:85     .text.OCFLS_REraseSync:0000000f .LBE4
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:93     .text.OCFLS_REraseSync:00000016 .LBB7
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:101    .text.OCFLS_REraseSync:0000001a .LBE7
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:76     .text.OCFLS_REraseSync:00000002 .LBB5
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:84     .text.OCFLS_REraseSync:0000000f .LBE5
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:94     .text.OCFLS_REraseSync:00000016 .LBB6
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:100    .text.OCFLS_REraseSync:0000001a .LBE6
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:210    .text.OCFLS_RWriteSync:00000015 .LBE10
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:221    .text.OCFLS_RWriteSync:00000021 .LBB13
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:229    .text.OCFLS_RWriteSync:00000024 .LBE13
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:196    .text.OCFLS_RWriteSync:00000002 .LBB11
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:209    .text.OCFLS_RWriteSync:00000015 .LBE11
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:222    .text.OCFLS_RWriteSync:00000021 .LBB12
+C:\Users\Andrea\AppData\Local\Temp\ccsX9Cuk.s:228    .text.OCFLS_RWriteSync:00000024 .LBE12
+
+UNDEFINED SYMBOLS
+_FlashMap
+_FlashMapEraseForbidden
+_FLS_Init
+_LIB_Error_Warning_Handler
+_OS_Global
+_FLS_InitRegsForErasing
+_OS_DisableInterrupt
+_FLS_Erase
+_OS_EnableInterrupt
+_FLS_CheckErrors
+_FLS_Programming
+_FLS_BlankCheck
+_OCWDT_RefreshSync

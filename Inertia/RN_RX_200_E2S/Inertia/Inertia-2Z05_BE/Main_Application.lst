@@ -1,0 +1,459 @@
+   1                             		.file	"Main_Application.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.Main_ApplicationPeriodicAsynTask,"ax",@progbits
+   6                             	_Main_ApplicationPeriodicAsynTask:
+   7                             	.LFB1:
+   8                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Main_Application.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /**
+   7:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \n
+   8:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \ar		Description
+   9:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \n			This file contains the EmbOS-based service for the final application.
+  10:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \n
+  11:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \file		Main_Application.c
+  12:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \ingroup	Main
+  13:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \date		Feb 7, 2011
+  14:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \version	01.00.00
+  15:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \author		Roberto Fioravanti
+  16:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \n
+  17:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \n
+  18:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \par\b	History:
+  19:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \n
+  20:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \n 		00.00.00
+  21:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \n		Feb 7, 2011
+  22:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \n		Roberto Fioravanti
+  23:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \n		changes
+  24:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \n 		- file created
+  25:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \n
+  26:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \n
+  27:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \n etc.
+  28:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** */
+  29:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /*lint -idlen(60)*/
+  30:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+  31:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* ******** */
+  32:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* Includes */
+  33:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* ******** */
+  34:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #include "callback.h"
+  35:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #include "Main.h"
+  36:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #include "LIB_BackupExp.h"
+  37:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #include "LIB_Trace.h"
+  38:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+  39:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* Product modules*/
+  40:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+  41:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* ****************** */
+  42:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* Defines and Macros */
+  43:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* ****************** */
+  44:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+  45:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #if defined(CONFIG_MAIN_APPLICATION_TASK_TRACE_PIN_ENABLE) && defined(CONFIG_LIB_TRACE_SUPPORT)
+  46:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #define MAIN_APPLICATION_TASK_TRACE_BEGIN()        TRACE_TO_PIN(ON , (CONFIG_MAIN_APPLICATION_TASK_
+  47:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #define MAIN_APPLICATION_TASK_TRACE_END()          TRACE_TO_PIN(OFF , (CONFIG_MAIN_APPLICATION_TASK
+  48:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #else
+  49:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #define MAIN_APPLICATION_TASK_TRACE_BEGIN()			{}
+  50:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #define MAIN_APPLICATION_TASK_TRACE_END()			{}
+  51:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #endif
+  52:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+  53:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+  54:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+  55:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+  56:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #if defined(OS_TICK_ms_PERIOD)
+  57:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+  58:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #if (MAIN_APPLICATION_TASK_PERIOD < OS_TICK_ms_PERIOD)
+  59:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /*
+  60:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** Lowest period is defined by OS tick defined by OS_TICK_FREQ
+  61:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** */
+  62:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #error "OS tick (defined by OS_TICK_FREQ) cannot generate the period set in MAIN_APPLICATION_TASK_P
+  63:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #error "Change OS_TICK_FREQ or MAIN_APPLICATION_TASK_PERIOD"
+  64:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #endif
+  65:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+  66:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #if (MAIN_APPLICATION_TASK_PERIOD % OS_TICK_ms_PERIOD) != 0
+  67:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /*
+  68:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** Period must be a multiple of OS tick defined by OS_TICK_FREQ
+  69:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** */
+  70:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #error "MAIN_APPLICATION_TASK_PERIOD must be multiple of OS tick (defined by OS_TICK_FREQ). "
+  71:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #error "Change OS_TICK_ms_PERIOD or MAIN_APPLICATION_TASK_PERIOD."
+  72:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #else
+  73:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /*
+  74:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** Defines the Supervisor task period as expected by OS.
+  75:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** */
+  76:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #define MAIN_APPLICATION_TASK__OSTICK_PERIOD             (MAIN_APPLICATION_TASK_PERIOD / OS_TICK_RE
+  77:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #endif
+  78:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+  79:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #endif
+  80:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+  81:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+  82:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+  83:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+  84:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #if !defined(MAIN_APP_PERIODICASYN_TASK__MONITOR_IN) && !defined(MAIN_APP_PERIODICASYN_TASK__MONITO
+  85:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /** @name Analog task safety
+  86:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+  87:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \par Properties
+  88:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** Not mandatory. If they remain undefined assume by default an empty value.
+  89:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+  90:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \par Examples
+  91:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \code
+  92:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__MONITOR_IN()     helloTaskMonitor( APPLICATION_TASK_ID );
+  93:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__MONITOR_OUT()
+  94:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \endcode
+  95:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** @{
+  96:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** */
+  97:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /** safety config */
+  98:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__MONITORING()
+  99:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /** safety entry */
+ 100:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__MONITOR_IN()
+ 101:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /** safety exit */
+ 102:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__MONITOR_OUT()
+ 103:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /*@}*/
+ 104:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 105:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #else
+ 106:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* MAIN_APP_PERIODICASYN_TASK__MONITOR_IN or MAIN_APP_PERIODICASYN_TASK__MONITOR_OUT defined */
+ 107:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #if !defined(MAIN_APP_PERIODICASYN_TASK__MONITOR_IN)
+ 108:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #error "MAIN_APP_PERIODICASYN_TASK__MONITOR_IN() missing definition."
+ 109:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #error "Both MAIN_APP_PERIODICASYN_TASK__MONITOR_IN() and MAIN_APP_PERIODICASYN_TASK__MONITOR_OUT()
+ 110:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #endif
+ 111:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 112:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #if !defined(MAIN_APP_PERIODICASYN_TASK__MONITOR_OUT)
+ 113:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #error "MAIN_APP_PERIODICASYN_TASK__MONITOR_OUT() missing definition."
+ 114:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #error "Both MAIN_APP_PERIODICASYN_TASK__MONITOR_IN() and MAIN_APP_PERIODICASYN_TASK__MONITOR_OUT()
+ 115:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #endif
+ 116:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 117:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #if !defined(MAIN_APP_PERIODICASYN_TASK__MONITORING)
+ 118:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #error "MAIN_APP_PERIODICASYN_TASK__MONITORING() missing definition - must be defined."
+ 119:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #endif
+ 120:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 121:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #endif /* !defined(MAIN_APP_PERIODICASYN_TASK__MONITOR_IN) && !defined(MAIN_APP_PERIODICASYN_TASK__
+ 122:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 123:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 124:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #ifndef MAIN_APP_PERIODICASYN_TASK__IS_READY
+ 125:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 126:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /**
+ 127:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** Defines the condition to allow the execution of application task.
+ 128:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 129:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \par Properties
+ 130:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** Not mandatory. If they remain undefined assume by default 1.
+ 131:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 132:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \par Example #1: only if Res is good.
+ 133:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \code
+ 134:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__IS_READY()       Main_Analog_IsRefOk()
+ 135:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \endcode
+ 136:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 137:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \par Example #2: always
+ 138:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \code
+ 139:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__IS_READY()       (1)
+ 140:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \endcode
+ 141:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** */
+ 142:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__IS_READY()       (1)
+ 143:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #endif /* MAIN_APP_PERIODICASYN_TASK__IS_READY */
+ 144:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 145:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 146:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /**
+ 147:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** Defines the startup behavior of the application task.
+ 148:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 149:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \par Properties
+ 150:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** Not mandatory. If they remain undefined assume by default an empy value.
+ 151:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** */
+ 152:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #ifndef MAIN_APP_PERIODICASYN_TASK__STARTUP
+ 153:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__STARTUP()
+ 154:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #endif
+ 155:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 156:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 157:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #ifndef MAIN_APP_PERIODICASYN_TASK__BODY
+ 158:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /**
+ 159:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** Defines the application task body.
+ 160:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 161:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \par Properties
+ 162:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** Not mandatory. If they remain undefined assume by default an empty value.
+ 163:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 164:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \par Example: with Remote Loads management
+ 165:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \code
+ 166:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__BODY()\
+ 167:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** if ( CALLBACK_Main_ApplicationTask_Ctrl() )\
+ 168:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** {\
+ 169:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c ****   void * pRemoteLoadsControlData = 0;\
+ 170:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c ****   int len=0;\
+ 171:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c ****   \
+ 172:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c ****   Main_RemoteLoadsControl_GetCommand(&pRemoteLoadsControlData, &len);\
+ 173:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c ****   if(pRemoteLoadsControlData && len)\
+ 174:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c ****   {\
+ 175:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c ****     CALLBACK_RemoteLoadsControl_BeforeProcess(pRemoteLoadsControlData, &len);\
+ 176:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c ****     Main_RemoteLoadsControl_ProcessCommand((uint8_t*)pRemoteLoadsControlData);\
+ 177:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c ****     CALLBACK_RemoteLoadsControl_AfterProcess(pRemoteLoadsControlData, &len);\
+ 178:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c ****     Main_RemoteLoadsControl_PurgeCommand();\
+ 179:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c ****   }\
+ 180:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c ****   CALLBACK_Main_ApplicationTask_Body();\
+ 181:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** }
+ 182:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \endcode
+ 183:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** */
+ 184:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #define MAIN_APP_PERIODICASYN_TASK__BODY()       {}
+ 185:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #endif
+ 186:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 187:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 188:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 189:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* *************************** */
+ 190:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* Typedef, Structs and Unions */
+ 191:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* *************************** */
+ 192:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 193:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* **************************** */
+ 194:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* Prototype of local functions */
+ 195:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* **************************** */
+ 196:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 197:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* ********* */
+ 198:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* Variables */
+ 199:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* ********* */
+ 200:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 201:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* Global */
+ 202:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* Static */
+ 203:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /**
+ 204:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** @name Service variables
+ 205:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** @{
+ 206:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** */
+ 207:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 208:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 209:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 210:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 211:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /** Task Stack */
+ 212:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** static STACK_SEC OS_STACKPTR int Main_ApplicationPeriodicAsynTaskStack[MAIN_APP_PERIODICASYN_TASK_S
+ 213:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 214:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /** Task Control Block*/
+ 215:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** static OS_TASK Main_ApplicationPeriodicAsynTaskTCB;
+ 216:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /*@}*/
+ 217:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 218:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #if defined(CONFIG_MAIN_APPLICATION_STACK_MONITOR)
+ 219:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** static 	TOOLS_STACKUSAGE_MONITOR	Main_ApplicationStackMonitor;
+ 220:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #endif
+ 221:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 222:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* ******************* */
+ 223:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* Functions Prototype */
+ 224:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* ******************* */
+ 225:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 226:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* Exported function */
+ 227:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 228:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 229:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* Local Function */
+ 230:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** static void Main_ApplicationPeriodicAsynTask ( void );
+ 231:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 232:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* *************** */
+ 233:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* Function Bodies */
+ 234:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* *************** */
+ 235:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 236:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* Exported function */
+ 237:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 238:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /**
+ 239:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** Application service initialization.
+ 240:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** It creates the task \ref Main_ApplicationPeriodicAsynTask.
+ 241:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** */
+ 242:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** void Main_ApplicationInit ( void )
+ 243:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** {
+ 244:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 	OS_CREATETASK ( &Main_ApplicationPeriodicAsynTaskTCB,
+ 245:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 					"ApplicationPeriodicAsynTask",
+ 246:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 					Main_ApplicationPeriodicAsynTask,
+ 247:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 					MAIN_APPLICATION_TASK_PRIORITY,
+ 248:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 					Main_ApplicationPeriodicAsynTaskStack );
+ 249:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #if defined(CONFIG_MAIN_APPLICATION_STACK_MONITOR)
+ 250:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 	Tools_CreateTaskStackMonitor(&Main_ApplicationPeriodicAsynTaskTCB, &Main_ApplicationStackMonitor);
+ 251:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** #endif
+ 252:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** }
+ 253:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 254:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /* Local Functions */
+ 255:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 256:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** /**
+ 257:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** preemptable task for Feedback
+ 258:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 259:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \warning	none
+ 260:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 261:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \author 	Roberto Fioravanti
+ 262:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \date		  gg/mm/aaaa
+ 263:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \version	1.0.0
+ 264:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 265:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** \note		\par \b Note 1:
+ 266:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 			documentation by Roberto Fioravanti
+ 267:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 268:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** */
+ 269:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** static void Main_ApplicationPeriodicAsynTask ( void )
+ 270:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** {
+   9                             		.loc 1 270 0
+  10 0000 6E 7A                   		pushm	r7-r10
+  11                             	.LCFI0:
+ 271:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 	int t0 = OS_GetTime();
+ 272:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c ****     static bool_t Main_ApplicationPeriodicAsynRunning = FALSE;
+ 273:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 274:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 275:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 	MAIN_APP_PERIODICASYN_TASK__MONITORING();
+  12                             		.loc 1 275 0
+  13 0002 66 01                   		mov	#0, r1
+  14 0004 66 F2                   		mov	#15, r2
+  15 0006 66 13                   		mov.L	#1, r3
+ 271:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 	int t0 = OS_GetTime();
+  16                             		.loc 1 271 0
+  17 0008 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+  18 000e AA F7                   		mov.L	40[r7], r7
+  19                             	.LVL0:
+ 276:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c ****     MAIN_APP_PERIODICASYN_TASK__STARTUP();
+ 277:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 278:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 	while ( 1 )
+ 279:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 	{
+ 280:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 		TRACE_CPU_IDLE_END();
+ 281:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 282:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 	    MAIN_APP_PERIODICASYN_TASK__MONITOR_IN();
+ 283:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 	    MAIN_APPLICATION_TASK_TRACE_BEGIN();
+ 284:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 285:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 	    t0 += MAIN_APPLICATION_TASK__OSTICK_PERIOD;
+ 286:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 287:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 288:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 	    /* waiting for condition in MAIN_APP_PERIODICASYN_TASK__IS_READY() is satisfied */
+ 289:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 	    Main_ApplicationPeriodicAsynRunning = MAIN_APP_PERIODICASYN_TASK__IS_READY();
+  20                             		.loc 1 289 0
+  21 0010 FB A2 00 00 00 00       		mov.L	#_Main_ApplicationPeriodicAsynRunning.10544, r10
+ 275:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 	MAIN_APP_PERIODICASYN_TASK__MONITORING();
+  22                             		.loc 1 275 0
+  23 0016 05 00 00 00             		bsr	_LIB_TaskMonitoringConfig
+  24                             	.LVL1:
+ 276:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c ****     MAIN_APP_PERIODICASYN_TASK__STARTUP();
+  25                             		.loc 1 276 0
+  26 001a 05 00 00 00             		bsr	_Main_RemoteLoadsControl_Init
+  27                             	.LVL2:
+  28 001e 05 00 00 00             		bsr	_CALLBACK_Main_StartUp
+  29                             	.LVL3:
+  30                             		.balign 2,3,1
+  31                             	.L4:
+ 282:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 	    MAIN_APP_PERIODICASYN_TASK__MONITOR_IN();
+  32                             		.loc 1 282 0
+  33 0022 66 01                   		mov	#0, r1
+  34 0024 05 00 00 00             		bsr	_LIB_TaskStartActivity
+  35                             	.LVL4:
+  36                             		.loc 1 289 0
+  37 0028 05 00 00 00             		bsr	_Main_Analog_IsRefOk
+  38                             	.LVL5:
+  39 002c 5B 11                   		movu.B	r1, r1
+ 285:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 	    t0 += MAIN_APPLICATION_TASK__OSTICK_PERIOD;
+  40                             		.loc 1 285 0
+  41 002e 71 77 64                		add	#0x64, r7
+  42                             	.LVL6:
+  43                             		.loc 1 289 0
+  44 0031 E3 A1                   		mov.L	r1, [r10]
+ 290:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 		
+ 291:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 		if(Main_ApplicationPeriodicAsynRunning)
+  45                             		.loc 1 291 0
+  46 0033 61 01                   		cmp	#0, r1
+  47 0035 20 27                   		beq	.L2
+ 292:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 		{
+ 293:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 			if ( ! ( Main_IsRestoreCompleted() ) )
+  48                             		.loc 1 293 0
+  49 0037 05 00 00 00             		bsr	_Main_IsRestoreCompleted
+  50                             	.LVL7:
+  51 003b 5B 11                   		movu.B	r1, r1
+  52 003d 61 01                   		cmp	#0, r1
+  53 003f 21 19                   		bne	.L3
+ 294:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 			{
+ 295:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 			    OS_EnterRegion();
+  54                             		.loc 1 295 0
+  55 0041 05 00 00 00             		bsr	_OS_EnterRegionFunc
+  56                             	.LVL8:
+ 296:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 				Main_Backup_DoRestore();
+  57                             		.loc 1 296 0
+  58 0045 05 00 00 00             		bsr	_Main_Backup_DoRestore
+  59                             	.LVL9:
+ 297:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 				Main_CompleteRestore();
+  60                             		.loc 1 297 0
+  61 0049 05 00 00 00             		bsr	_Main_CompleteRestore
+  62                             	.LVL10:
+ 298:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 299:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 				OS_LeaveRegion();
+  63                             		.loc 1 299 0
+  64 004d 05 00 00 00             		bsr	_OS_LeaveRegion
+  65                             	.LVL11:
+ 300:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 				LIB_Backup_SetBackupControlMonitor(BACKUP_ON_RTN);
+  66                             		.loc 1 300 0
+  67 0051 66 11                   		mov	#1, r1
+  68 0053 05 00 00 00             		bsr	_LIB_Backup_SetBackupControlMonitor
+  69                             	.LVL12:
+  70 0057 03                      		.balign 2,3,3
+  71                             	.L3:
+ 301:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 				START_LIB_PRODUCTSAFETY_TASK_MONITORING();
+ 302:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 				START_LIB_LOADSREQUEST_MONITORING();
+ 303:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 			}
+ 304:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 305:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 			MAIN_APP_PERIODICASYN_TASK__BODY();
+  72                             		.loc 1 305 0
+  73 0058 05 00 00 00             		bsr	_Main_ApplicationTask_Body
+  74                             	.LVL13:
+  75                             		.balign 2,3,1
+  76                             	.L2:
+ 306:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 		}
+ 307:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 
+ 308:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 		MAIN_APPLICATION_TASK_TRACE_END();
+ 309:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 		MAIN_APP_PERIODICASYN_TASK__MONITOR_OUT();
+  77                             		.loc 1 309 0
+  78 005c 66 01                   		mov	#0, r1
+  79 005e 05 00 00 00             		bsr	_LIB_TaskEndActivity
+  80                             	.LVL14:
+ 310:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 		OS_DelayUntil ( t0 );
+  81                             		.loc 1 310 0
+  82 0062 EF 71                   		mov.L	r7, r1
+  83 0064 05 00 00 00             		bsr	_OS_DelayUntil
+  84                             	.LVL15:
+ 311:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 	}
+  85                             		.loc 1 311 0
+  86 0068 2E BA                   		bra	.L4
+  87                             	.LFE1:
+  89                             		.section	.rodata.str1.1,"aMS",@progbits,1
+  90                             	.LC0:
+  91 0000 41 70 70 6C 69 63 61 74 		.string	"ApplicationPeriodicAsynTask"
+  91      69 6F 6E 50 65 72 69 6F 
+  91      64 69 63 41 73 79 6E 54 
+  91      61 73 6B 00 
+  92                             		.section	.text.Main_ApplicationInit,"ax",@progbits
+  93                             		.global	_Main_ApplicationInit
+  95                             	_Main_ApplicationInit:
+  96                             	.LFB0:
+ 243:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** {
+  97                             		.loc 1 243 0
+  98 0000 60 80                   		sub	#8, r0
+  99                             	.LCFI1:
+ 244:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** 	OS_CREATETASK ( &Main_ApplicationPeriodicAsynTaskTCB,
+ 100                             		.loc 1 244 0
+ 101 0002 F8 02 00 00 00 00       		mov.L	#_Main_ApplicationPeriodicAsynTaskStack, [r0]
+ 102 0008 F9 0A 01 00 02          		mov.L	#0x200, 4[r0]
+ 103 000d FB 12 00 00 00 00       		mov.L	#_Main_ApplicationPeriodicAsynTaskTCB, r1
+ 104 0013 FB 22 00 00 00 00       		mov.L	#.LC0, r2
+ 105 0019 75 43 3C                		mov	#60, r3
+ 106 001c FB 42 00 00 00 00       		mov.L	#_Main_ApplicationPeriodicAsynTask, r4
+ 107 0022 05 00 00 00             		bsr	_OS_CreateTask_S
+ 108                             	.LVL16:
+ 252:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Application.c **** }
+ 109                             		.loc 1 252 0
+ 110 0026 67 02                   		rtsd	#8
+ 111                             	.LFE0:
+ 113                             		.section	.bss.Main_ApplicationPeriodicAsynTaskTCB,"aw",@nobits
+ 114                             		.balign 4
+ 117                             	_Main_ApplicationPeriodicAsynTaskTCB:
+ 118 0000 00 00 00 00 00 00 00 00 		.zero	44
+ 118      00 00 00 00 00 00 00 00 
+ 118      00 00 00 00 00 00 00 00 
+ 118      00 00 00 00 00 00 00 00 
+ 118      00 00 00 00 00 00 00 00 
+ 119                             		.section	.osstack,"aw",@progbits
+ 120                             		.balign 4
+ 123                             	_Main_ApplicationPeriodicAsynTaskStack:
+ 124 0000 00 00 00 00 00 00 00 00 		.zero	512
+ 124      00 00 00 00 00 00 00 00 
+ 124      00 00 00 00 00 00 00 00 
+ 124      00 00 00 00 00 00 00 00 
+ 124      00 00 00 00 00 00 00 00 
+ 125                             		.section	.bss.Main_ApplicationPeriodicAsynRunning.10544,"aw",@nobits
+ 126                             		.balign 4
+ 129                             	_Main_ApplicationPeriodicAsynRunning.10544:
+ 130 0000 00 00 00 00             		.zero	4
+ 181                             	.Letext0:
+ 182                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 183                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 184                             		.file 4 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Main.h"
+ 185                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary/callback.h"
+ 186                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_SecurityCheck/LIB_TaskMonitori
+ 187                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_BackUp/LIB_BackupExp.h"
+ 188                             		.file 8 "C:\\Workspace\\FW_Platform2_5\\trunk\\CFG_DishWasher\\CFG_Inertia/Config.h"
+ 189                             		.file 9 "C:\\Workspace\\FW_Platform2_5\\trunk\\CFG_DishWasher\\CFG_Inertia/TaskMonitor_Cfg.h"

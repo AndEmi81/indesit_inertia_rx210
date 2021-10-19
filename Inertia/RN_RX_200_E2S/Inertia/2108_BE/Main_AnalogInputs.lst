@@ -1,0 +1,1203 @@
+   1                             		.file	"Main_AnalogInputs.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.Main_AnalogInputsTask,"ax",@progbits
+   6                             	_Main_AnalogInputsTask:
+   7                             	.LFB6:
+   8                             		.file 1 "C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS/Main_AnalogInputs.c"
+   1:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /*
+   2:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+   5:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+   6:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+   7:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \n
+   8:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \par		AnalogInputs
+   9:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \n			This file contains the EmbOS-based service for the acquisition of analog channels (ADC).
+  10:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** It makes use of Platform Library modules.
+  11:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \n
+  12:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \file		Main_AnalogInputs.c
+  13:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \ingroup	Main
+  14:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \date		Feb 7, 2011
+  15:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \version	01.00.00
+  16:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \author		Roberto Fioravanti
+  17:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \n
+  18:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \n
+  19:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \par\b	History:
+  20:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \n
+  21:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \n 		00.00.00
+  22:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \n		29/03/2011
+  23:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \n		Roberto Fioravanti
+  24:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \n		changes
+  25:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \n 		- file created
+  26:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \n
+  27:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \n
+  28:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \n etc.
+  29:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+  30:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* ******** */
+  31:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* Includes */
+  32:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* ******** */
+  33:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #include "Main.h"
+  34:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #include "Analog.h"
+  35:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #include "LIB_Trace.h"
+  36:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+  37:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #ifdef CONFIG_PM_ANALOG_FEEDBACKS_SUPPORT
+  38:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #include "PM_AnalogFeedback.h"
+  39:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif /* CONFIG_PM_ANALOG_FEEDBACK */
+  40:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+  41:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if defined(CONFIG_PM_TASK_MONITOR_SUPPORT)
+  42:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #include "PM_TaskMonitoring.h"
+  43:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif
+  44:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+  45:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if defined(CONFIG_LIB_CLASS_B_PERIODIC_CHECK)
+  46:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #include "LIB_TaskMonitoring.h"
+  47:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif
+  48:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+  49:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if defined(CONFIG_MAIN_ANALOG_TASK_TRACE_PIN_ENABLE)
+  50:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #include "LIB_Trace.h"
+  51:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif
+  52:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+  53:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* ****************** */
+  54:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* Defines and Macros */
+  55:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* ****************** */
+  56:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+  57:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+  58:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /** 
+  59:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @name Trace to pin
+  60:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** If CONFIG_MAIN_ANALOG_TASK_TRACE_PIN_ENABLE and CONFIG_LIB_TRACE_SUPPORT are both defined the pin
+  61:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** CONFIG_MAIN_ANALOG_TASK_TRACE_PIN geneates a pulse during the execution of a task.
+  62:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+  63:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \attention:
+  64:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** This section show the default definition that may not reflect the real configuration of your projec
+  65:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @{
+  66:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+  67:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if defined(CONFIG_MAIN_ANALOG_TASK_TRACE_PIN_ENABLE) && defined(CONFIG_LIB_TRACE_SUPPORT)
+  68:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_TASK_TRACE_BEGIN()        TRACE_TO_PIN(ON , (CONFIG_MAIN_ANALOG_TASK_TRACE_PIN)
+  69:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_TASK_TRACE_END()          TRACE_TO_PIN(OFF , (CONFIG_MAIN_ANALOG_TASK_TRACE_PIN
+  70:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #else
+  71:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_TASK_TRACE_BEGIN()	{}
+  72:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_TASK_TRACE_END()	{}
+  73:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif
+  74:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+  75:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+  76:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if !defined(MAIN_ANALOG_INPUTS_TASK__MONITOR_IN) && \
+  77:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****     !defined(MAIN_ANALOG_INPUTS_TASK__MONITOR_OUT) && \
+  78:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****     !defined(START_ANALOG_TASK_MONITORING)
+  79:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****       
+  80:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /** @name Analog task safety
+  81:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+  82:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \par Properties
+  83:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** Not mandatory. If they remain undefined assume by default an empty value.
+  84:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @{
+  85:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+  86:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define START_ANALOG_TASK_MONITORING()
+  87:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /** safety entry */
+  88:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_INPUTS_TASK__MONITOR_IN()
+  89:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /** safety exit */
+  90:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_INPUTS_TASK__MONITOR_OUT()
+  91:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+  92:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+  93:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #else
+  94:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* MAIN_ANALOG_INPUTS_TASK__MONITOR_IN or MAIN_ANALOG_INPUTS_TASK__MONITOR_OUT defined */
+  95:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if !defined(MAIN_ANALOG_INPUTS_TASK__MONITOR_IN)
+  96:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #error "MAIN_ANALOG_INPUTS_TASK__MONITOR_IN() missing definition."
+  97:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #error "START_ANALOG_TASK_MONITORING, MAIN_ANALOG_INPUTS_TASK__MONITOR_IN() and MAIN_ANALOG_INPUTS_
+  98:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif
+  99:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 100:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if !defined(MAIN_ANALOG_INPUTS_TASK__MONITOR_OUT)
+ 101:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #error "MAIN_ANALOG_INPUTS_TASK__MONITOR_OUT() missing definition."
+ 102:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #error "START_ANALOG_TASK_MONITORING, MAIN_ANALOG_INPUTS_TASK__MONITOR_IN() and MAIN_ANALOG_INPUTS_
+ 103:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif
+ 104:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****       
+ 105:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if !defined(START_ANALOG_TASK_MONITORING)
+ 106:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #error "START_ANALOG_TASK_MONITORING() missing definition."
+ 107:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #error "START_ANALOG_TASK_MONITORING, MAIN_ANALOG_INPUTS_TASK__MONITOR_IN() and MAIN_ANALOG_INPUTS_
+ 108:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif
+ 109:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****              
+ 110:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif /* !defined(MAIN_ANALOG_INPUTS_TASK__MONITOR_IN) && !defined(MAIN_ANALOG_INPUTS_TASK__MONITO
+ 111:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 112:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 113:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 114:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @name Debug Configuration
+ 115:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \par Properties
+ 116:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** Not mandatory. If not defined they assume the default values
+ 117:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 118:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** In order to save ram and flash this options should be disabled.
+ 119:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \code
+ 120:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_INPUTS_TASK_DEBUG                (1)
+ 121:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_INPUTS_TASK_DURATION             (1)
+ 122:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_INPUTS_TASK_DELAY_ON_ZC          (1)
+ 123:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_INPUTS_TASK_TUNING               (1)
+ 124:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \endcode
+ 125:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 126:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 127:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if !defined(MAIN_ANALOG_INPUTS_TASK_DEBUG)
+ 128:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 129:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /** Debug enable
+ 130:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \li 0: all debug features disabled
+ 131:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \li 1: allows to enable the debug level for MAIN_ANALOG_INPUTS_TASK_DURATION, MAIN_ANALOG_INPUTS_TA
+ 132:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** MAIN_ANALOG_INPUTS_TASK_TUNING
+ 133:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 134:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_INPUTS_TASK_DEBUG                (1)
+ 135:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif
+ 136:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if !defined(MAIN_ANALOG_INPUTS_TASK_DURATION)
+ 137:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /** Measurement of the duration of the task
+ 138:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \li 0: disabled
+ 139:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \li 1: enabled
+ 140:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 141:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** If enabled defines:
+ 142:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \li Main_AnalogInputsTask_Duration_Init
+ 143:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \li Main_AnalogInputsTask_Duration_End
+ 144:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \li Main_AnalogInputsTask_Duration_Start
+ 145:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 146:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_INPUTS_TASK_DURATION		(1)
+ 147:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif
+ 148:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 149:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if !defined(MAIN_ANALOG_INPUTS_TASK_DELAY_ON_ZC)
+ 150:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /** delay measurement of the activation of the task in [us] 
+ 151:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \li 0: disabled
+ 152:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \li 1: enabled
+ 153:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 154:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** If enabled defines:
+ 155:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \li Main_AnalogInputsTask_DelayOnZC_Init
+ 156:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \li Main_AnalogInputsTask_DelayOnZC_SetRef
+ 157:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \li Main_AnalogInputsTask_DelayOnZC_GetTiming
+ 158:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 159:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_INPUTS_TASK_DELAY_ON_ZC		(1)
+ 160:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif
+ 161:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 162:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if !defined(MAIN_ANALOG_INPUTS_TASK_TUNING)
+ 163:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /** Allows dynamic correction of the delay of the activation of the task in [us]. This options prov
+ 164:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** variable AnalogInputsTuning that allows the correction of delay the task activation.
+ 165:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 166:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** Once the system is tuned, it is good practice apply the value to the property MAIN_ANALOG_INPUTS_AC
+ 167:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** in order to save ram.
+ 168:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****  
+ 169:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \li 0: disabled
+ 170:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \li 1: enabled
+ 171:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 172:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** If enabled defines:
+ 173:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \li Main_AnalogInputsTask_Tuning_Init 
+ 174:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \li Main_AnalogInputsTask_Tuning_Tuner
+ 175:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 176:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_INPUTS_TASK_TUNING               (1)
+ 177:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif
+ 178:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 179:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 180:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 181:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 182:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 183:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 184:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @name Static Tuning
+ 185:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \par Properties
+ 186:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** Not mandatory. If not defined it assumes the default value
+ 187:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \code
+ 188:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define ANALOG_INPUTS_ACTIVATION_TUNING_VAL         (0)
+ 189:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \endcode
+ 190:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \attention Used only if \ref ANALOG_INPUTS_TASK_DEBUG is defined as 0, otherwise 
+ 191:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** dynamic correction is available.
+ 192:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 193:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 194:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 195:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #ifndef MAIN_ANALOG_INPUTS_ACTIVATION_TUNING_VAL
+ 196:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 197:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** Signed static delay correction in [us] analog task activation
+ 198:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \par Type
+ 199:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** Type: OS_I32
+ 200:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 201:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define MAIN_ANALOG_INPUTS_ACTIVATION_TUNING_VAL             (0)
+ 202:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif  /* ANALOG_INPUTS_OFFSET_ACTIVATION */
+ 203:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 204:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /*}@*/
+ 205:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* *************************** */
+ 206:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* Typedef, Structs and Unions */
+ 207:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* *************************** */
+ 208:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 209:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* **************************** */
+ 210:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* Prototype of local functions */
+ 211:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* **************************** */
+ 212:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 213:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* ********* */
+ 214:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* Variables */
+ 215:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* ********* */
+ 216:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 217:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* Global */
+ 218:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 219:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* Static */
+ 220:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 221:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @name Service variables
+ 222:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 223:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 224:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /** Task Stack */
+ 225:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static STACK_SEC OS_STACKPTR int  Main_AnalogInputsTaskStack[CONFIG_MAIN_ANALOGINPUTS_TASK_STACK_SI
+ 226:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 227:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /** Task Control Block*/
+ 228:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static OS_TASK          Main_AnalogInputsTaskTCB;
+ 229:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 230:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /** high resolution Alarm */
+ 231:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static OS_ALARM         Main_AlmMeasureAnalog;
+ 232:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 233:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /** Global event that signals Ref is good. */
+ 234:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static OS_EVENT         Main_AnalogRef_Event;
+ 235:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 236:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 237:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if defined(CONFIG_MAIN_ANALOG_INPUTS_STACK_MONITOR)
+ 238:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static 	TOOLS_STACKUSAGE_MONITOR	Main_AnalogInputsStackMonitor;
+ 239:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif
+ 240:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 241:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 242:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @name Debug - Delay measurement
+ 243:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 244:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 245:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if     MAIN_ANALOG_INPUTS_TASK_DEBUG
+ 246:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 247:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if     MAIN_ANALOG_INPUTS_TASK_DELAY_ON_ZC
+ 248:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /** task delay in [us]
+ 249:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \attention Available only if \ref MAIN_ANALOG_INPUTS_TASK_DEBUG and MAIN_ANALOG_INPUTS_TASK_DELAY_O
+ 250:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** defined as 1.
+ 251:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 252:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static  TOOLS_TIMING    AnalogInputsDelayOnZC;
+ 253:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif  /* ANALOG_INPUTS_TASK_DELAY_ON_ZC */
+ 254:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 255:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 256:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 257:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 258:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @name Debug - Duration measurement
+ 259:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 260:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 261:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if     MAIN_ANALOG_INPUTS_TASK_DURATION
+ 262:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /** task duration in [us]
+ 263:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \attention Available only if \ref MAIN_ANALOG_INPUTS_TASK_DEBUG and MAIN_ANALOG_INPUTS_TASK_DURATIO
+ 264:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** defined as 1.
+ 265:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 266:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static  TOOLS_TIMING    AnalogInputsDuration;
+ 267:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /** statistics about task duration [us]
+ 268:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \attention Available only if \ref MAIN_ANALOG_INPUTS_TASK_DEBUG and MAIN_ANALOG_INPUTS_TASK_DURATIO
+ 269:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** defined as 1.
+ 270:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 271:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static  TOOLS_TIMING_STATS  AnalogInputsTaskDurationStat;
+ 272:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif  /* MAIN_ANALOG_INPUTS_TASK_DURATION */
+ 273:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 274:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 275:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 276:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @name Debug - Dynamic Tuning
+ 277:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 278:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 279:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if     MAIN_ANALOG_INPUTS_TASK_TUNING
+ 280:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /** Dynamic delay correction in [us] of the task activation
+ 281:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \attention Available only if \ref MAIN_ANALOG_INPUTS_TASK_DEBUG and MAIN_ANALOG_INPUTS_TASK_TUNING 
+ 282:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** defined as 1.
+ 283:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 284:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static  OS_I32  AnalogInputsTuning;
+ 285:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif /* MAIN_ANALOG_INPUTS_TASK_ACTIVATION_TUNING */
+ 286:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 287:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif  /* MAIN_ANALOG_INPUTS_TASK_DEBUG */
+ 288:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 289:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 290:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 291:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 292:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* ******************* */
+ 293:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* Functions Prototype */
+ 294:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* ******************* */
+ 295:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 296:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* Exported function */
+ 297:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 298:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 299:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* Local Function */
+ 300:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 301:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static void AlmAnalogCallback ( void );
+ 302:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static void Main_AnalogInputsTask ( void );
+ 303:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 304:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 305:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 306:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @name Debug - Delay measurement
+ 307:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** They are called by framework to measure the delay between the event and the intant of the task acti
+ 308:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 309:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 310:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 311:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /*lint -idlen(60) */
+ 312:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /*lint -esym(621,Main_AnalogInputsTask_DelayOnZC_GetTiming)*/
+ 313:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /*lint -esym(621,Main_AnalogInputsTask_DelayOnZC_SetRef)*/
+ 314:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 315:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 316:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if     MAIN_ANALOG_INPUTS_TASK_DEBUG   &&   MAIN_ANALOG_INPUTS_TASK_DELAY_ON_ZC
+ 317:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static void Main_AnalogInputsTask_DelayOnZC_Init ( void );
+ 318:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static void Main_AnalogInputsTask_DelayOnZC_SetRef ( void );
+ 319:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static void Main_AnalogInputsTask_DelayOnZC_GetTiming ( void );
+ 320:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #else
+ 321:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define Main_AnalogInputsTask_DelayOnZC_Init()
+ 322:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define Main_AnalogInputsTask_DelayOnZC_SetRef()
+ 323:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define Main_AnalogInputsTask_DelayOnZC_GetTiming()
+ 324:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif /* MAIN_ANALOG_INPUTS_TASK_DEBUG   &&   MAIN_ANALOG_INPUTS_TASK_DELAY_ON_ZC */
+ 325:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 326:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 327:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 328:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 329:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @name Debug - Duration Measurement
+ 330:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** They are called by framework to measure the task duration
+ 331:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 332:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 333:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 334:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if     MAIN_ANALOG_INPUTS_TASK_DEBUG   &&   MAIN_ANALOG_INPUTS_TASK_DURATION
+ 335:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInputsTask_Duration_Init ( void );
+ 336:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInputsTask_Duration_Start ( void );
+ 337:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInputsTask_Duration_End ( void );
+ 338:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #else
+ 339:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define Main_AnalogInputsTask_Duration_Init()
+ 340:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define Main_AnalogInputsTask_Duration_Start()
+ 341:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define Main_AnalogInputsTask_Duration_End()
+ 342:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif /* MAIN_ANALOG_INPUTS_TASK_DEBUG   &&   MAIN_ANALOG_INPUTS_TASK_DURATION */
+ 343:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 344:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 345:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 346:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 347:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @name Debug - Dynamic Tuning
+ 348:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** They are called by framework to apply the correction to the delay.
+ 349:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @{
+ 350:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 351:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if     MAIN_ANALOG_INPUTS_TASK_DEBUG   &&   MAIN_ANALOG_INPUTS_TASK_TUNING
+ 352:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInputsTask_Tuning_Init ( void );
+ 353:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** OS_I32 Main_AnalogInputsTask_Tuner ( OS_U32 usOffset );
+ 354:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #else
+ 355:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define Main_AnalogInputsTask_Tuning_Init()
+ 356:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #define Main_AnalogInputsTask_Tuner(dummy)     ((OS_I32)MAIN_ANALOG_INPUTS_ACTIVATION_TUNING_VAL)
+ 357:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif /* MAIN_ANALOG_INPUTS_TASK_DEBUG   &&   MAIN_ANALOG_INPUTS_TASK_TUNING */
+ 358:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 359:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 360:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 361:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 362:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* *************** */
+ 363:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* Function Bodies */
+ 364:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* *************** */
+ 365:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 366:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* Exported function */
+ 367:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 368:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @name APIs
+ 369:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \page APIs APIs
+ 370:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 371:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 372:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 373:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 374:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** Analog inputs service initialization.
+ 375:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** It creates task Main_AnalogInputsTask and the high resolution alarm.
+ 376:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** If debug (\ref ANALOG_INPUTS_TASK_DEBUG and \ref ANALOG_INPUTS_TASK_DELAY_ON_ZC or
+ 377:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \ref ANALOG_INPUTS_TASK_DURATION or \ref ANALOG_INPUTS_TASK_TUNING) is enabled
+ 378:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** initializes tools for timing measurement.
+ 379:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 380:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInit ( void )
+ 381:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 382:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	OS_CREATETASK ( &Main_AnalogInputsTaskTCB,
+ 383:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 					"AnalogInputsTask",
+ 384:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 					Main_AnalogInputsTask,
+ 385:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 					( OS_U8 ) MAIN_ANALOG_TASK_PRIORITY,
+ 386:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 					Main_AnalogInputsTaskStack );
+ 387:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	OS_CreateAlarm ( &Main_AlmMeasureAnalog, AlmAnalogCallback, ( OS_U32 ) 0, ( OS_U32 ) 0 );
+ 388:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	OS_EVENT_Create ( &Main_AnalogRef_Event );
+ 389:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	Main_AnalogInputsTask_DelayOnZC_Init();
+ 390:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	Main_AnalogInputsTask_Duration_Init();
+ 391:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	Main_AnalogInputsTask_Tuning_Init();
+ 392:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if defined(CONFIG_MAIN_ANALOG_INPUTS_STACK_MONITOR)
+ 393:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	Tools_CreateTaskStackMonitor(&Main_AnalogInputsTaskTCB, &Main_AnalogInputsStackMonitor);
+ 394:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif
+ 395:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+ 396:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 397:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 398:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 399:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****     If 'Ref' is good sets Main_AnalogRef_Event to signaled state.
+ 400:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****     Calls LIB_ADC_Is_Ref_Good.
+ 401:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 402:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogRefMonitor ( void )
+ 403:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 404:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	if ( LIB_ADC_Is_Ref_Good() )
+ 405:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	{
+ 406:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		OS_EVENT_Set ( &Main_AnalogRef_Event );
+ 407:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	}
+ 408:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	else
+ 409:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	{
+ 410:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		OS_EVENT_Reset ( &Main_AnalogRef_Event );
+ 411:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	}
+ 412:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+ 413:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 414:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 415:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 416:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****     If 'Ref' is good sets Main_AnalogRef_Event to signaled state.
+ 417:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****     Calls LIB_ADC_Is_Ref_Good.
+ 418:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 419:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** uint8_t Main_Analog_IsRefOk ( void )
+ 420:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 421:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	return OS_EVENT_Get ( &Main_AnalogRef_Event );
+ 422:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+ 423:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 424:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 425:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 426:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** Resumes task
+ 427:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 428:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** void Main_ActivateAnalogInputs ( void )
+ 429:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 430:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	if ( OS_GetSuspendCnt ( &Main_AnalogInputsTaskTCB ) > 0 )
+ 431:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	{
+ 432:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		OS_Resume ( &Main_AnalogInputsTaskTCB );
+ 433:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	}
+ 434:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+ 435:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 436:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 437:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** Sets the Alarm on high resolution timer for analog task
+ 438:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 439:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \param [in] usOffset alarm expiration in microseconds
+ 440:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \attention For sync readings it must bel called in sync with ZC.
+ 441:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 442:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \author 	Roberto Fioravanti
+ 443:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \date		29/03/2011
+ 444:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \version	1.0.0
+ 445:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 446:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** void Main_ScheduleAnalogMeasure ( OS_U32 usOffset, OS_U32 TickRef )
+ 447:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 448:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****     OS_ALARM_TICK ref = (OS_ALARM_TICK)TickRef;	
+ 449:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	usOffset += Main_AnalogInputsTask_Tuner ( usOffset );
+ 450:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	if(OS_IsTask(&Main_AnalogInputsTaskTCB))
+ 451:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****     {
+ 452:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****         OS_START_ABSALARM_ONESHOT ( &Main_AlmMeasureAnalog, usOffset, &ref );
+ 453:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****     }
+ 454:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	Main_AnalogInputsTask_DelayOnZC_SetRef();
+ 455:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+ 456:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 457:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 458:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 459:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** Sets perodic alarm on high resolution timer for analog task
+ 460:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 461:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \param [in] usOffset - alarm delay in microseconds
+ 462:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \param [in] usPeriod - alarm period in microseconds
+ 463:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 464:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \attention For sync readings it must bel called in sync with ZC.
+ 465:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 466:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \author 	Alessandro Sabbatini
+ 467:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \date		26/02/2014
+ 468:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \version	1.0.0
+ 469:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 470:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** void Main_SchedulePeriodicAnalogMeasure ( OS_U32 usOffset, OS_U32 usPeriod, OS_U32 TickRef )
+ 471:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 472:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****     OS_ALARM_TICK ref = (OS_ALARM_TICK)TickRef;
+ 473:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	usOffset += Main_AnalogInputsTask_Tuner ( usOffset );
+ 474:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	if(OS_IsTask(&Main_AnalogInputsTaskTCB))
+ 475:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****     {
+ 476:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****         OS_START_ABSALARM(&Main_AlmMeasureAnalog, usOffset, usPeriod, -1, &ref );
+ 477:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****     }
+ 478:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	Main_AnalogInputsTask_DelayOnZC_SetRef();
+ 479:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+ 480:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 481:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /*@}*/
+ 482:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 483:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 484:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 485:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 486:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /* Local Functions */
+ 487:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 488:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 489:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** @name Local functions
+ 490:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 491:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 492:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 493:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 494:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** normal Non-preemptable periodic task for ADC channels readings.
+ 495:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** When its activity has been completed the task suspends itself, waiting for the next alamr expiratio
+ 496:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \warning	none
+ 497:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 498:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \author 	Roberto Fioravanti
+ 499:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \date		29/03/2011
+ 500:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \version	1.0.0
+ 501:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 502:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \note		\par \b Note 1:
+ 503:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 			documentation by Roberto Fioravanti
+ 504:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 505:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 506:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static void Main_AnalogInputsTask ( void )
+ 507:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+   9                             		.loc 1 507 0
+ 508:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	START_ANALOG_TASK_MONITORING();
+  10                             		.loc 1 508 0
+  11 0000 66 11                   		mov	#1, r1
+  12 0002 75 42 1E                		mov	#30, r2
+  13 0005 66 03                   		mov.L	#0, r3
+  14 0007 05 00 00 00             		bsr	_LIB_TaskMonitoringConfig
+  15                             	.LVL0:
+  16 000b 03                      		.balign 2,3,1
+  17                             	.L3:
+ 509:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	while ( 1 )
+ 510:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	{
+ 511:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		TRACE_CPU_IDLE_END();
+ 512:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 513:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		OS_Suspend ( (OS_TASK*)NULL );
+  18                             		.loc 1 513 0
+  19 000c 66 01                   		mov.L	#0, r1
+  20 000e 05 00 00 00             		bsr	_OS_Suspend
+  21                             	.LVL1:
+ 514:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****         MAIN_ANALOG_TASK_TRACE_BEGIN();
+ 515:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		/*OS_EnterRegion();*/
+ 516:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		/* here the scheduler is switched off */
+ 517:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		/* debug: begin */
+ 518:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		Main_AnalogInputsTask_DelayOnZC_GetTiming();
+ 519:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		Main_AnalogInputsTask_Duration_Start();
+ 520:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		/* debug: end */
+ 521:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		MAIN_ANALOG_INPUTS_TASK__MONITOR_IN()
+  22                             		.loc 1 521 0
+  23 0012 66 11                   		mov	#1, r1
+  24 0014 66 12                   		mov.L	#1, r2
+  25 0016 05 00 00 00             		bsr	_LIB_SetTask
+  26                             	.LVL2:
+  27 001a 66 11                   		mov	#1, r1
+  28 001c 05 00 00 00             		bsr	_LIB_TaskStartActivity
+  29                             	.LVL3:
+ 522:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if defined(CONFIG_PM_ANALOG_FEEDBACKS_SUPPORT)
+ 523:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		PM_AnalogFeedbackManager();
+  30                             		.loc 1 523 0
+  31 0020 05 00 00 00             		bsr	_PM_AnalogFeedbackManager
+  32                             	.LVL4:
+ 524:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif /* CONFIG_PM_ANALOG_FEEDBACKS_SUPPORT*/
+ 525:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		LIB_ADC_Manager();
+  33                             		.loc 1 525 0
+  34 0024 05 00 00 00             		bsr	_LIB_ADC_Manager
+  35                             	.LVL5:
+ 526:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		ANALOG_INPUT_TASK__BODY ( 1 );
+  36                             		.loc 1 526 0
+  37 0028 66 11                   		mov	#1, r1
+  38 002a 05 00 00 00             		bsr	_LIB_Backup_CheckIfIsTimeToBackup
+  39                             	.LVL6:
+  40 002e 61 11                   		cmp	#1, r1
+  41 0030 1E                      		bne	.L2
+  42                             		.loc 1 526 0 is_stmt 0 discriminator 1
+  43 0031 05 00 00 00             		bsr	_Main_ActivateBackup
+  44                             	.LVL7:
+  45 0035 03                      		.balign 2,3,1
+  46                             	.L2:
+ 527:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		MAIN_ANALOG_INPUTS_TASK__MONITOR_OUT()
+  47                             		.loc 1 527 0 is_stmt 1
+  48 0036 66 11                   		mov	#1, r1
+  49 0038 05 00 00 00             		bsr	_LIB_TaskEndActivity
+  50                             	.LVL8:
+ 528:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		/* debug: begin */
+ 529:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		Main_AnalogInputsTask_Duration_End();
+ 530:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		/* debug: end */
+ 531:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		/*OS_LeaveRegion();*/
+ 532:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		/* here the scheduler is switched on */
+ 533:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****         MAIN_ANALOG_TASK_TRACE_END();
+ 534:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	}
+  51                             		.loc 1 534 0
+  52 003c 2E D0                   		bra	.L3
+  53                             	.LFE6:
+  55                             		.section	.rodata.str1.1,"aMS",@progbits,1
+  56                             	.LC0:
+  57 0000 41 6E 61 6C 6F 67 49 6E 		.string	"AnalogInputsTask"
+  57      70 75 74 73 54 61 73 6B 
+  57      00 
+  58                             		.section	.text.Main_AnalogInit,"ax",@progbits
+  59                             		.global	_Main_AnalogInit
+  61                             	_Main_AnalogInit:
+  62                             	.LFB0:
+ 381:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+  63                             		.loc 1 381 0
+  64 0000 60 80                   		sub	#8, r0
+  65                             	.LCFI0:
+ 382:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	OS_CREATETASK ( &Main_AnalogInputsTaskTCB,
+  66                             		.loc 1 382 0
+  67 0002 F8 02 00 00 00 00       		mov.L	#_Main_AnalogInputsTaskStack, [r0]
+  68 0008 F9 0A 01 00 03          		mov.L	#0x300, 4[r0]
+  69 000d FB 12 00 00 00 00       		mov.L	#_Main_AnalogInputsTaskTCB, r1
+  70 0013 FB 22 00 00 00 00       		mov.L	#.LC0, r2
+  71 0019 75 43 46                		mov	#0x46, r3
+  72 001c FB 42 00 00 00 00       		mov.L	#_Main_AnalogInputsTask, r4
+  73 0022 05 00 00 00             		bsr	_OS_CreateTask_S
+  74                             	.LVL9:
+ 387:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	OS_CreateAlarm ( &Main_AlmMeasureAnalog, AlmAnalogCallback, ( OS_U32 ) 0, ( OS_U32 ) 0 );
+  75                             		.loc 1 387 0
+  76 0026 FB 12 00 00 00 00       		mov.L	#_Main_AlmMeasureAnalog, r1
+  77 002c FB 22 00 00 00 00       		mov.L	#_AlmAnalogCallback, r2
+  78 0032 66 03                   		mov.L	#0, r3
+  79 0034 EF 34                   		mov.L	r3, r4
+  80 0036 05 00 00 00             		bsr	_OS_CreateAlarm_
+  81                             	.LVL10:
+ 388:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	OS_EVENT_Create ( &Main_AnalogRef_Event );
+  82                             		.loc 1 388 0
+  83 003a FB 12 00 00 00 00       		mov.L	#_Main_AnalogRef_Event, r1
+ 395:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+  84                             		.loc 1 395 0
+  85 0040 62 80                   		add	#8, r0
+ 388:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	OS_EVENT_Create ( &Main_AnalogRef_Event );
+  86                             		.loc 1 388 0
+  87 0042 04 00 00 00             		bra	_OS_EVENT_Create
+  88                             	.LVL11:
+  89                             	.LFE0:
+  91                             		.section	.text.Main_AnalogRefMonitor,"ax",@progbits
+  92                             		.global	_Main_AnalogRefMonitor
+  94                             	_Main_AnalogRefMonitor:
+  95                             	.LFB1:
+ 403:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+  96                             		.loc 1 403 0
+ 404:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	if ( LIB_ADC_Is_Ref_Good() )
+  97                             		.loc 1 404 0
+  98 0000 05 00 00 00             		bsr	_LIB_ADC_Is_Ref_Good
+  99                             	.LVL12:
+ 100 0004 61 01                   		cmp	#0, r1
+ 406:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		OS_EVENT_Set ( &Main_AnalogRef_Event );
+ 101                             		.loc 1 406 0
+ 102 0006 FB 12 00 00 00 00       		mov.L	#_Main_AnalogRef_Event, r1
+ 404:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	if ( LIB_ADC_Is_Ref_Good() )
+ 103                             		.loc 1 404 0
+ 104 000c 15                      		beq	.L7
+ 406:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		OS_EVENT_Set ( &Main_AnalogRef_Event );
+ 105                             		.loc 1 406 0
+ 106 000d 04 00 00 00             		bra	_OS_EVENT_Set
+ 107                             	.LVL13:
+ 108                             	.L7:
+ 410:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		OS_EVENT_Reset ( &Main_AnalogRef_Event );
+ 109                             		.loc 1 410 0
+ 110 0011 04 00 00 00             		bra	_OS_EVENT_Reset
+ 111                             	.LVL14:
+ 112                             	.LFE1:
+ 114                             		.section	.text.Main_Analog_IsRefOk,"ax",@progbits
+ 115                             		.global	_Main_Analog_IsRefOk
+ 117                             	_Main_Analog_IsRefOk:
+ 118                             	.LFB2:
+ 420:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 119                             		.loc 1 420 0
+ 421:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	return OS_EVENT_Get ( &Main_AnalogRef_Event );
+ 120                             		.loc 1 421 0
+ 121 0000 FB 12 00 00 00 00       		mov.L	#_Main_AnalogRef_Event, r1
+ 122 0006 04 00 00 00             		bra	_OS_EVENT_Get
+ 123                             	.LVL15:
+ 124                             	.LFE2:
+ 126                             		.section	.text.Main_ActivateAnalogInputs,"ax",@progbits
+ 127                             		.global	_Main_ActivateAnalogInputs
+ 129                             	_Main_ActivateAnalogInputs:
+ 130                             	.LFB3:
+ 429:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 131                             		.loc 1 429 0
+ 430:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	if ( OS_GetSuspendCnt ( &Main_AnalogInputsTaskTCB ) > 0 )
+ 132                             		.loc 1 430 0
+ 133 0000 FB 12 00 00 00 00       		mov.L	#_Main_AnalogInputsTaskTCB, r1
+ 134 0006 05 00 00 00             		bsr	_OS_GetSuspendCnt
+ 135                             	.LVL16:
+ 136 000a 76 21 FF 00             		and #0xff, r1
+ 137 000e 20 0C                   		beq	.L9
+ 432:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		OS_Resume ( &Main_AnalogInputsTaskTCB );
+ 138                             		.loc 1 432 0
+ 139 0010 FB 12 00 00 00 00       		mov.L	#_Main_AnalogInputsTaskTCB, r1
+ 140 0016 04 00 00 00             		bra	_OS_Resume
+ 141                             	.LVL17:
+ 142                             	.L9:
+ 143 001a 02                      		rts
+ 144                             	.LFE3:
+ 146                             		.section	.text.AlmAnalogCallback,"ax",@progbits
+ 148                             	_AlmAnalogCallback:
+ 149                             	.LFB7:
+ 535:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+ 536:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 537:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 538:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 539:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 540:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 541:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 542:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 543:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if MAIN_ANALOG_INPUTS_TASK_DEBUG   &&   MAIN_ANALOG_INPUTS_TASK_DELAY_ON_ZC
+ 544:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 545:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** Init Duration  measurement
+ 546:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 547:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static void Main_AnalogInputsTask_DelayOnZC_Init ( void )
+ 548:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 549:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	Tools_CreateTimingMeasure ( &AnalogInputsDelayOnZC );
+ 550:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+ 551:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 552:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** Starts the delay measurement
+ 553:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 554:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static void Main_AnalogInputsTask_DelayOnZC_SetRef ( void )
+ 555:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 556:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	Tools_TimingSetRef ( &AnalogInputsDelayOnZC );
+ 557:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+ 558:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 559:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 560:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** Stops the delay measurement
+ 561:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 562:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static void Main_AnalogInputsTask_DelayOnZC_GetTiming ( void )
+ 563:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 564:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	( void ) Tools_GetTiming ( &AnalogInputsDelayOnZC );
+ 565:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+ 566:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif /* MAIN_ANALOG_INPUTS_TASK_DEBUG   &&   MAIN_ANALOG_INPUTS_TASK_DELAY_ON_ZC */
+ 567:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 568:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 569:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if MAIN_ANALOG_INPUTS_TASK_DEBUG && MAIN_ANALOG_INPUTS_TASK_DURATION
+ 570:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInputsTask_Duration_Init ( void )
+ 571:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 572:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	Tools_CreateTimingMeasure ( &AnalogInputsDuration );
+ 573:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	Tools_CreateTimingStats ( &AnalogInputsTaskDurationStat );
+ 574:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+ 575:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 576:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInputsTask_Duration_Start ( void )
+ 577:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 578:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	Tools_TimingSetRef ( &AnalogInputsDuration );
+ 579:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+ 580:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 581:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInputsTask_Duration_End ( void )
+ 582:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 583:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	Tools_ProcessValue ( &AnalogInputsTaskDurationStat, Tools_GetTiming ( &AnalogInputsDuration ) );
+ 584:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+ 585:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif /* MAIN_ANALOG_INPUTS_TASK_DEBUG && MAIN_ANALOG_INPUTS_TASK_DURATION */
+ 586:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 587:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 588:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #if     MAIN_ANALOG_INPUTS_TASK_DEBUG && MAIN_ANALOG_INPUTS_TASK_TUNING
+ 589:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** void Main_AnalogInputsTask_Tuning_Init ( void )
+ 590:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 591:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	AnalogInputsTuning = 0;
+ 592:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+ 593:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 594:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** OS_I32 Main_AnalogInputsTask_Tuner ( OS_U32 usOffset )
+ 595:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 596:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	if ( AnalogInputsTuning < 0 )
+ 597:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	{
+ 598:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		if ( -AnalogInputsTuning > usOffset )
+ 599:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		{
+ 600:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 			AnalogInputsTuning = - ( ( OS_I32 ) usOffset );
+ 601:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 		}
+ 602:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	}
+ 603:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	
+ 604:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	return AnalogInputsTuning;
+ 605:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+ 606:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** #endif /* MAIN_ANALOG_INPUTS_TASK_DEBUG && MAIN_ANALOG_INPUTS_TASK_TUNING */
+ 607:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 608:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 609:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** /**
+ 610:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** High resolution timer Alarm callback is called when Main_AlmMeasureAnalog expires.
+ 611:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** It resumes task Main_AnalogInputsTask
+ 612:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 
+ 613:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \author 	Roberto Fioravanti
+ 614:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \date		29/03/2011
+ 615:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** \version	1.0.0
+ 616:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** */
+ 617:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** static void AlmAnalogCallback ( void )
+ 618:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 150                             		.loc 1 618 0
+ 619:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	Main_ActivateAnalogInputs();
+ 151                             		.loc 1 619 0
+ 152 0000 04 00 00 00             		bra	_Main_ActivateAnalogInputs
+ 153                             	.LVL18:
+ 154                             	.LFE7:
+ 156                             		.section	.text.Main_ScheduleAnalogMeasure,"ax",@progbits
+ 157                             		.global	_Main_ScheduleAnalogMeasure
+ 159                             	_Main_ScheduleAnalogMeasure:
+ 160                             	.LFB4:
+ 447:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 161                             		.loc 1 447 0
+ 162                             	.LVL19:
+ 163 0000 6E 7A                   		pushm	r7-r10
+ 164                             	.LCFI1:
+ 165 0002 60 40                   		sub	#4, r0
+ 166                             	.LCFI2:
+ 167 0004 EF 1A                   		mov.L	r1, r10
+ 448:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****     OS_ALARM_TICK ref = (OS_ALARM_TICK)TickRef;	
+ 168                             		.loc 1 448 0
+ 169 0006 D3 02                   		mov.W	r2, [r0]
+ 170                             	.LVL20:
+ 450:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	if(OS_IsTask(&Main_AnalogInputsTaskTCB))
+ 171                             		.loc 1 450 0
+ 172 0008 FB 12 00 00 00 00       		mov.L	#_Main_AnalogInputsTaskTCB, r1
+ 173                             	.LVL21:
+ 174 000e 05 00 00 00             		bsr	_OS_IsTask
+ 175                             	.LVL22:
+ 176 0012 76 21 FF 00             		and #0xff, r1
+ 177 0016 20 54                   		beq	.L12
+ 452:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****         OS_START_ABSALARM_ONESHOT ( &Main_AlmMeasureAnalog, usOffset, &ref );
+ 178                             		.loc 1 452 0
+ 179 0018 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 180                             	.LVL23:
+ 181 001c FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 182 0022 CD 7E 01                		mov.B	1[r7], r14
+ 183 0025 62 1E                   		add	#1, r14
+ 184 0027 C7 7E 01                		mov.B	r14, 1[r7]
+ 185 002a FB 12 00 00 00 00       		mov.L	#_Main_AlmMeasureAnalog, r1
+ 186 0030 05 00 00 00             		bsr	_OS_StopAlarm
+ 187                             	.LVL24:
+ 188 0034 FB 12 00 00 00 00       		mov.L	#_Main_AlmMeasureAnalog, r1
+ 189 003a 66 02                   		mov.L	#0, r2
+ 190 003c 05 00 00 00             		bsr	_OS_SetAlarmPeriod_
+ 191                             	.LVL25:
+ 192 0040 FB 12 00 00 00 00       		mov.L	#_Main_AlmMeasureAnalog, r1
+ 193 0046 EF A2                   		mov.L	r10, r2
+ 194 0048 05 00 00 00             		bsr	_OS_SetAlarmOffset_
+ 195                             	.LVL26:
+ 196 004c FB 12 00 00 00 00       		mov.L	#_Main_AlmMeasureAnalog, r1
+ 197 0052 EF 02                   		mov.L	r0, r2
+ 198 0054 05 00 00 00             		bsr	_OS_StartAbsAlarm
+ 199                             	.LVL27:
+ 200 0058 CD 7E 01                		mov.B	1[r7], r14
+ 201 005b 60 1E                   		sub	#1, r14
+ 202 005d C7 7E 01                		mov.B	r14, 1[r7]
+ 203 0060 76 2E FF 00             		and #0xff, r14
+ 204 0064 1E                      		bne	.L12
+ 452:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****         OS_START_ABSALARM_ONESHOT ( &Main_AlmMeasureAnalog, usOffset, &ref );
+ 205                             		.loc 1 452 0 is_stmt 0 discriminator 1
+ 206 0065 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 207                             	.LVL28:
+ 208 0069 03                      		.balign 2,3,2
+ 209                             	.L12:
+ 455:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+ 210                             		.loc 1 455 0 is_stmt 1
+ 211 006a 3F 7A 05                		rtsd	#20, r7-r10
+ 212                             	.LFE4:
+ 214 006d 03                      		.section	.text.Main_SchedulePeriodicAnalogMeasure,"ax",@progbits
+ 215                             		.global	_Main_SchedulePeriodicAnalogMeasure
+ 217                             	_Main_SchedulePeriodicAnalogMeasure:
+ 218                             	.LFB5:
+ 471:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** {
+ 219                             		.loc 1 471 0
+ 220                             	.LVL29:
+ 221 0000 6E 7B                   		pushm	r7-r11
+ 222                             	.LCFI3:
+ 223 0002 60 40                   		sub	#4, r0
+ 224                             	.LCFI4:
+ 225 0004 EF 1B                   		mov.L	r1, r11
+ 226 0006 EF 2A                   		mov.L	r2, r10
+ 472:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****     OS_ALARM_TICK ref = (OS_ALARM_TICK)TickRef;
+ 227                             		.loc 1 472 0
+ 228 0008 D3 03                   		mov.W	r3, [r0]
+ 229                             	.LVL30:
+ 474:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** 	if(OS_IsTask(&Main_AnalogInputsTaskTCB))
+ 230                             		.loc 1 474 0
+ 231 000a FB 12 00 00 00 00       		mov.L	#_Main_AnalogInputsTaskTCB, r1
+ 232                             	.LVL31:
+ 233 0010 05 00 00 00             		bsr	_OS_IsTask
+ 234                             	.LVL32:
+ 235 0014 76 21 FF 00             		and #0xff, r1
+ 236 0018 20 60                   		beq	.L17
+ 476:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****         OS_START_ABSALARM(&Main_AlmMeasureAnalog, usOffset, usPeriod, -1, &ref );
+ 237                             		.loc 1 476 0
+ 238 001a 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 239                             	.LVL33:
+ 240 001e FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 241 0024 CD 7E 01                		mov.B	1[r7], r14
+ 242 0027 62 1E                   		add	#1, r14
+ 243 0029 C7 7E 01                		mov.B	r14, 1[r7]
+ 244 002c FB 12 00 00 00 00       		mov.L	#_Main_AlmMeasureAnalog, r1
+ 245 0032 05 00 00 00             		bsr	_OS_StopAlarm
+ 246                             	.LVL34:
+ 247 0036 FB 12 00 00 00 00       		mov.L	#_Main_AlmMeasureAnalog, r1
+ 248 003c EF B2                   		mov.L	r11, r2
+ 249 003e 05 00 00 00             		bsr	_OS_SetAlarmOffset_
+ 250                             	.LVL35:
+ 251 0042 FB 12 00 00 00 00       		mov.L	#_Main_AlmMeasureAnalog, r1
+ 252 0048 EF A2                   		mov.L	r10, r2
+ 253 004a 05 00 00 00             		bsr	_OS_SetAlarmPeriod_
+ 254                             	.LVL36:
+ 255 004e FB 12 00 00 00 00       		mov.L	#_Main_AlmMeasureAnalog, r1
+ 256 0054 FB 26 FF                		mov.L	#-1, r2
+ 257 0057 05 00 00 00             		bsr	_OS_SetAlarmActivationsCount_
+ 258                             	.LVL37:
+ 259 005b FB 12 00 00 00 00       		mov.L	#_Main_AlmMeasureAnalog, r1
+ 260 0061 EF 02                   		mov.L	r0, r2
+ 261 0063 05 00 00 00             		bsr	_OS_StartAbsAlarm
+ 262                             	.LVL38:
+ 263 0067 CD 7E 01                		mov.B	1[r7], r14
+ 264 006a 60 1E                   		sub	#1, r14
+ 265 006c C7 7E 01                		mov.B	r14, 1[r7]
+ 266 006f 76 2E FF 00             		and #0xff, r14
+ 267 0073 1D                      		bne	.L17
+ 476:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c ****         OS_START_ABSALARM(&Main_AlmMeasureAnalog, usOffset, usPeriod, -1, &ref );
+ 268                             		.loc 1 476 0 is_stmt 0 discriminator 1
+ 269 0074 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 270                             	.LVL39:
+ 271                             		.balign 2,3,2
+ 272                             	.L17:
+ 479:C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS\Main_AnalogInputs.c **** }
+ 273                             		.loc 1 479 0 is_stmt 1
+ 274 0078 3F 7B 06                		rtsd	#24, r7-r11
+ 275                             	.LFE5:
+ 277 007b 03                      		.section	.bss.Main_AnalogInputsTaskTCB,"aw",@nobits
+ 278                             		.balign 4
+ 281                             	_Main_AnalogInputsTaskTCB:
+ 282 0000 00 00 00 00 00 00 00 00 		.zero	44
+ 282      00 00 00 00 00 00 00 00 
+ 282      00 00 00 00 00 00 00 00 
+ 282      00 00 00 00 00 00 00 00 
+ 282      00 00 00 00 00 00 00 00 
+ 283                             		.section	.osstack,"aw",@progbits
+ 284                             		.balign 4
+ 287                             	_Main_AnalogInputsTaskStack:
+ 288 0000 00 00 00 00 00 00 00 00 		.zero	768
+ 288      00 00 00 00 00 00 00 00 
+ 288      00 00 00 00 00 00 00 00 
+ 288      00 00 00 00 00 00 00 00 
+ 288      00 00 00 00 00 00 00 00 
+ 289                             		.section	.bss.Main_AlmMeasureAnalog,"aw",@nobits
+ 290                             		.balign 4
+ 293                             	_Main_AlmMeasureAnalog:
+ 294 0000 00 00 00 00 00 00 00 00 		.zero	20
+ 294      00 00 00 00 00 00 00 00 
+ 294      00 00 00 00 
+ 295                             		.section	.bss.Main_AnalogRef_Event,"aw",@nobits
+ 296                             		.balign 4
+ 299                             	_Main_AnalogRef_Event:
+ 300 0000 00 00 00 00 00 00 00 00 		.zero	8
+ 421                             	.Letext0:
+ 422                             		.file 2 "C:\\Workspace\\FW_Inertia\\branch_indesit\\HAL\\HAL_General/StandardTypes.h"
+ 423                             		.file 3 "C:\\Workspace\\FW_Inertia\\branch_indesit\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 424                             		.file 4 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_SecurityCheck/LIB_TaskMon
+ 425                             		.file 5 "C:\\Workspace\\FW_Inertia\\branch_indesit\\ProductModules\\PM_AnalogFeedbacks/PM_AnalogFe
+ 426                             		.file 6 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_Analog/Analog.h"
+ 427                             		.file 7 "C:/Workspace/FW_Inertia/branch_indesit/Main/EmbOS/Main.h"
+ 428                             		.file 8 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_BackUp/LIB_Backup.h"
+ 429                             		.file 9 "C:\\Workspace\\FW_Inertia\\branch_indesit\\CFG_DishWasher\\CFG_Inertia/TaskMonitor_Cfg.h"
+ 430                             		.file 10 "C:\\Workspace\\FW_Inertia\\branch_indesit\\PlatformLibrary\\LIB_Analog/AnalogExp.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 Main_AnalogInputs.c
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:6      .text.Main_AnalogInputsTask:00000000 _Main_AnalogInputsTask
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:11     .text.Main_AnalogInputsTask:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:61     .text.Main_AnalogInit:00000000 _Main_AnalogInit
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:64     .text.Main_AnalogInit:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:287    .osstack:00000000 _Main_AnalogInputsTaskStack
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:281    .bss.Main_AnalogInputsTaskTCB:00000000 _Main_AnalogInputsTaskTCB
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:293    .bss.Main_AlmMeasureAnalog:00000000 _Main_AlmMeasureAnalog
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:148    .text.AlmAnalogCallback:00000000 _AlmAnalogCallback
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:299    .bss.Main_AnalogRef_Event:00000000 _Main_AnalogRef_Event
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:94     .text.Main_AnalogRefMonitor:00000000 _Main_AnalogRefMonitor
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:98     .text.Main_AnalogRefMonitor:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:117    .text.Main_Analog_IsRefOk:00000000 _Main_Analog_IsRefOk
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:121    .text.Main_Analog_IsRefOk:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:129    .text.Main_ActivateAnalogInputs:00000000 _Main_ActivateAnalogInputs
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:133    .text.Main_ActivateAnalogInputs:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:152    .text.AlmAnalogCallback:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:159    .text.Main_ScheduleAnalogMeasure:00000000 _Main_ScheduleAnalogMeasure
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:163    .text.Main_ScheduleAnalogMeasure:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:217    .text.Main_SchedulePeriodicAnalogMeasure:00000000 _Main_SchedulePeriodicAnalogMeasure
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:221    .text.Main_SchedulePeriodicAnalogMeasure:00000000 L0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:56     .rodata.str1.1:00000000 .LC0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:302    .debug_frame:00000000 .Lframe0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:7      .text.Main_AnalogInputsTask:00000000 .LFB6
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:62     .text.Main_AnalogInit:00000000 .LFB0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:95     .text.Main_AnalogRefMonitor:00000000 .LFB1
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:118    .text.Main_Analog_IsRefOk:00000000 .LFB2
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:130    .text.Main_ActivateAnalogInputs:00000000 .LFB3
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:149    .text.AlmAnalogCallback:00000000 .LFB7
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:160    .text.Main_ScheduleAnalogMeasure:00000000 .LFB4
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:218    .text.Main_SchedulePeriodicAnalogMeasure:00000000 .LFB5
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:2292   .debug_abbrev:00000000 .Ldebug_abbrev0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3235   .debug_str:000002a4 .LASF126
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3217   .debug_str:000001d4 .LASF127
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3125   .debug_ranges:00000000 .Ldebug_ranges0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3145   .debug_line:00000000 .Ldebug_line0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3349   .debug_str:000005bb .LASF0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3211   .debug_str:000001ad .LASF6
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3259   .debug_str:00000343 .LASF1
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3247   .debug_str:00000303 .LASF2
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3201   .debug_str:00000170 .LASF3
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3173   .debug_str:000000b3 .LASF4
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3209   .debug_str:0000019f .LASF5
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3375   .debug_str:0000067c .LASF7
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3309   .debug_str:000004a6 .LASF8
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3183   .debug_str:00000105 .LASF9
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3189   .debug_str:00000124 .LASF10
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3343   .debug_str:000005a2 .LASF11
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3383   .debug_str:000006b0 .LASF12
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3397   .debug_str:000006f8 .LASF13
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3207   .debug_str:00000192 .LASF14
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3357   .debug_str:000005e4 .LASF15
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3147   .debug_str:00000000 .LASF16
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3213   .debug_str:000001b6 .LASF17
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3335   .debug_str:00000568 .LASF18
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3231   .debug_str:00000290 .LASF32
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3155   .debug_str:00000032 .LASF19
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3271   .debug_str:00000383 .LASF20
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3167   .debug_str:0000008d .LASF21
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3177   .debug_str:000000e8 .LASF22
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3249   .debug_str:00000315 .LASF23
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3261   .debug_str:00000356 .LASF24
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3353   .debug_str:000005d0 .LASF25
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3341   .debug_str:00000598 .LASF26
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3371   .debug_str:0000066d .LASF27
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3409   .debug_str:0000074a .LASF28
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3373   .debug_str:00000672 .LASF29
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3289   .debug_str:0000040b .LASF30
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3355   .debug_str:000005d7 .LASF31
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3369   .debug_str:00000659 .LASF33
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3395   .debug_str:000006f2 .LASF34
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3313   .debug_str:000004c4 .LASF35
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3265   .debug_str:00000368 .LASF36
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3329   .debug_str:0000053b .LASF37
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3149   .debug_str:00000005 .LASF38
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3169   .debug_str:00000097 .LASF39
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3281   .debug_str:000003d0 .LASF40
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3255   .debug_str:00000328 .LASF41
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3239   .debug_str:000002d8 .LASF42
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3333   .debug_str:0000055b .LASF43
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3251   .debug_str:0000031a .LASF44
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3345   .debug_str:000005af .LASF45
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3187   .debug_str:00000118 .LASF46
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3253   .debug_str:00000321 .LASF47
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3237   .debug_str:000002ca .LASF48
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3283   .debug_str:000003da .LASF49
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3347   .debug_str:000005b6 .LASF50
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3401   .debug_str:00000716 .LASF51
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3159   .debug_str:00000043 .LASF52
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3175   .debug_str:000000ca .LASF53
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3287   .debug_str:00000404 .LASF54
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3163   .debug_str:0000006e .LASF55
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3223   .debug_str:0000023c .LASF56
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3339   .debug_str:00000593 .LASF57
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3359   .debug_str:000005f0 .LASF58
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3389   .debug_str:000006cf .LASF59
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3233   .debug_str:0000029f .LASF60
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3185   .debug_str:00000111 .LASF61
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3219   .debug_str:0000021a .LASF62
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3305   .debug_str:00000494 .LASF63
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3171   .debug_str:000000a3 .LASF64
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3245   .debug_str:000002fb .LASF65
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3307   .debug_str:0000049d .LASF66
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3387   .debug_str:000006c8 .LASF67
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3197   .debug_str:0000015a .LASF68
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3267   .debug_str:0000036e .LASF69
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3157   .debug_str:00000038 .LASF70
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3405   .debug_str:0000072e .LASF71
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3377   .debug_str:00000684 .LASF72
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3203   .debug_str:00000179 .LASF73
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3179   .debug_str:000000f0 .LASF74
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3275   .debug_str:0000039d .LASF75
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3293   .debug_str:00000433 .LASF76
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3269   .debug_str:0000037a .LASF77
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3323   .debug_str:00000515 .LASF78
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3241   .debug_str:000002e0 .LASF79
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3277   .debug_str:000003a6 .LASF80
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3199   .debug_str:00000160 .LASF81
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3351   .debug_str:000005c5 .LASF128
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3303   .debug_str:00000487 .LASF82
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3327   .debug_str:0000052c .LASF83
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3195   .debug_str:0000014b .LASF84
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3295   .debug_str:0000043c .LASF85
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3321   .debug_str:00000503 .LASF86
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3399   .debug_str:00000701 .LASF87
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3215   .debug_str:000001be .LASF91
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:53     .text.Main_AnalogInputsTask:0000003e .LFE6
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:15     .text.Main_AnalogInputsTask:0000000b .LVL0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:21     .text.Main_AnalogInputsTask:00000012 .LVL1
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:26     .text.Main_AnalogInputsTask:0000001a .LVL2
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:29     .text.Main_AnalogInputsTask:00000020 .LVL3
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:32     .text.Main_AnalogInputsTask:00000024 .LVL4
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:35     .text.Main_AnalogInputsTask:00000028 .LVL5
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:39     .text.Main_AnalogInputsTask:0000002e .LVL6
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:44     .text.Main_AnalogInputsTask:00000035 .LVL7
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:50     .text.Main_AnalogInputsTask:0000003c .LVL8
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3317   .debug_str:000004e0 .LASF88
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:89     .text.Main_AnalogInit:00000046 .LFE0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:2988   .debug_loc:00000000 .LLST0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:74     .text.Main_AnalogInit:00000026 .LVL9
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:81     .text.Main_AnalogInit:0000003a .LVL10
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:88     .text.Main_AnalogInit:00000046 .LVL11
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3297   .debug_str:0000044e .LASF89
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:112    .text.Main_AnalogRefMonitor:00000015 .LFE1
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:99     .text.Main_AnalogRefMonitor:00000004 .LVL12
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:107    .text.Main_AnalogRefMonitor:00000011 .LVL13
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:111    .text.Main_AnalogRefMonitor:00000015 .LVL14
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3205   .debug_str:0000017e .LASF129
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:124    .text.Main_Analog_IsRefOk:0000000a .LFE2
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:123    .text.Main_Analog_IsRefOk:0000000a .LVL15
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3161   .debug_str:00000054 .LASF90
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:144    .text.Main_ActivateAnalogInputs:0000001b .LFE3
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:135    .text.Main_ActivateAnalogInputs:0000000a .LVL16
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:141    .text.Main_ActivateAnalogInputs:0000001a .LVL17
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3301   .debug_str:00000475 .LASF92
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:154    .text.AlmAnalogCallback:00000004 .LFE7
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:153    .text.AlmAnalogCallback:00000004 .LVL18
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3221   .debug_str:00000221 .LASF93
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:212    .text.Main_ScheduleAnalogMeasure:0000006d .LFE4
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3001   .debug_loc:00000020 .LLST1
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3325   .debug_str:00000523 .LASF94
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3019   .debug_loc:0000004c .LLST2
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3227   .debug_str:00000267 .LASF95
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3030   .debug_loc:0000006a .LLST3
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:175    .text.Main_ScheduleAnalogMeasure:00000012 .LVL22
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:180    .text.Main_ScheduleAnalogMeasure:0000001c .LVL23
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:187    .text.Main_ScheduleAnalogMeasure:00000034 .LVL24
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:191    .text.Main_ScheduleAnalogMeasure:00000040 .LVL25
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:195    .text.Main_ScheduleAnalogMeasure:0000004c .LVL26
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:199    .text.Main_ScheduleAnalogMeasure:00000058 .LVL27
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:207    .text.Main_ScheduleAnalogMeasure:00000069 .LVL28
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3337   .debug_str:00000570 .LASF96
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:275    .text.Main_SchedulePeriodicAnalogMeasure:0000007b .LFE5
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3044   .debug_loc:0000008b .LLST4
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3062   .debug_loc:000000b7 .LLST5
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3263   .debug_str:0000035f .LASF97
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3073   .debug_loc:000000d5 .LLST6
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3084   .debug_loc:000000f3 .LLST7
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:234    .text.Main_SchedulePeriodicAnalogMeasure:00000014 .LVL32
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:239    .text.Main_SchedulePeriodicAnalogMeasure:0000001e .LVL33
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:246    .text.Main_SchedulePeriodicAnalogMeasure:00000036 .LVL34
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:250    .text.Main_SchedulePeriodicAnalogMeasure:00000042 .LVL35
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:254    .text.Main_SchedulePeriodicAnalogMeasure:0000004e .LVL36
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:258    .text.Main_SchedulePeriodicAnalogMeasure:0000005b .LVL37
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:262    .text.Main_SchedulePeriodicAnalogMeasure:00000067 .LVL38
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:270    .text.Main_SchedulePeriodicAnalogMeasure:00000078 .LVL39
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3367   .debug_str:0000063e .LASF98
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3291   .debug_str:0000041a .LASF99
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3365   .debug_str:00000628 .LASF100
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3165   .debug_str:00000078 .LASF101
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3181   .debug_str:000000fb .LASF130
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3361   .debug_str:000005f9 .LASF102
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3411   .debug_str:00000754 .LASF103
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3193   .debug_str:0000013f .LASF104
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3363   .debug_str:00000612 .LASF105
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3279   .debug_str:000003b7 .LASF106
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3311   .debug_str:000004b4 .LASF107
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3229   .debug_str:0000026f .LASF115
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3331   .debug_str:00000547 .LASF108
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3225   .debug_str:00000253 .LASF109
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3403   .debug_str:0000071e .LASF110
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3243   .debug_str:000002eb .LASF111
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3153   .debug_str:00000022 .LASF112
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3381   .debug_str:0000069c .LASF131
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3379   .debug_str:0000068f .LASF113
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3385   .debug_str:000006b9 .LASF114
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3391   .debug_str:000006d8 .LASF116
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3299   .debug_str:00000464 .LASF117
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3257   .debug_str:00000339 .LASF118
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3151   .debug_str:00000018 .LASF119
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3191   .debug_str:0000012b .LASF120
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3393   .debug_str:000006e5 .LASF121
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3315   .debug_str:000004cd .LASF122
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3319   .debug_str:000004f0 .LASF123
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3407   .debug_str:00000739 .LASF124
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3273   .debug_str:0000038a .LASF125
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:3285   .debug_str:000003e7 .LASF132
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:65     .text.Main_AnalogInit:00000002 .LCFI0
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:164    .text.Main_ScheduleAnalogMeasure:00000002 .LCFI1
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:166    .text.Main_ScheduleAnalogMeasure:00000004 .LCFI2
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:162    .text.Main_ScheduleAnalogMeasure:00000000 .LVL19
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:173    .text.Main_ScheduleAnalogMeasure:0000000e .LVL21
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:222    .text.Main_SchedulePeriodicAnalogMeasure:00000002 .LCFI3
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:224    .text.Main_SchedulePeriodicAnalogMeasure:00000004 .LCFI4
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:220    .text.Main_SchedulePeriodicAnalogMeasure:00000000 .LVL29
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:232    .text.Main_SchedulePeriodicAnalogMeasure:00000010 .LVL31
+C:\Users\Andrea\AppData\Local\Temp\ccmJnrU3.s:432    .debug_info:00000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_LIB_TaskMonitoringConfig
+_OS_Suspend
+_LIB_SetTask
+_LIB_TaskStartActivity
+_PM_AnalogFeedbackManager
+_LIB_ADC_Manager
+_LIB_Backup_CheckIfIsTimeToBackup
+_Main_ActivateBackup
+_LIB_TaskEndActivity
+_OS_CreateTask_S
+_OS_CreateAlarm_
+_OS_EVENT_Create
+_LIB_ADC_Is_Ref_Good
+_OS_EVENT_Set
+_OS_EVENT_Reset
+_OS_EVENT_Get
+_OS_GetSuspendCnt
+_OS_Resume
+_OS_IsTask
+_OS_DisableInterrupt
+_OS_Global
+_OS_StopAlarm
+_OS_SetAlarmPeriod_
+_OS_SetAlarmOffset_
+_OS_StartAbsAlarm
+_OS_EnableInterrupt
+_OS_SetAlarmActivationsCount_

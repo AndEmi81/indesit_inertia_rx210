@@ -1,0 +1,595 @@
+   1                             		.file	"DigitalOutputMulti.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.PM_DigDelayedMulti_InitSync,"ax",@progbits
+   5                             		.global	_PM_DigDelayedMulti_InitSync
+   7                             	_PM_DigDelayedMulti_InitSync:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti/DigitalOutputMulti
+   1:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** Copyright (c) 2004-2005, Indesit Company, EDT.
+   3:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+   7:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+   8:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /**
+   9:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** Gestione di carichi collegati a 2 pin utilizzati in modalità On/Off.
+  10:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \file    DigitalOutputMulti.c
+  11:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \ingroup PM_DigitalOutputMulti
+  12:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \version 1.0.0
+  13:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \date    28/01/2008
+  14:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \author  Stefano Ughi
+  15:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** */
+  16:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  17:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* Old Versions
+  18:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \version 1.4.0
+  19:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \date    gg/mm/aaaa
+  20:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \author  Progettista_1
+  21:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  22:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \version 1.3.0
+  23:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \date    10/04/2004
+  24:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \author  Progettista_1
+  25:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** */
+  26:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  27:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* ******** */
+  28:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* Includes */
+  29:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* ******** */
+  30:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #if defined(PLATFORM2_SUPPORT) && ( defined(DR_DRYER) || defined (DW_DEA700) || defined(WILD_CARD) 
+  31:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #include "Config.h"
+  32:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #include "DigitalOutputMulti.h"
+  33:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #else
+  34:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #include "SkeletonGlobal.h"
+  35:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #include "IO_Manager.h"
+  36:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #endif
+  37:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #include "LIB_ClassBVar.h"
+  38:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  39:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* ****************** */
+  40:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* Defines and Macros */
+  41:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* ****************** */
+  42:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #if defined(CONFIG_DIGITAL_OUTPUT_MULTI_NUM_OF_LOADS)
+  43:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #define DMD_NUM_OF_LOADS CONFIG_DIGITAL_OUTPUT_MULTI_NUM_OF_LOADS
+  44:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  45:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  46:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* *************************** */
+  47:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* Typedef, Structs and Unions */
+  48:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* *************************** */
+  49:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** typedef struct DMDEL_Struct {
+  50:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  51:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t   pin1;           /* 1� Pin */
+  52:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t   pin2;           /* 2� Pin */
+  53:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t   act_delay;      /* Ritardo di attivazione */
+  54:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t   deact_delay;    /* Ritardo di disattivazione */
+  55:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t   delay_cnt;      /* Contatore per la gestione del ritardo di pilotaggio */
+  56:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t   loadState;      /* Stato del carico */
+  57:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	
+  58:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** } DMDEL_Type;
+  59:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  60:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* **************************** */
+  61:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* Prototype of local functions */
+  62:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* **************************** */
+  63:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  64:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* **************************** */
+  65:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* External functions           */
+  66:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* **************************** */
+  67:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  68:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* ****************** */
+  69:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* Exported variables */
+  70:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* ****************** */
+  71:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  72:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* **************** */
+  73:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* Global variables */
+  74:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* **************** */
+  75:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** static DMDEL_Type DMDVar[DMD_NUM_OF_LOADS];
+  76:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** static uint8_t    DMDLoads;
+  77:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  78:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* ***************** */
+  79:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* Exported function */
+  80:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /* ***************** */
+  81:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** void PM_DigDelayedMulti_InitSync(void)
+  82:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** {	int i;
+  10                             		.loc 1 82 0
+  83:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	SAFETY_REGION_START();
+  84:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	DMDLoads = 0;
+  11                             		.loc 1 84 0
+  12 0000 FB E2 00 00 00 00       		mov.L	#_DMDLoads, r14
+  13 0006 F8 E4 00                		mov.B	#0, [r14]
+  14                             	.LVL0:
+  15 0009 02                      		rts
+  16                             	.LFE0:
+  18                             		.section	.text.DigDelayedMulti_Init,"ax",@progbits
+  19                             		.global	_DigDelayedMulti_Init
+  21                             	_DigDelayedMulti_Init:
+  22                             	.LFB1:
+  85:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	for(i=0;i<DMD_NUM_OF_LOADS; i++){
+  86:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 		SAFETY_DATA_ELEM_UPDATE( DMDVar, i );
+  87:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	}
+  88:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	SAFETY_DATA_UPDATE( DMDLoads );
+  89:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	SAFETY_REGION_END();
+  90:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** }
+  91:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  92:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /**
+  93:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** Funzione per l'inizializzazione di un carico con PylotType DIGITALDELAYED_MULTI_L. 
+  94:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  95:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	pModulePins puntatore al campo contenente i 2 pins
+  96:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	delay_activation: ritardo, impostabile da setting, per l'attivazione del carico
+  97:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	delay_deactivation: ritardo, impostabile da setting, per la disattivazione del carico
+  98:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+  99:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \author 	Leonardo Sparti
+ 100:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \date		  27/05/2011
+ 101:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \version	1.0.0
+ 102:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****    
+ 103:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \note		\par \b Nota 1:
+ 104:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 			documentation by Leonardo Sparti
+ 105:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 106:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** */
+ 107:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** void DigDelayedMulti_Init(pModulesPins_t pModulePins, uint8_t delay_activation, uint8_t delay_deact
+ 108:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** {
+  23                             		.loc 1 108 0
+  24                             	.LVL1:
+  25 0000 7E A7                   		push.l	r7
+  26                             	.LCFI0:
+ 109:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   DMDEL_Type *pDMDVar;
+ 110:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   
+ 111:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   PLT_ASSERT(DMDLoads < DMD_NUM_OF_LOADS)
+ 112:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 113:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_REGION_START();
+ 114:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_DATA_CHECK( DMDLoads );
+ 115:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_DATA_ELEM_CHECK( DMDVar, DMDLoads );
+ 116:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 117:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   pDMDVar = &DMDVar[DMDLoads];
+  27                             		.loc 1 117 0
+  28 0002 FB 42 00 00 00 00       		mov.L	#_DMDLoads, r4
+  29 0008 CC 45                   		mov.B	[r4], r5
+ 118:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   
+ 119:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   pDMDVar->pin1 = *pModulePins;
+  30                             		.loc 1 119 0
+  31 000a CC 17                   		mov.B	[r1], r7
+ 117:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   pDMDVar = &DMDVar[DMDLoads];
+  32                             		.loc 1 117 0
+  33 000c 5B 5E                   		movu.B	r5, r14
+  34 000e 63 6E                   		mul	#6, r14
+  35 0010 70 EE 00 00 00 00       		add	#_DMDVar, r14
+  36                             	.LVL2:
+  37                             		.loc 1 119 0
+  38 0016 C3 E7                   		mov.B	r7, [r14]
+ 120:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   pDMDVar->pin2 = *(pModulePins+1);
+  39                             		.loc 1 120 0
+  40 0018 88 19                   		mov.B	1[r1], r1
+  41                             	.LVL3:
+ 121:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   pDMDVar->act_delay = delay_activation;
+ 122:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   pDMDVar->deact_delay = delay_deactivation;
+ 123:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   pDMDVar->delay_cnt = 0;
+ 124:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   
+ 125:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   DMDLoads++;
+  42                             		.loc 1 125 0
+  43 001a 62 15                   		add	#1, r5
+ 120:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   pDMDVar->pin2 = *(pModulePins+1);
+  44                             		.loc 1 120 0
+  45 001c C7 E1 01                		mov.B	r1, 1[r14]
+ 121:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   pDMDVar->act_delay = delay_activation;
+  46                             		.loc 1 121 0
+  47 001f C7 E2 02                		mov.B	r2, 2[r14]
+ 122:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   pDMDVar->deact_delay = delay_deactivation;
+  48                             		.loc 1 122 0
+  49 0022 C7 E3 03                		mov.B	r3, 3[r14]
+ 123:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   pDMDVar->delay_cnt = 0;
+  50                             		.loc 1 123 0
+  51 0025 F9 E4 04 00             		mov.B	#0, 4[r14]
+  52                             		.loc 1 125 0
+  53 0029 C3 45                   		mov.B	r5, [r4]
+ 126:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 127:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_DATA_ELEM_UPDATE( DMDVar, DMDLoads );
+ 128:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_DATA_UPDATE( DMDLoads );
+ 129:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_REGION_END();
+ 130:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** }
+  54                             		.loc 1 130 0
+  55 002b 3F 77 01                		rtsd	#4, r7-r7
+  56                             	.LFE1:
+  58                             		.section	.text.DigOutMultiSetLoad,"ax",@progbits
+  59                             		.global	_DigOutMultiSetLoad
+  61                             	_DigOutMultiSetLoad:
+  62                             	.LFB2:
+ 131:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 132:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /**
+ 133:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** Funzione per l'attivazione/disattivazione di un carico con PylotType DIGITAL_OUTPUT_MULTI_L.
+ 134:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \n Se cfg = DIGOUT_MULTI_FIRST_PIN viene pilotato solo il primo pin mentre il secondo
+ 135:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \n mantiene lo stato corrente
+ 136:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 137:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \n Se cfg = DIGOUT_MULTI_SECOND_PIN viene pilotato solo il secondo pin mentre il primo
+ 138:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \n mantiene lo stato corrente
+ 139:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 140:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \n Se cfg è diverso dalle precedenti, allora i pin vengono pilotati insieme
+ 141:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 142:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	loadParam type L_PARAM stato del carico
+ 143:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	pModulePins puntatore al campo contenente i 2 pins che servono a \n
+ 144:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****                 pilotare il carico
+ 145:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 146:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \author 	Stefano Ughi
+ 147:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \date		10/03/2008
+ 148:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \version	1.0.0
+ 149:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****    
+ 150:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \note		\par \b Nota 1:
+ 151:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 			documentation by Stefano Ughi
+ 152:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 153:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** */
+ 154:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** void DigOutMultiSetLoad(L_PARAM loadParam, pModulesPins_t pModulePins )
+ 155:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** {
+  63                             		.loc 1 155 0
+  64                             	.LVL4:
+  65 0000 6E 7A                   		pushm	r7-r10
+  66                             	.LCFI1:
+  67 0002 60 40                   		sub	#4, r0
+  68                             	.LCFI2:
+  69                             		.loc 1 155 0
+  70 0004 CD 0A 18                		mov.B	24[r0], r10
+  71 0007 EF 27                   		mov.L	r2, r7
+ 156:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t loadState;
+ 157:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	loadState = (loadParam.s.reg?1:0);
+  72                             		.loc 1 157 0
+  73 0009 64 FA                   		and	#15, r10
+  74 000b FC DB A1                		scne.L	r10
+ 158:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	#if defined(PLATFORM2_SUPPORT) && ( defined(DR_DRYER) || defined (DW_DEA700) || defined(WILD_CARD)
+ 159:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #if defined(CONFIG_DIGITAL_OUTPUT_MULTI_SELECTABLE_PINS)
+ 160:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t cfg;
+ 161:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	cfg = loadParam.s.config;
+ 162:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	if(cfg == DIGOUT_MULTI_FIRST_PIN )
+ 163:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	{
+ 164:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 		LIB_DIO_SET_LOAD(loadState, *pModulePins);
+ 165:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	}
+ 166:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	else if (cfg == DIGOUT_MULTI_SECOND_PIN)
+ 167:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	{
+ 168:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 		LIB_DIO_SET_LOAD(loadState, *(pModulePins+1));
+ 169:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	}
+ 170:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	else
+ 171:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** #endif /* CONFIG_DIGITAL_OUTPUT_MULTI_SELECTABLE_PINS */
+ 172:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	{
+ 173:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 		LIB_DIO_SET_LOAD(loadState, *pModulePins);
+  75                             		.loc 1 173 0
+  76 000e CC 22                   		mov.B	[r2], r2
+  77                             	.LVL5:
+  78 0010 CF A1                   		mov.B	r10, r1
+  79 0012 05 00 00 00             		bsr	_LIB_DIO_SET_LOAD
+  80                             	.LVL6:
+ 174:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 		LIB_DIO_SET_LOAD(loadState, *(pModulePins+1));
+ 175:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	}
+ 176:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 177:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	#else
+ 178:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     SET_LOAD( loadState, *pModulePins );
+ 179:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     SET_LOAD( loadState, *(pModulePins+1) );
+ 180:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	#endif
+ 181:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** }
+  81                             		.loc 1 181 0
+  82 0016 62 40                   		add	#4, r0
+ 174:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 		LIB_DIO_SET_LOAD(loadState, *(pModulePins+1));
+  83                             		.loc 1 174 0
+  84 0018 CF A1                   		mov.B	r10, r1
+  85 001a 88 7A                   		mov.B	1[r7], r2
+  86                             		.loc 1 181 0
+  87 001c 6F 7A                   		popm	r7-r10
+  88                             	.LVL7:
+ 174:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 		LIB_DIO_SET_LOAD(loadState, *(pModulePins+1));
+  89                             		.loc 1 174 0
+  90 001e 04 00 00 00             		bra	_LIB_DIO_SET_LOAD
+  91                             	.LVL8:
+  92                             	.LFE2:
+  94                             		.section	.text.DigOutMul3PSetLoad,"ax",@progbits
+  95                             		.global	_DigOutMul3PSetLoad
+  97                             	_DigOutMul3PSetLoad:
+  98                             	.LFB3:
+ 182:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 183:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /**
+ 184:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** Funzione per l'attivazione/disattivazione di un carico con PylotType DIGITAL_OUTPUT_MULTI_3P_L. 
+ 185:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 186:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	loadParam type L_PARAM stato del carico
+ 187:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	pModulePins puntatore al campo contenente i 3 pins che servono a \n
+ 188:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****                 pilotare il carico
+ 189:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 190:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \author 	Leonardo Sparti
+ 191:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \date		  22/09/2010
+ 192:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \version	1.0.0
+ 193:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****    
+ 194:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \note		\par \b Nota 1:
+ 195:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 			documentation by Leonardo Sparti
+ 196:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 197:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** */
+ 198:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** void DigOutMul3PSetLoad(L_PARAM loadParam, pModulesPins_t pModulePins )
+ 199:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** {
+  99                             		.loc 1 199 0
+ 100                             	.LVL9:
+ 101 0000 6E 7A                   		pushm	r7-r10
+ 102                             	.LCFI3:
+ 103 0002 60 40                   		sub	#4, r0
+ 104                             	.LCFI4:
+ 105                             		.loc 1 199 0
+ 106 0004 CD 0A 18                		mov.B	24[r0], r10
+ 107 0007 EF 27                   		mov.L	r2, r7
+ 200:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	uint8_t loadState;
+ 201:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 202:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     loadState = (loadParam.s.reg?1:0); 
+ 108                             		.loc 1 202 0
+ 109 0009 64 FA                   		and	#15, r10
+ 110 000b FC DB A1                		scne.L	r10
+ 203:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	#if defined(PLATFORM2_SUPPORT) && ( defined(DR_DRYER) || defined (DW_DEA700) || defined(WILD_CARD)
+ 204:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     LIB_DIO_SET_LOAD(loadState, *pModulePins);
+ 111                             		.loc 1 204 0
+ 112 000e CC 22                   		mov.B	[r2], r2
+ 113                             	.LVL10:
+ 114 0010 CF A1                   		mov.B	r10, r1
+ 115 0012 05 00 00 00             		bsr	_LIB_DIO_SET_LOAD
+ 116                             	.LVL11:
+ 205:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     LIB_DIO_SET_LOAD(loadState, *(pModulePins+1));
+ 117                             		.loc 1 205 0
+ 118 0016 88 7A                   		mov.B	1[r7], r2
+ 119 0018 CF A1                   		mov.B	r10, r1
+ 120 001a 05 00 00 00             		bsr	_LIB_DIO_SET_LOAD
+ 121                             	.LVL12:
+ 206:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     LIB_DIO_SET_LOAD(loadState, *(pModulePins+2));
+ 207:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	#else
+ 208:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	/* Non usato perch� si � gi� passati alla piattaforma 2 */
+ 209:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     SET_LOAD( loadState, *pModulePins );
+ 210:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     SET_LOAD( loadState, *(pModulePins+1) );
+ 211:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     SET_LOAD( loadState, *(pModulePins+2) );
+ 212:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	#endif
+ 213:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** }
+ 122                             		.loc 1 213 0
+ 123 001e 62 40                   		add	#4, r0
+ 206:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     LIB_DIO_SET_LOAD(loadState, *(pModulePins+2));
+ 124                             		.loc 1 206 0
+ 125 0020 CF A1                   		mov.B	r10, r1
+ 126 0022 88 F2                   		mov.B	2[r7], r2
+ 127                             		.loc 1 213 0
+ 128 0024 6F 7A                   		popm	r7-r10
+ 129                             	.LVL13:
+ 206:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     LIB_DIO_SET_LOAD(loadState, *(pModulePins+2));
+ 130                             		.loc 1 206 0
+ 131 0026 04 00 00 00             		bra	_LIB_DIO_SET_LOAD
+ 132                             	.LVL14:
+ 133                             	.LFE3:
+ 135                             		.section	.text.DigDelayedMultiSetLoad,"ax",@progbits
+ 136                             		.global	_DigDelayedMultiSetLoad
+ 138                             	_DigDelayedMultiSetLoad:
+ 139                             	.LFB4:
+ 214:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 215:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /**
+ 216:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** Funzione per l'attivazione/disattivazione di un carico con PylotType DIGITALDELAYED_MULTI_L. 
+ 217:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 218:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	loadParam type L_PARAM stato del carico
+ 219:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]	pModulePins puntatore al campo contenente i 2 pins che servono a \n
+ 220:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****                 pilotare il carico
+ 221:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 222:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \author 	Leonardo Sparti
+ 223:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \date		  27/05/2011
+ 224:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \version	1.0.0
+ 225:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****    
+ 226:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \note		\par \b Nota 1:
+ 227:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 			documentation by Leonardo Sparti
+ 228:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 229:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** */
+ 230:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** void DigDelayedMultiSetLoad(L_PARAM loadParam, pModulesPins_t pModulePins )
+ 231:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** {
+ 140                             		.loc 1 231 0
+ 141                             	.LVL15:
+ 142 0000 60 40                   		sub	#4, r0
+ 143                             	.LCFI5:
+ 144                             		.loc 1 231 0
+ 145 0002 CD 0E 08                		mov.B	8[r0], r14
+ 232:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   uint8_t i;
+ 233:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   DMDEL_Type *pDMDVar;
+ 234:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   
+ 235:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_REGION_START();
+ 236:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_DATA_CHECK( DMDLoads );
+ 237:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 238:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   PLT_ASSERT(DMDLoads < DMD_NUM_OF_LOADS)
+ 239:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 240:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   for(i=0;i<DMDLoads;i++)
+ 146                             		.loc 1 240 0
+ 147 0005 FB 42 00 00 00 00       		mov.L	#_DMDLoads, r4
+ 241:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   {
+ 242:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	SAFETY_DATA_ELEM_CHECK( DMDVar, i );
+ 243:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 244:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     pDMDVar = &DMDVar[i];
+ 245:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     
+ 246:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     if( (pDMDVar->pin1 == *pModulePins) && (pDMDVar->pin2 == *(pModulePins+1)) )
+ 247:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     {
+ 248:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****       pDMDVar->loadState = (loadParam.s.reg?ON:OFF);
+ 148                             		.loc 1 248 0
+ 149 000b EF E1                   		mov.L	r14, r1
+ 150 000d 64 F1                   		and	#15, r1
+ 151 000f FC DB 11                		scne.L	r1
+ 240:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   for(i=0;i<DMDLoads;i++)
+ 152                             		.loc 1 240 0
+ 153 0012 66 0E                   		mov.L	#0, r14
+ 154 0014 58 43                   		movu.B	[r4], r3
+ 155 0016 2E 22                   		bra	.L9
+ 156                             	.LVL16:
+ 157                             	.L11:
+ 244:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     pDMDVar = &DMDVar[i];
+ 158                             		.loc 1 244 0
+ 159 0018 EF E4                   		mov.L	r14, r4
+ 160 001a 63 64                   		mul	#6, r4
+ 161 001c 70 44 00 00 00 00       		add	#_DMDVar, r4
+ 162                             	.LVL17:
+ 246:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     if( (pDMDVar->pin1 == *pModulePins) && (pDMDVar->pin2 == *(pModulePins+1)) )
+ 163                             		.loc 1 246 0
+ 164 0022 58 4F                   		movu.B	[r4], r15
+ 165 0024 44 2F                   		cmp	[r2].UB, r15
+ 166 0026 21 10                   		bne	.L10
+ 246:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     if( (pDMDVar->pin1 == *pModulePins) && (pDMDVar->pin2 == *(pModulePins+1)) )
+ 167                             		.loc 1 246 0 is_stmt 0 discriminator 1
+ 168 0028 59 4F 01                		movu.B	1[r4], r15
+ 169 002b 45 2F 01                		cmp	1[r2].UB, r15
+ 170 002e 21 08                   		bne	.L10
+ 171                             		.loc 1 248 0 is_stmt 1
+ 172 0030 81 49                   		mov.B	r1, 5[r4]
+ 249:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****       pDMDVar->delay_cnt = 0;
+ 173                             		.loc 1 249 0
+ 174 0032 3C 44 00                		mov.B	#0, 4[r4]
+ 175 0035 03                      		.balign 2,3,1
+ 176                             	.L10:
+ 177 0036 62 1E                   		add	#1, r14
+ 178                             	.LVL18:
+ 179                             		.balign 2,3,1
+ 180                             	.L9:
+ 240:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   for(i=0;i<DMDLoads;i++)
+ 181                             		.loc 1 240 0 discriminator 1
+ 182 0038 5B E4                   		movu.B	r14, r4
+ 183 003a 47 43                   		cmp	r4, r3
+ 184 003c 24 DC                   		bgtu	.L11
+ 250:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     }
+ 251:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 252:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     SAFETY_DATA_ELEM_UPDATE( DMDVar, i );
+ 253:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   }
+ 254:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 255:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_REGION_END();
+ 256:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** }
+ 185                             		.loc 1 256 0
+ 186 003e 67 01                   		rtsd	#4
+ 187                             	.LFE4:
+ 189                             		.section	.text.DigDelayedMulti_Manager,"ax",@progbits
+ 190                             		.global	_DigDelayedMulti_Manager
+ 192                             	_DigDelayedMulti_Manager:
+ 193                             	.LFB5:
+ 257:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 258:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 259:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** /**
+ 260:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** Funzione per la gestione delle temporizzazioni di un carico con PylotType DIGITALDELAYED_MULTI_L. 
+ 261:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 262:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \param  [in]  none
+ 263:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 264:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \author 	Leonardo Sparti
+ 265:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \date		  27/05/2011
+ 266:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \version	1.0.0
+ 267:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****    
+ 268:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** \note		\par \b Nota 1:
+ 269:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 			documentation by Leonardo Sparti
+ 270:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 271:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** */
+ 272:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** void DigDelayedMulti_Manager( void )
+ 273:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** {
+ 194                             		.loc 1 273 0
+ 195                             	.LVL19:
+ 196 0000 6E 7B                   		pushm	r7-r11
+ 197                             	.LCFI6:
+ 274:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   uint8_t i;
+ 275:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   DMDEL_Type *pDMDVar;
+ 276:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   
+ 277:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_REGION_START();
+ 278:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_DATA_CHECK( DMDLoads );
+ 279:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 280:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   for(i=0;i<DMDLoads;i++)
+ 198                             		.loc 1 280 0
+ 199 0002 66 0A                   		mov	#0, r10
+ 200 0004 FB B2 00 00 00 00       		mov.L	#_DMDLoads, r11
+ 201 000a 2E 54                   		bra	.L14
+ 202                             	.LVL20:
+ 203                             	.L20:
+ 281:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   {
+ 282:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 	SAFETY_DATA_ELEM_CHECK( DMDVar, i );
+ 283:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** 
+ 284:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     pDMDVar = &DMDVar[i];
+ 204                             		.loc 1 284 0
+ 205 000c 63 67                   		mul	#6, r7
+ 206 000e 70 77 00 00 00 00       		add	#_DMDVar, r7
+ 207                             	.LVL21:
+ 285:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     
+ 286:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     if(  ( (pDMDVar->loadState == ON)  && (pDMDVar->delay_cnt>=pDMDVar->act_delay)   )  ||
+ 208                             		.loc 1 286 0
+ 209 0014 89 79                   		mov.B	5[r7], r1
+ 210 0016 5B 1E                   		movu.B	r1, r14
+ 211 0018 61 1E                   		cmp	#1, r14
+ 212 001a 21 09                   		bne	.L15
+ 213                             		.loc 1 286 0 is_stmt 0 discriminator 1
+ 214 001c B1 74                   		movu.B	4[r7], r4
+ 215 001e 59 7E 02                		movu.B	2[r7], r14
+ 216 0021 2E 0B                   		bra	.L22
+ 217                             	.L15:
+ 218                             		.loc 1 286 0 discriminator 2
+ 219 0023 61 0E                   		cmp	#0, r14
+ 220 0025 21 19                   		bne	.L17
+ 287:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****          ( (pDMDVar->loadState == OFF) && (pDMDVar->delay_cnt>=pDMDVar->deact_delay) )   )
+ 221                             		.loc 1 287 0 is_stmt 1
+ 222 0027 B1 74                   		movu.B	4[r7], r4
+ 223 0029 59 7E 03                		movu.B	3[r7], r14
+ 224                             		.balign 2,3,1
+ 225                             	.L22:
+ 226 002c 47 E4                   		cmp	r14, r4
+ 227 002e 23 10                   		bltu	.L17
+ 288:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     {
+ 289:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****       #if defined(PLATFORM2_SUPPORT) && ( defined(DR_DRYER) || defined (DW_DEA700) || defined(WILD_
+ 290:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****         LIB_DIO_SET_LOAD(pDMDVar->loadState, pDMDVar->pin1);
+ 228                             		.loc 1 290 0
+ 229 0030 CC 72                   		mov.B	[r7], r2
+ 230 0032 05 00 00 00             		bsr	_LIB_DIO_SET_LOAD
+ 231                             	.LVL22:
+ 291:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****         LIB_DIO_SET_LOAD(pDMDVar->loadState, pDMDVar->pin2);
+ 232                             		.loc 1 291 0
+ 233 0036 89 79                   		mov.B	5[r7], r1
+ 234 0038 88 7A                   		mov.B	1[r7], r2
+ 235 003a 05 00 00 00             		bsr	_LIB_DIO_SET_LOAD
+ 236                             	.LVL23:
+ 237                             		.balign 2,3,5
+ 238                             	.L17:
+ 292:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****       #else
+ 293:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****         SET_LOAD( pDMDVar->loadState, pDMDVar->pin1 );
+ 294:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****         SET_LOAD( pDMDVar->loadState, pDMDVar->pin2 );
+ 295:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****       #endif
+ 296:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     }
+ 297:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     
+ 298:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     if( pDMDVar->delay_cnt < (pDMDVar->act_delay > pDMDVar->deact_delay ? pDMDVar->act_delay : pDMD
+ 239                             		.loc 1 298 0
+ 240 003e 88 FB                   		mov.B	3[r7], r3
+ 241 0040 CD 7E 02                		mov.B	2[r7], r14
+ 242 0043 89 74                   		mov.B	4[r7], r4
+ 243 0045 5B E5                   		movu.B	r14, r5
+ 244 0047 5B 31                   		movu.B	r3, r1
+ 245 0049 47 15                   		cmp	r1, r5
+ 246 004b 5B 42                   		movu.B	r4, r2
+ 247 004d 22 05                   		bgeu	.L19
+ 248 004f CF 3E                   		mov.B	r3, r14
+ 249 0051 03                      		.balign 2,3,1
+ 250                             	.L19:
+ 251 0052 5B EE                   		movu.B	r14, r14
+ 252 0054 47 E2                   		cmp	r14, r2
+ 253 0056 28 06                   		bge	.L18
+ 299:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     {
+ 300:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****       pDMDVar->delay_cnt++;
+ 254                             		.loc 1 300 0
+ 255 0058 62 14                   		add	#1, r4
+ 256 005a 81 74                   		mov.B	r4, 4[r7]
+ 257                             		.balign 2,3,1
+ 258                             	.L18:
+ 280:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   for(i=0;i<DMDLoads;i++)
+ 259                             		.loc 1 280 0
+ 260 005c 62 1A                   		add	#1, r10
+ 261                             	.LVL24:
+ 262                             		.balign 2,3,1
+ 263                             	.L14:
+ 280:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   for(i=0;i<DMDLoads;i++)
+ 264                             		.loc 1 280 0 is_stmt 0 discriminator 1
+ 265 005e 5B A7                   		movu.B	r10, r7
+ 266 0060 44 B7                   		cmp	[r11].UB, r7
+ 267 0062 23 AA                   		bltu	.L20
+ 301:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     }
+ 302:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     
+ 303:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****     SAFETY_DATA_ELEM_UPDATE( DMDVar, i );
+ 304:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   }
+ 305:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   
+ 306:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c ****   SAFETY_REGION_END();
+ 307:C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti\DigitalOutputMulti.c **** }
+ 268                             		.loc 1 307 0 is_stmt 1
+ 269 0064 3F 7B 05                		rtsd	#20, r7-r11
+ 270                             	.LFE5:
+ 272 0067 03                      		.section	.bss.DMDLoads,"aw",@nobits
+ 275                             	_DMDLoads:
+ 276 0000 00                      		.zero	1
+ 277                             		.section	.bss.DMDVar,"aw",@nobits
+ 280                             	_DMDVar:
+ 281 0000 00 00 00 00 00 00 00 00 		.zero	24
+ 281      00 00 00 00 00 00 00 00 
+ 281      00 00 00 00 00 00 00 00 
+ 404                             	.Letext0:
+ 405                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_IOManager/OutputManagerExp.h"
+ 406                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 407                             		.file 4 "C:/Workspace/FW_Platform2_5/trunk/ProductModules/PM_DigitalOutputMulti/DigitalOutputMulti
+ 408                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_DigitalIO/DigitalOutputs.h"

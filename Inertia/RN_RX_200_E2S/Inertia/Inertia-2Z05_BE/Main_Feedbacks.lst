@@ -1,0 +1,1133 @@
+   1                             		.file	"Main_Feedbacks.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.AlmFeedbacksCallback,"ax",@progbits
+   6                             	_AlmFeedbacksCallback:
+   7                             	.LFB7:
+   8                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS/Main_Feedbacks.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /**
+   7:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \n
+   8:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \par		Description
+   9:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \n			This file contains the EmbOS-based service for the acquisition of feedbacks.
+  10:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \n			For both types of feedbacks the module makes use of a task with parameter.
+  11:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 			Each type of feedback runs inside its own instance of the same task.
+  12:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \file		Main_Feedbacks.c
+  13:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \ingroup	Main
+  14:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \date		Feb 7, 2011
+  15:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \version	01.00.00
+  16:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \author		Roberto Fioravanti
+  17:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \n
+  18:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \n
+  19:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \Par\b	History:
+  20:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \n
+  21:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \n 		00.00.00
+  22:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \n		29/03/2011
+  23:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \n		Roberto Fioravanti
+  24:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \n		changes
+  25:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \n 		- file created
+  26:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \n
+  27:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \n
+  28:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \n etc.
+  29:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+  30:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* ******** */
+  31:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* Includes */
+  32:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* ******** */
+  33:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+  34:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #include "Main.h"
+  35:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #include "FeedBacks.h"
+  36:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #include "LIB_Trace.h"
+  37:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+  38:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_CLASS_B_DATA_INTEGRITY)
+  39:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #include "Lib_ClassBVar.h"
+  40:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* defined(CONFIG_CLASS_B_DATA_INTEGRITY) */
+  41:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+  42:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+  43:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* ****************** */
+  44:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* Defines and Macros */
+  45:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* ****************** */
+  46:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_FEEDBACKS_TASK_TRACE_PIN_ENABLE) && defined(CONFIG_LIB_TRACE_SUPPORT)
+  47:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define MAIN_FEEDBACKS_TASK_TRACE_BEGIN()    TRACE_TO_PIN(ON , (CONFIG_MAIN_FEEDBACKS_TASK_TRACE_PI
+  48:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define MAIN_FEEDBACKS_TASK_TRACE_END()      TRACE_TO_PIN(OFF , (CONFIG_MAIN_FEEDBACKS_TASK_TRACE_P
+  49:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #else
+  50:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define MAIN_FEEDBACKS_TASK_TRACE_BEGIN()	{}
+  51:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define MAIN_FEEDBACKS_TASK_TRACE_END()		{}
+  52:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+  53:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+  54:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if !defined(CONFIG_MAIN_FEEDBACKS_TASK_TASKMONITOR_ENABLE)
+  55:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /** @name Feedbacks task safety
+  56:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+  57:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \par Properties
+  58:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Not mandatory. If they remain undefined assume by default an empty value.
+  59:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+  60:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** @{
+  61:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+  62:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define START_FEEDBACKS_TASK_MONITORING(delayed)	{}
+  63:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /** safety entry */
+  64:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define MAIN_FEEDBACKS_TASK__MONITOR_IN(delayed)	{}
+  65:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /** safety exit */
+  66:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define MAIN_FEEDBACKS_TASK__MONITOR_OUT(delayed)	{}
+  67:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /*@}*/
+  68:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+  69:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+  70:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+  71:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if !defined(START_FEEDBACKS_TASK_MONITORING)
+  72:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #error "START_FEEDBACKS_TASK_MONITORING() missing definition."
+  73:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+  74:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+  75:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if !defined(MAIN_FEEDBACKS_TASK__MONITOR_IN)
+  76:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #error "MAIN_FEEDBACKS_TASK__MONITOR_IN() missing definition."
+  77:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #error "Both MAIN_FEEDBACKS_TASK__MONITOR_IN() and MAIN_FEEDBACKS_TASK__MONITOR_OUT() must be defin
+  78:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+  79:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+  80:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if !defined(MAIN_FEEDBACKS_TASK__MONITOR_OUT)
+  81:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #error "MAIN_FEEDBACKS_TASK__MONITOR_OUT() missing definition."
+  82:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #error "Both MAIN_FEEDBACKS_TASK__MONITOR_IN() and MAIN_FEEDBACKS_TASK__MONITOR_OUT() must be defin
+  83:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+  84:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+  85:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+  86:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+  87:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if !defined(MAIN_FEEDBACKS_TASK_DEBUG)
+  88:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /**
+  89:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** @name Debug macros
+  90:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \par Properties
+  91:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Not mandatory. If not defined they assume the default values
+  92:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \code
+  93:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define MAIN_FEEDBACKS__TASK_DEBUG                  (1)
+  94:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define MAIN_FEEDBACKS_TASK_DURATION                (1)
+  95:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define MAIN_FEEDBACKS_TASK_DELAY_ON_ZC             (1)
+  96:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \endcode
+  97:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** @{
+  98:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+  99:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /** Debug enable
+ 100:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \li 0: all debug features disabled
+ 101:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \li 1: allows to enable the debug level for MAIN_FEEDBACKS_TASK_DURATION, MAIN_FEEDBACKS_TASK_DELAY
+ 102:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 103:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define MAIN_FEEDBACKS_TASK_DEBUG                (1)
+ 104:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 105:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 106:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if !defined(MAIN_FEEDBACKS_TASK_DURATION)
+ 107:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /** Measurement of the duration of the task
+ 108:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \li 0: disabled
+ 109:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \li 1: enabled
+ 110:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 111:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define MAIN_FEEDBACKS_TASK_DURATION             (1)
+ 112:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 113:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 114:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 115:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /*@}*/
+ 116:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 117:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 118:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 119:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 120:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 121:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* *************************** */
+ 122:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* Typedef, Structs and Unions */
+ 123:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* *************************** */
+ 124:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /** Feedback modes enum
+ 125:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 126:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** typedef enum MainFeedbacksMode
+ 127:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 128:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 129:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE)
+ 130:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	/**
+ 131:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Normal feedbacks mode.
+ 132:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	*/
+ 133:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     MAIN_FEEDBACK_MODE_NORMAL = 0,
+ 134:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 135:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE)
+ 136:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     /**
+ 137:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Delayed feedbacks mode.
+ 138:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	*/
+ 139:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	MAIN_FEEDBACK_MODE_DELAYED
+ 140:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 141:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** } MainFeedbacksModeType;
+ 142:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 143:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /*
+ 144:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Parameter for delay on ZC
+ 145:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** It is the delay on ZC in system cycles (OS_NANOSECS_TO_SYSTEMTIMERCYCLES())
+ 146:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 147:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** typedef OS_U32 MainFeedbacksDelayOnZCParamType;
+ 148:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 149:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* enum to access Delay on ZC param structure */
+ 150:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** typedef enum
+ 151:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 152:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	/**
+ 153:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Normal feedbacks mode.
+ 154:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	*/
+ 155:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     MAIN_FEEDBACK_DELAY_ON_ZC_PARAM_MIN = 0,
+ 156:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	/**
+ 157:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Delayed feedbacks mode.
+ 158:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	*/
+ 159:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     MAIN_FEEDBACK_DELAY_ON_ZC_PARAM_MAX
+ 160:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** } MainFeedbacksDelayOnZCParamIndexType;
+ 161:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 162:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* score (kind of correlation index) to state if delay on ZC measurement is in range and reliable *
+ 163:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** typedef struct Score_s
+ 164:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 165:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	OS_I8	score;
+ 166:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	OS_I8	eScore;
+ 167:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** } MainFeedbacks_ScoreType;
+ 168:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* ********* */
+ 169:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* Variables */
+ 170:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* ********* */
+ 171:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 172:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* Global */
+ 173:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* Static */
+ 174:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /**
+ 175:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** @name Service variables
+ 176:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** @{
+ 177:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 178:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE)
+ 179:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /** Task Stack for normal feedbacks */
+ 180:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static STACK_SEC OS_STACKPTR int  Main_FeedbacksTaskStack[CONFIG_MAIN_FEEDBACKS_TASK_STACK_SIZE] ST
+ 181:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /** Task Control Block for normal feedbacks*/
+ 182:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static OS_TASK          Main_FeedbacksTaskTCB;
+ 183:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /** high resolution Alarm for normal feedbacks*/
+ 184:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static OS_ALARM         Main_AlmFeedbacks;
+ 185:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_FEEDBACKS_STACK_MONITOR)
+ 186:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static 	TOOLS_STACKUSAGE_MONITOR	Main_FeedbackTaskStackMonitor;
+ 187:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 188:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE) */
+ 189:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 190:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 191:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE)
+ 192:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /** Task Stack for delayed feedbacks */
+ 193:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static STACK_SEC OS_STACKPTR int  Main_FeedbacksPTaskStack[CONFIG_MAIN_FEEDBACKS_TASK_STACK_SIZE] S
+ 194:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /** Task Control Block for delayed feedbacks*/
+ 195:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static OS_TASK          Main_FeedbacksPTaskTCB;
+ 196:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /** high resolution Alarm for delayed feedbacks*/
+ 197:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static OS_ALARM         Main_AlmFeedbacksP;
+ 198:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_FEEDBACKSP_STACK_MONITOR)
+ 199:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static 	TOOLS_STACKUSAGE_MONITOR	Main_FeedbackPTaskStackMonitor;
+ 200:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 201:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /*defined(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE) */
+ 202:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 203:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /*@}*/
+ 204:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 205:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 206:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 207:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if MAIN_FEEDBACK_BOTH==1
+ 208:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 209:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE)
+ 210:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	#define MAIN_FEEDBACK_MODE_TYPE     	0     /*MAIN_FEEDBACK_MODE_NORMAL*/
+ 211:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	#define Main_Feedbacks_TASK_TCB     	Main_FeedbacksTaskTCB
+ 212:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	#define Main_Feedbacks_TASK_STACK   	Main_FeedbacksTaskStack
+ 213:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	#define Main_Feedbacks_StackMonitor   	Main_FeedbackTaskStackMonitor
+ 214:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 215:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #elif defined(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE)
+ 216:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	#define MAIN_FEEDBACK_MODE_TYPE     	1     /*MAIN_FEEDBACK_MODE_DELAYED*/
+ 217:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	#define Main_Feedbacks_TASK_TCB     	Main_FeedbacksPTaskTCB
+ 218:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	#define Main_Feedbacks_TASK_STACK   	Main_FeedbacksPTaskStack
+ 219:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	#define Main_Feedbacks_StackMonitor   	Main_FeedbackPTaskStackMonitor
+ 220:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 221:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 222:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 223:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 224:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 225:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 226:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /**
+ 227:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** @name  variables
+ 228:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 229:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** @{
+ 230:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 231:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 232:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_FEEDBACKS_TASK_DELAY_ON_ZC)
+ 233:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* feedbacks timing for the measurement of the delay to ZC  */
+ 234:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static  TOOLS_TIMING        		MainFeedbacksDelayOnZC[MAIN_FEEDBACK_BOTH];
+ 235:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* Number of updates for normal feedbacks :
+ 236:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****  * free runner counter incremented from -128 up to 127 each task execution
+ 237:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****  * */
+ 238:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static	MainFeedbacks_ScoreType		MainFeedbacksDelayOnZC_Score[MAIN_FEEDBACK_BOTH]; /*score*/
+ 239:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* Max and min delay in ZC in ns*/
+ 240:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static const MainFeedbacksDelayOnZCParamType MainFeedbacksDelayOnZCParam[2]=
+ 241:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 242:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	OS_NANOSECS_TO_SYSTEMTIMERCYCLES(CONFIG_MAIN_FEEDBACKS_TASK_DELAY_ON_ZC_MIN_VALUE*1000),/*min*/
+ 243:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	OS_NANOSECS_TO_SYSTEMTIMERCYCLES(CONFIG_MAIN_FEEDBACKS_TASK_DELAY_ON_ZC_MAX_VALUE*1000)	/*max*/
+ 244:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** };
+ 245:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 246:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 247:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif  /* MAIN_FEEDBACKS_TASK_DELAY_ON_ZC */
+ 248:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 249:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 250:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if     MAIN_FEEDBACKS_TASK_DEBUG
+ 251:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if     MAIN_FEEDBACKS_TASK_DURATION
+ 252:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /** task duration in [us]
+ 253:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \attention Available only if \ref MAIN_FEEDBACKS_TASK_DEBUG and MAIN_FEEDBACKS_TASK_DURATION are
+ 254:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** defined as 1.
+ 255:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \note not used yet
+ 256:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 257:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static  TOOLS_TIMING        		MainFeedbacksDuration;
+ 258:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /** statistics about task duration [us]
+ 259:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \attention Available only if \ref MAIN_FEEDBACKS_TASK_DEBUG and MAIN_FEEDBACKS_TASK_DURATION are
+ 260:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** defined as 1.
+ 261:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \note not used yet
+ 262:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 263:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static  TOOLS_TIMING_STATS  		MainFeedbacksTaskDurationStat;
+ 264:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif  /* MAIN_FEEDBACKS_TASK_DURATION */
+ 265:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 266:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif  /* MAIN_FEEDBACKS_TASK_DEBUG */
+ 267:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /*@}*/
+ 268:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 269:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if		defined(CONFIG_MAIN_FEEDBACKS_TASK_PERIOD_CHECK)
+ 270:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* feedbacks timing for task period measurement */
+ 271:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static  TOOLS_PERIOD        		MainFeedbacksPeriod[MAIN_FEEDBACK_BOTH];
+ 272:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* Number of updates for feedbacks :
+ 273:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****  * free runner counter incremented from -128 up to 127 each task execution
+ 274:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****  * */
+ 275:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static	MainFeedbacks_ScoreType		MainFeedbacksPeriod_Score[MAIN_FEEDBACK_BOTH]; /*score*/
+ 276:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 277:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* Max and min delay oin ZC in ns*/
+ 278:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static const MainFeedbacksDelayOnZCParamType MainFeedbacksPeriodParam[2]=
+ 279:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 280:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	OS_NANOSECS_TO_SYSTEMTIMERCYCLES(CONFIG_MAIN_FEEDBACKS_TASK_PERIOD_MIN_VALUE*1000),/*min*/
+ 281:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	OS_NANOSECS_TO_SYSTEMTIMERCYCLES(CONFIG_MAIN_FEEDBACKS_TASK_PERIOD_MAX_VALUE*1000)	/*max*/
+ 282:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** };
+ 283:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 284:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 285:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* ******************* */
+ 286:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* Functions Prototype */
+ 287:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* ******************* */
+ 288:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 289:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* Exported function */
+ 290:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 291:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 292:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 293:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* Local Function */
+ 294:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE)
+ 295:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_ActivateFeedbacks ( void );
+ 296:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE) */
+ 297:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE)
+ 298:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_ActivateFeedbacksP ( void );
+ 299:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* defined(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE) */
+ 300:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 301:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 302:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if MAIN_FEEDBACK_BOTH  == 2
+ 303:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask ( void* pFeedbackType );
+ 304:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #elif MAIN_FEEDBACK_BOTH  == 1
+ 305:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask ( void );
+ 306:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 307:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE)
+ 308:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void AlmFeedbacksCallback ( void );
+ 309:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* (CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE) */
+ 310:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 311:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE)
+ 312:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void AlmFeedbacksPCallback ( void );
+ 313:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /*(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE) */
+ 314:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 315:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 316:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #ifdef		CONFIG_MAIN_FEEDBACKS_TASK_DELAY_ON_ZC
+ 317:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask_DelayOnZC_Init ( void );
+ 318:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask_DelayOnZC_Process 	( MainFeedbacksModeType FeedbackType );
+ 319:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static OS_I8 Main_FeedbacksMode_DelayOnZC_IsRangeOK(MainFeedbacksModeType mode);
+ 320:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #else
+ 321:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define Main_FeedbacksTask_DelayOnZC_Init()
+ 322:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define Main_FeedbacksTask_DelayOnZC_Process(dummy)
+ 323:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define Main_FeedbacksMode_DelayOnZC_IsRangeOK(dummy)
+ 324:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* CONFIG_MAIN_FEEDBACKS_TASK_DELAY_ON_ZC */
+ 325:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 326:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if     MAIN_FEEDBACKS_TASK_DEBUG   &&   MAIN_FEEDBACKS_TASK_DURATION
+ 327:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask_Duration_Init ( void );
+ 328:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask_Duration_Start ( void );
+ 329:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask_Duration_End ( void );
+ 330:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #else
+ 331:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define Main_FeedbacksTask_Duration_Init()
+ 332:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define Main_FeedbacksTask_Duration_Start()
+ 333:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define Main_FeedbacksTask_Duration_End()
+ 334:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* MAIN_FEEDBACKS_TASK_DEBUG   &&   MAIN_FEEDBACKS_TASK_DURATION */
+ 335:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 336:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if		defined(CONFIG_MAIN_FEEDBACKS_TASK_PERIOD_CHECK)
+ 337:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask_Period_Init ( void );
+ 338:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask_Period_Measure ( MainFeedbacksModeType FeedbackType );
+ 339:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static OS_I8 Main_FeedbacksMode_Period_IsRangeOK(MainFeedbacksModeType mode);
+ 340:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #else
+ 341:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define Main_FeedbacksTask_Period_Init()
+ 342:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define Main_FeedbacksTask_Period_Measure(dummy)
+ 343:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #define Main_FeedbacksMode_Period_IsRangeOK(dummy)
+ 344:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* CONFIG_MAIN_FEEDBACKS_TASK_PERIOD_CHECK */
+ 345:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 346:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 347:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 348:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 349:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* *************** */
+ 350:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* Function Bodies */
+ 351:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* *************** */
+ 352:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 353:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* Exported function */
+ 354:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 355:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /**
+ 356:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Feedbacks service initialization.
+ 357:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** It creates:
+ 358:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \li two instances of the same task ref Main_FeedbacksTask (\ref MAIN_FEEDBACK_MODE_NORMAL
+ 359:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** and \ref MAIN_FEEDBACK_MODE_DELAYED)
+ 360:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \li and the two alarms \ref Main_AlmFeedbacksP and \ref Main_AlmFeedbacks.
+ 361:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \n If CONFIG_MAIN_FEEDBACKS_TASK_PERIOD_CHECK is enabled, it
+ 362:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** initializes tools for timing measurement.
+ 363:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 364:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** void Main_FeedbacksInit ( void )
+ 365:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 366:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if MAIN_FEEDBACK_BOTH  == 2
+ 367:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****   
+ 368:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	OS_CREATETASK_EX ( &Main_FeedbacksTaskTCB,
+ 369:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 					   "FeedbackTask",
+ 370:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 					   Main_FeedbacksTask,
+ 371:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 					   ( OS_U8 ) MAIN_FEEDBACKS_TASK_PRIORITY,
+ 372:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 					   Main_FeedbacksTaskStack,
+ 373:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 					   ( void* ) MAIN_FEEDBACK_MODE_NORMAL );
+ 374:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	OS_CREATETASK_EX ( &Main_FeedbacksPTaskTCB,
+ 375:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 					   "FeedbackPTask",
+ 376:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 					   Main_FeedbacksTask,
+ 377:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 					   ( OS_U8 ) MAIN_FEEDBACKSP_TASK_PRIORITY,
+ 378:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 					   Main_FeedbacksPTaskStack,
+ 379:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 					   ( void* ) MAIN_FEEDBACK_MODE_DELAYED );
+ 380:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_FEEDBACKS_STACK_MONITOR)
+ 381:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Tools_CreateTaskStackMonitor(&Main_FeedbacksTaskTCB, &Main_FeedbackStackMonitor);
+ 382:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 383:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_FEEDBACKSP_STACK_MONITOR)
+ 384:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Tools_CreateTaskStackMonitor(&Main_FeedbacksPTaskTCB, &Main_FeedbackPStackMonitor);
+ 385:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 386:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     
+ 387:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #elif MAIN_FEEDBACK_BOTH  == 1 /* MAIN_FEEDBACK_BOTH */
+ 388:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     
+ 389:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     OS_CREATETASK    ( &Main_Feedbacks_TASK_TCB,
+ 390:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 					   "FeedbackTask",
+ 391:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 					   Main_FeedbacksTask,
+ 392:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 					   ( OS_U8 ) MAIN_FEEDBACKS_TASK_PRIORITY,
+ 393:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 					   Main_Feedbacks_TASK_STACK );
+ 394:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_FEEDBACKS_STACK_MONITOR) || defined(CONFIG_MAIN_FEEDBACKP_STACK_MONITOR)
+ 395:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Tools_CreateTaskStackMonitor(&Main_Feedbacks_TASK_TCB, &Main_Feedbacks_StackMonitor);
+ 396:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 397:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     
+ 398:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* MAIN_FEEDBACK_BOTH */
+ 399:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     
+ 400:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE)
+ 401:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	OS_CreateAlarm ( &Main_AlmFeedbacks, AlmFeedbacksCallback, ( OS_U32 ) 0, ( OS_U32 ) 0 );
+ 402:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* if CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE    */
+ 403:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE)
+ 404:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	OS_CreateAlarm ( &Main_AlmFeedbacksP, AlmFeedbacksPCallback, ( OS_U32 ) 0, ( OS_U32 ) 0 );
+ 405:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE  */
+ 406:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Main_FeedbacksTask_DelayOnZC_Init();
+ 407:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     Main_FeedbacksTask_Duration_Init();
+ 408:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     Main_FeedbacksTask_Period_Init();
+ 409:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 410:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 411:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /**
+ 412:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Sets the alarm on high resolution timer for continuous readings of normal feedbacks.
+ 413:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Use it only if zerocrossing is missing.
+ 414:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 415:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** It could be used for continuous asynchronous readings of normal feedbacks, that is when
+ 416:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** zerocrossing signal is missing.
+ 417:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 418:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \param [in] usOffset alarm expiration in microseconds
+ 419:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 420:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \author 	Roberto Fioravanti
+ 421:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \date		29/03/2011
+ 422:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \version	1.0.0
+ 423:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 424:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE)
+ 425:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** void Main_ActivateFeedbacks_AsyncRead ( OS_U32 usOffset )
+ 426:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 427:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     if(OS_IsTask(&Main_FeedbacksTaskTCB))
+ 428:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     {        
+ 429:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****         OS_STARTALARMSF ( &Main_AlmFeedbacks, usOffset, usOffset, -1 );
+ 430:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     }
+ 431:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 432:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE */
+ 433:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 434:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /**
+ 435:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Sets the alarm on high resolution timer for continuous readings of delayed feedbacks.
+ 436:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Use it only if zerocrossing is missing.
+ 437:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 438:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** It could be used for continuous asynchronous readings of delayed feedbacks, that is when
+ 439:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** zerocrossing signal is missing.
+ 440:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 441:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \param [in] usOffset alarm expiration in microseconds
+ 442:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 443:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \author 	Roberto Fioravanti
+ 444:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \date		29/03/2011
+ 445:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \version	1.0.0
+ 446:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 447:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE)
+ 448:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** void Main_ActivateFeedbacksP_AsyncRead ( OS_U32 usOffset )
+ 449:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 450:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     if(OS_IsTask(&Main_FeedbacksPTaskTCB))
+ 451:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     {
+ 452:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****         OS_STARTALARMSF ( &Main_AlmFeedbacksP, usOffset, usOffset, -1 );
+ 453:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     }
+ 454:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 455:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE */
+ 456:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /**
+ 457:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Sets the alarm on high resolution timer for synchronous one-shot readings of normal feedbacks.
+ 458:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 459:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** It could be used for synchronized readings of normal feedbacks, whenever zerocrossing signal is ava
+ 460:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 461:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \param [in] usOffset alarm expiration in microseconds
+ 462:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 463:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \attention For sync readings it must be called in sync with ZC.
+ 464:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 465:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \author 	Roberto Fioravanti
+ 466:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \date		29/03/2011
+ 467:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \version	1.0.0
+ 468:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 469:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE)
+ 470:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** void Main_ScheduleFeedbacks ( OS_U32 usOffset, OS_U32 TickRef, OS_U32 sysTime )
+ 471:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 472:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     OS_ALARM_TICK ref = (OS_ALARM_TICK)TickRef;
+ 473:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     if(OS_IsTask(&Main_FeedbacksTaskTCB))
+ 474:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     {
+ 475:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****         OS_START_ABSALARM_ONESHOT ( &Main_AlmFeedbacks, usOffset, &ref );
+ 476:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     }
+ 477:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 478:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE */
+ 479:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 480:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /**
+ 481:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Sets the Alarm on high resolution timer for synchronous one-shot readings of delayed feedbacks.
+ 482:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 483:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** It could be used for synchronized readings of normal feedbacks, whenever zerocrossing signal is ava
+ 484:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 485:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \param [in] usOffset alarm expiration in microseconds
+ 486:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \attention For sync readings it must bel called in sync with ZC.
+ 487:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 488:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \author 	Roberto Fioravanti
+ 489:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \date		29/03/2011
+ 490:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \version	1.0.0
+ 491:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 492:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE)
+ 493:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** void Main_ScheduleFeedbacksP ( OS_U32 usOffset, OS_U32 TickRef, OS_U32 sysTime )
+ 494:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 495:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     OS_ALARM_TICK ref = (OS_ALARM_TICK)TickRef;
+ 496:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     if(OS_IsTask(&Main_FeedbacksPTaskTCB))
+ 497:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     {
+ 498:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****         OS_START_ABSALARM_ONESHOT ( &Main_AlmFeedbacksP, usOffset, &ref );
+ 499:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     }
+ 500:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 501:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE */
+ 502:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 503:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 504:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 505:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /*
+ 506:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****  *
+ 507:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 508:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_FEEDBACKS_TASK_DELAY_ON_ZC)
+ 509:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE)
+ 510:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 511:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /*
+ 512:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Checks if range is ok.
+ 513:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \return
+ 514:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \retvalue	0 , no update since last time
+ 515:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \retvalue	>0 , in range and reliable (value has been at least once updated since last call
+ 516:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \retvalue	<0 , not in range
+ 517:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 518:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** OS_I8 Main_Feedbacks_DelayOnZC_IsOK(void)
+ 519:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 520:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	return Main_FeedbacksMode_DelayOnZC_IsRangeOK(MAIN_FEEDBACK_MODE_NORMAL);
+ 521:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 522:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE)*/
+ 523:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /*
+ 524:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Checks if range is ok.
+ 525:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \return
+ 526:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \retvalue	0 , no update since last time
+ 527:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \retvalue	>0 , in range and reliable (value has been at least once updated since last call
+ 528:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \retvalue	<0 , not in range
+ 529:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 530:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE)
+ 531:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** OS_I8 Main_FeedbacksP_DelayOnZC_IsOK(void)
+ 532:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 533:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	return Main_FeedbacksMode_DelayOnZC_IsRangeOK(MAIN_FEEDBACK_MODE_DELAYED);
+ 534:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 535:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 536:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /*defined(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE)*/
+ 537:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /*defined(CONFIG_MAIN_FEEDBACKS_TASK_DELAY_ON_ZC)*/
+ 538:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 539:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 540:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 541:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_FEEDBACKS_TASK_PERIOD_CHECK)
+ 542:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE)
+ 543:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /*
+ 544:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Checks if range is ok.
+ 545:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \return
+ 546:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \retvalue	0 , no update since last time
+ 547:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \retvalue	>0 , in range and reliable (value has been at least once updated since last call
+ 548:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \retvalue	<0 , not in range
+ 549:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 550:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** OS_I8 Main_Feedbacks_Period_IsOK(void)
+ 551:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 552:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	return Main_FeedbacksMode_Period_IsRangeOK(MAIN_FEEDBACK_MODE_NORMAL);
+ 553:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 554:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE)*/
+ 555:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE)
+ 556:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /*
+ 557:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Checks if range is ok.
+ 558:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \return
+ 559:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \retvalue	0 , no update since last time
+ 560:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \retvalue	>0 , in range and reliable (value has been at least once updated since last call
+ 561:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \retvalue	<0 , not in range
+ 562:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 563:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** OS_I8 Main_FeedbacksP_Period_IsOK(void)
+ 564:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 565:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	return Main_FeedbacksMode_Period_IsRangeOK(MAIN_FEEDBACK_MODE_DELAYED);
+ 566:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 567:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 568:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /*defined(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE)*/
+ 569:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /*defined(CONFIG_MAIN_FEEDBACKS_TASK_DELAY_ON_ZC)*/
+ 570:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 571:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /* Local Functions */
+ 572:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 573:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 574:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /**
+ 575:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Preemptable task for Feedback
+ 576:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** When its activity has been completed the task suspends itself, waiting for the next alarm expiratio
+ 577:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** which will resume the task.
+ 578:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \warning	none
+ 579:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 580:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \author 	Roberto Fioravanti
+ 581:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \date		25/02/2011
+ 582:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \version	1.0.0
+ 583:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 584:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \par Properties (safety)
+ 585:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \li MAIN_FEEDBACKS_TASK__MONITOR_IN()
+ 586:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \li MAIN_FEEDBACKS_TASK__MONITOR_OUT()
+ 587:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 588:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \par Properties (system)
+ 589:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \li MAIN_FEEDBACKS_TASK_STACK_SIZE
+ 590:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 591:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \note		\par \b Note 1:
+ 592:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 			documentation by Roberto Fioravanti
+ 593:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 594:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 595:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if MAIN_FEEDBACK_BOTH == 2
+ 596:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask ( void* pFeedbackType )
+ 597:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 598:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	START_FEEDBACKS_TASK_MONITORING(pFeedbackType);
+ 599:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	while ( 1 )
+ 600:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	{
+ 601:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		OS_Suspend ( (OS_TASK*)NULL );
+ 602:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		MAIN_FEEDBACKS_TASK_TRACE_BEGIN();
+ 603:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		Main_FeedbacksTask_Period_Measure(( MainFeedbacksModeType ) pFeedbackType);
+ 604:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		Main_FeedbacksTask_DelayOnZC_Process ( (MainFeedbacksModeType) pFeedbackType );
+ 605:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****         Main_FeedbacksTask_Duration_Start();
+ 606:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		MAIN_FEEDBACKS_TASK__MONITOR_IN(pFeedbackType);
+ 607:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		LIB_FDB_Manager ( ( bool_t ) ((int)pFeedbackType), goodZCSignal() );
+ 608:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		MAIN_FEEDBACKS_TASK__MONITOR_OUT(pFeedbackType);
+ 609:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****         Main_FeedbacksTask_Duration_End();
+ 610:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****         MAIN_FEEDBACKS_TASK_TRACE_END();
+ 611:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	}
+ 612:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 613:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #elif MAIN_FEEDBACK_BOTH  == 1 /* MAIN_FEEDBACK_BOTH */
+ 614:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask ( void )
+ 615:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 616:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	START_FEEDBACKS_TASK_MONITORING(0); /* mode is not applicable */
+ 617:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	while ( 1 )
+ 618:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	{
+ 619:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		OS_Suspend ( NULL );
+ 620:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 621:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		TRACE_CPU_IDLE_END();
+ 622:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 623:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		/* debug: begin */
+ 624:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		MAIN_FEEDBACKS_TASK_TRACE_BEGIN();
+ 625:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		Main_FeedbacksTask_Period_Measure(( MainFeedbacksModeType ) 0 /*MAIN_FEEDBACK_MODE_TYPE*/);
+ 626:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		Main_FeedbacksTask_DelayOnZC_Process ( ( MainFeedbacksModeType ) 0 );
+ 627:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		Main_FeedbacksTask_Duration_Start();
+ 628:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		MAIN_FEEDBACKS_TASK__MONITOR_IN(0);	/* mode is not applicable */
+ 629:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		LIB_FDB_Manager ( ( bool_t ) MAIN_FEEDBACK_MODE_TYPE, goodZCSignal() );
+ 630:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		MAIN_FEEDBACKS_TASK__MONITOR_OUT(0);	/* mode is not applicable */
+ 631:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****         Main_FeedbacksTask_Duration_End();
+ 632:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		MAIN_FEEDBACKS_TASK_TRACE_END();
+ 633:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	}
+ 634:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 635:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* MAIN_FEEDBACK_BOTH */
+ 636:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 637:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if		defined(CONFIG_MAIN_FEEDBACKS_TASK_PERIOD_CHECK) && defined(CONFIG_CLASS_B_DATA_INTEGRITY)
+ 638:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /**
+ 639:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** debug only
+ 640:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \attention available if MEASURE_PERIOD_TASK_PERIODIC_DEBUG
+ 641:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 642:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask_Period_Init ( void )
+ 643:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 644:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_REGION_START();
+ 645:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE)
+ 646:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Tools_CreatePeriodMeasure ( &MainFeedbacksPeriod[MAIN_FEEDBACK_MODE_NORMAL] );
+ 647:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_DATA_ELEM_UPDATE(MainFeedbacksPeriod, MAIN_FEEDBACK_MODE_NORMAL );
+ 648:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_DATA_ELEM_UPDATE(MainFeedbacksPeriod_Score, MAIN_FEEDBACK_MODE_NORMAL);
+ 649:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 650:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE)
+ 651:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Tools_CreatePeriodMeasure ( &MainFeedbacksPeriod[MAIN_FEEDBACK_MODE_DELAYED] );
+ 652:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_DATA_ELEM_UPDATE(MainFeedbacksPeriod, MAIN_FEEDBACK_MODE_DELAYED );
+ 653:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_DATA_ELEM_UPDATE(MainFeedbacksPeriod_Score, MAIN_FEEDBACK_MODE_DELAYED);
+ 654:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 655:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_REGION_END();
+ 656:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 657:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 658:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /**
+ 659:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** debug only
+ 660:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \attention available if MEASURE_PERIOD_TASK_PERIODIC_DEBUG
+ 661:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 662:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask_Period_Measure ( MainFeedbacksModeType FeedbackType )
+ 663:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 664:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	OS_TIMING timing=0;
+ 665:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 666:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_REGION_START();
+ 667:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 668:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	/* get period */
+ 669:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_DATA_ELEM_CHECK(MainFeedbacksPeriod, FeedbackType );
+ 670:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Tools_PeriodMeasure ( &MainFeedbacksPeriod[FeedbackType] );
+ 671:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_DATA_ELEM_UPDATE(MainFeedbacksPeriod, FeedbackType );
+ 672:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 673:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	/* store the period in a local variable */
+ 674:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	timing = MainFeedbacksPeriod[FeedbackType].Period_cyc;
+ 675:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 676:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	/* check*/
+ 677:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	if(( timing >= MainFeedbacksPeriodParam[MAIN_FEEDBACK_DELAY_ON_ZC_PARAM_MIN])
+ 678:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		&& (timing <= MainFeedbacksPeriodParam[MAIN_FEEDBACK_DELAY_ON_ZC_PARAM_MAX]))
+ 679:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	{
+ 680:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		/* the value of the delay is in the allowed range */
+ 681:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		SAFETY_DATA_ELEM_CHECK(MainFeedbacksPeriod_Score, FeedbackType);
+ 682:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		MainFeedbacksPeriod_Score[FeedbackType].score++;
+ 683:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		SAFETY_DATA_ELEM_UPDATE(MainFeedbacksPeriod_Score, FeedbackType);
+ 684:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	}
+ 685:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	else
+ 686:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	{
+ 687:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		SAFETY_DATA_ELEM_CHECK(MainFeedbacksPeriod_Score, FeedbackType);
+ 688:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		if(MainFeedbacksPeriod_Score[FeedbackType].score!=MainFeedbacksPeriod_Score[FeedbackType].eScore)
+ 689:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		{
+ 690:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 			MainFeedbacksPeriod_Score[FeedbackType].score--;
+ 691:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 			SAFETY_DATA_ELEM_UPDATE(MainFeedbacksPeriod_Score, FeedbackType);
+ 692:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		}
+ 693:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	}
+ 694:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 695:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_REGION_END();
+ 696:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 697:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 698:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 699:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if MAIN_FEEDBACKS_TASK_DEBUG && MAIN_FEEDBACKS_TASK_DURATION
+ 700:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask_Duration_Init ( void )
+ 701:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 702:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Tools_CreateTimingMeasure ( &MainFeedbacksDuration );
+ 703:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Tools_CreateTimingStats ( &MainFeedbacksTaskDurationStat );
+ 704:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 705:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 706:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask_Duration_Start ( void )
+ 707:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 708:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Tools_TimingSetRef ( &MainFeedbacksDuration );
+ 709:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 710:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 711:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask_Duration_End ( void )
+ 712:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 713:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Tools_ProcessValue ( &MainFeedbacksTaskDurationStat, Tools_GetTiming ( &MainFeedbacksDuration ) );
+ 714:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 715:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* MAIN_ANALOG_INPUTS_TASK_DEBUG && MAIN_ANALOG_INPUTS_TASK_DURATION */
+ 716:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 717:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 718:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 719:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_FEEDBACKS_TASK_DELAY_ON_ZC) && defined(CONFIG_CLASS_B_DATA_INTEGRITY)
+ 720:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /**
+ 721:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Init Duration  measurement
+ 722:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 723:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask_DelayOnZC_Init ( void )
+ 724:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 725:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_REGION_START();
+ 726:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE)
+ 727:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Tools_CreateTimingMeasure ( &MainFeedbacksDelayOnZC[MAIN_FEEDBACK_MODE_NORMAL] );
+ 728:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_DATA_ELEM_UPDATE(MainFeedbacksDelayOnZC, MAIN_FEEDBACK_MODE_NORMAL );
+ 729:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_DATA_ELEM_UPDATE(MainFeedbacksDelayOnZC_Score, MAIN_FEEDBACK_MODE_NORMAL );
+ 730:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 731:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE)
+ 732:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Tools_CreateTimingMeasure ( &MainFeedbacksDelayOnZC[MAIN_FEEDBACK_MODE_DELAYED] );
+ 733:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_DATA_ELEM_UPDATE( MainFeedbacksDelayOnZC, MAIN_FEEDBACK_MODE_DELAYED );
+ 734:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_DATA_ELEM_UPDATE(MainFeedbacksDelayOnZC_Score, MAIN_FEEDBACK_MODE_DELAYED );
+ 735:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif
+ 736:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_REGION_END();
+ 737:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 738:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 739:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 740:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /**
+ 741:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Stops the delay measurement
+ 742:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** \param [in] FeedbackType
+ 743:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 744:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_FeedbacksTask_DelayOnZC_Process ( MainFeedbacksModeType FeedbackType )
+ 745:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 746:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	OS_TIMING timing=0;
+ 747:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 748:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_REGION_START();
+ 749:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	if(goodZCSignal())
+ 750:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	{
+ 751:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		/* get the delay */
+ 752:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		SAFETY_DATA_ELEM_CHECK( MainFeedbacksDelayOnZC,  FeedbackType);
+ 753:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		Tools_TimingSetRefBySysTime ( &MainFeedbacksDelayOnZC[FeedbackType], Get_ZCSysTime() );
+ 754:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		Tools_GetTiming ( &MainFeedbacksDelayOnZC[FeedbackType] );
+ 755:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		SAFETY_DATA_ELEM_UPDATE( MainFeedbacksDelayOnZC, FeedbackType );
+ 756:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 757:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 758:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		/* store the delay in a local variable */
+ 759:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		timing = MainFeedbacksDelayOnZC[FeedbackType].Timing_cyc;
+ 760:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 761:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		/* check if the delay is in range */
+ 762:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		if(( timing >= MainFeedbacksDelayOnZCParam[MAIN_FEEDBACK_DELAY_ON_ZC_PARAM_MIN])
+ 763:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 			&& (timing <= MainFeedbacksDelayOnZCParam[MAIN_FEEDBACK_DELAY_ON_ZC_PARAM_MAX]))
+ 764:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		{
+ 765:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 			/* the value of the delay is in the allowed range */
+ 766:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 			SAFETY_DATA_ELEM_CHECK(MainFeedbacksDelayOnZC_Score, FeedbackType);
+ 767:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 			MainFeedbacksDelayOnZC_Score[FeedbackType].score++;
+ 768:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 			SAFETY_DATA_ELEM_UPDATE(MainFeedbacksDelayOnZC_Score, FeedbackType);
+ 769:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		}
+ 770:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		else
+ 771:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		{
+ 772:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 773:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 			SAFETY_DATA_ELEM_CHECK(MainFeedbacksDelayOnZC_Score, FeedbackType);
+ 774:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 			if(MainFeedbacksDelayOnZC_Score[FeedbackType].score!=MainFeedbacksDelayOnZC_Score[FeedbackType].
+ 775:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 			{
+ 776:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 				MainFeedbacksDelayOnZC_Score[FeedbackType].score--;
+ 777:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 				SAFETY_DATA_ELEM_UPDATE(MainFeedbacksDelayOnZC_Score, FeedbackType);
+ 778:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 			}
+ 779:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 780:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		}
+ 781:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	}
+ 782:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	else
+ 783:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	{
+ 784:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		/* cannot apply delay on ZC*/
+ 785:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		/* do nothing*/
+ 786:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 787:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	}
+ 788:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	SAFETY_REGION_END();
+ 789:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 790:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif  /* defined(CONFIG_MAIN_FEEDBACKS_TASK_DELAY_ON_ZC) */
+ 791:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 792:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 793:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 794:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 795:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 796:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /**
+ 797:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Alarm callback for normal feedbacks alarm that will be called at alarm expiration
+ 798:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 799:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE)
+ 800:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void AlmFeedbacksCallback ( void )
+ 801:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+   9                             		.loc 1 801 0
+  10                             	.LBB4:
+  11                             	.LBB5:
+ 802:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Main_ActivateFeedbacks();
+ 803:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 804:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE */
+ 805:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 806:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /**
+ 807:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Alarm callback for delayed feedbacks alarm that will be called at alarm expiration
+ 808:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 809:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE)
+ 810:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void AlmFeedbacksPCallback ( void )
+ 811:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 812:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Main_ActivateFeedbacksP();
+ 813:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 814:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #endif /* CONFIG_MAIN_DELAYED_FEEDBACKS_READ_ENABLE */
+ 815:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 816:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 
+ 817:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** /**
+ 818:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** Resumes normal feedbacks task
+ 819:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** */
+ 820:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** #if defined(CONFIG_MAIN_NORMAL_FEEDBACKS_READ_ENABLE)
+ 821:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** static void Main_ActivateFeedbacks ( void )
+ 822:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 823:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	if ( OS_GetSuspendCnt ( &Main_FeedbacksTaskTCB ) > 0 )
+  12                             		.loc 1 823 0
+  13 0000 FB 12 00 00 00 00       		mov.L	#_Main_FeedbacksTaskTCB, r1
+  14 0006 05 00 00 00             		bsr	_OS_GetSuspendCnt
+  15                             	.LVL0:
+  16 000a 5B 11                   		movu.B	r1, r1
+  17 000c 61 01                   		cmp	#0, r1
+  18 000e 20 0C                   		beq	.L1
+ 824:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	{
+ 825:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		OS_Resume ( &Main_FeedbacksTaskTCB );
+  19                             		.loc 1 825 0
+  20 0010 FB 12 00 00 00 00       		mov.L	#_Main_FeedbacksTaskTCB, r1
+  21 0016 04 00 00 00             		bra	_OS_Resume
+  22                             	.LVL1:
+  23                             	.L1:
+  24 001a 02                      		rts
+  25                             	.LBE5:
+  26                             	.LBE4:
+  27                             	.LFE7:
+  29                             		.section	.text.Main_FeedbacksTask,"ax",@progbits
+  31                             	_Main_FeedbacksTask:
+  32                             	.LFB3:
+ 615:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+  33                             		.loc 1 615 0
+ 616:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	START_FEEDBACKS_TASK_MONITORING(0); /* mode is not applicable */
+  34                             		.loc 1 616 0
+  35 0000 66 31                   		mov	#3, r1
+  36 0002 75 42 1E                		mov	#30, r2
+  37 0005 66 03                   		mov.L	#0, r3
+  38 0007 05 00 00 00             		bsr	_LIB_TaskMonitoringConfig
+  39                             	.LVL2:
+  40 000b 03                      		.balign 2,3,1
+  41                             	.L4:
+ 619:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		OS_Suspend ( NULL );
+  42                             		.loc 1 619 0 discriminator 1
+  43 000c 66 01                   		mov.L	#0, r1
+  44 000e 05 00 00 00             		bsr	_OS_Suspend
+  45                             	.LVL3:
+  46                             	.LBB10:
+  47                             	.LBB11:
+ 708:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Tools_TimingSetRef ( &MainFeedbacksDuration );
+  48                             		.loc 1 708 0 discriminator 1
+  49 0012 FB 12 00 00 00 00       		mov.L	#_MainFeedbacksDuration, r1
+  50 0018 05 00 00 00             		bsr	_Tools_TimingSetRef
+  51                             	.LVL4:
+  52                             	.LBE11:
+  53                             	.LBE10:
+ 628:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		MAIN_FEEDBACKS_TASK__MONITOR_IN(0);	/* mode is not applicable */
+  54                             		.loc 1 628 0 discriminator 1
+  55 001c 66 12                   		mov.L	#1, r2
+  56 001e 66 31                   		mov	#3, r1
+  57 0020 05 00 00 00             		bsr	_LIB_SetTask
+  58                             	.LVL5:
+  59 0024 66 31                   		mov	#3, r1
+  60 0026 05 00 00 00             		bsr	_LIB_TaskStartActivity
+  61                             	.LVL6:
+ 629:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		LIB_FDB_Manager ( ( bool_t ) MAIN_FEEDBACK_MODE_TYPE, goodZCSignal() );
+  62                             		.loc 1 629 0 discriminator 1
+  63 002a 05 00 00 00             		bsr	_goodZCSignal
+  64                             	.LVL7:
+  65 002e EF 12                   		mov.L	r1, r2
+  66 0030 66 01                   		mov.L	#0, r1
+  67 0032 05 00 00 00             		bsr	_LIB_FDB_Manager
+  68                             	.LVL8:
+ 630:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 		MAIN_FEEDBACKS_TASK__MONITOR_OUT(0);	/* mode is not applicable */
+  69                             		.loc 1 630 0 discriminator 1
+  70 0036 66 31                   		mov	#3, r1
+  71 0038 05 00 00 00             		bsr	_LIB_TaskEndActivity
+  72                             	.LVL9:
+  73                             	.LBB12:
+  74                             	.LBB13:
+ 713:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Tools_ProcessValue ( &MainFeedbacksTaskDurationStat, Tools_GetTiming ( &MainFeedbacksDuration ) );
+  75                             		.loc 1 713 0 discriminator 1
+  76 003c FB 12 00 00 00 00       		mov.L	#_MainFeedbacksDuration, r1
+  77 0042 05 00 00 00             		bsr	_Tools_GetTiming
+  78                             	.LVL10:
+  79 0046 EF 12                   		mov.L	r1, r2
+  80 0048 FB 12 00 00 00 00       		mov.L	#_MainFeedbacksTaskDurationStat, r1
+  81 004e 05 00 00 00             		bsr	_Tools_ProcessValue
+  82                             	.LVL11:
+  83 0052 2E BA                   		bra	.L4
+  84                             	.LBE13:
+  85                             	.LBE12:
+  86                             	.LFE3:
+  88                             		.section	.rodata.str1.1,"aMS",@progbits,1
+  89                             	.LC0:
+  90 0000 46 65 65 64 62 61 63 6B 		.string	"FeedbackTask"
+  90      54 61 73 6B 00 
+  91                             		.section	.text.Main_FeedbacksInit,"ax",@progbits
+  92                             		.global	_Main_FeedbacksInit
+  94                             	_Main_FeedbacksInit:
+  95                             	.LFB0:
+ 365:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+  96                             		.loc 1 365 0
+  97 0000 60 80                   		sub	#8, r0
+  98                             	.LCFI0:
+ 389:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     OS_CREATETASK    ( &Main_Feedbacks_TASK_TCB,
+  99                             		.loc 1 389 0
+ 100 0002 F8 02 00 00 00 00       		mov.L	#_Main_FeedbacksTaskStack, [r0]
+ 101 0008 F9 0A 01 00 01          		mov.L	#0x100, 4[r0]
+ 102 000d FB 12 00 00 00 00       		mov.L	#_Main_FeedbacksTaskTCB, r1
+ 103 0013 FB 22 00 00 00 00       		mov.L	#.LC0, r2
+ 104 0019 75 43 5B                		mov	#0x5b, r3
+ 105 001c FB 42 00 00 00 00       		mov.L	#_Main_FeedbacksTask, r4
+ 106 0022 05 00 00 00             		bsr	_OS_CreateTask_S
+ 107                             	.LVL12:
+ 401:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	OS_CreateAlarm ( &Main_AlmFeedbacks, AlmFeedbacksCallback, ( OS_U32 ) 0, ( OS_U32 ) 0 );
+ 108                             		.loc 1 401 0
+ 109 0026 66 03                   		mov.L	#0, r3
+ 110 0028 FB 12 00 00 00 00       		mov.L	#_Main_AlmFeedbacks, r1
+ 111 002e FB 22 00 00 00 00       		mov.L	#_AlmFeedbacksCallback, r2
+ 112 0034 EF 34                   		mov.L	r3, r4
+ 113 0036 05 00 00 00             		bsr	_OS_CreateAlarm_
+ 114                             	.LVL13:
+ 115                             	.LBB16:
+ 116                             	.LBB17:
+ 702:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Tools_CreateTimingMeasure ( &MainFeedbacksDuration );
+ 117                             		.loc 1 702 0
+ 118 003a FB 12 00 00 00 00       		mov.L	#_MainFeedbacksDuration, r1
+ 119 0040 05 00 00 00             		bsr	_Tools_CreateTimingMeasure
+ 120                             	.LVL14:
+ 703:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Tools_CreateTimingStats ( &MainFeedbacksTaskDurationStat );
+ 121                             		.loc 1 703 0
+ 122 0044 FB 12 00 00 00 00       		mov.L	#_MainFeedbacksTaskDurationStat, r1
+ 123                             	.LBE17:
+ 124                             	.LBE16:
+ 409:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 125                             		.loc 1 409 0
+ 126 004a 62 80                   		add	#8, r0
+ 127                             	.LBB19:
+ 128                             	.LBB18:
+ 703:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** 	Tools_CreateTimingStats ( &MainFeedbacksTaskDurationStat );
+ 129                             		.loc 1 703 0
+ 130 004c 04 00 00 00             		bra	_Tools_CreateTimingStats
+ 131                             	.LVL15:
+ 132                             	.LBE18:
+ 133                             	.LBE19:
+ 134                             	.LFE0:
+ 136                             		.section	.text.Main_ActivateFeedbacks_AsyncRead,"ax",@progbits
+ 137                             		.global	_Main_ActivateFeedbacks_AsyncRead
+ 139                             	_Main_ActivateFeedbacks_AsyncRead:
+ 140                             	.LFB1:
+ 426:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 141                             		.loc 1 426 0
+ 142 0000 6E 7A                   		pushm	r7-r10
+ 143                             	.LCFI1:
+ 426:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 144                             		.loc 1 426 0
+ 145 0002 EF 1A                   		mov.L	r1, r10
+ 427:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     if(OS_IsTask(&Main_FeedbacksTaskTCB))
+ 146                             		.loc 1 427 0
+ 147 0004 FB 12 00 00 00 00       		mov.L	#_Main_FeedbacksTaskTCB, r1
+ 148 000a 05 00 00 00             		bsr	_OS_IsTask
+ 149 000e 5B 11                   		movu.B	r1, r1
+ 150 0010 61 01                   		cmp	#0, r1
+ 151 0012 20 61                   		beq	.L7
+ 429:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****         OS_STARTALARMSF ( &Main_AlmFeedbacks, usOffset, usOffset, -1 );
+ 152                             		.loc 1 429 0
+ 153 0014 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 154 0018 FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 155 001e CD 7E 01                		mov.B	1[r7], r14
+ 156 0021 FB 12 00 00 00 00       		mov.L	#_Main_AlmFeedbacks, r1
+ 157 0027 62 1E                   		add	#1, r14
+ 158 0029 C7 7E 01                		mov.B	r14, 1[r7]
+ 159 002c 05 00 00 00             		bsr	_OS_StopAlarm
+ 160 0030 EF A2                   		mov.L	r10, r2
+ 161 0032 FB 12 00 00 00 00       		mov.L	#_Main_AlmFeedbacks, r1
+ 162 0038 05 00 00 00             		bsr	_OS_SetAlarmOffset_
+ 163 003c EF A2                   		mov.L	r10, r2
+ 164 003e FB 12 00 00 00 00       		mov.L	#_Main_AlmFeedbacks, r1
+ 165 0044 05 00 00 00             		bsr	_OS_SetAlarmPeriod_
+ 166 0048 FB 12 00 00 00 00       		mov.L	#_Main_AlmFeedbacks, r1
+ 167 004e FB 26 FF                		mov.L	#-1, r2
+ 168 0051 05 00 00 00             		bsr	_OS_SetAlarmActivationsCount_
+ 169 0055 FB 12 00 00 00 00       		mov.L	#_Main_AlmFeedbacks, r1
+ 170 005b 05 00 00 00             		bsr	_OS_StartAlarm
+ 171 005f CD 7A 01                		mov.B	1[r7], r10
+ 172 0062 60 1A                   		sub	#1, r10
+ 173 0064 C7 7A 01                		mov.B	r10, 1[r7]
+ 174 0067 5B AA                   		movu.B	r10, r10
+ 175 0069 61 0A                   		cmp	#0, r10
+ 176 006b 21 08                   		bne	.L7
+ 431:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 177                             		.loc 1 431 0 discriminator 1
+ 178 006d 6F 7A                   		popm	r7-r10
+ 429:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****         OS_STARTALARMSF ( &Main_AlmFeedbacks, usOffset, usOffset, -1 );
+ 179                             		.loc 1 429 0 discriminator 1
+ 180 006f 04 00 00 00             		bra	_OS_EnableInterrupt
+ 181                             	.L7:
+ 431:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 182                             		.loc 1 431 0
+ 183 0073 3F 7A 04                		rtsd	#16, r7-r10
+ 184                             	.LFE1:
+ 186                             		.section	.text.Main_ScheduleFeedbacks,"ax",@progbits
+ 187                             		.global	_Main_ScheduleFeedbacks
+ 189                             	_Main_ScheduleFeedbacks:
+ 190                             	.LFB2:
+ 471:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 191                             		.loc 1 471 0
+ 192                             	.LVL16:
+ 193 0000 6E 7A                   		pushm	r7-r10
+ 194                             	.LCFI2:
+ 195 0002 60 40                   		sub	#4, r0
+ 196                             	.LCFI3:
+ 471:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** {
+ 197                             		.loc 1 471 0
+ 198 0004 EF 1A                   		mov.L	r1, r10
+ 473:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     if(OS_IsTask(&Main_FeedbacksTaskTCB))
+ 199                             		.loc 1 473 0
+ 200 0006 FB 12 00 00 00 00       		mov.L	#_Main_FeedbacksTaskTCB, r1
+ 201                             	.LVL17:
+ 472:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     OS_ALARM_TICK ref = (OS_ALARM_TICK)TickRef;
+ 202                             		.loc 1 472 0
+ 203 000c D3 02                   		mov.W	r2, [r0]
+ 204                             	.LVL18:
+ 473:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****     if(OS_IsTask(&Main_FeedbacksTaskTCB))
+ 205                             		.loc 1 473 0
+ 206 000e 05 00 00 00             		bsr	_OS_IsTask
+ 207                             	.LVL19:
+ 208 0012 5B 11                   		movu.B	r1, r1
+ 209 0014 61 01                   		cmp	#0, r1
+ 210 0016 20 54                   		beq	.L12
+ 475:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****         OS_START_ABSALARM_ONESHOT ( &Main_AlmFeedbacks, usOffset, &ref );
+ 211                             		.loc 1 475 0
+ 212 0018 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 213                             	.LVL20:
+ 214 001c FB 72 00 00 00 00       		mov.L	#_OS_Global, r7
+ 215 0022 CD 7E 01                		mov.B	1[r7], r14
+ 216 0025 FB 12 00 00 00 00       		mov.L	#_Main_AlmFeedbacks, r1
+ 217 002b 62 1E                   		add	#1, r14
+ 218 002d C7 7E 01                		mov.B	r14, 1[r7]
+ 219 0030 05 00 00 00             		bsr	_OS_StopAlarm
+ 220                             	.LVL21:
+ 221 0034 FB 12 00 00 00 00       		mov.L	#_Main_AlmFeedbacks, r1
+ 222 003a 66 02                   		mov.L	#0, r2
+ 223 003c 05 00 00 00             		bsr	_OS_SetAlarmPeriod_
+ 224                             	.LVL22:
+ 225 0040 FB 12 00 00 00 00       		mov.L	#_Main_AlmFeedbacks, r1
+ 226 0046 EF A2                   		mov.L	r10, r2
+ 227 0048 05 00 00 00             		bsr	_OS_SetAlarmOffset_
+ 228                             	.LVL23:
+ 229 004c FB 12 00 00 00 00       		mov.L	#_Main_AlmFeedbacks, r1
+ 230 0052 EF 02                   		mov.L	r0, r2
+ 231 0054 05 00 00 00             		bsr	_OS_StartAbsAlarm
+ 232                             	.LVL24:
+ 233 0058 CD 7E 01                		mov.B	1[r7], r14
+ 234 005b 60 1E                   		sub	#1, r14
+ 235 005d C7 7E 01                		mov.B	r14, 1[r7]
+ 236 0060 5B EE                   		movu.B	r14, r14
+ 237 0062 61 0E                   		cmp	#0, r14
+ 238 0064 21 06                   		bne	.L12
+ 475:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c ****         OS_START_ABSALARM_ONESHOT ( &Main_AlmFeedbacks, usOffset, &ref );
+ 239                             		.loc 1 475 0 is_stmt 0 discriminator 1
+ 240 0066 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 241                             	.LVL25:
+ 242                             		.balign 2,3,2
+ 243                             	.L12:
+ 477:C:/Workspace/FW_Platform2_5/trunk/Main/EmbOS\Main_Feedbacks.c **** }
+ 244                             		.loc 1 477 0 is_stmt 1
+ 245 006a 3F 7A 05                		rtsd	#20, r7-r10
+ 246                             	.LFE2:
+ 248 006d 03                      		.section	.bss.Main_FeedbacksTaskTCB,"aw",@nobits
+ 249                             		.balign 4
+ 252                             	_Main_FeedbacksTaskTCB:
+ 253 0000 00 00 00 00 00 00 00 00 		.zero	44
+ 253      00 00 00 00 00 00 00 00 
+ 253      00 00 00 00 00 00 00 00 
+ 253      00 00 00 00 00 00 00 00 
+ 253      00 00 00 00 00 00 00 00 
+ 254                             		.section	.osstack,"aw",@progbits
+ 255                             		.balign 4
+ 258                             	_Main_FeedbacksTaskStack:
+ 259 0000 00 00 00 00 00 00 00 00 		.zero	256
+ 259      00 00 00 00 00 00 00 00 
+ 259      00 00 00 00 00 00 00 00 
+ 259      00 00 00 00 00 00 00 00 
+ 259      00 00 00 00 00 00 00 00 
+ 260                             		.section	.bss.Main_AlmFeedbacks,"aw",@nobits
+ 261                             		.balign 4
+ 264                             	_Main_AlmFeedbacks:
+ 265 0000 00 00 00 00 00 00 00 00 		.zero	20
+ 265      00 00 00 00 00 00 00 00 
+ 265      00 00 00 00 
+ 266                             		.section	.bss.MainFeedbacksDuration,"aw",@nobits
+ 267                             		.balign 4
+ 270                             	_MainFeedbacksDuration:
+ 271 0000 00 00 00 00 00 00 00 00 		.zero	16
+ 271      00 00 00 00 00 00 00 00 
+ 272                             		.section	.bss.MainFeedbacksTaskDurationStat,"aw",@nobits
+ 273                             		.balign 4
+ 276                             	_MainFeedbacksTaskDurationStat:
+ 277 0000 00 00 00 00 00 00 00 00 		.zero	12
+ 277      00 00 00 00 
+ 368                             	.Letext0:
+ 369                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 370                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 371                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\Main\\EmbOS\\tools/Tools.h"
+ 372                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_SecurityCheck/LIB_TaskMonitori
+ 373                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Feedbacks/FeedBacks.h"
+ 374                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\CFG_DishWasher\\CFG_Inertia/TaskMonitor_Cfg.h"
+ 375                             		.file 8 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_ZeroCrossing/Lib_ZeroCrossingE

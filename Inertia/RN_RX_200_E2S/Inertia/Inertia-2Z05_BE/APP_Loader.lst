@@ -1,0 +1,615 @@
+   1                             		.file	"APP_Loader.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.LDR_phaseLoader,"ax",@progbits
+   5                             		.global	_LDR_phaseLoader
+   7                             	_LDR_phaseLoader:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Application_Platform/APP_Loader.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /**
+   2:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \defgroup	APP_Loader Modulo Loader
+   3:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \ingroup	ApplPlatform
+   4:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+   5:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** Il modulo fornisce funzionalita' di caricamento dati dal file di setting.
+   6:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** */
+   7:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+   8:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /**
+   9:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** Source file del modulo Loader
+  10:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  11:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \file		APP_Loader.c
+  12:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \ingroup	APP_Loader
+  13:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \date		23/07/2008
+  14:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \version	01.00.00
+  15:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \author		Valeria Catani, Simone Costantini, Stefano Ughi, Marco Quintini
+  16:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  17:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \par		History
+  18:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  19:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \par		PCLint
+  20:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 			Report 16/01/2009: 0 Errors, 0 Warnings, 0 Info
+  21:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  22:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** */
+  23:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  24:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /*
+  25:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** Copyright (c) 2004-2007, Indesit Company, EDT.
+  26:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** Tutti i diritti sono riservati. All rights reserved.
+  27:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** */
+  28:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  29:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* ******** */
+  30:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* Includes */
+  31:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* ******** */
+  32:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** #include "CstmHeaders.h"
+  33:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  34:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  35:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* ****************** */
+  36:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* Defines and Macros */
+  37:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* ****************** */
+  38:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /**
+  39:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \name Valori particolari assunti dai puntatori nel file di setting
+  40:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** */
+  41:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /*@{*/ 
+  42:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** #define NULL_POINTER				0x0000U	/**< Puntatore nullo */
+  43:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** #define INVALID_POINTER				0xFFFFU	/**< Puntatori non valido */
+  44:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /*@}*/ 
+  45:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  46:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  47:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  48:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* *************************** */
+  49:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* Typedef, Structs and Unions */
+  50:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* *************************** */
+  51:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  52:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* **************************** */
+  53:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* Prototype of local functions */
+  54:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* **************************** */
+  55:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  56:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* ****************** */
+  57:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* Exported variables */
+  58:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* ****************** */
+  59:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  60:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* **************** */
+  61:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* Global variables */
+  62:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* **************** */
+  63:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /** Puntatori ai selettori per i diversi vani */
+  64:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** extern const uint16_t SelectorDataPointers[APP_N_COMP];
+  65:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  66:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* ***************** */
+  67:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* Exported function */
+  68:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /* ***************** */
+  69:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  70:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  71:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /**
+  72:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** Carica i dati relativi alla fase indicata in ingresso: numero di fasi nel ciclo
+  73:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** cui la fase appartiene, numero di statement che la compongono, puntatore agli High
+  74:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** Statement, puntatore ai Low Statement.
+  75:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  76:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \param [in]		compartment e' il vano in cui si trova il ciclo a cui appartiene
+  77:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 				la fase che si vuole caricare
+  78:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \param [in]		cycle e' il ciclo a cui appartiene la fase che si vuole caricare
+  79:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \param [in]		phase e' la fase che si vuole caricare
+  80:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \param [out]	pDataOut punta ai dati relativi alla fase caricata
+  81:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \attention		SelectorDataPointers (global, buffer puntatori ai selettori per
+  82:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 				i diversi vani) e' usata come input
+  83:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  84:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \return			S_OK se la funzione e' stata eseguita correttamente,
+  85:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 				un codice d'errore altrimenti.
+  86:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  87:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \warning		none		
+  88:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  89:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \version		1.0.0
+  90:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \date 			04/01/2006
+  91:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \author			Simone Costantini, Stefano Ughi
+  92:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** */
+  93:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** #if (MULTI_COMPARTMENT_APPL == 1)
+  94:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** uint8_t LDR_phaseLoader(uint8_t compartment, uint8_t cycle, uint8_t phase, uint8_t mSetting, PhaseL
+  95:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** #else /* (MULTI_COMPARTMENT_APPL == 1) */
+  96:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  97:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+  98:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** uint8_t LDR_phaseLoader(uint8_t cycle, uint8_t phase, uint8_t mSetting, PhaseLoader_Struct *pDataOu
+  99:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 100:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** #endif /* (MULTI_COMPARTMENT_APPL != 1) */
+ 101:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** {
+  10                             		.loc 1 101 0
+  11                             	.LVL0:
+  12 0000 6E 7C                   		pushm	r7-r12
+  13                             	.LCFI0:
+  14 0002 60 80                   		sub	#8, r0
+  15                             	.LCFI1:
+ 102:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** #if (MULTI_COMPARTMENT_APPL == 0)
+ 103:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** uint8_t compartment = 0;
+ 104:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** #endif /* (MULTI_COMPARTMENT_APPL == 0) */  	
+ 105:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 106:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** Loader_Struct ldData;
+ 107:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** uint8_t result;
+ 108:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** uint8_t hiStatRefMacro, loStatRefMacro;
+ 109:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 110:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** #if (MULTI_COMPARTMENT_APPL == 1)
+ 111:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	if( compartment >= SIZE(SelectorDataPointers) )
+ 112:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	{
+ 113:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return LDR_ERR_OVFL_SELECTORS;
+ 114:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	}
+ 115:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** #endif /* (MULTI_COMPARTMENT_APPL == 1) */
+ 116:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 117:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	/**	cycle indica il numero del ciclo partendo da 0 
+ 118:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	per questo motivo nel test va usato >= */
+ 119:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	if( cycle >= N_MAX_CYCLES_PC )
+  16                             		.loc 1 119 0
+  17 0004 5B 1A                   		movu.B	r1, r10
+  18 0006 75 5A 3F                		cmp	#63, r10
+ 101:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** {
+  19                             		.loc 1 101 0
+  20 0009 CF 1E                   		mov.B	r1, r14
+  21                             		.loc 1 119 0
+  22 000b 25 05 38 93 00          		bgtu	.L3
+ 120:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	{
+ 121:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return LDR_ERR_OVFL_CYCLES;
+ 122:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	}
+ 123:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		
+ 124:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	if( phase >= N_MAX_PHASES )
+  23                             		.loc 1 124 0
+  24 0010 5B 2A                   		movu.B	r2, r10
+  25 0012 75 5A 3F                		cmp	#63, r10
+  26 0015 25 05 38 8E 00          		bgtu	.L4
+  27 001a EF 47                   		mov.L	r4, r7
+ 125:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	{
+ 126:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return LDR_ERR_OVFL_PHASES;
+ 127:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	}
+ 128:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	result = MSettingBasicLoader( mSetting, SelectorDataPointers[compartment], cycle, &ldData );
+  28                             		.loc 1 128 0
+  29 001c FB 42 00 00 00 00       		mov.L	#_SelectorDataPointers, r4
+  30                             	.LVL1:
+  31 0022 DC 42                   		mov.W	[r4], r2
+  32                             	.LVL2:
+  33 0024 CF 31                   		mov.B	r3, r1
+  34                             	.LVL3:
+  35 0026 CF 3B                   		mov.B	r3, r11
+  36 0028 EF 04                   		mov.L	r0, r4
+  37 002a CF E3                   		mov.B	r14, r3
+  38                             	.LVL4:
+  39 002c 05 00 00 00             		bsr	_MSettingBasicLoader
+  40                             	.LVL5:
+ 129:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 130:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	if( result != S_OK )
+  41                             		.loc 1 130 0
+  42 0030 5B 1E                   		movu.B	r1, r14
+  43 0032 61 0E                   		cmp	#0, r14
+  44 0034 3B 84 00                		bne	.L2
+ 131:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	{
+ 132:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return result;
+ 133:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	}
+ 134:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	
+ 135:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	if( phase >= ldData.DataLenght )
+  45                             		.loc 1 135 0
+  46 0037 CD 0E 04                		mov.B	4[r0], r14
+  47 003a 5B E4                   		movu.B	r14, r4
+  48 003c 47 4A                   		cmp	r4, r10
+  49 003e 22 6C                   		bgeu	.L5
+ 136:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	{
+ 137:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return LDR_ERR_INVALID_PHASE;
+ 138:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	}
+ 139:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		
+ 140:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	pDataOut->nCyclePhases = ldData.DataLenght; 	
+  50                             		.loc 1 140 0
+  51 0040 C3 7E                   		mov.B	r14, [r7]
+ 141:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	
+ 142:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	ldData.Data += 2*phase;
+  52                             		.loc 1 142 0
+  53 0042 EC 0E                   		mov.L	[r0], r14
+  54 0044 4B AA                   		add	r10, r10
+  55                             	.LVL6:
+  56 0046 4B EA                   		add	r14, r10
+  57 0048 E3 0A                   		mov.L	r10, [r0]
+ 143:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	hiStatRefMacro = OFFS_B(ldData.Data, 0);
+  58                             		.loc 1 143 0
+  59 004a CC A3                   		mov.B	[r10], r3
+  60                             	.LVL7:
+ 144:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	loStatRefMacro = OFFS_B(ldData.Data, 1);
+  61                             		.loc 1 144 0
+  62 004c CD AA 01                		mov.B	1[r10], r10
+  63                             	.LVL8:
+ 145:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	
+ 146:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	if( ( hiStatRefMacro == 0 ) || ( loStatRefMacro == 0 ) )
+  64                             		.loc 1 146 0
+  65 004f 5B 3E                   		movu.B	r3, r14
+  66 0051 61 0E                   		cmp	#0, r14
+  67 0053 20 5C                   		beq	.L7
+  68                             		.loc 1 146 0 is_stmt 0 discriminator 1
+  69 0055 5B AE                   		movu.B	r10, r14
+  70 0057 61 0E                   		cmp	#0, r14
+  71 0059 20 56                   		beq	.L7
+ 147:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	{
+ 148:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return LDR_ERR_MACRO_NULL;
+ 149:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	}
+ 150:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 151:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	result = MSettingBasicLoader( mSetting, PTR_HI_STATEMENTS, (uint8_t)(hiStatRefMacro - 1), &ldData)
+  72                             		.loc 1 151 0 is_stmt 1
+  73 005b 60 13                   		sub	#1, r3
+  74                             	.LVL9:
+  75 005d CF B1                   		mov.B	r11, r1
+  76                             	.LVL10:
+  77 005f 66 C2                   		mov	#12, r2
+  78 0061 EF 04                   		mov.L	r0, r4
+  79 0063 05 00 00 00             		bsr	_MSettingBasicLoader
+  80                             	.LVL11:
+ 152:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 153:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	if( result != S_OK )
+  81                             		.loc 1 153 0
+  82 0067 5B 1E                   		movu.B	r1, r14
+  83 0069 61 0E                   		cmp	#0, r14
+  84 006b 21 4D                   		bne	.L2
+ 154:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	{
+ 155:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return result;
+ 156:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	}
+ 157:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		
+ 158:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	/*
+ 159:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	Se gli statements reali sono dispari l'editor deve provvedere
+ 160:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	ad aggiungere un ultimo statement a '0' (NOP).
+ 161:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	*/
+ 162:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	pDataOut->nPhaseStatements = (uint8_t)(2 * ldData.DataLenght);
+  85                             		.loc 1 162 0
+  86 006d CD 0E 04                		mov.B	4[r0], r14
+ 163:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	pDataOut->pHiStat = ldData.Data;
+  87                             		.loc 1 163 0
+  88 0070 EC 0C                   		mov.L	[r0], r12
+ 162:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	pDataOut->nPhaseStatements = (uint8_t)(2 * ldData.DataLenght);
+  89                             		.loc 1 162 0
+  90 0072 4B EE                   		add	r14, r14
+ 164:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 165:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	result = MSettingBasicLoader( mSetting, PTR_LO_STATEMENTS, (uint8_t)(loStatRefMacro - 1), &ldData)
+  91                             		.loc 1 165 0
+  92 0074 71 A3 FF                		add	#-1, r10, r3
+ 162:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	pDataOut->nPhaseStatements = (uint8_t)(2 * ldData.DataLenght);
+  93                             		.loc 1 162 0
+  94 0077 C7 7E 01                		mov.B	r14, 1[r7]
+ 163:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	pDataOut->pHiStat = ldData.Data;
+  95                             		.loc 1 163 0
+  96 007a E7 7C 01                		mov.L	r12, 4[r7]
+  97                             		.loc 1 165 0
+  98 007d CF B1                   		mov.B	r11, r1
+  99                             	.LVL12:
+ 100 007f 66 D2                   		mov	#13, r2
+ 101 0081 EF 04                   		mov.L	r0, r4
+ 102 0083 05 00 00 00             		bsr	_MSettingBasicLoader
+ 103                             	.LVL13:
+ 166:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 167:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	if( result != S_OK )
+ 104                             		.loc 1 167 0
+ 105 0087 5B 1A                   		movu.B	r1, r10
+ 106                             	.LVL14:
+ 107 0089 61 0A                   		cmp	#0, r10
+ 108 008b 21 2D                   		bne	.L2
+ 168:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	{
+ 169:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return result;
+ 170:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	}
+ 171:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 172:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	if (pDataOut->nPhaseStatements != (2 * ldData.DataLenght))
+ 109                             		.loc 1 172 0
+ 110 008d 59 0A 04                		movu.B	4[r0], r10
+ 111 0090 59 7B 01                		movu.B	1[r7], r11
+ 112                             	.LVL15:
+ 113 0093 4B AA                   		add	r10, r10
+ 114 0095 47 AB                   		cmp	r10, r11
+ 115 0097 21 1D                   		bne	.L8
+ 173:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	{
+ 174:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return LDR_ERR_STATEMENT_MISMATCH;
+ 175:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	}
+ 176:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 177:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	pDataOut->pLoStat = ldData.Data;
+ 116                             		.loc 1 177 0
+ 117 0099 EC 0A                   		mov.L	[r0], r10
+ 118 009b E7 7A 02                		mov.L	r10, 8[r7]
+ 119 009e 2E 1A                   		bra	.L2
+ 120                             	.LVL16:
+ 121                             	.L3:
+ 121:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return LDR_ERR_OVFL_CYCLES;
+ 122                             		.loc 1 121 0
+ 123 00a0 FB 16 83                		mov	#0xffffff83, r1
+ 124                             	.LVL17:
+ 125 00a3 2E 15                   		bra	.L2
+ 126                             	.LVL18:
+ 127                             	.L4:
+ 126:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return LDR_ERR_OVFL_PHASES;
+ 128                             		.loc 1 126 0
+ 129 00a5 FB 16 84                		mov	#0xffffff84, r1
+ 130                             	.LVL19:
+ 131 00a8 2E 10                   		bra	.L2
+ 132                             	.LVL20:
+ 133                             	.L5:
+ 137:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return LDR_ERR_INVALID_PHASE;
+ 134                             		.loc 1 137 0
+ 135 00aa FB 16 85                		mov	#0xffffff85, r1
+ 136                             	.LVL21:
+ 137 00ad 2E 0B                   		bra	.L2
+ 138                             	.LVL22:
+ 139                             	.L7:
+ 148:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return LDR_ERR_MACRO_NULL;
+ 140                             		.loc 1 148 0
+ 141 00af FB 16 86                		mov	#0xffffff86, r1
+ 142                             	.LVL23:
+ 143 00b2 2E 06                   		bra	.L2
+ 144                             	.LVL24:
+ 145                             	.L8:
+ 174:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return LDR_ERR_STATEMENT_MISMATCH;
+ 146                             		.loc 1 174 0
+ 147 00b4 FB 16 87                		mov	#0xffffff87, r1
+ 148                             	.LVL25:
+ 149 00b7 03                      		.balign 2,3,1
+ 150                             	.L2:
+ 178:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	
+ 179:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	return S_OK;
+ 180:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** } /* END: LDR_phaseLoader */
+ 151                             		.loc 1 180 0
+ 152 00b8 5B 11                   		movu.B	r1, r1
+ 153 00ba 3F 7C 08                		rtsd	#32, r7-r12
+ 154                             	.LFE0:
+ 156 00bd 03                      		.section	.text.MissedLoadCheck,"ax",@progbits
+ 157                             		.global	_MissedLoadCheck
+ 159                             	_MissedLoadCheck:
+ 160                             	.LFB1:
+ 181:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 182:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 183:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /**
+ 184:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** Questa funzione carica un dato (uint8_t) del setting evitando problemi di incompatibilità
+ 185:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** setting file <--> firmware grazie alla funzione MissedOnlyCheck, in seguito all'introduzione 
+ 186:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** di nuovi parametri setting;
+ 187:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 188:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** in pratica viene controllato se il dato che si vuole caricare esiste veramente nella tabella,
+ 189:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** se sì viene caricato, altrimenti viene caricato al suo posto il valore 0;
+ 190:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** può succedere quando viene introdotta una nuova funzionalità che richiede un nuovo parametro (uint8
+ 191:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** setting, quando il dato aggiunto comporta l'aggiunta di una word nella tabella, perchè in questo ca
+ 192:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** la tabella si allunga. Se un nuovo firmware che va a cercare questo dato viene fatto girare con un 
+ 193:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** setting dove la tabella è più corta (il dato non esiste) senza questo controllo si caricherebbe
+ 194:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** un dato random, in questo caso invece si verifica che la lunghezza della tabella comprenda il dato 
+ 195:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** se non è così viene forzato il caricamento del dato a 0
+ 196:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 197:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \param [in]		pointer e' il puntatore del file di setting da cui caricare i dati
+ 198:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \param [in]		position e' lo spiazzamento relativo al puntatore pointer
+ 199:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 				del dato da caricare (uint8_t)
+ 200:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 201:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \return			il dato caricato
+ 202:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 203:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \warning		none
+ 204:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 205:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \use			Questa funzione va usata tutte le volte che una tabella setting si allunga con nuovi dati,
+ 206:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 				mentre non è necessario usarla quando viene aggiunto un nuovo byte ma la lunghezza della
+ 207:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 				tabella (in word) rimane la stessa.
+ 208:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 209:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \version		1.0.0
+ 210:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \date 			28/09/2010
+ 211:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \author			Claudio Fontana
+ 212:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** */
+ 213:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 214:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** uint8_t MissedLoadCheck(Loader_Struct* pointer, uint8_t position)
+ 215:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** {
+ 161                             		.loc 1 215 0
+ 162                             	.LVL26:
+ 163                             	.LBB4:
+ 164                             	.LBB5:
+ 216:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 217:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** Loader_Struct* pointerToCheck = pointer;
+ 218:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** uint8_t positionToCheck = position;
+ 219:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 220:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	if (MissedOnlyCheck(pointerToCheck,positionToCheck))
+ 221:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	{
+ 222:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return (OFFS_B(pointer->Data,position));	
+ 223:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	}
+ 224:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	else
+ 225:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	{
+ 226:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return 0;	
+ 227:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	}
+ 228:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** }
+ 229:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 230:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 231:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /**
+ 232:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** Questa funzione serve per evitare problemi di incompatibilità setting file <--> firmware
+ 233:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** in seguito all'introduzione di nuovi parametri setting;
+ 234:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** in pratica viene controllato se il dato che si vuole caricare esiste veramente nella tabella,
+ 235:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** può succedere quando viene introdotta una nuova funzionalità che richiede un nuovo parametro (uint8
+ 236:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** setting, quando il dato aggiunto comporta l'aggiunta di una word nella tabella, perchè in questo ca
+ 237:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** la tabella si allunga. Se un nuovo firmware che va a cercare questo dato viene fatto girare con un 
+ 238:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** setting dove la tabella è più corta (il dato non esiste) grazie a questo controllo si può evitare
+ 239:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** di caricare un dato random
+ 240:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 241:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** la funzionalità completa viene espletata dalla funzione MissedLoadCheck che però dà per scontato
+ 242:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** che il valore 0 del dato da caricare sia quello che disabilita la funzionalità, ma non è sempre cos
+ 243:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** per i casi che questa condizione non è rispettata usare questa funzione prima di caricare il dato
+ 244:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 245:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \param [in]		pointer e' il puntatore del file di setting da cui caricare i dati
+ 246:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \param [in]		position e' lo spiazzamento relativo al puntatore pointer
+ 247:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 				del dato da caricare (uint8_t)
+ 248:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 249:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \return			esito del check (TRUE significa che il dato esiste)
+ 250:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 251:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \warning		none
+ 252:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 253:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \use			Questa funzione va usata tutte le volte che una tabella setting si allunga con nuovi dati,
+ 254:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 				mentre non è necessario usarla quando viene aggiunto un nuovo byte ma la lunghezza della
+ 255:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 				tabella (in word) rimane la stessa.
+ 256:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 257:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \version		1.0.0
+ 258:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \date 			28/09/2010
+ 259:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \author			Claudio Fontana
+ 260:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** */
+ 261:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 262:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 263:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** bool_t MissedOnlyCheck(const Loader_Struct* pointer, uint8_t position)
+ 264:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** {
+ 265:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 266:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	if (pointer->DataLenght <= (position/2))
+ 165                             		.loc 1 266 0
+ 166 0000 5B 22                   		movu.B	r2, r2
+ 167 0002 B1 14                   		movu.B	4[r1], r4
+ 168 0004 FD 81 2E                		shlr	#1, r2, r14
+ 169 0007 47 E4                   		cmp	r14, r4
+ 170 0009 24 08                   		bgtu	.L11
+ 226:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return 0;	
+ 171                             		.loc 1 226 0
+ 172 000b 66 01                   		mov	#0, r1
+ 173                             	.LVL27:
+ 174 000d 03                      		.balign 2,3,1
+ 175                             	.L12:
+ 176 000e 5B 11                   		movu.B	r1, r1
+ 177 0010 02                      		rts
+ 178                             	.LVL28:
+ 179                             	.L11:
+ 180                             	.LBE5:
+ 181                             	.LBE4:
+ 222:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return (OFFS_B(pointer->Data,position));	
+ 182                             		.loc 1 222 0
+ 183 0011 EC 1E                   		mov.L	[r1], r14
+ 184 0013 FE 42 E1                		mov.B	[r2,r14], r1
+ 185                             	.LVL29:
+ 186 0016 2E F8                   		bra	.L12
+ 187                             	.LFE1:
+ 189                             		.section	.text.MissedOnlyCheck,"ax",@progbits
+ 190                             		.global	_MissedOnlyCheck
+ 192                             	_MissedOnlyCheck:
+ 193                             	.LFB2:
+ 264:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** {
+ 194                             		.loc 1 264 0
+ 195                             	.LVL30:
+ 196                             		.loc 1 266 0
+ 197 0000 B1 11                   		movu.B	4[r1], r1
+ 198                             	.LVL31:
+ 199 0002 5B 22                   		movu.B	r2, r2
+ 200 0004 68 12                   		shlr	#1, r2
+ 201                             	.LVL32:
+ 267:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	{
+ 268:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return FALSE;
+ 269:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	}
+ 270:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	else
+ 271:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	{
+ 272:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return TRUE;
+ 273:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	}
+ 274:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** }
+ 202                             		.loc 1 274 0
+ 203 0006 47 21                   		cmp	r2, r1
+ 204 0008 FC DB 14                		scgtu.L	r1
+ 205 000b 02                      		rts
+ 206                             	.LFE2:
+ 208                             		.section	.text.SettingDataCompare,"ax",@progbits
+ 209                             		.global	_SettingDataCompare
+ 211                             	_SettingDataCompare:
+ 212                             	.LFB3:
+ 275:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 276:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 277:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /**
+ 278:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** Questa funzione serve per verificare se una variabile ha raggiunto un limite specificato in setting
+ 279:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** tenendo conto che se il limite in setting è 0 significa che il controllo è disabilitato
+ 280:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** questo al fine di gestire la compatibilità, difatti se la funzionalità a cui si riferisce il
+ 281:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** test è una nuova funzionalità non prevista nei vecchi setting, succede che il riferimento in settin
+ 282:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** perchè il dato era fisicamente presente ma non era usato (vale 0) oppure non era proprio presente
+ 283:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** in questo caso diventa 0 grazie alla funzione precedente MissedLoadCheck
+ 284:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 285:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** in sintesi se il riferimento (in setting) è presente (cioè > 0) viene fatto il controllo tra la var
+ 286:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** da testare ed il riferimento stesso, ritornando TRUE o FALSE a seconda dell'esito del test,
+ 287:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** mentre se il riferimento non è presente (cioè = 0) verrà sempre ritornato FALSE
+ 288:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 289:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \param [in]		pointer e' il puntatore del file di setting da cui caricare i dati
+ 290:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \param [in]		position e' lo spiazzamento relativo al puntatore pointer
+ 291:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 				del dato da caricare (uint8_t)
+ 292:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 293:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \return			esito del test
+ 294:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 295:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \warning		none
+ 296:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 297:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \use			Questa funzione va usata tutte le volte che si può avere un problema di compatibilità
+ 298:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 				in seguito all'introduzione di un nuovo dato in setting
+ 299:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 300:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \version		1.0.0
+ 301:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \date 			30/09/2010
+ 302:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \author			Claudio Fontana
+ 303:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** */
+ 304:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** bool_t SettingDataCompare (uint16_t check, uint16_t reference)
+ 305:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** {
+ 213                             		.loc 1 305 0
+ 214                             	.LVL33:
+ 306:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	if ((reference > 0) && (check >= reference))
+ 215                             		.loc 1 306 0
+ 216 0000 5F 22                   		movu.W	r2, r2
+ 217 0002 61 02                   		cmp	#0, r2
+ 218 0004 20 0A                   		beq	.L17
+ 219                             		.loc 1 306 0 is_stmt 0 discriminator 1
+ 220 0006 5F 11                   		movu.W	r1, r1
+ 307:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	{
+ 308:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return TRUE;
+ 221                             		.loc 1 308 0 is_stmt 1 discriminator 1
+ 222 0008 47 21                   		cmp	r2, r1
+ 223 000a FC DB 12                		scgeu.L	r1
+ 224                             	.LVL34:
+ 225 000d 02                      		rts
+ 226                             	.LVL35:
+ 227                             	.L17:
+ 309:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	}
+ 310:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	else
+ 311:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	{
+ 312:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return FALSE;
+ 228                             		.loc 1 312 0
+ 229 000e EF 21                   		mov.L	r2, r1
+ 230                             	.LVL36:
+ 313:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	}
+ 314:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** }
+ 231                             		.loc 1 314 0
+ 232 0010 02                      		rts
+ 233                             	.LFE3:
+ 235                             		.section	.text.SettingDataReverseCompare,"ax",@progbits
+ 236                             		.global	_SettingDataReverseCompare
+ 238                             	_SettingDataReverseCompare:
+ 239                             	.LFB4:
+ 315:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 316:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** /*
+ 317:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** Complementare alla precedente funzione 'SettingDtaCompare'
+ 318:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** in pratica il test viene fatto al contarario, sempre tenendo conto che se reference=0 la condizione
+ 319:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 320:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \param [in]		pointer e' il puntatore del file di setting da cui caricare i dati
+ 321:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \param [in]		position e' lo spiazzamento relativo al puntatore pointer
+ 322:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 				del dato da caricare (uint8_t)
+ 323:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 324:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \return			esito del test
+ 325:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 326:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \warning		none
+ 327:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 328:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \use			Questa funzione va usata tutte le volte che si può avere un problema di compatibilità
+ 329:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 				in seguito all'introduzione di un nuovo dato in setting
+ 330:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 
+ 331:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \version		1.0.0
+ 332:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \date 			22/03/2012
+ 333:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** \author			Claudio Fontana
+ 334:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** */
+ 335:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** bool_t SettingDataReverseCompare (uint16_t check, uint16_t reference)
+ 336:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** {
+ 240                             		.loc 1 336 0
+ 241                             	.LVL37:
+ 337:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	if ((reference > 0) && (check < reference))
+ 242                             		.loc 1 337 0
+ 243 0000 5F 22                   		movu.W	r2, r2
+ 244 0002 61 02                   		cmp	#0, r2
+ 245 0004 20 0A                   		beq	.L20
+ 246                             		.loc 1 337 0 is_stmt 0 discriminator 1
+ 247 0006 5F 11                   		movu.W	r1, r1
+ 338:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	{
+ 339:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return TRUE;
+ 248                             		.loc 1 339 0 is_stmt 1 discriminator 1
+ 249 0008 47 21                   		cmp	r2, r1
+ 250 000a FC DB 13                		scltu.L	r1
+ 251                             	.LVL38:
+ 252 000d 02                      		rts
+ 253                             	.LVL39:
+ 254                             	.L20:
+ 340:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	}
+ 341:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	else
+ 342:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	{
+ 343:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 		return FALSE;
+ 255                             		.loc 1 343 0
+ 256 000e EF 21                   		mov.L	r2, r1
+ 257                             	.LVL40:
+ 344:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** 	}
+ 345:C:/Workspace/FW_Platform2_5/trunk/Application_Platform\APP_Loader.c **** }
+ 258                             		.loc 1 345 0
+ 259 0010 02                      		rts
+ 260                             	.LFE4:
+ 340                             	.Letext0:
+ 341                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 342                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_Library/LIB_Utilities.h"
+ 343                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_Types.h"
+ 344                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmTypes.h"
+ 345                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_Global.h"
+ 346                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\Inertia\\General/CstmGlobal.h"

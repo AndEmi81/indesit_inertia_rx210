@@ -1,0 +1,1307 @@
+   1                             		.file	"OCADC_drv.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.OCADC_InitSync,"ax",@progbits
+   5                             		.global	_OCADC_InitSync
+   7                             	_OCADC_InitSync:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC/OCADC_drv.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /*
+   2:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** Copyright (c) 2004-2005, Indesit Company, I.D.D..
+   3:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** Tutti i diritti sono riservati. All rights reserved.
+   4:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** */
+   5:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+   6:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /**
+   7:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n
+   8:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \par		OCADC_drv.c
+   9:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n			Implementation of all functions necessary to achieve the aim.
+  10:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n
+  11:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \file		OCADC_drv.c
+  12:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \ingroup	OCADC
+  13:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \date		March 2, 2010
+  14:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \version	01.00.03
+  15:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \author		Jaroslav Musil
+  16:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n
+  17:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n
+  18:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \par	History:
+  19:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n
+  20:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      01.00.07
+  21:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      Feb 02,2011
+  22:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      Stefano Ughi
+  23:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      fixed bug on OCADC_StartMultiSampleMultiChannelSync()
+  24:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n
+  25:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      01.00.06
+  26:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      16/06/2010
+  27:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      Stefano Ughi
+  28:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      added function IO_ErrorType OCADC_GetADchannelSync(IO_ModuleIOMapType *pIOMap,uint8_t *pCha
+  29:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n
+  30:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n		01.00.05
+  31:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n		31/05/2010
+  32:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n		Stefano Ughi
+  33:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n		added channel parameter on ADC_pResultRegister for compatibility with others uc
+  34:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n
+  35:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n 		01.00.04
+  36:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n		16/04/2010
+  37:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n		Stefano Ughi
+  38:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      - In OCADC_StartMultiSampleMultiChannelSync()
+  39:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      (void)SWDMA_StartTransferSync(ADC_RESULTS_DMA_CHANNEL, ADC_Callback);
+  40:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      changed in
+  41:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      (void)SWDMA_StartTransferSync(ADC_RESULTS_DMA_CHANNEL, NULL);
+  42:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n
+  43:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      (void)SWDMA_StartTransferSync(ADC_CHANNELS_DMA_CHANNEL, NULL);
+  44:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      changed in
+  45:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      (void)SWDMA_StartTransferSync(ADC_CHANNELS_DMA_CHANNEL, ADC_Callback);
+  46:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      because of new DMA SW Implementation
+  47:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n
+  48:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n 		01.00.03
+  49:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n		02/03/2010
+  50:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n		Jaroslav Musil
+  51:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      - added ADC_ResultValueType that depends on the peripheral result register
+  52:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      - added the ADC_RESULT_REGISTER_SIZE define
+  53:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      - added pResults item into the OCADC_ResultType structure
+  54:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n
+  55:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n 		01.00.02
+  56:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n		18/02/2010
+  57:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n		Jaroslav Musil
+  58:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      - Commented
+  59:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      - dma channels set up by the defines; i.e. removed from the function interfaces
+  60:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      - dma structure setting checks the type of the results and sets the transfer either 8-bit o
+  61:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      - used defines ADC_USE_SW_DMA and ADC_USE_HW_DMA
+  62:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n
+  63:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n 		01.00.01
+  64:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n		18/02/2010
+  65:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n		Jaroslav Musil
+  66:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n      - added the DMA multi sample functions
+  67:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n
+  68:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n 		01.00.00
+  69:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n		16/02/2010
+  70:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n		Stefano Ughi
+  71:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n		- Creation
+  72:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n
+  73:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** */
+  74:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+  75:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* ******** */
+  76:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* Includes */
+  77:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* ******** */
+  78:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #include "OCADC_drv.h"
+  79:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #include "LIB_ClassBVar.h"
+  80:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #include "LIB_Trace.h"
+  81:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #include "LIB_TaskMonitoring.h"
+  82:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if defined (CHECK_POSSIBLE_RESET_CAUSES)
+  83:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #include "ResetModule.h"
+  84:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif
+  85:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* ****************** */
+  86:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* Defines and Macros */
+  87:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* ****************** */
+  88:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+  89:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+  90:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* *************************** */
+  91:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* Typedef, Structs and Unions */
+  92:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* *************************** */
+  93:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /**
+  94:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+  95:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** */
+  96:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** typedef struct OCADC_ResultType_tag
+  97:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** {
+  98:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	Comm_Notification callback;     /* callback function that will be called after the last sample is 
+  99:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_ValueType *pResult;         /* pointer to the result after resolution correction, i.e. data ty
+ 100:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA | ADC_USE_HW_DMA)
+ 101:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_ResultValueType *pResults;  /* pointer to the result correction where the data type is the sam
+ 102:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif
+ 103:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	IO_ChannelType channel;			/*usato per l'acquisizione singola*/
+ 104:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	IO_ChannelType *pChannel;       /* pointer to the channels */
+ 105:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	uint16_t sampleCount;           /* defines the number of samples that should be taken. In single s
+ 106:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	IO_ChannelType dmaChannel;      /* dma channel for the results */
+ 107:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	IO_ChannelType dmaChannelCh;    /* dma channel for the adc channels */
+ 108:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** } OCADC_ResultType;
+ 109:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 110:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 111:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 112:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* ********* */
+ 113:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* Variables */
+ 114:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* ********* */
+ 115:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 116:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* Global */
+ 117:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 118:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* Static */
+ 119:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /** If TRUE ADC is Busy */
+ 120:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** static bool_t ADC_Resource;
+ 121:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 122:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /** Here driver store convertion results
+ 123:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c ****  * \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_3
+ 124:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c ****  * */
+ 125:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** static ADC_ValueType ADC_Convertions[ADC_NUM_CHANNELLS_USED];
+ 126:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** static OCADC_ResultType ADC_DataResult;
+ 127:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 128:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* ******************* */
+ 129:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* Functions Prototype */
+ 130:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* ******************* */
+ 131:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 132:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* Local Function */
+ 133:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA | ADC_USE_HW_DMA)
+ 134:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** static IO_ErrorType ADC_Callback(IO_NotificationType notification, IO_ChannelType channel, IO_Error
+ 135:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif
+ 136:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 137:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* *************** */
+ 138:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* Function Bodies */
+ 139:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* *************** */
+ 140:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 141:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /* Exported function */
+ 142:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /**
+ 143:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n This function initialises the ADC driver. It uses the configurations parameters defined in
+ 144:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n AdcConfig.h file that must be included in Config.h file.
+ 145:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \return 	IO_ErrorType
+ 146:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_OK initialization done
+ 147:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 148:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 149:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** */
+ 150:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** IO_ErrorType OCADC_InitSync(void)
+ 151:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** {
+  10                             		.loc 1 151 0
+ 152:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	int i;
+ 153:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_Init();
+  11                             		.loc 1 153 0
+  12 0000 05 00 00 00             		bsr	_ADC_Init
+  13                             	.LVL0:
+ 154:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_Resource = FALSE;
+  14                             		.loc 1 154 0
+  15 0004 FB E2 00 00 00 00       		mov.L	#_ADC_Resource, r14
+  16 000a F8 E6 00                		mov.L	#0, [r14]
+  17                             	.LVL1:
+ 155:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 156:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	SAFETY_REGION_START();
+ 157:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	for(i=0; i<ADC_NUM_CHANNELLS_USED ; i++){
+ 158:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		SAFETY_DATA_ELEM_UPDATE( ADC_Convertions, i );
+ 159:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 160:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	SAFETY_REGION_END();
+ 161:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 162:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** }
+  18                             		.loc 1 162 0
+  19 000d 66 01                   		mov.L	#0, r1
+  20 000f 02                      		rts
+  21                             	.LFE0:
+  23                             		.section	.text.OCADC_DeInitSync,"ax",@progbits
+  24                             		.global	_OCADC_DeInitSync
+  26                             	_OCADC_DeInitSync:
+  27                             	.LFB1:
+ 163:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /**
+ 164:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n This function deinitialises the ADC driver and
+ 165:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n sets all ADC-channels back to their controller default configuration.
+ 166:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \return 	IO_ErrorType
+ 167:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_OK deinitialization done
+ 168:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 169:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 170:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** */
+ 171:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** IO_ErrorType OCADC_DeInitSync(void)
+ 172:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** {
+  28                             		.loc 1 172 0
+ 173:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DeInit();
+  29                             		.loc 1 173 0
+  30 0000 05 00 00 00             		bsr	_ADC_DeInit
+  31                             	.LVL2:
+ 174:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_Resource = FALSE;
+  32                             		.loc 1 174 0
+  33 0004 FB E2 00 00 00 00       		mov.L	#_ADC_Resource, r14
+  34 000a F8 E6 00                		mov.L	#0, [r14]
+ 175:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 176:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** }
+  35                             		.loc 1 176 0
+  36 000d 66 01                   		mov.L	#0, r1
+  37 000f 02                      		rts
+  38                             	.LFE1:
+  40                             		.section	.text.OCADC_GetADchannelSync,"ax",@progbits
+  41                             		.global	_OCADC_GetADchannelSync
+  43                             	_OCADC_GetADchannelSync:
+  44                             	.LFB2:
+ 177:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /**
+ 178:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n The function returns the analogue channel linked to a specified pin.
+ 179:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \param  [in]	pIOMap fixed a pin index specifies the pointer to the Module IO Map.
+ 180:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \param  [in]	pChannel pointer where is stored the ADC channel
+ 181:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \return 	IO_ErrorType
+ 182:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_OK
+ 183:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval     IO_E_UNEXPECTED_CONDITION
+ 184:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 185:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 186:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** */
+ 187:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** IO_ErrorType OCADC_GetADchannelSync(const IO_ModuleIOMapType *const pIOMap,uint8_t *pChannel)
+ 188:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** {
+  45                             		.loc 1 188 0
+  46                             	.LVL3:
+  47 0000 6E 7A                   		pushm	r7-r10
+  48                             	.LCFI0:
+  49 0002 EF 1E                   		mov.L	r1, r14
+  50 0004 60 40                   		sub	#4, r0
+  51                             	.LCFI1:
+  52                             		.loc 1 188 0
+  53 0006 EF 27                   		mov.L	r2, r7
+ 189:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	uint8_t ch;
+ 190:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 191:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if ( ADC_GetChannel(pIOMap->PortAddress,pIOMap->PinMask,&ch))
+  54                             		.loc 1 191 0
+  55 0008 EC 11                   		mov.L	[r1], r1
+  56                             	.LVL4:
+  57 000a CD E2 04                		mov.B	4[r14], r2
+  58                             	.LVL5:
+  59 000d EF 03                   		mov.L	r0, r3
+  60 000f 05 00 00 00             		bsr	_ADC_GetChannel
+  61                             	.LVL6:
+  62 0013 61 01                   		cmp	#0, r1
+  63 0015 20 0A                   		beq	.L5
+  64                             	.LVL7:
+ 192:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 193:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		*pChannel = ch;
+  65                             		.loc 1 193 0
+  66 0017 CC 0A                   		mov.B	[r0], r10
+ 194:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_OK;
+  67                             		.loc 1 194 0
+  68 0019 66 01                   		mov	#0, r1
+ 193:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		*pChannel = ch;
+  69                             		.loc 1 193 0
+  70 001b C3 7A                   		mov.B	r10, [r7]
+  71 001d 2E 05                   		bra	.L4
+  72                             	.LVL8:
+  73                             	.L5:
+ 195:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 196:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	return (IO_ErrorType)IO_E_UNEXPECTED_CONDITION;
+  74                             		.loc 1 196 0
+  75 001f 75 41 17                		mov	#23, r1
+  76                             	.LVL9:
+  77                             		.balign 2,3,2
+  78                             	.L4:
+ 197:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** }
+  79                             		.loc 1 197 0
+  80 0022 75 21 17                		and	#23, r1
+  81 0025 3F 7A 05                		rtsd	#20, r7-r10
+  82                             	.LFE2:
+  84                             		.section	.text.OCADC_GetSync,"ax",@progbits
+  85                             		.global	_OCADC_GetSync
+  87                             	_OCADC_GetSync:
+  88                             	.LFB3:
+ 198:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /**
+ 199:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n The function returns the analogue value of the specified position in the configured resolution.
+ 200:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n Cfr. ADC_RESOLUTION param in AdcConfig.h.\n
+ 201:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n The user is responsible to call the OCADC_StartSampleSync or OCADC_SampleSync functions before.
+ 202:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \param  [in]	position specifies a position inside ADC_Convertions[] buffer.
+ 203:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \return 	ADC_ValueType
+ 204:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		analogue value
+ 205:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 206:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 207:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** */
+ 208:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** ADC_ValueType OCADC_GetSync(IO_PositionType position)
+ 209:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** {
+  89                             		.loc 1 209 0
+  90                             	.LVL10:
+ 210:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	return (ADC_Convertions[position]);
+ 211:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** }
+  91                             		.loc 1 211 0
+  92 0000 FB E2 00 00 00 00       		mov.L	#_ADC_Convertions, r14
+ 210:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	return (ADC_Convertions[position]);
+  93                             		.loc 1 210 0
+  94 0006 5B 11                   		movu.B	r1, r1
+  95                             		.loc 1 211 0
+  96 0008 FE D1 E1                		movu.W	[r1,r14], r1
+  97                             	.LVL11:
+  98 000b 02                      		rts
+  99                             	.LFE3:
+ 101                             		.section	.text.OCADC_StartSampleSync,"ax",@progbits
+ 102                             		.global	_OCADC_StartSampleSync
+ 104                             	_OCADC_StartSampleSync:
+ 105                             	.LFB4:
+ 212:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 213:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /**
+ 214:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n This function starts the measurement of analogue value of the specified ADC channel and
+ 215:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n stores the values into ADC_Convertions[] buffer. The function OCADC_GetSync  returns the stored
+ 216:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n values. A measurement can be stopped using the function OCADC_StopSampleSync.
+ 217:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 218:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \param  [in]	The parameter channel specifies the ADC channel.
+ 219:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \param  [in]	The parameter position specifies where conversion must be stored inside ADC_Convertion
+ 220:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \param  [in]	callback  This parameter points to a callback function to inform the caller \n
+ 221:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c ****  				about sample status of the specified channel: \n
+ 222:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 				IO_E_OK: Measurement successfully finished. \n
+ 223:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 				IO_E_FCN_SUSPENDED: Measurement was cancelled with function OCADC_StopSampleSync. \n
+ 224:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 				This pointer can be set to NULL if not needed, in this case the caller is responsable to \n
+ 225:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 				call OCADC_IsConvertionReadySync() in order to test if the resul is ready.\n
+ 226:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 				The callback will be called when measurement is finished.\n
+ 227:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 				Starting a new measurement from callback function is possible.
+ 228:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 229:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \return 	IO_ErrorType
+ 230:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_OK Measurement started successfully.
+ 231:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_BUSY Function is blocked because a measurement is currently running.
+ 232:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_INVALID_CHANNEL_ID The channel descriptor is invalid.
+ 233:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_INVALID_POSITION The position descriptor is invalid.
+ 234:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 235:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 236:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** */
+ 237:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** IO_ErrorType OCADC_StartSampleSync (IO_ChannelType channel,IO_PositionType position, Comm_Notificat
+ 238:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** {
+ 106                             		.loc 1 238 0
+ 107                             	.LVL12:
+ 108 0000 6E 7C                   		pushm	r7-r12
+ 109                             	.LCFI2:
+ 239:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 240:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if ( position >= ADC_NUM_CHANNELLS_USED )
+ 110                             		.loc 1 240 0
+ 111 0002 5B 2B                   		movu.B	r2, r11
+ 112 0004 61 7B                   		cmp	#7, r11
+ 238:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** {
+ 113                             		.loc 1 238 0
+ 114 0006 CF 2C                   		mov.B	r2, r12
+ 115                             		.loc 1 240 0
+ 116 0008 24 7A                   		bgtu	.L13
+ 241:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 242:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_POSITION;
+ 243:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 244:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_CheckChannel(channel))
+ 117                             		.loc 1 244 0
+ 118 000a 5B 1B                   		movu.B	r1, r11
+ 119 000c 75 5B 1E                		cmp	#30, r11
+ 120 000f CF 17                   		mov.B	r1, r7
+ 121 0011 24 76                   		bgtu	.L14
+ 122 0013 EF 3A                   		mov.L	r3, r10
+ 245:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 246:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 247:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 248:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 249:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 250:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	EnterCriticalSection();
+ 123                             		.loc 1 250 0
+ 124 0015 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 125                             	.LVL13:
+ 251:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if ( ADC_Resource )
+ 126                             		.loc 1 251 0
+ 127 0019 FB 32 00 00 00 00       		mov.L	#_ADC_Resource, r3
+ 250:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	EnterCriticalSection();
+ 128                             		.loc 1 250 0
+ 129 001f FB B2 00 00 00 00       		mov.L	#_OS_Global, r11
+ 130                             		.loc 1 251 0
+ 131 0025 EC 32                   		mov.L	[r3], r2
+ 250:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	EnterCriticalSection();
+ 132                             		.loc 1 250 0
+ 133 0027 CD BE 01                		mov.B	1[r11], r14
+ 134                             		.loc 1 251 0
+ 135 002a 61 02                   		cmp	#0, r2
+ 136 002c 5B E4                   		movu.B	r14, r4
+ 137 002e 20 0F                   		beq	.L10
+ 252:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 253:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		ExitCriticalSection();
+ 138                             		.loc 1 253 0
+ 139 0030 C7 BE 01                		mov.B	r14, 1[r11]
+ 140 0033 61 04                   		cmp	#0, r4
+ 141 0035 21 57                   		bne	.L15
+ 142                             		.loc 1 253 0 is_stmt 0 discriminator 1
+ 143 0037 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 144                             	.LVL14:
+ 145 003b 2E 51                   		bra	.L15
+ 146                             	.L10:
+ 254:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_BUSY;
+ 255:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 256:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Get ADC Resource */
+ 257:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_Resource = TRUE;
+ 147                             		.loc 1 257 0 is_stmt 1
+ 148 003d 3E 30 01                		mov.L	#1, [r3]
+ 258:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ExitCriticalSection();
+ 149                             		.loc 1 258 0
+ 150 0040 C7 BE 01                		mov.B	r14, 1[r11]
+ 151 0043 61 04                   		cmp	#0, r4
+ 152 0045 21 07                   		bne	.L11
+ 153                             		.loc 1 258 0 is_stmt 0 discriminator 1
+ 154 0047 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 155                             	.LVL15:
+ 156 004b 03                      		.balign 2,3,1
+ 157                             	.L11:
+ 259:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 260:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* The sampleCount is zero to determine that it is not multisample mode */
+ 261:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.sampleCount = 0;
+ 262:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Stores the pointer for the callback function */
+ 263:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.callback = callback;
+ 264:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Stores the pointer for the result */
+ 265:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 266:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.pResult = &ADC_Convertions[position];
+ 158                             		.loc 1 266 0 is_stmt 1
+ 159 004c 5B CC                   		movu.B	r12, r12
+ 160 004e 4B CC                   		add	r12, r12
+ 161                             	.LVL16:
+ 261:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.sampleCount = 0;
+ 162                             		.loc 1 261 0
+ 163 0050 FB B2 00 00 00 00       		mov.L	#_ADC_DataResult, r11
+ 164                             		.loc 1 266 0
+ 165 0056 70 CC 00 00 00 00       		add	#_ADC_Convertions, r12
+ 267:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Start Convertion */
+ 268:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_ConfigurePinAsChannel(channel);
+ 166                             		.loc 1 268 0
+ 167 005c CF 71                   		mov.B	r7, r1
+ 261:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.sampleCount = 0;
+ 168                             		.loc 1 261 0
+ 169 005e F9 B5 08 00             		mov.W	#0, 16[r11]
+ 263:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.callback = callback;
+ 170                             		.loc 1 263 0
+ 171 0062 E3 BA                   		mov.L	r10, [r11]
+ 266:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.pResult = &ADC_Convertions[position];
+ 172                             		.loc 1 266 0
+ 173 0064 E7 BC 01                		mov.L	r12, 4[r11]
+ 174                             		.loc 1 268 0
+ 175 0067 05 00 00 00             		bsr	_ADC_ConfigurePinAsChannel
+ 176                             	.LVL17:
+ 269:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.channel = channel;
+ 270:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	
+ 271:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/*lint -e506 */
+ 272:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/*lint -e610 pointers have the same size */
+ 273:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if ( NULL != callback )
+ 177                             		.loc 1 273 0
+ 178 006b 61 0A                   		cmp	#0, r10
+ 269:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.channel = channel;
+ 179                             		.loc 1 269 0
+ 180 006d C7 B7 08                		mov.B	r7, 8[r11]
+ 274:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		/*lint +e610 */
+ 275:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 276:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		ADC_StartConvertionOnChannel(channel,ADC_INT_ENABLED);
+ 181                             		.loc 1 276 0
+ 182 0070 CF 71                   		mov.B	r7, r1
+ 273:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if ( NULL != callback )
+ 183                             		.loc 1 273 0
+ 184 0072 20 0C                   		beq	.L12
+ 185                             	.LVL18:
+ 186                             		.loc 1 276 0
+ 187 0074 66 12                   		mov	#1, r2
+ 188                             		.balign 2,3,3
+ 189                             	.L17:
+ 190 0076 05 00 00 00             		bsr	_ADC_StartConvertionOnChannel
+ 191                             	.LVL19:
+ 277:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 278:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	else
+ 279:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 280:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		ADC_StartConvertionOnChannel(channel,ADC_INT_DISABLED);
+ 281:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 282:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/*lint +e506 */
+ 283:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 284:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 192                             		.loc 1 284 0
+ 193 007a 66 01                   		mov	#0, r1
+ 194 007c 2E 12                   		bra	.L9
+ 195                             	.LVL20:
+ 196                             	.L12:
+ 280:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		ADC_StartConvertionOnChannel(channel,ADC_INT_DISABLED);
+ 197                             		.loc 1 280 0
+ 198 007e CF A2                   		mov.B	r10, r2
+ 199 0080 2E F6                   		bra	.L17
+ 200                             	.LVL21:
+ 201                             	.L13:
+ 242:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_POSITION;
+ 202                             		.loc 1 242 0
+ 203 0082 75 41 15                		mov	#21, r1
+ 204                             	.LVL22:
+ 205 0085 2E 09                   		bra	.L9
+ 206                             	.LVL23:
+ 207                             	.L14:
+ 246:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 208                             		.loc 1 246 0
+ 209 0087 75 41 12                		mov	#18, r1
+ 210                             	.LVL24:
+ 211 008a 2E 04                   		bra	.L9
+ 212                             	.LVL25:
+ 213                             	.L15:
+ 254:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_BUSY;
+ 214                             		.loc 1 254 0
+ 215 008c 66 11                   		mov	#1, r1
+ 216                             	.LVL26:
+ 217                             		.balign 2,3,1
+ 218                             	.L9:
+ 285:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 286:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** }
+ 219                             		.loc 1 286 0
+ 220 008e 5B 11                   		movu.B	r1, r1
+ 221 0090 3F 7C 06                		rtsd	#24, r7-r12
+ 222                             	.LFE4:
+ 224 0093 03                      		.section	.text.OCADC_IsConvertionReadySync,"ax",@progbits
+ 225                             		.global	_OCADC_IsConvertionReadySync
+ 227                             	_OCADC_IsConvertionReadySync:
+ 228                             	.LFB5:
+ 287:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /**
+ 288:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n This function checks if the measurement of analogue value is finished. If it is finished, the va
+ 289:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n stored on the position into ADC_Convertions[] buffer which was specified by the function OCADC_S
+ 290:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n The function OCADC_GetSync  returns the stored values.
+ 291:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n A measurement can be stopped using the function OCADC_StopSampleSync.
+ 292:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 293:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \return 	IO_ErrorType
+ 294:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_OK Measurement finished successfully.
+ 295:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_BUSY Function is blocked because a measurement is currently running.
+ 296:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 297:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 298:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** */
+ 299:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** IO_ErrorType OCADC_IsConvertionReadySync(IO_ChannelType channel)
+ 300:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** {
+ 229                             		.loc 1 300 0
+ 230                             	.LVL27:
+ 231 0000 7E A7                   		push.l	r7
+ 232                             	.LCFI3:
+ 301:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c ****     (void)channel;
+ 302:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_EndConvertion())
+ 233                             		.loc 1 302 0
+ 234 0002 FB 7E 00 90 08          		mov.L	#0x89000, r7
+ 235 0007 DC 77                   		mov.W	[r7], r7
+ 236 0009 61 07                   		cmp	#0, r7
+ 237 000b 28 1D                   		bge	.L20
+ 303:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 304:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c ****         	*ADC_DataResult.pResult = (ADC_ValueType) ADC_GetConvertedValueOnChannel(channel);
+ 238                             		.loc 1 304 0
+ 239 000d FB 72 00 00 00 00       		mov.L	#_ADC_DataResult, r7
+ 240 0013 A8 7F                   		mov.L	4[r7], r7
+ 241 0015 05 00 00 00             		bsr	_ADC_GetConvertedValueOnChannel
+ 242                             	.LVL28:
+ 243 0019 D3 71                   		mov.W	r1, [r7]
+ 305:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		/* Release ADC Resource */
+ 306:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		ADC_Resource = FALSE;
+ 244                             		.loc 1 306 0
+ 245 001b FB 72 00 00 00 00       		mov.L	#_ADC_Resource, r7
+ 246 0021 3E 70 00                		mov.L	#0, [r7]
+ 307:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_OK;
+ 247                             		.loc 1 307 0
+ 248 0024 66 01                   		mov	#0, r1
+ 249 0026 2E 04                   		bra	.L19
+ 250                             	.LVL29:
+ 251                             	.L20:
+ 308:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 309:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	else
+ 310:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 311:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_BUSY;
+ 252                             		.loc 1 311 0
+ 253 0028 66 11                   		mov	#1, r1
+ 254                             	.LVL30:
+ 255                             		.balign 2,3,1
+ 256                             	.L19:
+ 312:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 313:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** }
+ 257                             		.loc 1 313 0
+ 258 002a 64 11                   		and	#1, r1
+ 259 002c 3F 77 01                		rtsd	#4, r7-r7
+ 260                             	.LFE5:
+ 262 002f 03                      		.section	.text.OCADC_SampleSync,"ax",@progbits
+ 263                             		.global	_OCADC_SampleSync
+ 265                             	_OCADC_SampleSync:
+ 266                             	.LFB6:
+ 314:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 315:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /**
+ 316:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n This function starts the measurement of analogue value of the specified ADC channel,
+ 317:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n wait for end convertion, and stores the values into ADC_Convertions[] buffer.
+ 318:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n The function OCADC_GetSync  returns the stored values.
+ 319:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n The function is always avaible also if is not defined ADC_HW_DMA nor ADC_SW_DMA.
+ 320:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 321:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \param  [in]	The parameter channel specifies the ADC channel.
+ 322:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \param  [in]	The parameter position specifies where conversion must be stored inside ADC_Convertion
+ 323:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 324:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \return 	IO_ErrorType
+ 325:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 326:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_OK Measurement finished successfully.
+ 327:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_BUSY Function is blocked because a measurement is currently running.
+ 328:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_INVALID_CHANNEL_ID The channel descriptor is invalid.
+ 329:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_INVALID_POSITION The position descriptor is invalid.
+ 330:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 331:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \note		\par \b Note 1:
+ 332:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			-if position = AD_DUMMY_POS will be performed a sample on channel but the read not stored.
+ 333:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			-added for debugging functions Reset_SetResetCode(RESET_CODE_ATD);
+ 334:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 335:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 336:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** */
+ 337:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** IO_ErrorType OCADC_SampleSync (IO_ChannelType channel,IO_PositionType position)
+ 338:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** {
+ 267                             		.loc 1 338 0
+ 268                             	.LVL31:
+ 269 0000 6E 7A                   		pushm	r7-r10
+ 270                             	.LCFI4:
+ 271                             		.loc 1 338 0
+ 272 0002 CF 2A                   		mov.B	r2, r10
+ 339:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_ValueType adcValue;
+ 340:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 341:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if ( (position >= ADC_NUM_CHANNELLS_USED) && (position != AD_DUMMY_POS))
+ 273                             		.loc 1 341 0
+ 274 0004 71 AE F8                		add	#-8, r10, r14
+ 275 0007 5B EE                   		movu.B	r14, r14
+ 276 0009 75 5E F6                		cmp	#0xf6, r14
+ 277 000c 25 7F                   		bleu	.L28
+ 342:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 343:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_POSITION;
+ 344:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 345:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_CheckChannel(channel))
+ 278                             		.loc 1 345 0
+ 279 000e 5B 1E                   		movu.B	r1, r14
+ 280 0010 75 5E 1E                		cmp	#30, r14
+ 281 0013 CF 17                   		mov.B	r1, r7
+ 282 0015 24 7B                   		bgtu	.L29
+ 346:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 347:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 348:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 349:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 350:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	EnterCriticalSection();
+ 283                             		.loc 1 350 0
+ 284 0017 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 285                             	.LVL32:
+ 351:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if ( ADC_Resource )
+ 286                             		.loc 1 351 0
+ 287 001b FB 22 00 00 00 00       		mov.L	#_ADC_Resource, r2
+ 350:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	EnterCriticalSection();
+ 288                             		.loc 1 350 0
+ 289 0021 FB E2 00 00 00 00       		mov.L	#_OS_Global, r14
+ 290                             		.loc 1 351 0
+ 291 0027 EC 21                   		mov.L	[r2], r1
+ 350:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	EnterCriticalSection();
+ 292                             		.loc 1 350 0
+ 293 0029 CD E4 01                		mov.B	1[r14], r4
+ 294                             		.loc 1 351 0
+ 295 002c 61 01                   		cmp	#0, r1
+ 296 002e 5B 43                   		movu.B	r4, r3
+ 297 0030 20 0F                   		beq	.L24
+ 352:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 353:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		ExitCriticalSection();
+ 298                             		.loc 1 353 0
+ 299 0032 C7 E4 01                		mov.B	r4, 1[r14]
+ 300 0035 61 03                   		cmp	#0, r3
+ 301 0037 21 5E                   		bne	.L30
+ 302                             		.loc 1 353 0 is_stmt 0 discriminator 1
+ 303 0039 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 304                             	.LVL33:
+ 305 003d 2E 58                   		bra	.L30
+ 306                             	.L24:
+ 354:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_BUSY;
+ 355:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 356:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Get ADC Resource */
+ 357:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_Resource = TRUE;
+ 307                             		.loc 1 357 0 is_stmt 1
+ 308 003f 3E 20 01                		mov.L	#1, [r2]
+ 358:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ExitCriticalSection();
+ 309                             		.loc 1 358 0
+ 310 0042 C7 E4 01                		mov.B	r4, 1[r14]
+ 311 0045 61 03                   		cmp	#0, r3
+ 312 0047 21 07                   		bne	.L25
+ 313                             		.loc 1 358 0 is_stmt 0 discriminator 1
+ 314 0049 05 00 00 00             		bsr	_OS_EnableInterrupt
+ 315                             	.LVL34:
+ 316 004d 03                      		.balign 2,3,1
+ 317                             	.L25:
+ 359:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Start Convertion */
+ 360:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_ConfigurePinAsChannel(channel);
+ 318                             		.loc 1 360 0 is_stmt 1
+ 319 004e CF 71                   		mov.B	r7, r1
+ 320 0050 05 00 00 00             		bsr	_ADC_ConfigurePinAsChannel
+ 321                             	.LVL35:
+ 361:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/*lint -e506 */
+ 362:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_StartConvertionOnChannel(channel,ADC_INT_DISABLED);
+ 322                             		.loc 1 362 0
+ 323 0054 CF 71                   		mov.B	r7, r1
+ 324 0056 66 02                   		mov	#0, r2
+ 325 0058 05 00 00 00             		bsr	_ADC_StartConvertionOnChannel
+ 326                             	.LVL36:
+ 363:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/*lint +e506 */
+ 364:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if defined (CHECK_POSSIBLE_RESET_CAUSES)
+ 365:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	Reset_SetResetCode(RESET_CODE_ATD);
+ 366:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif /* #if defined (CHECK_POSSIBLE_RESET_CAUSES) */
+ 367:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_WaitForConvertionOnChannel(channel);
+ 327                             		.loc 1 367 0
+ 328 005c FB 4E 00 90 08          		mov.L	#0x89000, r4
+ 329 0061 03                      		.balign 2,3,5
+ 330                             	.L26:
+ 331                             		.loc 1 367 0 is_stmt 0 discriminator 1
+ 332 0062 DC 4E                   		mov.W	[r4], r14
+ 333 0064 61 0E                   		cmp	#0, r14
+ 334 0066 29 FC                   		blt	.L26
+ 368:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 369:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	adcValue = (ADC_ValueType) ADC_GetConvertedValueOnChannel(channel);
+ 335                             		.loc 1 369 0 is_stmt 1
+ 336 0068 CF 71                   		mov.B	r7, r1
+ 337 006a 05 00 00 00             		bsr	_ADC_GetConvertedValueOnChannel
+ 338                             	.LVL37:
+ 370:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if (position != AD_DUMMY_POS)
+ 339                             		.loc 1 370 0
+ 340 006e 5B AA                   		movu.B	r10, r10
+ 341 0070 75 5A FF                		cmp	#0xff, r10
+ 342 0073 20 0B                   		beq	.L27
+ 371:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 372:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		SAFETY_REGION_START();
+ 373:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		SAFETY_DATA_ELEM_CHECK( ADC_Convertions, position );
+ 374:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 375:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		ADC_Convertions[position] = adcValue;
+ 343                             		.loc 1 375 0
+ 344 0075 FB 72 00 00 00 00       		mov.L	#_ADC_Convertions, r7
+ 345                             	.LVL38:
+ 346 007b FE 1A 71                		mov.W	r1, [r10,r7]
+ 347                             		.balign 2,3,5
+ 348                             	.L27:
+ 376:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		
+ 377:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		SAFETY_DATA_ELEM_UPDATE( ADC_Convertions, position );
+ 378:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		SAFETY_REGION_END();
+ 379:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 380:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Release ADC Resource */
+ 381:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_Resource = FALSE;
+ 349                             		.loc 1 381 0
+ 350 007e FB 72 00 00 00 00       		mov.L	#_ADC_Resource, r7
+ 351 0084 3E 70 00                		mov.L	#0, [r7]
+ 382:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 352                             		.loc 1 382 0
+ 353 0087 66 01                   		mov	#0, r1
+ 354 0089 2E 0F                   		bra	.L23
+ 355                             	.LVL39:
+ 356                             	.L28:
+ 343:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_POSITION;
+ 357                             		.loc 1 343 0
+ 358 008b 75 41 15                		mov	#21, r1
+ 359                             	.LVL40:
+ 360 008e 2E 0A                   		bra	.L23
+ 361                             	.LVL41:
+ 362                             	.L29:
+ 347:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 363                             		.loc 1 347 0
+ 364 0090 75 41 12                		mov	#18, r1
+ 365                             	.LVL42:
+ 366 0093 2E 05                   		bra	.L23
+ 367                             	.LVL43:
+ 368                             	.L30:
+ 354:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_BUSY;
+ 369                             		.loc 1 354 0
+ 370 0095 66 11                   		mov	#1, r1
+ 371                             	.LVL44:
+ 372 0097 03                      		.balign 2,3,2
+ 373                             	.L23:
+ 383:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** }
+ 374                             		.loc 1 383 0
+ 375 0098 75 21 17                		and	#23, r1
+ 376 009b 3F 7A 04                		rtsd	#16, r7-r10
+ 377                             	.LFE6:
+ 379                             		.section	.text.OCADC_StopSampleSync,"ax",@progbits
+ 380                             		.global	_OCADC_StopSampleSync
+ 382                             	_OCADC_StopSampleSync:
+ 383                             	.LFB7:
+ 384:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /**
+ 385:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n This function stop a measurement.
+ 386:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 387:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 388:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** */
+ 389:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** void OCADC_StopSampleSync(void)
+ 390:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** {
+ 384                             		.loc 1 390 0
+ 391:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	EnterCriticalSection();
+ 385                             		.loc 1 391 0
+ 386 0000 05 00 00 00             		bsr	_OS_DisableInterrupt
+ 387                             	.LVL45:
+ 392:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 393:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_Resource)
+ 388                             		.loc 1 393 0
+ 389 0004 FB 42 00 00 00 00       		mov.L	#_ADC_Resource, r4
+ 390 000a EC 42                   		mov.L	[r4], r2
+ 391:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	EnterCriticalSection();
+ 391                             		.loc 1 391 0
+ 392 000c FB 32 00 00 00 00       		mov.L	#_OS_Global, r3
+ 393                             		.loc 1 393 0
+ 394 0012 61 02                   		cmp	#0, r2
+ 391:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	EnterCriticalSection();
+ 395                             		.loc 1 391 0
+ 396 0014 CD 3E 01                		mov.B	1[r3], r14
+ 397                             		.loc 1 393 0
+ 398 0017 20 05                   		beq	.L37
+ 394:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 395:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		/* Stops ADC conversion */
+ 396:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		ADC_StopConversion();
+ 397:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 398:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		/* Release ADC Resource */
+ 399:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		ADC_Resource = FALSE;
+ 399                             		.loc 1 399 0
+ 400 0019 3E 40 00                		mov.L	#0, [r4]
+ 401                             		.balign 2,3,5
+ 402                             	.L37:
+ 400:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 401:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 402:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 403:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ExitCriticalSection();
+ 403                             		.loc 1 403 0
+ 404 001c C7 3E 01                		mov.B	r14, 1[r3]
+ 405 001f 5B EE                   		movu.B	r14, r14
+ 406 0021 61 0E                   		cmp	#0, r14
+ 407 0023 21 06                   		bne	.L36
+ 408                             		.loc 1 403 0 is_stmt 0 discriminator 1
+ 409 0025 04 00 00 00             		bra	_OS_EnableInterrupt
+ 410                             	.LVL46:
+ 411                             	.L36:
+ 412 0029 02                      		rts
+ 413                             	.LFE7:
+ 415                             		.section	.text.OCADC_ISR,"ax",@progbits
+ 416                             		.global	_OCADC_ISR
+ 418                             	_OCADC_ISR:
+ 419                             	.LFB8:
+ 404:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** }
+ 405:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 406:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA | ADC_USE_HW_DMA)
+ 407:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /**
+ 408:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n This function starts the measurement of analogue value of the specified ADC channel.
+ 409:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n It uses DMA and converts from the same channel the defined number of results.
+ 410:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n At the end the function generates the callback.
+ 411:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 412:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \param  [in]	channel specifies the ADC channel.
+ 413:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \param  [in]	sampleCount specifies the number of samples to be taken.
+ 414:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \param  [in]	pResults specifies the position in memory where to store the first sample after conver
+ 415:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \param  [in]	callback  This parameter points to a callback function to inform the caller \n
+ 416:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c ****  				about the conversion complete: \n
+ 417:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 				if callback return IO_E_OK -> measurement successfully finished. \n
+ 418:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 419:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \return 	IO_ErrorType
+ 420:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 421:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_OK Measurement finished successfully.
+ 422:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_BUSY Function is blocked because a measurement is currently running.
+ 423:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_INVALID_CHANNEL_ID The channel descriptor is invalid.
+ 424:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 425:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 426:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** */
+ 427:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** IO_ErrorType OCADC_StartMultiSampleOneChannelSync(IO_ChannelType channel, uint16_t sampleCount, ADC
+ 428:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** {
+ 429:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA)
+ 430:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	SWDMA_TransferType  transfer = {0};
+ 431:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #else
+ 432:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	OCDMA_TransferType  transfer = {0};
+ 433:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif
+ 434:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 435:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Checks if all the channel is valid */
+ 436:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_CheckChannel(channel))
+ 437:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 438:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 439:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 440:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 441:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	EnterCriticalSection();
+ 442:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 443:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_Resource)
+ 444:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 445:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		ExitCriticalSection();
+ 446:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_BUSY;
+ 447:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 448:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 449:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Get ADC Resource */
+ 450:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_Resource = TRUE;
+ 451:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 452:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ExitCriticalSection();
+ 453:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 454:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Configures the DMA for the results transmission */
+ 455:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 456:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA)
+ 457:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 458:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if (ADC_RESULT_REGISTER_SIZE == 8)
+ 459:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 460:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.options.optionbyte |= (SWDMA_OPTION_SSIZE_BYTE|SWDMA_OPTION_DSIZE_BYTE);
+ 461:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.bcr = sampleCount;
+ 462:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 463:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif
+ 464:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 465:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if (ADC_RESULT_REGISTER_SIZE == 16)
+ 466:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 467:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.options.optionbyte |= (SWDMA_OPTION_SSIZE_WORD|SWDMA_OPTION_DSIZE_WORD);
+ 468:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.bcr = (sampleCount << 1);
+ 469:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 470:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif
+ 471:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 472:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.sar = (SWDMA_SarType)ADC_pResultRegister(channel);
+ 473:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.dar = (SWDMA_DarType)pResults;
+ 474:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.channel = ADC_RESULTS_DMA_CHANNEL;
+ 475:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 476:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.options.optionbyte |= (SWDMA_OPTION_DINC|SWDMA_OPTION_CS);
+ 477:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 478:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_ChannelEnableSync(ADC_RESULTS_DMA_CHANNEL);
+ 479:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_SetTransferSync(&transfer);
+ 480:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_StartTransferSync(ADC_RESULTS_DMA_CHANNEL, ADC_Callback);
+ 481:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #elif (ADC_USE_HW_DMA)
+ 482:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* in case of 8-bit ADC */
+ 483:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_RESULT_DMA_SIZE == OCDMA_SIZE_8BITs)
+ 484:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 485:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		transfer.addr = OCDMA_ADDR_DINC | OCDMA_ADDR_SSIZE_BYTE | OCDMA_ADDR_DSIZE_BYTE | OCDMA_ADDR_CS;
+ 486:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 487:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		transfer.bcr = sampleCount;
+ 488:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 489:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* in case of 16-bit ADC */
+ 490:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	else if (ADC_RESULT_DMA_SIZE == OCDMA_SIZE_16BITs)
+ 491:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 492:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		transfer.addr = OCDMA_ADDR_DINC | OCDMA_ADDR_SSIZE_WORD | OCDMA_ADDR_DSIZE_WORD | OCDMA_ADDR_CS;
+ 493:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 494:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		transfer.bcr = (sampleCount << 1);
+ 495:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 496:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 497:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.sar = (OCDMA_SarType)ADC_pResultRegister();
+ 498:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.dar = (OCDMA_DarType)pResults;
+ 499:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 500:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.channel = OCDMA_CHANNEL_ID(ADC_RESULTS_DMA_CHANNEL) | OCDMA_CHANNEL_DEVICE(ADC_RESULTS_DM
+ 501:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 502:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.perlink = OCDMA_PERLINK_ERQ | OCDMA_PERLINK_D_ERQ;
+ 503:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 504:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 505:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Enables the DMA on ADC */
+ 506:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_EnableDMA();
+ 507:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 508:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetChannelDeviceSync(&transfer);
+ 509:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetTransferParamSync(&transfer);
+ 510:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetTransferSync(&transfer);
+ 511:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_StartTransferSync(0, &transfer, ADC_Callback);
+ 512:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif /* #if (ADC_USE_SW_DMA) */
+ 513:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 514:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 515:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Stores sampleCount information */
+ 516:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.sampleCount = sampleCount;
+ 517:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 518:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Stores the pointer for the callback function */
+ 519:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.callback = callback;
+ 520:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 521:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Stores the pointer for the result */
+ 522:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.pResults = pResults;
+ 523:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 524:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* No source table with channels */
+ 525:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.pChannel = NULL;
+ 526:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 527:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Saves the dma channels */
+ 528:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.dmaChannel = ADC_RESULTS_DMA_CHANNEL;
+ 529:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 530:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Configures the pin as ADC */
+ 531:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_ConfigurePinAsChannel(channel);
+ 532:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 533:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Start Conversion */
+ 534:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_StartMultiSampleConvertionOnChannel(channel);
+ 535:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 536:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 537:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 538:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** }
+ 539:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif /* #if (ADC_USE_SW_DMA | ADC_USE_HW_DMA)*/
+ 540:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA | ADC_USE_HW_DMA)
+ 541:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /**
+ 542:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n This function, fixed a channels table pointed by pChannels, performs an A/D reading on each chan
+ 543:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \described inside the table.
+ 544:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n One sample for each channel.
+ 545:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n It uses DMA to transfer the channels to the ADC peripher and to transfer the converted results.
+ 546:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n At the end the function generates the callback.
+ 547:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n This function use two DMA Channels one for A/D channel table and one for results.
+ 548:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 549:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \param  [in]	pChannels points to the position in memory where the table of ADC Channels that must b
+ 550:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \param  [in]	sampleCount specifies the number of samples to be taken equal to the numbers of channe
+ 551:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \param  [in]    pResults points to the position in memory where the samples will be stored.
+ 552:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \param  [in]	callback  This parameter points to a callback function to inform the caller \n
+ 553:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c ****  				about the conversion complete: \n
+ 554:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 				IO_E_OK: Measurement successfully finished. \n
+ 555:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 556:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \return 	IO_ErrorType
+ 557:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 558:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_OK Measurement finished successfully.
+ 559:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_BUSY Function is blocked because a measurement is currently running.
+ 560:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \retval		IO_E_INVALID_CHANNEL_ID The channel descriptor is invalid.
+ 561:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 562:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 563:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \warning 	this function is not supported by H839079 because A/D result register depends from \n
+ 564:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			selected channel.
+ 565:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 566:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \note		\par \b Note 1:
+ 567:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			documentation by Jaroslav Musil
+ 568:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			\par \b Note 2:
+ 569:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			On MCF51AG128 the table of channels is modified by the funtion in the way that the channel is or
+ 570:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			because the channel register is shared with additional cofiguration like DMA and interrupt bit. 
+ 571:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			is set in each item of the channels' table and so the table must be R/W.
+ 572:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 573:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 574:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** */
+ 575:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** IO_ErrorType OCADC_StartMultiSampleMultiChannelSync(IO_ChannelType *pChannels, uint16_t sampleCount
+ 576:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** {
+ 577:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	IO_ChannelType *pChannel;
+ 578:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	uint32_t i;
+ 579:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 580:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA)
+ 581:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	SWDMA_TransferType  transfer = {0};
+ 582:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	SWDMA_TransferType  transferCh = {0};
+ 583:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #elif (ADC_USE_HW_DMA)
+ 584:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	OCDMA_TransferType  transfer = {0};
+ 585:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	OCDMA_TransferType  transferCh = {0};
+ 586:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif
+ 587:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 588:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* The working pointer to the channels' table */
+ 589:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	pChannel = pChannels;
+ 590:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 591:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Checks if all the channels are valid */
+ 592:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	for (i = 0; i < sampleCount; i++)
+ 593:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 594:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		/*lint -e666, -e960 side effects don't cause problem */
+ 595:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		if (ADC_CheckChannel(*pChannel))
+ 596:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			/*lint +e666, +e960 */
+ 597:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		{
+ 598:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			return (IO_ErrorType)IO_E_INVALID_CHANNEL_ID;
+ 599:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		}
+ 600:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		pChannel++;
+ 601:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 602:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 603:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 604:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	EnterCriticalSection();
+ 605:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 606:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_Resource)
+ 607:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 608:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		ExitCriticalSection();
+ 609:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		return (IO_ErrorType)IO_E_BUSY;
+ 610:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 611:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 612:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Get ADC Resource */
+ 613:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_Resource = TRUE;
+ 614:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 615:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ExitCriticalSection();
+ 616:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 617:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Configures the DMA for the results transmission */
+ 618:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 619:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA)
+ 620:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 621:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if (ADC_RESULT_REGISTER_SIZE == 8)
+ 622:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 623:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.options.optionbyte |= (SWDMA_OPTION_SSIZE_BYTE|SWDMA_OPTION_DSIZE_BYTE);
+ 624:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.bcr = sampleCount;
+ 625:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 626:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif
+ 627:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 628:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if (ADC_RESULT_REGISTER_SIZE == 16)
+ 629:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 630:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.options.optionbyte |= (SWDMA_OPTION_SSIZE_WORD|SWDMA_OPTION_DSIZE_WORD);
+ 631:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.bcr = (sampleCount << 1);
+ 632:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 633:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif
+ 634:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Source register is the A/D result register */
+ 635:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.sar = (SWDMA_SarType)ADC_pResultRegister(*pChannels);
+ 636:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.dar = (SWDMA_DarType)pResults;
+ 637:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Select DMA Channel */
+ 638:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.channel = ADC_RESULTS_DMA_CHANNEL;
+ 639:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Increment destination pointer after a sample, no source pointer incrementation  */
+ 640:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.options.optionbyte |= (SWDMA_OPTION_DINC|SWDMA_OPTION_CS);
+ 641:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 642:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 643:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_ChannelEnableSync(ADC_RESULTS_DMA_CHANNEL);
+ 644:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_SetTransferSync(&transfer);
+ 645:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_StartTransferSync(ADC_RESULTS_DMA_CHANNEL, NULL);
+ 646:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #elif (ADC_USE_HW_DMA)
+ 647:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 648:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* in case of 8-bit ADC */
+ 649:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_RESULT_DMA_SIZE == OCDMA_SIZE_8BITs)
+ 650:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 651:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		transfer.addr = OCDMA_ADDR_DINC | OCDMA_ADDR_SSIZE_BYTE | OCDMA_ADDR_DSIZE_BYTE | OCDMA_ADDR_CS;
+ 652:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 653:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		transfer.bcr = sampleCount;
+ 654:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 655:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* in case of 16-bit ADC */
+ 656:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	else if (ADC_RESULT_DMA_SIZE == OCDMA_SIZE_16BITs)
+ 657:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 658:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		transfer.addr = OCDMA_ADDR_DINC | OCDMA_ADDR_SSIZE_WORD | OCDMA_ADDR_DSIZE_WORD | OCDMA_ADDR_CS;
+ 659:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 660:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		transfer.bcr = (sampleCount << 1);
+ 661:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 662:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 663:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.sar = (OCDMA_SarType)ADC_pResultRegister();
+ 664:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.dar = (OCDMA_DarType)pResults;
+ 665:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.channel = OCDMA_CHANNEL_ID(ADC_RESULTS_DMA_CHANNEL) | OCDMA_CHANNEL_DEVICE(ADC_RESULTS_DM
+ 666:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 667:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transfer.perlink = OCDMA_PERLINK_ERQ | OCDMA_PERLINK_D_ERQ | OCDMA_PERLINK_LINKCC_LCH1CS | OCDMA_P
+ 668:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 669:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Enables the DMA on ADC */
+ 670:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_EnableDMA();
+ 671:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 672:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetChannelDeviceSync(&transfer);
+ 673:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetTransferParamSync(&transfer);
+ 674:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetTransferSync(&transfer);
+ 675:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_StartTransferSync(0, &transfer, ADC_Callback);
+ 676:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif
+ 677:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 678:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 679:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Stores sampleCount information */
+ 680:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.sampleCount = sampleCount;
+ 681:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 682:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Stores the pointer for the callback function */
+ 683:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.callback = callback;
+ 684:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 685:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Stores the pointer for the result */
+ 686:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.pResults = pResults;
+ 687:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 688:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* No source table with channels */
+ 689:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.pChannel = pChannels;
+ 690:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 691:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Saves the dma channels */
+ 692:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.dmaChannel = ADC_RESULTS_DMA_CHANNEL;
+ 693:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_DataResult.dmaChannelCh = ADC_CHANNELS_DMA_CHANNEL;
+ 694:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 695:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 696:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* The working pointer to the channels' table */
+ 697:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	pChannel = pChannels;
+ 698:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 699:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 700:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 701:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Configures all the channels as ADC and sets the IE flag of the channel (important for the DMA) 
+ 702:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	for (i = 0; i < sampleCount; i++)
+ 703:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 704:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		ADC_ConfigurePinAsChannel(*pChannel);
+ 705:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 706:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		*pChannel = ADC_CorrectChannel(*pChannel);
+ 707:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 708:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		pChannel++;
+ 709:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 710:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 711:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Configures the ADC for the conversion */
+ 712:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	ADC_StartMultiSampleConvertionMultiChannel();
+ 713:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 714:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* Configures the DMA for channels; the ADC starts with the first channel transmission */
+ 715:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 716:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA)
+ 717:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 718:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transferCh.bcr = sampleCount;
+ 719:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transferCh.sar = (SWDMA_SarType)pChannels;
+ 720:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transferCh.dar = (SWDMA_DarType)ADC_pChannelRegister(*pChannels);
+ 721:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transferCh.channel = ADC_CHANNELS_DMA_CHANNEL;
+ 722:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 723:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transferCh.options.optionbyte |= (SWDMA_OPTION_CS|SWDMA_OPTION_START|SWDMA_OPTION_SINC|SWDMA_OPTIO
+ 724:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 725:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_ChannelEnableSync(ADC_CHANNELS_DMA_CHANNEL);
+ 726:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_SetTransferSync(&transferCh);
+ 727:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/*lint -e619 pointers have the same size */
+ 728:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)SWDMA_StartTransferSync(ADC_CHANNELS_DMA_CHANNEL, ADC_Callback);
+ 729:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/*lint +e619 */
+ 730:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #elif (ADC_USE_HW_DMA)
+ 731:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 732:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* bcr = sampleCounte * 2 because it is 16-bit */
+ 733:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transferCh.bcr = sampleCount;
+ 734:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transferCh.sar = (OCDMA_SarType)pChannels;
+ 735:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transferCh.dar = (OCDMA_DarType)ADC_pChannelRegister();
+ 736:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 737:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transferCh.channel = OCDMA_CHANNEL_ID(ADC_CHANNELS_DMA_CHANNEL) | OCDMA_CHANNEL_DEVICE(ADC_CHANNEL
+ 738:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 739:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transferCh.addr = OCDMA_ADDR_SINC | OCDMA_ADDR_SSIZE_BYTE | OCDMA_ADDR_DSIZE_BYTE | OCDMA_ADDR_CS;
+ 740:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 741:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	transferCh.perlink = OCDMA_PERLINK_ERQ | OCDMA_PERLINK_D_ERQ;
+ 742:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 743:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetChannelDeviceSync(&transferCh);
+ 744:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetTransferParamSync(&transferCh);
+ 745:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_SetTransferSync(&transferCh);
+ 746:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	(void)OCDMA_StartTransferSync(1, &transferCh, NULL);
+ 747:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 748:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif
+ 749:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 750:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	return (IO_ErrorType)IO_E_OK;
+ 751:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 752:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** }
+ 753:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif /* #if (ADC_USE_SW_DMA | ADC_USE_HW_DMA) */
+ 754:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** /**
+ 755:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n ADC Driver event.
+ 756:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \n Call this method inside the ADC interrupt.
+ 757:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 758:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** \par Architecture Requirements ID: SARS_WMMT_MN_DrvADC_2
+ 759:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** */
+ 760:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** void OCADC_ISR(void)
+ 761:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** {
+ 420                             		.loc 1 761 0 is_stmt 1
+ 421 0000 6E 7B                   		pushm	r7-r11
+ 422                             	.LCFI5:
+ 762:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	IRQ_MONITOR_ENTER();
+ 763:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 764:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	/* if sampleCount is 0, it means the single shot mode is used */
+ 765:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	if (ADC_DataResult.sampleCount == 0)
+ 423                             		.loc 1 765 0
+ 424 0002 FB 72 00 00 00 00       		mov.L	#_ADC_DataResult, r7
+ 762:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	IRQ_MONITOR_ENTER();
+ 425                             		.loc 1 762 0
+ 426 0008 05 00 00 00             		bsr	_LIB_IRQMonitor_Enter
+ 427                             	.LVL47:
+ 428                             		.loc 1 765 0
+ 429 000c 5D 7A 08                		movu.W	16[r7], r10
+ 430 000f 61 0A                   		cmp	#0, r10
+ 431 0011 21 25                   		bne	.L43
+ 432                             	.LVL48:
+ 433                             	.LBB2:
+ 766:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 767:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		IO_ChannelType channel;
+ 768:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		channel = ADC_DataResult.channel;
+ 769:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		/* Saves the result into the table */
+ 770:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		*ADC_DataResult.pResult
+ 771:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 				= (ADC_ValueType) ADC_GetConvertedValueOnChannel(channel);
+ 434                             		.loc 1 771 0
+ 435 0013 8A 71                   		mov.B	8[r7], r1
+ 770:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		*ADC_DataResult.pResult
+ 436                             		.loc 1 770 0
+ 437 0015 ED 7B 01                		mov.L	4[r7], r11
+ 438                             		.loc 1 771 0
+ 439 0018 05 00 00 00             		bsr	_ADC_GetConvertedValueOnChannel
+ 440                             	.LVL49:
+ 441 001c D3 B1                   		mov.W	r1, [r11]
+ 772:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		/* Release ADC Resource */
+ 773:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		ADC_Resource = FALSE;
+ 442                             		.loc 1 773 0
+ 443 001e FB B2 00 00 00 00       		mov.L	#_ADC_Resource, r11
+ 444 0024 E3 BA                   		mov.L	r10, [r11]
+ 774:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 775:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		/* Conversion complete callback */
+ 776:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		(void) (ADC_DataResult.callback)((IO_NotificationType) IO_N_COMPLETED,
+ 777:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 				(IO_ChannelType) ADC_GetActiveChannel(), (IO_ErrorType) IO_E_OK);
+ 445                             		.loc 1 777 0
+ 446 0026 FB BE 00 90 08          		mov.L	#0x89000, r11
+ 447 002b DD B2 02                		mov.W	4[r11], r2
+ 776:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		(void) (ADC_DataResult.callback)((IO_NotificationType) IO_N_COMPLETED,
+ 448                             		.loc 1 776 0
+ 449 002e EC 77                   		mov.L	[r7], r7
+ 450 0030 66 61                   		mov	#6, r1
+ 451 0032 CF A3                   		mov.B	r10, r3
+ 452 0034 7F 17                   		jsr	r7
+ 453                             	.LVL50:
+ 454                             		.balign 2,3,1
+ 455                             	.L43:
+ 456                             	.LBE2:
+ 778:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 779:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 780:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	IRQ_MONITOR_EXIT();
+ 781:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 782:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA | ADC_USE_HW_DMA)
+ 783:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	else
+ 784:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	{
+ 785:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if (ADC_USE_SW_DMA)
+ 786:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		/* executes the result DMA transfer */
+ 787:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		if (SWDMA_CheckChannelEnableSync(ADC_DataResult.dmaChannel) == (IO_ErrorType)IO_STATE_ACTIVE)
+ 788:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		{
+ 789:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			(void)SWDMA_ExeTransferMngrSync(ADC_DataResult.dmaChannel);
+ 790:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #if defined(ADC_NO_CONTINUOS_MODE_SUPPORTED)
+ 791:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			/* if in single channel mode */
+ 792:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			if (ADC_DataResult.pChannel == NULL)
+ 793:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			{
+ 794:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 				ADC_EmulateContinuousConversion();
+ 795:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			}
+ 796:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif /* #if defined(ADC_NO_CONTINUOS_MODE_SUPPORTED) */
+ 797:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		}
+ 798:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 799:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		/* if in multi channel mode */
+ 800:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		if (ADC_DataResult.pChannel != NULL)
+ 801:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		{
+ 802:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			/* executes the channelt DMA transfer */
+ 803:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			if (SWDMA_CheckChannelEnableSync(ADC_DataResult.dmaChannelCh) == (IO_ErrorType)IO_STATE_ACTIVE)
+ 804:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			{
+ 805:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 				(void)SWDMA_ExeTransferMngrSync(ADC_DataResult.dmaChannelCh);
+ 806:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 			}
+ 807:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 		}
+ 808:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 
+ 809:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif /* (ADC_USE_SW_DMA) */
+ 810:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	}
+ 811:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** #endif /* #if (ADC_USE_SW_DMA | ADC_USE_HW_DMA) */
+ 812:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** }
+ 457                             		.loc 1 812 0
+ 458 0036 6F 7B                   		popm	r7-r11
+ 780:C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC\OCADC_drv.c **** 	IRQ_MONITOR_EXIT();
+ 459                             		.loc 1 780 0
+ 460 0038 04 00 00 00             		bra	_LIB_IRQMonitor_Exit
+ 461                             	.LVL51:
+ 462                             	.LFE8:
+ 464                             		.section	.bss.ADC_Resource,"aw",@nobits
+ 465                             		.balign 4
+ 468                             	_ADC_Resource:
+ 469 0000 00 00 00 00             		.zero	4
+ 470                             		.section	.bss.ADC_Convertions,"aw",@nobits
+ 471                             		.balign 2
+ 474                             	_ADC_Convertions:
+ 475 0000 00 00 00 00 00 00 00 00 		.zero	16
+ 475      00 00 00 00 00 00 00 00 
+ 476                             		.section	.bss.ADC_DataResult,"aw",@nobits
+ 477                             		.balign 4
+ 480                             	_ADC_DataResult:
+ 481 0000 00 00 00 00 00 00 00 00 		.zero	20
+ 481      00 00 00 00 00 00 00 00 
+ 481      00 00 00 00 
+ 636                             	.Letext0:
+ 637                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 638                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\OS\\EmbOS\\RX200_GNU\\V388\\Inc/RTOS.h"
+ 639                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_reg.h"
+ 640                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_cfg.h"
+ 641                             		.file 6 "C:\\Workspace\\FW_Platform2_5\\trunk\\Drivers/IO_driver.h"
+ 642                             		.file 7 "C:/Workspace/FW_Platform2_5/trunk/Drivers/OCADC/OCADC_drv.h"
+ 643                             		.file 8 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\RN_RX200/RN_RX200_hal.h"
+ 644                             		.file 9 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_SecurityCheck/LIB_TaskMonitori

@@ -1,0 +1,1303 @@
+   1                             		.file	"callback.c"
+   2                             		.section P,"ax"
+   3                             	.Ltext0:
+   4                             		.section	.text.CBF_SetAllLoaddOff,"ax",@progbits
+   5                             		.global	_CBF_SetAllLoaddOff
+   7                             	_CBF_SetAllLoaddOff:
+   8                             	.LFB0:
+   9                             		.file 1 "C:/Workspace/FW_Platform2_5/trunk/Inertia/General/callback.c"
+   1:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+   2:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \defgroup	callback Modulo Callback
+   3:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \ingroup	ApplGeneral
+   4:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+   5:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Il modulo definisce le callback utilizzate nel progetto.
+   6:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+   7:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+   8:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+   9:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Source file del modulo Callback
+  10:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  11:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \file		callback.c
+  12:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \ingroup	callback
+  13:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date    	01/08/2012
+  14:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version	01.00.00
+  15:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author  	Francesco Corvo , Marco Quintini
+  16:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+  17:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  18:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /*
+  19:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Copyright (c) 2004-2010, Indesit Company, EDT.
+  20:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Tutti i diritti sono riservati. All rights reserved.
+  21:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+  22:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  23:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* Suppresses "unused symbol" and "pointer should be const", because callback bodies could
+  24:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****  * not use/need all the specified parameters */
+  25:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /*lint -save -e715 -e818 */
+  26:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  27:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* ******** */
+  28:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* Includes */
+  29:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* ******** */
+  30:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #include "AnalogExp.h"
+  31:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #include "DigitalInputsExp.h"
+  32:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #include "StandardTypes.h"
+  33:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #include "StandardDefines.h"
+  34:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #include "callback.h"
+  35:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #include "CstmHeaders.h"
+  36:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #include "Main.h"
+  37:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #include "Lib_ResetExp.h"
+  38:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #include "BusCommPltf_cfg.h"
+  39:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /*#include "PM_DoorLockExp.h"
+  40:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #include "PM_PowerProfileExp.h"*/
+  41:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /*#include "SwTimersCounters.h"*/
+  42:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  43:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  44:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #ifdef _MQ_DEBUG_ATTILIO_
+  45:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #include "DigitalOutputs.h"
+  46:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #endif /* _MQ_DEBUG_ATTILIO_ */
+  47:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  48:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #if defined(CONFIG_PL_CLASS_B_CHECK)
+  49:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #include "LIB_ClassBCheck.h"
+  50:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #endif
+  51:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* ****************** */
+  52:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* Defines and Macros */
+  53:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* ****************** */
+  54:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* Defines on Special Mode */ /* Sicuramente da spostare MQ PA */
+  55:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #define SPECIAL_MODE_ENTER			0xFF
+  56:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #define SPECIAL_MODE_EXIT			0x00
+  57:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  58:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  59:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* *************************** */
+  60:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* Typedef, Structs and Unions */
+  61:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* *************************** */
+  62:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  63:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* **************************** */
+  64:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* Prototype of local functions */
+  65:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* **************************** */
+  66:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  67:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* ****************** */
+  68:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* Exported variables */
+  69:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* ****************** */
+  70:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  71:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* **************** */
+  72:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* Global variables */
+  73:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* **************** */
+  74:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  75:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* ***************** */
+  76:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* External function */
+  77:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* ***************** */
+  78:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  79:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* ***************** */
+  80:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* Exported function */
+  81:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /* ***************** */
+  82:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  83:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+  84:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata all'interno della routine SetAllLoadsOff() per escludere
+  85:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** dallo spegnimento alcuni carichi particolari.
+  86:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  87:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \param [in]		loadID e' l'ID del carico da spegnere
+  88:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  89:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return 		TRUE se il carico deve essere spento (sempre su Cooling 2008), 0 altrimenti.
+  90:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  91:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+  92:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+  93:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+  94:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date
+  95:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author
+  96:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+  97:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /*lint -e715 */
+  98:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** uint8_t CBF_SetAllLoaddOff(uint8_t loadID)
+  99:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+  10                             		.loc 1 99 0
+  11                             	.LVL0:
+ 100:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 101:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	return TRUE;
+ 102:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 103:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+  12                             		.loc 1 103 0
+  13 0000 66 11                   		mov.L	#1, r1
+  14                             	.LVL1:
+  15 0002 02                      		rts
+  16                             	.LFE0:
+  18                             		.section	.text.CBF_GIOM_LoadPilot,"ax",@progbits
+  19                             		.global	_CBF_GIOM_LoadPilot
+  21                             	_CBF_GIOM_LoadPilot:
+  22                             	.LFB1:
+ 104:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /*lint +e715 */
+ 105:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 106:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Restituisce un valore che indica se l'applicazione pilota i carichi con la
+ 107:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** SetLoad() standard o con la GIOM_LoadPilot().
+ 108:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 109:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \param [in]		loadPos e' la posizione o l'ID del carico (noto all'applicazione)
+ 110:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 111:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return 		FALSE -> utilizzare SetLoad() (se TRUE -> utilizzare GIOM_LoadPilot(),
+ 112:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				ma non e' il caso dell'applicazione Cooling 2008)
+ 113:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 114:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 115:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 116:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 117:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			19/05/2006
+ 118:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Stefano Ughi
+ 119:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 120:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** uint8_t CBF_GIOM_LoadPilot(uint8_t loadPos)
+ 121:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+  23                             		.loc 1 121 0
+  24                             	.LVL2:
+ 122:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 123:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****   	return FALSE;
+ 124:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+  25                             		.loc 1 124 0
+  26 0000 66 01                   		mov.L	#0, r1
+  27                             	.LVL3:
+  28 0002 02                      		rts
+  29                             	.LFE1:
+  31                             		.section	.text.CALLBACK_Main_WarmReset,"ax",@progbits
+  32                             		.global	_CALLBACK_Main_WarmReset
+  34                             	_CALLBACK_Main_WarmReset:
+  35                             	.LFB2:
+ 125:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 126:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 127:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata all'interno della routine Main_Backup_DoRestore(), in caso di
+ 128:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** reset caldo.
+ 129:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 130:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			void
+ 131:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 132:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		none
+ 133:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 134:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 135:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 136:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 137:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			03/08/2012
+ 138:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 139:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 140:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 141:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 142:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 143:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 144:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 145:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 146:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CALLBACK_Main_WarmReset(void)
+ 147:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+  36                             		.loc 1 147 0
+  37 0000 02                      		rts
+  38                             	.LFE2:
+  40                             		.section	.text.CALLBACK_Main_ColdReset_BeforeRestore,"ax",@progbits
+  41                             		.global	_CALLBACK_Main_ColdReset_BeforeRestore
+  43                             	_CALLBACK_Main_ColdReset_BeforeRestore:
+  44                             	.LFB3:
+ 148:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 149:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 150:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 151:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 152:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata all'interno della routine Main_Backup_DoRestore(), in caso di
+ 153:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** reset freddo e prima che vengano ripristinati i dati di backup. \n
+ 154:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Al suo interno viene chiamata la routine che esegue la configurazione
+ 155:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** iniziale dell'applicazione, caricando i dati dal file di setting.
+ 156:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 157:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		ConfigInit_result (global, risultato della chiamata alla
+ 158:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				routine HND_wmConfigInit()) e' usata come output
+ 159:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 160:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			void
+ 161:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 162:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		none
+ 163:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 164:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 165:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 166:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 167:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			25/07/2012
+ 168:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 169:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 170:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 171:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 172:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 173:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 174:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 175:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 176:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CALLBACK_Main_ColdReset_BeforeRestore(void)
+ 177:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+  45                             		.loc 1 177 0
+  46 0000 02                      		rts
+  47                             	.LFE3:
+  49                             		.section	.text.CALLBACK_Main_ColdReset_OnRestoredData,"ax",@progbits
+  50                             		.global	_CALLBACK_Main_ColdReset_OnRestoredData
+  52                             	_CALLBACK_Main_ColdReset_OnRestoredData:
+  53                             	.LFB4:
+ 178:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 179:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 180:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 181:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 182:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata all'interno della routine Main_Backup_DoRestore(), in caso
+ 183:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** di reset freddo e se i dati di backup sono stati ripristinati con successo.
+ 184:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 185:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		RestoreType (global, tipo di ripristino dei dati di backup)
+ 186:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				e' usata come output
+ 187:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 188:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			void
+ 189:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 190:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		none
+ 191:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 192:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 193:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 194:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 195:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			03/08/2012
+ 196:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 197:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 198:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 199:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 200:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 201:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 202:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 203:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 204:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CALLBACK_Main_ColdReset_OnRestoredData(void)
+ 205:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+  54                             		.loc 1 205 0
+  55 0000 02                      		rts
+  56                             	.LFE4:
+  58                             		.section	.text.CALLBACK_Main_ColdReset_OnNotRestoredData,"ax",@progbits
+  59                             		.global	_CALLBACK_Main_ColdReset_OnNotRestoredData
+  61                             	_CALLBACK_Main_ColdReset_OnNotRestoredData:
+  62                             	.LFB5:
+ 206:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 207:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 208:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 209:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 210:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 211:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata all'interno della routine Main_Backup_DoRestore(), in caso di
+ 212:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** reset freddo e se i dati di backup non sono stati ripristinati.
+ 213:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 214:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		RestoreType (global, tipo di ripristino dei dati di backup)
+ 215:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				e' usata come output
+ 216:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 217:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			void
+ 218:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 219:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		none
+ 220:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 221:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 222:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 223:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 224:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			03/08/2012
+ 225:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 226:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 227:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 228:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 229:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 230:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 231:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 232:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 233:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CALLBACK_Main_ColdReset_OnNotRestoredData(void)
+ 234:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+  63                             		.loc 1 234 0
+  64 0000 02                      		rts
+  65                             	.LFE5:
+  67                             		.section	.text.CALLBACK_Main_ColdReset_AfterRestore,"ax",@progbits
+  68                             		.global	_CALLBACK_Main_ColdReset_AfterRestore
+  70                             	_CALLBACK_Main_ColdReset_AfterRestore:
+  71                             	.LFB6:
+ 235:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 236:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 237:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 238:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 239:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 240:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata all'interno della routine Main_Backup_DoRestore(), in caso di
+ 241:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** reset freddo e dopo che e' stata eseguita la fase di ripristino dei dati (che
+ 242:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** sia stata eseguita con successo o meno).
+ 243:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 244:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		ConfigInit_result (global, risultato della chiamata alla
+ 245:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				routine HND_wmConfigInit()) e' usata come input
+ 246:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		MachineStatistics (global, statistiche) e' usata come output
+ 247:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 248:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			void
+ 249:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 250:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		none
+ 251:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 252:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 253:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 254:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 255:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			03/08/2012
+ 256:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 257:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 258:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 259:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 260:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 261:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 262:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 263:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 264:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CALLBACK_Main_ColdReset_AfterRestore(void)
+ 265:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+  72                             		.loc 1 265 0
+  73 0000 02                      		rts
+  74                             	.LFE6:
+  76                             		.section	.text.CALLBACK_Main_BackupAreaInvalidationRequired,"ax",@progbits
+  77                             		.global	_CALLBACK_Main_BackupAreaInvalidationRequired
+  79                             	_CALLBACK_Main_BackupAreaInvalidationRequired:
+  80                             	.LFB7:
+ 266:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 267:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 268:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 269:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 270:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata all'interno della routine Main_Backup_DoRestore(), restituisce un
+ 271:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** valore che indica se l'applicazione richiede l'invalidazione dell'area di backup
+ 272:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** al reset e dopo l'eventuale restore dei dati. \n
+ 273:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Per la posizione della sua chiamata, viene al momento sfruttata anche per
+ 274:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** inizializzare le strutture utilizzate dalla piattaforma per gestire i pacchetti
+ 275:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** di lettura e scrittura regolazioni.
+ 276:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 277:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		BufOldReg (global, buffer delle regolazioni main) e' usata come input
+ 278:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		BufNewReg (global, buffer delle regolazioni scritte dalla UI) e'
+ 279:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				usata come input
+ 280:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 281:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			bool_t
+ 282:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 283:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		TRUE (si richiede l'invalidazione)
+ 284:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 285:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 286:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 287:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 288:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			03/08/2012
+ 289:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 290:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 291:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 292:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 293:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 294:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****    
+ 295:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 296:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 297:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** bool_t CALLBACK_Main_BackupAreaInvalidationRequired(void)
+ 298:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+  81                             		.loc 1 298 0
+ 299:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	CPApplianceDataTableType applDataItem;
+ 300:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 301:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	/*
+ 302:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	Init strutture per la gestione dei pacchetti lettura e scrittura regolazioni
+ 303:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	e scrittura UI Info.
+ 304:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	N.B.: per questa operazione sarebbe esteticamente più bello	creare una nuova
+ 305:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	callback con un nome diverso, chiamata nello stesso punto, ma alla fine la sostanza
+ 306:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	non cambia.	Oppure si potrebbe inizializzare le strutture solo al reset freddo.
+ 307:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	*/
+ 308:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 309:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	/* TODO
+ 310:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	applDataItem.pData = (void*)&BufOldReg[0];
+ 311:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	applDataItem.szMaxLength = 1;
+ 312:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 313:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	Set_CPApplianceDataItem(CP_APPLDATA_R_REGS, &applDataItem);
+ 314:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 315:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	applDataItem.pData = (void*)&BufNewReg[0];
+ 316:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	applDataItem.szMaxLength = 1;
+ 317:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 318:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	Set_CPApplianceDataItem(CP_APPLDATA_W_REGS, &applDataItem);
+ 319:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 320:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	applDataItem.pData = (void*)&BufUIInfo[0];
+ 321:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	applDataItem.szMaxLength = sizeof(BufUIInfo);
+ 322:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 323:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	Set_CPApplianceDataItem(CP_APPLDATA_W_UIINFO, &applDataItem);
+ 324:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	*/
+ 325:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	return TRUE;
+ 326:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+  82                             		.loc 1 326 0
+  83 0000 66 11                   		mov.L	#1, r1
+  84 0002 02                      		rts
+  85                             	.LFE7:
+  87                             		.section	.text.CALLBACK_Main_StartUp,"ax",@progbits
+  88                             		.global	_CALLBACK_Main_StartUp
+  90                             	_CALLBACK_Main_StartUp:
+  91                             	.LFB8:
+ 327:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 328:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 329:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 330:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata all'interno della macro MAIN_APP_PERIODICASYN_TASK__STARTUP.
+ 331:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Attiva il contatore che misura il tempo dall'ultimo reset.
+ 332:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 333:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		Time_Since_Last_Reset_Counter (global, contatore tempo
+ 334:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				dall'ultimo reset) e' usata come output
+ 335:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 336:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 337:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			void
+ 338:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 339:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		none
+ 340:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 341:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 342:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 343:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 344:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			03/08/2012
+ 345:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 346:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 347:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 348:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 349:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 350:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****    
+ 351:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 352:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 353:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CALLBACK_Main_StartUp(void)
+ 354:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+  92                             		.loc 1 354 0
+ 355:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	(void)SWTC_SetSValueAndRun ((SWTC_CountersType)TIME_SINCE_LAST_RESET_COUNTER_ID, (SWTC_SCounterVal
+  93                             		.loc 1 355 0
+  94 0000 66 11                   		mov	#1, r1
+  95 0002 66 02                   		mov	#0, r2
+  96 0004 04 00 00 00             		bra	_SWTC_SetSValueAndRun
+  97                             	.LVL4:
+  98                             	.LFE8:
+ 100                             		.section	.text.CALLBACK_Main_ApplicationTask_Ctrl,"ax",@progbits
+ 101                             		.global	_CALLBACK_Main_ApplicationTask_Ctrl
+ 103                             	_CALLBACK_Main_ApplicationTask_Ctrl:
+ 104                             	.LFB9:
+ 356:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 357:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 358:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 359:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 360:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene eseguita in MAIN_APP_PERIODICASYN_TASK__BODY. \n
+ 361:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Verifica che i Low Level Input analogici e digitali siano pronti, esegue
+ 362:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** l'aggiornamento dei Generic Input e la copia dei Consistency nel buffer
+ 363:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** utilizzato dall'applicazione, ...
+ 364:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 365:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 366:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			bool_t
+ 367:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 368:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		FALSE se gli ingressi analogici o digitali non sono ancora
+ 369:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				pronti (in questo caso il Task Periodico di Applicazione non
+ 370:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				esegue nessun'altra operazione), TRUE altrimenti
+ 371:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 372:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 373:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 374:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 375:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			03/08/2012
+ 376:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 377:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 378:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 379:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 380:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 381:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 382:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 383:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 384:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** bool_t CALLBACK_Main_ApplicationTask_Ctrl(void)
+ 385:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+ 105                             		.loc 1 385 0
+ 386:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** static uint8_t BackupDataAnalysed = FALSE;
+ 387:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 388:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #ifdef CONFIG_PM_LINEARPRESSURE_SENSOR
+ 389:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	/* Stato PL */
+ 390:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	LPS_configUpdate();
+ 391:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #endif /* CONFIG_PM_LINEARPRESSURE_SENSOR */
+ 392:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 393:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	/* Filtro su ingressi analogici e digitali */
+ 394:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	/*lint -save -e960 */ /* There are not side-effects */
+ 395:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	if( (LIB_ADC_AreAnalogInputsReady() == FALSE) || (LIB_DIO_AreDigInputsReady() == FALSE) )
+ 106                             		.loc 1 395 0
+ 107 0000 05 00 00 00             		bsr	_LIB_ADC_AreAnalogInputsReady
+ 108                             	.LVL5:
+ 109 0004 61 01                   		cmp	#0, r1
+ 110 0006 20 0B                   		beq	.L11
+ 111                             		.loc 1 395 0 is_stmt 0 discriminator 1
+ 112 0008 05 00 00 00             		bsr	_LIB_DIO_AreDigInputsReady
+ 113                             	.LVL6:
+ 396:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	/*lint -restore */
+ 397:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	{
+ 398:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 		return FALSE;
+ 114                             		.loc 1 398 0 is_stmt 1 discriminator 1
+ 115 000c 61 01                   		cmp	#0, r1
+ 116 000e FC DB 11                		scne.L	r1
+ 117                             	.L11:
+ 399:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	}
+ 400:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 401:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	/*
+ 402:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	Aggiornamento del flag che indica se ci sono le condizioni per l'esecuzione dei u-programmi
+ 403:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	e per l'aggiornamento degli ingressi
+ 404:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	*/
+ 405:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 406:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	return TRUE;
+ 407:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 118                             		.loc 1 407 0
+ 119 0011 02                      		rts
+ 120                             	.LFE9:
+ 122                             		.section	.text.CALLBACK_RemoteLoadsControl_BeforeProcess,"ax",@progbits
+ 123                             		.global	_CALLBACK_RemoteLoadsControl_BeforeProcess
+ 125                             	_CALLBACK_RemoteLoadsControl_BeforeProcess:
+ 126                             	.LFB10:
+ 408:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 409:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 410:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 411:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata in MAIN_APP_PERIODICASYN_TASK__BODY quando si riceve un
+ 412:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** pacchetto PC Control e prima di richiedere il pilotaggio dei carichi. \n
+ 413:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Attiva il contatore che gestisce il timeout dello stato di PC Control.
+ 414:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 415:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \param [in]		pRemoteLoadsControlData punta ai dati del pacchetto PC Control
+ 416:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \param [in]		len punta alla lunghezza del pacchetto PC Control?
+ 417:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 418:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			void
+ 419:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 420:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		none
+ 421:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 422:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 423:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 424:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 425:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			03/08/2012
+ 426:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 427:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 428:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 429:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 430:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 431:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****    
+ 432:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 433:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 434:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CALLBACK_RemoteLoadsControl_BeforeProcess(void * pRemoteLoadsControlData, int *len)
+ 435:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+ 127                             		.loc 1 435 0
+ 128                             	.LVL7:
+ 129 0000 02                      		rts
+ 130                             	.LFE10:
+ 132                             		.section	.text.CALLBACK_RemoteLoadsControl_AfterProcess,"ax",@progbits
+ 133                             		.global	_CALLBACK_RemoteLoadsControl_AfterProcess
+ 135                             	_CALLBACK_RemoteLoadsControl_AfterProcess:
+ 136                             	.LFB11:
+ 436:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 437:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 438:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 439:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 440:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 441:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata in MAIN_APP_PERIODICASYN_TASK__BODY quando si riceve un
+ 442:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** pacchetto PC Control e dopo la richiesta di pilotaggio dei carichi.
+ 443:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 444:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			void
+ 445:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 446:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		none
+ 447:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 448:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 449:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 450:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 451:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			
+ 452:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			
+ 453:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 454:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 455:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 456:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 457:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****    
+ 458:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 459:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 460:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CALLBACK_RemoteLoadsControl_AfterProcess(void * pRemoteLoadsControlData, int *len)
+ 461:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+ 137                             		.loc 1 461 0
+ 138                             	.LVL8:
+ 139 0000 02                      		rts
+ 140                             	.LFE11:
+ 142                             		.section	.text.CALLBACK_Main_ApplicationTask_Body,"ax",@progbits
+ 143                             		.global	_CALLBACK_Main_ApplicationTask_Body
+ 145                             	_CALLBACK_Main_ApplicationTask_Body:
+ 146                             	.LFB12:
+ 462:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 463:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 464:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 465:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 466:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 467:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene eseguita in MAIN_APP_PERIODICASYN_TASK__BODY. \n
+ 468:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Esegue le chiamate alle routine che costituiscono il corpo dell'applicazione:
+ 469:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \par
+ 470:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	- Supervisore;
+ 471:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	- gestione sicurezze e fault;
+ 472:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	- imposizione dello stato dei carichi;
+ 473:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	- aggiornamento delle statistiche;
+ 474:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	- aggiornamento del buffer di stato.
+ 475:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 476:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			void
+ 477:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 478:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		none
+ 479:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 480:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 481:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 482:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 483:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			03/08/2012
+ 484:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 485:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 486:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 487:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 488:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 489:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 490:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 491:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 492:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CALLBACK_Main_ApplicationTask_Body(void)
+ 493:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+ 147                             		.loc 1 493 0
+ 148 0000 02                      		rts
+ 149                             	.LFE12:
+ 151                             		.section	.text.CALLBACK_Main_GP,"ax",@progbits
+ 152                             		.global	_CALLBACK_Main_GP
+ 154                             	_CALLBACK_Main_GP:
+ 155                             	.LFB13:
+ 494:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 495:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 496:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #if defined(CONFIG_LIB_LOADSREQUEST_SUPPORT)
+ 497:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 498:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CALLBACK_Main_ApplBody_PostLoads(void)
+ 499:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {}
+ 500:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 501:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #endif /*  defined(CONFIG_LIB_LOADSREQUEST_SUPPORT) */
+ 502:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 503:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /** 
+ 504:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Chiamata all'interno della macro MAIN_SUPERVISOR_TASK__BODY ogni 
+ 505:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** MAIN_SUPERVISOR_TASK_PERIOD.
+ 506:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 507:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			void
+ 508:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 509:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		none
+ 510:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 511:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 512:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 513:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 514:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			03/08/2012
+ 515:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 516:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 517:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 518:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 519:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 520:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****    
+ 521:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 522:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 523:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CALLBACK_Main_GP(SupervisorInfoType spInfo)
+ 524:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+ 156                             		.loc 1 524 0
+ 157                             		.loc 1 524 0
+ 158 0000 60 C0                   		sub	#12, r0
+ 159                             	.LCFI0:
+ 525:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	SWTC_Manager();
+ 526:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 160                             		.loc 1 526 0
+ 161 0002 62 C0                   		add	#12, r0
+ 525:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	SWTC_Manager();
+ 162                             		.loc 1 525 0
+ 163 0004 04 00 00 00             		bra	_SWTC_Manager
+ 164                             	.LVL9:
+ 165                             	.LFE13:
+ 167                             		.section	.text.CALLBACK_EnableCheckColdResetTimeout,"ax",@progbits
+ 168                             		.global	_CALLBACK_EnableCheckColdResetTimeout
+ 170                             	_CALLBACK_EnableCheckColdResetTimeout:
+ 171                             	.LFB14:
+ 527:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 528:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 529:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 530:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata nel MAIN_SUPERVISOR_TASK__BODY, verifica se l'applicazione richiede
+ 531:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** che sia controllato il timeout del contatore Time2Death_Counter (in pratica verifica
+ 532:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** se il prodotto e' in PC Control).
+ 533:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 534:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		ApplicationState (global, bitmap stato applicazione) e' usata
+ 535:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				come input
+ 536:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 537:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			bool_t
+ 538:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 539:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		TRUE se il prodotto e' in PC-Control, FALSE altrimenti
+ 540:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 541:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 542:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 543:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 544:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			31/08/2012
+ 545:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 546:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 547:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 548:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 549:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 550:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****    
+ 551:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 552:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 553:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** bool_t CALLBACK_EnableCheckColdResetTimeout(uint8_t systemMode)
+ 554:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+ 172                             		.loc 1 554 0
+ 173                             	.LVL10:
+ 555:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	return FALSE;
+ 556:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 174                             		.loc 1 556 0
+ 175 0000 66 01                   		mov.L	#0, r1
+ 176                             	.LVL11:
+ 177 0002 02                      		rts
+ 178                             	.LFE14:
+ 180                             		.section	.text.CALLBACK_Main_InitTask,"ax",@progbits
+ 181                             		.global	_CALLBACK_Main_InitTask
+ 183                             	_CALLBACK_Main_InitTask:
+ 184                             	.LFB15:
+ 557:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 558:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 559:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 560:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Chiamata all'interno della routine Main_SupervisorTask().
+ 561:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Esegue delle inizializzazioni dipendenti da SystemMode e dal
+ 562:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** tipo di reset (caldo/freddo), ciò che prima veniva fatto in
+ 563:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** CBF_ProgrammingMode_InitTask(), OnColdReset(), OnWarmReset(),
+ 564:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** OutputInitialization(), CBF_ProgrammingMode_InitTaskStartUp0().
+ 565:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 566:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			void
+ 567:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 568:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		none
+ 569:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 570:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 571:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 572:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 573:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			03/08/2012
+ 574:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 575:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 576:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 577:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 578:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 579:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****    
+ 580:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 581:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 582:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CALLBACK_Main_InitTask(SysMode_Type systemMode, bool_t coldreset)
+ 583:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+ 185                             		.loc 1 583 0
+ 186                             	.LVL12:
+ 187 0000 7E A7                   		push.l	r7
+ 188                             	.LCFI1:
+ 189 0002 71 00 F0                		add	#-16, r0
+ 190                             	.LCFI2:
+ 584:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	CPApplianceDataTableType applDataItem;
+ 585:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 586:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	if(systemMode == SYSTEM_PROGRAMMING_MODE)
+ 191                             		.loc 1 586 0
+ 192 0005 5B 11                   		movu.B	r1, r1
+ 193 0007 61 21                   		cmp	#2, r1
+ 583:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+ 194                             		.loc 1 583 0
+ 195 0009 EF 27                   		mov.L	r2, r7
+ 196                             		.loc 1 586 0
+ 197 000b 21 07                   		bne	.L20
+ 587:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	{
+ 588:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 		/* Backup area Invalidation */
+ 589:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 		(void)LIB_Backup_InvalidateBackupArea();
+ 198                             		.loc 1 589 0
+ 199 000d 05 00 00 00             		bsr	_LIB_Backup_InvalidateBackupArea
+ 200                             	.LVL13:
+ 201 0011 03                      		.balign 2,3,1
+ 202                             	.L20:
+ 590:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	}
+ 591:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 592:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	if(systemMode == SYSTEM_NORMAL_MODE)
+ 593:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	{
+ 594:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 595:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	}
+ 596:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 597:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	/* Common product modules initialization */
+ 598:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	if ( coldreset )
+ 203                             		.loc 1 598 0
+ 204 0012 61 07                   		cmp	#0, r7
+ 205 0014 20 28                   		beq	.L21
+ 599:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	{
+ 600:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 601:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 		SWTC_InitManager();
+ 206                             		.loc 1 601 0
+ 207 0016 05 00 00 00             		bsr	_SWTC_InitManager
+ 208                             	.LVL14:
+ 602:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 		SWTC_InitTables(&SWTC_PrescalerTable[0],
+ 209                             		.loc 1 602 0
+ 210 001a FB 12 00 00 00 00       		mov.L	#_SWTC_PrescalerTable, r1
+ 211 0020 F8 02 00 00 00 00       		mov.L	#_SWTC_CountersTable, [r0]
+ 212 0026 3C 04 02                		mov.B	#2, 4[r0]
+ 213 0029 FB 22 00 00 00 00       		mov.L	#_SWTC_InternalCounter, r2
+ 214 002f 66 73                   		mov	#7, r3
+ 215 0031 FB 42 00 00 00 00       		mov.L	#_SWTC_CounterConfigurationTable, r4
+ 216 0037 05 00 00 00             		bsr	_SWTC_InitTables
+ 217                             	.LVL15:
+ 218 003b 03                      		.balign 2,3,3
+ 219                             	.L21:
+ 603:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				&SWTC_InternalCounter[0],
+ 604:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				(uint8_t)SWTC_PRESCALERS_NUM,
+ 605:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				SWTC_CounterConfigurationTable,
+ 606:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				SWTC_CountersTable,
+ 607:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				(uint8_t)SWTC_COUNTERS_NUM
+ 608:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				);
+ 609:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 610:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	}
+ 611:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 612:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #ifndef _IDENTCONST_ENABLE
+ 613:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	/* Ident Table initialization */
+ 614:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	Init_IdentTablePointers();
+ 220                             		.loc 1 614 0
+ 221 003c 05 00 00 00             		bsr	_Init_IdentTablePointers
+ 222                             	.LVL16:
+ 615:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #endif /* !_IDENTCONST_ENABLE */
+ 616:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 617:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	/* Lookup Table */
+ 618:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	Init_LookupTablePointers();
+ 223                             		.loc 1 618 0
+ 224 0040 05 00 00 00             		bsr	_Init_LookupTablePointers
+ 225                             	.LVL17:
+ 619:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 620:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	applDataItem.pData = (void*)&IdentTable;
+ 621:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	applDataItem.szMaxLength = sizeof(IdentTable);
+ 622:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 623:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	Set_CPApplianceDataItem(CP_APPLDATA_IDENT, &applDataItem);
+ 226                             		.loc 1 623 0
+ 227 0044 66 82                   		mov.L	#8, r2
+ 228 0046 4B 02                   		add	r0, r2
+ 229 0048 66 01                   		mov.L	#0, r1
+ 620:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	applDataItem.pData = (void*)&IdentTable;
+ 230                             		.loc 1 620 0
+ 231 004a F9 02 02 00 00 00 00    		mov.L	#_IdentTable, 8[r0]
+ 621:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	applDataItem.szMaxLength = sizeof(IdentTable);
+ 232                             		.loc 1 621 0
+ 233 0051 3D 06 28                		mov.W	#40, 12[r0]
+ 234                             		.loc 1 623 0
+ 235 0054 05 00 00 00             		bsr	_Set_CPApplianceDataItem
+ 236                             	.LVL18:
+ 624:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /*
+ 625:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	applDataItem.pData = (void*)&ExtendedIdentTable;
+ 626:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	applDataItem.szMaxLength = sizeof(ExtendedIdentTable);
+ 627:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 628:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	Set_CPApplianceDataItem(CP_APPLDATA_EXTENDED_IDENT, &applDataItem);
+ 629:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 630:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	applDataItem.pData = (void*)&MachineStateBuf[0];
+ 631:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	applDataItem.szMaxLength = sizeof(MachineStateBuf);
+ 632:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 633:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	Set_CPApplianceDataItem(CP_APPLDATA_R_STATUS, &applDataItem);
+ 237                             		.loc 1 633 0
+ 238 0058 66 82                   		mov.L	#8, r2
+ 239 005a 66 21                   		mov.L	#2, r1
+ 240 005c 4B 02                   		add	r0, r2
+ 630:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	applDataItem.pData = (void*)&MachineStateBuf[0];
+ 241                             		.loc 1 630 0
+ 242 005e F9 02 02 00 00 00 00    		mov.L	#_MachineStateBuf, 8[r0]
+ 631:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	applDataItem.szMaxLength = sizeof(MachineStateBuf);
+ 243                             		.loc 1 631 0
+ 244 0065 3D 06 07                		mov.W	#7, 12[r0]
+ 245                             		.loc 1 633 0
+ 246 0068 05 00 00 00             		bsr	_Set_CPApplianceDataItem
+ 247                             	.LVL19:
+ 634:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 248                             		.loc 1 634 0
+ 249 006c 3F 77 05                		rtsd	#20, r7-r7
+ 250                             	.LFE15:
+ 252 006f 03                      		.section	.text.CALLBACK_Protocol_SubModeManage,"ax",@progbits
+ 253                             		.global	_CALLBACK_Protocol_SubModeManage
+ 255                             	_CALLBACK_Protocol_SubModeManage:
+ 256                             	.LFB16:
+ 635:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 636:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 637:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 638:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene eseguita in CMS_EE_FUNC_EE_SystemMode. \n
+ 639:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** In base al contenuto del pacchetto SYSTEM_MODE imposta la variabile
+ 640:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** ExternalRequest che viene poi interpretata dall'applicazione per
+ 641:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** eseguire la corrispondente azione richiesta (es: attivazione/disattivazione
+ 642:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** cicli speciali, reset delle statistiche, scorrimento della pila dei Last Fault).
+ 643:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****  
+ 644:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \param [in]		submode indica l'azione richiesta
+ 645:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		ExternalRequest (global, memorizza per l'applicazione l'azione
+ 646:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				richiesta) e' usata come output
+ 647:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****  
+ 648:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			uint8_t
+ 649:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 650:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		0
+ 651:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 652:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 653:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 654:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 655:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			31/08/2012
+ 656:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 657:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 658:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 659:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 660:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 661:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****    
+ 662:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 663:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 664:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** uint8_t CALLBACK_Protocol_SubModeManage(uint8_t submode)
+ 665:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {	return 0;
+ 257                             		.loc 1 665 0
+ 258                             	.LVL20:
+ 666:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 259                             		.loc 1 666 0
+ 260 0000 66 01                   		mov.L	#0, r1
+ 261                             	.LVL21:
+ 262 0002 02                      		rts
+ 263                             	.LFE16:
+ 265                             		.section	.text.CBF_Task_Protocol_SetSpecialModeManager,"ax",@progbits
+ 266                             		.global	_CBF_Task_Protocol_SetSpecialModeManager
+ 268                             	_CBF_Task_Protocol_SetSpecialModeManager:
+ 269                             	.LFB17:
+ 667:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 668:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 669:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 670:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata all'interno della routine CMS_EE_FUNC_EE_SystemMode.
+ 671:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Attiva o disattiva la modalita' di Test per l'eventuale UI On Board.
+ 672:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Setta/Resetta il bit AS_SPECIAL_MODE_ON_BIT in ApplicationState.
+ 673:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 674:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \param [in]		submode indica la modalità di funzionamento richiesta.
+ 675:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 676:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return 		void
+ 677:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 678:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		none
+ 679:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 680:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none		
+ 681:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 682:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 683:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date 			31/08/2012
+ 684:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 685:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 686:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 687:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 688:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 689:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****    
+ 690:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 691:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 692:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CBF_Task_Protocol_SetSpecialModeManager(uint8_t submode)
+ 693:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+ 270                             		.loc 1 693 0
+ 271                             	.LVL22:
+ 272 0000 02                      		rts
+ 273                             	.LFE17:
+ 275                             		.section	.text.CALLBACK_Protocol_UIRemoteControlManage,"ax",@progbits
+ 276                             		.global	_CALLBACK_Protocol_UIRemoteControlManage
+ 278                             	_CALLBACK_Protocol_UIRemoteControlManage:
+ 279                             	.LFB18:
+ 694:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 695:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 696:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 697:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 698:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata all'interno della routine CMS_EE_FUNC_EE_SystemMode.
+ 699:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Usata solo se presente una UI On Board.
+ 700:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****  
+ 701:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \param [in]		submode indica la modalità di funzionamento richiesta
+ 702:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 703:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			void
+ 704:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 705:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		none
+ 706:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 707:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 708:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 709:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 710:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			31/08/2012
+ 711:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 712:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 713:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 714:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 715:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 716:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****    
+ 717:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 718:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 719:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CALLBACK_Protocol_UIRemoteControlManage(uint8_t subMode)
+ 720:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+ 280                             		.loc 1 720 0
+ 281                             	.LVL23:
+ 282 0000 02                      		rts
+ 283                             	.LFE18:
+ 285                             		.section	.text.CBF_notifyBackupAlarm,"ax",@progbits
+ 286                             		.global	_CBF_notifyBackupAlarm
+ 288                             	_CBF_notifyBackupAlarm:
+ 289                             	.LFB19:
+ 721:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 722:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 723:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 724:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 725:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 726:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene eseguita in Task_Backup. \n
+ 727:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Notifica l'allarme pre-Backup.
+ 728:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 729:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		ApplicationState (global, bitmap stato applicazione) e' usata
+ 730:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				come output
+ 731:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		recoveryComProc (global, variabile utilizzata per la procedura
+ 732:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				di sincronizzazione UI-Main) e' usata come output
+ 733:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 734:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			void
+ 735:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 736:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		none
+ 737:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 738:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 739:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 740:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 741:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			31/08/2012
+ 742:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 743:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 744:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 745:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 746:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 747:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****    
+ 748:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 749:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 750:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CBF_notifyBackupAlarm(void)
+ 751:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+ 290                             		.loc 1 751 0
+ 752:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #if ENABLE_SYNC_UI_MAIN == 1
+ 753:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 754:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	recoveryComProc = 0;			  /* blocca write reg. */	
+ 291                             		.loc 1 754 0
+ 292 0000 FB E2 00 00 00 00       		mov.L	#_recoveryComProc, r14
+ 293 0006 F8 E4 00                		mov.B	#0, [r14]
+ 294 0009 02                      		rts
+ 295                             	.LFE19:
+ 297                             		.section	.text.CBF_OnReadStatusCompleted,"ax",@progbits
+ 298                             		.global	_CBF_OnReadStatusCompleted
+ 300                             	_CBF_OnReadStatusCompleted:
+ 301                             	.LFB20:
+ 755:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 756:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #endif /* ENABLE_SYNC_UI_MAIN == 1 */
+ 757:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 758:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 759:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 760:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #if ENABLE_SYNC_UI_MAIN == 1
+ 761:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 762:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata all'interno della routine PP_SlaveNotification(). \n
+ 763:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** E' utilizzata nella procedura iniziale di sincronizzazione UI-Main mediante
+ 764:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** la sequenza READ_STATUS - READ_REGS - WRITE_REGS.
+ 765:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 766:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		recoveryComProc (global, variabile utilizzata per la procedura
+ 767:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				di sincronizzazione UI-Main) e' usata come input/output
+ 768:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 769:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			void
+ 770:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 771:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		none
+ 772:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 773:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 774:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 775:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 776:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			31/08/2012
+ 777:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 778:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 779:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 780:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 781:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 782:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****    
+ 783:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 784:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 785:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CBF_OnReadStatusCompleted(void)
+ 786:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+ 302                             		.loc 1 786 0
+ 787:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	if(recoveryComProc == 0)
+ 303                             		.loc 1 787 0
+ 304 0000 FB E2 00 00 00 00       		mov.L	#_recoveryComProc, r14
+ 305 0006 58 E4                   		movu.B	[r14], r4
+ 306 0008 61 04                   		cmp	#0, r4
+ 307 000a 21 05                   		bne	.L30
+ 788:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	{
+ 789:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 		recoveryComProc++;
+ 308                             		.loc 1 789 0
+ 309 000c F8 E4 01                		mov.B	#1, [r14]
+ 310                             	.L30:
+ 311 000f 02                      		rts
+ 312                             	.LFE20:
+ 314                             		.section	.text.CBF_OnReadRegulations,"ax",@progbits
+ 315                             		.global	_CBF_OnReadRegulations
+ 317                             	_CBF_OnReadRegulations:
+ 318                             	.LFB21:
+ 790:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	}
+ 791:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 792:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 793:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 794:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 795:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata all'interno della routine CMS_EE_CTRL_Ctrl_ReadRegsRequest(). \n
+ 796:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** E' utilizzata nella procedura iniziale di sincronizzazione UI-Main mediante
+ 797:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** la sequenza READ_STATUS - READ_REGS - WRITE_REGS.
+ 798:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 799:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		recoveryComProc (global, variabile utilizzata per la procedura
+ 800:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				di sincronizzazione UI-Main) e' usata come input
+ 801:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 802:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			uint8_t
+ 803:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 804:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		TRUE/FALSE
+ 805:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 806:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 807:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 808:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 809:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			31/08/2012
+ 810:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 811:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 812:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 813:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 814:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 815:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****    
+ 816:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 817:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 818:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** uint8_t CBF_OnReadRegulations(void)
+ 819:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+ 319                             		.loc 1 819 0
+ 820:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	if(recoveryComProc >= 1)
+ 320                             		.loc 1 820 0
+ 321 0000 FB E2 00 00 00 00       		mov.L	#_recoveryComProc, r14
+ 322 0006 58 E1                   		movu.B	[r14], r1
+ 821:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	{
+ 822:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 		return TRUE;
+ 823:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	}
+ 824:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 825:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	return FALSE;
+ 826:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 323                             		.loc 1 826 0
+ 324 0008 61 01                   		cmp	#0, r1
+ 325 000a FC DB 11                		scne.L	r1
+ 326 000d 02                      		rts
+ 327                             	.LFE21:
+ 329                             		.section	.text.CBF_OnReadRegulationsCompleted,"ax",@progbits
+ 330                             		.global	_CBF_OnReadRegulationsCompleted
+ 332                             	_CBF_OnReadRegulationsCompleted:
+ 333                             	.LFB22:
+ 827:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 828:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 829:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 830:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata all'interno della routine PP_SlaveNotification(). \n
+ 831:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** E' utilizzata nella procedura iniziale di sincronizzazione UI-Main mediante
+ 832:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** la sequenza READ_STATUS - READ_REGS - WRITE_REGS.
+ 833:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 834:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		ApplicationState (global, bitmap stato applicazione) e' usata
+ 835:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				come output
+ 836:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		recoveryComProc (global, variabile utilizzata per la procedura
+ 837:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				di sincronizzazione UI-Main) e' usata come input/output
+ 838:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 839:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			void
+ 840:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 841:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		none
+ 842:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 843:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 844:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 845:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 846:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			31/08/2012
+ 847:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 848:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 849:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 850:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 851:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 852:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****    
+ 853:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 854:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 855:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CBF_OnReadRegulationsCompleted(void)
+ 856:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+ 334                             		.loc 1 856 0
+ 857:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	if(recoveryComProc >= 1)
+ 858:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	{
+ 859:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 		if(recoveryComProc == 1)
+ 335                             		.loc 1 859 0
+ 336 0000 FB E2 00 00 00 00       		mov.L	#_recoveryComProc, r14
+ 337 0006 58 E4                   		movu.B	[r14], r4
+ 338 0008 61 14                   		cmp	#1, r4
+ 339 000a 21 05                   		bne	.L33
+ 860:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 		{
+ 861:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 			recoveryComProc++;
+ 340                             		.loc 1 861 0
+ 341 000c F8 E4 02                		mov.B	#2, [r14]
+ 342                             	.L33:
+ 343 000f 02                      		rts
+ 344                             	.LFE22:
+ 346                             		.section	.text.CBF_OnWriteRegulations,"ax",@progbits
+ 347                             		.global	_CBF_OnWriteRegulations
+ 349                             	_CBF_OnWriteRegulations:
+ 350                             	.LFB23:
+ 862:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 		}
+ 863:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	}	
+ 864:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 865:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 866:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 867:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 868:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata all'interno della routine CMS_EE_CTRL_Ctrl_WriteRegsRequest(). \n
+ 869:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** E' utilizzata nella procedura iniziale di sincronizzazione UI-Main mediante
+ 870:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** la sequenza READ_STATUS - READ_REGS - WRITE_REGS.
+ 871:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 872:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		ApplicationState (global, bitmap stato applicazione) e' usata
+ 873:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				come output
+ 874:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \attention 		recoveryComProc (global, variabile utilizzata per la procedura
+ 875:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 				di sincronizzazione UI-Main) e' usata come input
+ 876:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 877:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			uint8_t
+ 878:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 879:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		TRUE se è abilitata la scrittura delle regolazioni, FALSE altrimenti
+ 880:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 881:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 882:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 883:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 884:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			31/08/2012
+ 885:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 886:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 887:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 888:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 889:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 890:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****    
+ 891:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 892:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 893:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** uint8_t CBF_OnWriteRegulations(void)
+ 894:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+ 351                             		.loc 1 894 0
+ 895:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	if( recoveryComProc > 1 )
+ 352                             		.loc 1 895 0
+ 353 0000 FB E2 00 00 00 00       		mov.L	#_recoveryComProc, r14
+ 354 0006 58 E1                   		movu.B	[r14], r1
+ 896:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	{
+ 897:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 		return TRUE;		
+ 898:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	}
+ 899:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 900:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	return FALSE;
+ 901:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 355                             		.loc 1 901 0
+ 356 0008 61 11                   		cmp	#1, r1
+ 357 000a FC DB 14                		scgtu.L	r1
+ 358 000d 02                      		rts
+ 359                             	.LFE23:
+ 361                             		.section	.text.CBF_IOManager_IOVal_Ctrl,"ax",@progbits
+ 362                             		.global	_CBF_IOManager_IOVal_Ctrl
+ 364                             	_CBF_IOManager_IOVal_Ctrl:
+ 365                             	.LFB24:
+ 902:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** #endif /* ENABLE_SYNC_UI_MAIN == 1 */
+ 903:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 904:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 905:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 906:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata in LIB_IOM_OutputInitialization() per discriminare
+ 907:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** i carichi da spegnere all'inizializzazione.
+ 908:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Se TRUE il carico viene spento.
+ 909:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****  
+ 910:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \param [in]		loadPos e' la posizione nell'Output Map del carico da spegnere
+ 911:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 912:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			uint8_t
+ 913:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 914:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		TRUE (si richiede lo spegnimento)
+ 915:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 916:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none
+ 917:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 918:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 919:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			31/08/2012
+ 920:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Marco Quintini
+ 921:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 922:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 923:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 924:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 925:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****    
+ 926:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 927:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 928:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** bool_t CBF_IOManager_IOVal_Ctrl(uint8_t loadPos)
+ 929:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+ 366                             		.loc 1 929 0
+ 367                             	.LVL24:
+ 930:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 	return TRUE;
+ 931:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** }
+ 368                             		.loc 1 931 0
+ 369 0000 66 11                   		mov.L	#1, r1
+ 370                             	.LVL25:
+ 371 0002 02                      		rts
+ 372                             	.LFE24:
+ 374                             		.section	.text.CBF_AnalogInputIntManager_Polling,"ax",@progbits
+ 375                             		.global	_CBF_AnalogInputIntManager_Polling
+ 377                             	_CBF_AnalogInputIntManager_Polling:
+ 378                             	.LFB25:
+ 932:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 933:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** /**
+ 934:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Viene chiamata nel modulo Analog.
+ 935:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** Legge il canale del DS per evitare influenza reciproca dei canali
+ 936:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****  
+ 937:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \return			void
+ 938:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 939:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \retval 		none
+ 940:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 941:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \warning		none		
+ 942:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 943:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \version		1.0.0
+ 944:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \date			
+ 945:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \author			Stefano Ughi	
+ 946:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 947:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \bug			none
+ 948:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** 
+ 949:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \todo			nothing
+ 950:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c ****    
+ 951:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** \note			none
+ 952:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** */
+ 953:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** void CBF_AnalogInputIntManager_Polling(void)
+ 954:C:/Workspace/FW_Platform2_5/trunk/Inertia/General\callback.c **** {
+ 379                             		.loc 1 954 0
+ 380 0000 02                      		rts
+ 381                             	.LFE25:
+ 623                             	.Letext0:
+ 624                             		.file 2 "C:\\Workspace\\FW_Platform2_5\\trunk\\HAL\\HAL_General/StandardTypes.h"
+ 625                             		.file 3 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_SwTimersCounters/SwTimersCounter
+ 626                             		.file 4 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary/callback.h"
+ 627                             		.file 5 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_Types.h"
+ 628                             		.file 6 "C:/Workspace/FW_Platform2_5/trunk/Inertia/General/CstmTypes.h"
+ 629                             		.file 7 "C:\\Workspace\\FW_Platform2_5\\trunk\\ProductModules\\PM_BusCOMM/BCP_General.h"
+ 630                             		.file 8 "C:\\Workspace\\FW_Platform2_5\\trunk\\CFG_DishWasher\\CFG_Inertia/BusCommPltf_cfg.h"
+ 631                             		.file 9 "C:\\Workspace\\FW_Platform2_5\\trunk\\Application_Platform/APP_Global.h"
+ 632                             		.file 10 "C:/Workspace/FW_Platform2_5/trunk/Inertia/General/CstmGlobal.h"
+ 633                             		.file 11 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_Analog/AnalogExp.h"
+ 634                             		.file 12 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_DigitalIO/DigitalInputsExp.h"
+ 635                             		.file 13 "C:\\Workspace\\FW_Platform2_5\\trunk\\PlatformLibrary\\LIB_BackUp/LIB_BackupExp.h"
